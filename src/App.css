@@ -1,0 +1,12 @@
+/* Custom styles beyond Tailwind */
+
+/* Subtitle highlight animation */
+@keyframes pulse-subtle {
+  0% { opacity: 0.95; }
+  50% { opacity: 1; }
+  100% { opacity: 0.95; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}

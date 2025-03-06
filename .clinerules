@@ -1,0 +1,10 @@
+{
+  "rules": [
+    {
+      "name": "use-mobx-for-state",
+      "description": "Never put any state inside a React component using useState. All states, derived states, and related actions should be in MobX stores.",
+      "severity": "error",
+      "category": "state-management"
+    }
+  ]
+}
