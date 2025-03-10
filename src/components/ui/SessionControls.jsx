@@ -19,9 +19,9 @@ function SessionStopped() {
     <div className="flex items-center justify-center w-full h-full">
       <Button
         onClick={handleStartSession}
-        className={isActivating ? "bg-gray-600" : "bg-red-600"}
+        className={isActivating ? "bg-gray-600" : "bg-green-600"}
       >
-        {isActivating ? "starting session..." : "start session"}
+        {isActivating ? "连接中..." : "连接"}
       </Button>
     </div>
   );
@@ -38,8 +38,8 @@ function SessionActive() {
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full gap-4">
-      <input
+    <div className="flex items-center justify-center w-full h-full">
+      {/* <input
         onKeyDown={(e) => {
           if (e.key === "Enter" && message.trim()) {
             handleSendClientEvent();
@@ -60,9 +60,9 @@ function SessionActive() {
         className="bg-blue-400"
       >
         send text
-      </Button>
-      <Button onClick={() => realtimeSessionStore.stopSession()}>
-        disconnect
+      </Button> */}
+      <Button onClick={() => realtimeSessionStore.stopSession()} className="bg-red-400">
+        断开
       </Button>
     </div>
   );
@@ -72,7 +72,7 @@ function SessionControls() {
   // Directly use the realtimeSessionStore
   const isSessionActive = realtimeSessionStore.isSessionActive;
   return (
-    <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md">
+    <div className="flex border-gray-200 h-full rounded-md">
       {isSessionActive ? (
         <SessionActive />
       ) : (

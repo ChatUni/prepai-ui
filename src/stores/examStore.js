@@ -1,4 +1,5 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
+import { getApiBaseUrl } from '../config.js';
 
 class ExamStore {
   questions = [];
@@ -21,10 +22,10 @@ class ExamStore {
       closeResults: action
     });
   }
-  
   async fetchQuestions(courseId) {
     try {
-      const response = await fetch(`http://localhost:3001/api/questions/random?courseId=${courseId}&count=10`);
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
       if (!response.ok) {
         throw new Error('Failed to fetch questions');
       }

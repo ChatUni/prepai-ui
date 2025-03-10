@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import CourseList from './ui/CourseList';
 import SearchBar from './ui/SearchBar';
 import uiStore from '../stores/uiStore';
+import { getApiBaseUrl } from '../config.js';
 
 const FavoritesPage = observer(() => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +16,8 @@ const FavoritesPage = observer(() => {
       setError(null);
       
       try {
-        const response = await fetch(`http://localhost:3001/api/favorites?userId=${uiStore.userId}`);
+        const apiBaseUrl = getApiBaseUrl();
+        const response = await fetch(`${apiBaseUrl}/favorites?userId=${uiStore.userId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch favorites');

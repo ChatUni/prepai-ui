@@ -17,6 +17,8 @@ import AccountPage from './components/AccountPage';
 import LoginPage from './components/LoginPage';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthWrapper from './components/auth/AuthWrapper';
+// Import commented out for removal
+// import ApiSwitcher from './components/ui/ApiSwitcher';
 
 // Log import for debugging
 console.log('AccountPage imported:', AccountPage);
@@ -210,6 +212,8 @@ const MainLayout = observer(() => {
           </>
         )}
       </div>
+      
+      {/* API Tools removed */}
     </div>
   );
 });

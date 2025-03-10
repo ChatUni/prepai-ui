@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 import { setUIStore } from './coursesStore';
+import { getApiBaseUrl } from '../config.js';
 
 class UIStore {
   searchKeyword = '';
@@ -52,7 +53,8 @@ class UIStore {
   // Load favorites from API
   async loadFavorites() {
     try {
-      const response = await fetch(`http://localhost:3001/api/favorites?userId=${this.userId}`);
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/favorites?userId=${this.userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch favorites');
       }
@@ -87,7 +89,8 @@ class UIStore {
   // Toggle favorite status for a course
   async toggleFavorite(courseId) {
     try {
-      const response = await fetch('http://localhost:3001/api/favorites/toggle', {
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/favorites/toggle`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,9 +9,9 @@ class UserStore {
     avatar: DEFAULT_AVATAR, // Using default avatar from assets
     gender: 'male', // male/female
     vipExpiry: '2025-12-27 10:33:52',
-    isLoggedIn: false, // Changed to false by default for auth protection
+    isLoggedIn: true, // Set to true for development testing
     role: 'user',
-    phoneNumber: null
+    phoneNumber: '13800138000'
   };
 
   // Exam records

@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.PNG'], // Include PNG files as assets
   server: {
+    allowedHosts: ['prepai.loca.lt'],
     proxy: {
       // Proxy /token requests to backend server
       '/token': {
