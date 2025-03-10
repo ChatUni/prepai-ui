@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import coursesStore from '../stores/coursesStore';
 import videoPlayerStore from '../stores/videoPlayerStore';
+import uiStore from '../stores/uiStore';
 import { getYoutubeId } from '../utils/videoTranscriptService';
 
 const VideoPlayerPage = observer(() => {
@@ -12,7 +13,7 @@ const VideoPlayerPage = observer(() => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('subtitles'); // 'subtitles' or 'summary'
+  const [activeTab, setActiveTab] = useState('subtitles'); // 'subtitles', 'summary', or 'introduction'
   const [summary, setSummary] = useState(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
 
@@ -382,7 +383,7 @@ const VideoPlayerPage = observer(() => {
 
   if (loading) {
     return (
-      <div className="flex flex-col py-6 pl-6 h-full">
+      <div className="flex flex-col py-6 pb-20 md:pb-6 px-6 h-full">
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -395,7 +396,7 @@ const VideoPlayerPage = observer(() => {
 
   if (error) {
     return (
-      <div className="flex flex-col py-6 pl-6 h-full">
+      <div className="flex flex-col py-6 pb-20 md:pb-6 px-6 h-full">
         <button onClick={handleBack} className="text-blue-500 mb-4 flex items-center">
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -410,19 +411,20 @@ const VideoPlayerPage = observer(() => {
   }
 
   return (
-    <div className="flex flex-col flex-grow py-6 pl-6 pr-6 h-full">
-      <button onClick={handleBack} className="text-blue-500 mb-4 flex items-center">
+    <div className="flex flex-col flex-grow py-4 md:py-6 pb-16 md:pb-6 px-4 md:px-6 h-full">
+      <button onClick={handleBack} className="text-blue-500 mb-4 hidden md:flex items-center">
         <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
         返回
       </button>
       
-      {/* Main content area with video and tab panels */}
-      <div className="flex flex-col md:flex-row gap-6 mb-6 md:justify-between flex-grow">
+      {/* Main content area with video and tab panels - mobile optimized */}
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-6 md:justify-between flex-grow">
         {/* Video Player - takes the flexible space */}
         <div className="flex-grow order-1 md:order-1 md:max-w-[calc(100%-24rem)] flex flex-col">
-          <div className="aspect-video bg-black rounded overflow-hidden">
+          <div className="aspect-video bg-black rounded overflow-hidden relative">
+            
             {getYoutubeId(course.video_url) ? (
               <div className="w-full h-full relative">
                 <div id="youtube-player" className="absolute inset-0"></div>
@@ -458,8 +460,8 @@ const VideoPlayerPage = observer(() => {
           </div>
         </div>
         
-        {/* Tab Panel - fixed width on the right */}
-        <div className="w-full md:w-96 order-2 md:order-2 bg-white border border-gray-200 rounded-lg flex flex-col h-[calc(100vh-200px)] flex-shrink-0">
+        {/* Tab Panel - fixed width on the right, using calculated height to fit viewport */}
+        <div className="w-full md:w-96 order-2 md:order-2 bg-white border border-gray-200 rounded-lg flex flex-col h-[calc(100vh-380px)] md:h-[calc(100vh-200px)] flex-shrink-0">
           {/* Tab Navigation - fixed at the top */}
           <div className="flex border-b border-gray-200 flex-shrink-0">
             <button
@@ -481,6 +483,16 @@ const VideoPlayerPage = observer(() => {
               onClick={() => setActiveTab('summary')}
             >
               总结
+            </button>
+            <button
+              className={`flex-1 py-3 text-center font-medium ${
+                activeTab === 'introduction'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('introduction')}
+            >
+              课程介绍
             </button>
           </div>
           
@@ -573,7 +585,7 @@ const VideoPlayerPage = observer(() => {
                   <div className="text-gray-500 italic">没有找到字幕</div>
                 )}
               </div>
-            ) : (
+            ) : activeTab === 'summary' ? (
               <div className="space-y-4">
                 {summary ? (
                   <>
@@ -610,13 +622,38 @@ const VideoPlayerPage = observer(() => {
                   <div className="text-gray-500 italic">没有摘要数据可用</div>
                 )}
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  {course.category && (
+                    <div className="mb-2">
+                      <span className="font-medium">分类:</span> {course.category}
+                    </div>
+                  )}
+                  {course.keywords && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      <span className="font-medium">关键词:</span>
+                      {course.keywords.split(',').map((keyword, idx) => (
+                        <span key={idx} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
+                          {keyword.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {course.description && (
+                    <div className="mt-4">
+                      <p>{course.description}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
       </div>
       
-      {/* Course Description */}
-      <div className="bg-gray-50 p-4 rounded">
+      {/* Course Description - only visible on desktop */}
+      <div className="hidden md:block bg-gray-50 p-4 rounded">
         <h2 className="text-lg font-semibold mb-2">课程介绍</h2>
         <div className="text-gray-700">
           {course.category && (
@@ -632,6 +669,11 @@ const VideoPlayerPage = observer(() => {
                   {keyword.trim()}
                 </span>
               ))}
+            </div>
+          )}
+          {course.description && (
+            <div className="mt-4">
+              <p>{course.description}</p>
             </div>
           )}
         </div>

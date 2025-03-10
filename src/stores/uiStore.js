@@ -10,6 +10,15 @@ class UIStore {
   userId = 1; // Default user ID for development
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
   parentCategory = null; // Track parent category for subcategories
+  
+  // User account information
+  userInfo = {
+    username: '游客', // Default username (Guest)
+    userId: '53',     // User ID
+    gender: 'male',   // User gender
+    avatar: 'https://via.placeholder.com/150', // Placeholder avatar URL
+    vipExpiry: '2025-12-27 10:33:52', // VIP expiry date
+  };
 
   constructor() {
     makeObservable(this, {
@@ -21,6 +30,7 @@ class UIStore {
       userId: observable,
       courseTypeFilter: observable,
       parentCategory: observable,
+      userInfo: observable,
       setSearchKeyword: action,
       setActiveCategory: action,
       setActiveNavItem: action,
@@ -28,7 +38,8 @@ class UIStore {
       toggleFavorite: action,
       setFavorites: action,
       setCourseTypeFilter: action,
-      setParentCategory: action
+      setParentCategory: action,
+      updateUserInfo: action
     });
 
     // Set this store in coursesStore to avoid circular dependencies
@@ -132,6 +143,14 @@ class UIStore {
   // Set parent category for sub-menu items
   setParentCategory(category) {
     this.parentCategory = category;
+  }
+
+  // Update user information
+  updateUserInfo(newUserInfo) {
+    this.userInfo = {
+      ...this.userInfo,
+      ...newUserInfo
+    };
   }
 }
 

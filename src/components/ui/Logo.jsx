@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite';
+import logoImage from '../../assets/logo.PNG';
 
 const Logo = observer(() => {
   return (
-    <div className="bg-blue-600 text-white text-2xl font-bold rounded-lg p-4 w-32 h-16 flex items-center justify-center">
-      Logo
+    <div className="flex items-center justify-center">
+      <img src={logoImage} alt="Logo" className="h-10 sm:h-12 md:h-16 object-contain" />
     </div>
   );
 });

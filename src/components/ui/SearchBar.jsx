@@ -24,44 +24,46 @@ const SearchBar = observer(() => {
   };
 
   return (
-    <div className="flex items-center w-full max-w-2xl">
-      <div className="relative mr-2">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center w-full max-w-2xl gap-2 sm:gap-0">
+      <div className="relative w-full sm:w-auto sm:mr-2 mb-2 sm:mb-0">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center whitespace-nowrap min-w-max"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
           onClick={toggleDropdown}
         >
-          {uiStore.selectedInstructorId 
-            ? coursesStore.instructors.find(i => i.id === uiStore.selectedInstructorId)?.name 
-            : "所有老师"}
-          <svg 
-            className="w-4 h-4 ml-2" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
+          <span className="truncate max-w-[200px]">
+            {uiStore.selectedInstructorId
+              ? coursesStore.instructors.find(i => i.id === uiStore.selectedInstructorId)?.name
+              : "所有老师"}
+          </span>
+          <svg
+            className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d={isDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
             />
           </svg>
         </button>
         
         {isDropdownOpen && (
-          <div className="absolute z-10 mt-1 min-w-full bg-white rounded-md shadow-lg">
-            <ul className="py-1">
-              <li 
-                className={`px-4 py-2 hover:bg-blue-100 cursor-pointer ${!uiStore.selectedInstructorId ? 'bg-blue-50' : ''}`}
+          <div className="absolute z-10 mt-1 w-full sm:min-w-full bg-white rounded-md shadow-lg">
+            <ul className="py-1 max-h-60 overflow-y-auto">
+              <li
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${!uiStore.selectedInstructorId ? 'bg-blue-50' : ''}`}
                 onClick={() => handleInstructorFilter("")}
               >
                 所有老师
               </li>
               {coursesStore.instructors.map(instructor => (
-                <li 
-                  key={instructor.id} 
-                  className={`px-4 py-2 hover:bg-blue-100 cursor-pointer ${uiStore.selectedInstructorId === instructor.id ? 'bg-blue-50' : ''}`}
+                <li
+                  key={instructor.id}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${uiStore.selectedInstructorId === instructor.id ? 'bg-blue-50' : ''}`}
                   onClick={() => handleInstructorFilter(instructor.id)}
                 >
                   {instructor.name}
@@ -73,9 +75,9 @@ const SearchBar = observer(() => {
       </div>
       
       <div className="relative w-full flex">
-        <div className="absolute top-0 bottom-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div className="absolute top-0 bottom-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
           <svg
-            className="w-6 h-6 text-blue-500"
+            className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -91,7 +93,7 @@ const SearchBar = observer(() => {
         </div>
         <input
           type="text"
-          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none"
+          className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none"
           placeholder="搜索课程..."
           value={uiStore.searchKeyword}
           onChange={handleSearch}

@@ -1,12 +1,29 @@
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import uiStore from '../../stores/uiStore';
 
 const CourseCard = observer(({ course }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Check if the course is favorited
   const isFavorite = uiStore.favoriteCourseIds.has(course.id);
@@ -45,26 +62,27 @@ const CourseCard = observer(({ course }) => {
   
   return (
     <div
-      className="flex flex-col w-full relative group cursor-pointer"
+      className="flex flex-col w-full relative group cursor-pointer mb-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
       {/* Course Image */}
-      <div className="bg-amber-300 rounded-md overflow-hidden aspect-video mb-2 relative">
-        <img 
-          src={course.image || "https://via.placeholder.com/300x200/F59E0B/FFFFFF?text=Course"} 
+      <div className="bg-amber-300 rounded-lg overflow-hidden aspect-video mb-2 relative shadow-sm">
+        <img
+          src={course.image || "https://via.placeholder.com/300x200/F59E0B/FFFFFF?text=Course"}
           alt={course.title}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
         
         {/* Duration Badge or Format Badge */}
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-1 left-1 sm:bottom-2 sm:left-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs">
           {course.isVideo ? (
             course.duration || '00:00'
           ) : (
             <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
               </svg>
               PPT
@@ -72,18 +90,16 @@ const CourseCard = observer(({ course }) => {
           )}
         </div>
         
-        {/* Action Buttons */}
-        <div className="absolute top-2 right-2 flex gap-2">
+        {/* Action Buttons - Only visible on hover/touch */}
+        <div className={`absolute top-1 right-1 sm:top-2 sm:right-2 flex gap-1.5 sm:gap-2 transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100`}>
           {/* Practice Button */}
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white transition-all duration-200"
+            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md"
             onClick={handlePracticeClick}
-            style={{
-              opacity: isHovered ? 1 : 0
-            }}
+            aria-label="Practice questions"
           >
             <svg
-              className="w-5 h-5"
+              className="w-3.5 h-3.5 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -100,39 +116,36 @@ const CourseCard = observer(({ course }) => {
 
           {/* Favorite Button */}
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200"
+            className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full shadow-md ${isFavorite ? 'bg-red-50' : 'bg-white bg-opacity-80'}`}
             onClick={handleFavoriteToggle}
             disabled={isLoading}
-            style={{
-              opacity: isFavorite ? 1 : (isHovered ? 1 : 0),
-              cursor: isLoading ? 'wait' : 'pointer'
-            }}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
           {isFavorite ? (
             // Red filled star for favorites
-            <svg 
-              className="w-6 h-6 text-red-500" 
-              fill="currentColor" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="w-4 h-4 sm:w-5 sm:h-5 text-red-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path 
+              <path
                 d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
               />
             </svg>
           ) : (
-            // White outline star for non-favorites
-            <svg 
-              className="w-6 h-6 text-white" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24" 
+            // Empty heart for non-favorites
+            <svg
+              className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
               />
             </svg>
@@ -141,22 +154,28 @@ const CourseCard = observer(({ course }) => {
         </div>
       </div>
       
-      {/* Course Title */}
-      <h3 className="font-medium text-sm line-clamp-2">{course.title}</h3>
-      
-      {/* Course Instructor */}
-      <p className="text-gray-600 text-xs mt-1">{course.instructor}</p>
-      
-      {/* Keywords */}
-      <div className="flex flex-wrap gap-1 mt-2">
-        {keywords.map((keyword, index) => (
-          <span 
-            key={`${course.id}-keyword-${index}`}
-            className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded"
-          >
-            {keyword}
-          </span>
-        ))}
+      {/* Course Details */}
+      <div className="px-0.5">
+        {/* Course Title */}
+        <h3 className="font-medium text-sm sm:text-base line-clamp-2">{course.title}</h3>
+        
+        {/* Course Instructor */}
+        <p className="text-gray-600 text-xs sm:text-sm mt-1">{course.instructor}</p>
+        
+        {/* Keywords - Show on all screens now */}
+        <div className="flex flex-wrap gap-1 mt-1.5 sm:mt-2">
+          {keywords.slice(0, 2).map((keyword, index) => (
+            <span
+              key={`${course.id}-keyword-${index}`}
+              className="bg-gray-100 text-gray-600 text-[10px] sm:text-xs px-1.5 py-0.5 rounded"
+            >
+              {keyword}
+            </span>
+          ))}
+          {keywords.length > 2 && (
+            <span className="text-[10px] sm:text-xs text-gray-500">+{keywords.length - 2}</span>
+          )}
+        </div>
       </div>
     </div>
   );

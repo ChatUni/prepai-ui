@@ -21,7 +21,7 @@ const ExamPage = observer(() => {
   const filteredCourses = coursesStore.filteredCourses;
 
   return (
-    <div className="container mx-auto px-4 py-8 h-full flex flex-col">
+    <div className="container mx-auto px-4 py-8 pb-20 md:pb-8 h-full flex flex-col">
       <div className="mb-8 flex-shrink-0">
         <SearchBar />
       </div>

@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import videoProcessingRouter from './server/videoProcessing.js';
+import realtimeTokenRouter from './server/realtimeTokenEndpoint.js';
 
 // Get current module's directory for ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -23,12 +24,16 @@ app.use(express.json());
 // Add video processing routes
 app.use('/api/video', videoProcessingRouter);
 
+// Add realtime token endpoint
+app.use(realtimeTokenRouter);
+
 // Database connection configuration
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD, // Password from .env file
-  database: process.env.DB_DATABASE || 'prepai_courses'
+  database: process.env.DB_DATABASE || 'prepai'
 };
 
 // Create a connection pool

@@ -10,3 +10,17 @@
 .animate-pulse-subtle {
   animation: pulse-subtle 2s infinite ease-in-out;
 }
+
+/* Mobile-specific styles */
+@media (max-width: 640px) {
+  /* Improve touch targets on mobile */
+  button, a, input, select, [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent text from being too small */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+}

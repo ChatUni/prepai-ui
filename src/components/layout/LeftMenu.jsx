@@ -3,7 +3,7 @@ import uiStore from '../../stores/uiStore';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-const LeftMenu = observer(() => {
+const LeftMenu = observer(({ onItemClick }) => {
   const navigate = useNavigate();
   const [expandedSection, setExpandedSection] = useState(null);
   
@@ -24,7 +24,7 @@ const LeftMenu = observer(() => {
     }
     
     return [
-      { id: 'private', label: '私教', category: '私教', clickable: false },
+      { id: 'private', label: '私教', category: '私教', clickable: true },
       { id: 'video', label: '视频课程', category: '视频课程', highlight: true, clickable: true, isVideo: true, isMainCategory: true },
       { id: 'video-recommended', label: '推荐', category: '视频推荐', clickable: true, isVideo: true, parentCategory: '视频课程' },
       { id: 'video-collection', label: '我的收藏', category: '视频收藏', clickable: true, isVideo: true, parentCategory: '视频课程' },
@@ -55,6 +55,11 @@ const LeftMenu = observer(() => {
       uiStore.setActiveCategory(item.category);
       uiStore.setSelectedInstructorId(null);
       uiStore.setSearchKeyword('');
+    } else if (item.category === '私教') {
+      // Navigate to instructor listing page without any specific instructor
+      navigate('/instructor');
+      uiStore.setSelectedInstructorId(null);
+      uiStore.setSearchKeyword('');
     } else if (item.isMainCategory) {
       setExpandedSection(expandedSection === item.category ? null : item.category);
       
@@ -65,10 +70,15 @@ const LeftMenu = observer(() => {
       uiStore.setSelectedInstructorId(null);
       uiStore.setSearchKeyword('');
     }
+    
+    // Close mobile menu if provided
+    if (onItemClick) {
+      onItemClick();
+    }
   };
 
   return (
-    <div className="w-56 flex-shrink-0 border-r border-gray-200 h-full py-4">
+    <div className="w-full h-full bg-white border-r border-gray-200 overflow-y-auto py-4">
       {/* All menu items, with conditional rendering for submenus */}
       {menuItems.map(item => {
         // Skip submenu items when parent is not expanded
@@ -92,6 +102,7 @@ const LeftMenu = observer(() => {
               text-left
               ${isMainCategory && item.id === 'document' ? 'mt-6' : ''}
               ${item.parentCategory ? 'transition-all duration-200' : ''}
+              touch-manipulation
             `}
             onClick={() => handleMenuClick(item)}
           >
