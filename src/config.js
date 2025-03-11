@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'http://localhost:3001/api';
+export const BASE_URL = process.env.BASE_URL;
 
 // Get the API Base URL
-export const getApiBaseUrl = () => API_BASE_URL;
+export const getApiBaseUrl = () => `${BASE_URL}/api`;

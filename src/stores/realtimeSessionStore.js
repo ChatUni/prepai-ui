@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { BASE_URL } from '../config.js';
 
 class RealtimeSessionStore {
   isSessionActive = false;
@@ -14,7 +15,7 @@ class RealtimeSessionStore {
   async startSession() {
     try {
       // Get an ephemeral key from the Fastify server
-      const tokenResponse = await fetch("/token");
+      const tokenResponse = await fetch(`${BASE_URL}/token`);
       const data = await tokenResponse.json();
       const EPHEMERAL_KEY = data.client_secret.value;
 
