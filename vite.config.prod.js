@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.PNG'],
+  base: '/prepai/',
   define: {
     'process.env': {
         BASE_URL: 'http://app.freshroad.ai:3001'
