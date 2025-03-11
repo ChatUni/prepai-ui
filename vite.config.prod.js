@@ -6,7 +6,7 @@ export default defineConfig({
   assetsInclude: ['**/*.PNG'],
   define: {
     'process.env': {
-        BASE_URL: 'http://app.freshroad.ai:3003'
+        BASE_URL: 'http://app.freshroad.ai:3001'
     }
   }
 })
