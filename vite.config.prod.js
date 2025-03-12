@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/prepai/',
   define: {
     'process.env': {
-        BASE_URL: 'http://app.freshroad.ai:3001'
+        BASE_URL: 'https://lb.freshroad.ai:3001'
     }
   }
 })
