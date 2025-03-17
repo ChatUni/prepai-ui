@@ -84,7 +84,7 @@ const SeriesPage = observer(() => {
                   />
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-700 w-full h-48 flex items-center justify-center">
-                    <span className="text-gray-500 dark:text-gray-400">No cover image available</span>
+                    <span className="text-gray-500 dark:text-gray-400">无封面</span>
                   </div>
                 )}
               </div>
@@ -93,7 +93,7 @@ const SeriesPage = observer(() => {
               <div className="md:w-1/2">
                 {/* Series description */}
                 <div className="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h2 className="text-xl font-semibold mb-3">About this series</h2>
+                  <h2 className="text-xl font-semibold mb-3">关于这个系列</h2>
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
                     {selectedSeries.desc || 'No description available for this series.'}
                   </p>
@@ -116,7 +116,7 @@ const SeriesPage = observer(() => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">{selectedSeries.instructor_name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Instructor</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">老师</p>
                   </div>
                 </div>
               </div>
@@ -140,9 +140,7 @@ const SeriesPage = observer(() => {
   
   // Otherwise, display all available series
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6">Series</h1>
-      
+    <div className="container mx-auto px-4 py-6">      
       {/* Add instructor filter and search box */}
       <div className="mb-6">
         <SearchBar />
@@ -150,14 +148,14 @@ const SeriesPage = observer(() => {
       
       {coursesStore.isLoading ? (
         <div className="text-center py-10">
-          <p className="text-gray-600 dark:text-gray-400">Loading series...</p>
+          <p className="text-gray-600 dark:text-gray-400">加载系列课程...</p>
         </div>
       ) : coursesStore.filteredSeries.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-600 dark:text-gray-400">No series available</p>
+          <p className="text-gray-600 dark:text-gray-400">没有系列课程</p>
         </div>
       ) : (
-        <SeriesList title="All Series" series={coursesStore.filteredSeries} />
+        <SeriesList title="" series={coursesStore.filteredSeries} />
       )}
     </div>
   );
