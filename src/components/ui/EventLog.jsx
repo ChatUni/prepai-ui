@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import realtimeSessionStore from "../../stores/realtimeSessionStore";
 
-function Event({ event, timestamp }) {
+const Event = ({ event, timestamp }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isClient = event.event_id && !event.event_id.startsWith("event_");
@@ -30,9 +30,9 @@ function Event({ event, timestamp }) {
       </div>
     </div>
   );
-}
+};
 
-function EventLog() {
+const EventLog = () => {
   // Directly use the realtimeSessionStore
   const events = realtimeSessionStore.events;
   console.log(events.length)
@@ -67,7 +67,7 @@ function EventLog() {
       )}
     </div>
   );
-}
+};
 
 // Export the component wrapped with the MobX observer
 export default observer(EventLog);

@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, runInAction } from 'mobx';
+import { makeObservable, observable, action, runInAction, computed } from 'mobx';
 import { getApiBaseUrl } from '../config.js';
 
 class ExamStore {
@@ -19,7 +19,10 @@ class ExamStore {
       selectAnswer: action,
       submitExam: action,
       resetExam: action,
-      closeResults: action
+      closeResults: action,
+      questionsWithParsedOptions: computed,
+      getOptionClass: action,
+      isCorrectAnswer: action
     });
   }
   async fetchQuestions(courseId) {
@@ -88,6 +91,53 @@ class ExamStore {
       this.showResults = false;
       this.examResults = { correct: 0, incorrect: 0 };
     });
+  }
+  
+  // Computed property that returns questions with parsed options
+  get questionsWithParsedOptions() {
+    return this.questions.map(question => ({
+      ...question,
+      parsedOptions: JSON.parse(question.options)
+    }));
+  }
+  
+  // Method to determine if an answer is correct for a given question
+  isCorrectAnswer(questionId, option) {
+    const question = this.questions.find(q => q.id === questionId);
+    if (!question) return false;
+    
+    const options = JSON.parse(question.options);
+    return option === options[question.answer.charCodeAt(0) - 65];
+  }
+  
+  // Method to get the appropriate class for an option
+  getOptionClass(questionId, option) {
+    let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
+    const question = this.questions.find(q => q.id === questionId);
+    if (!question) return optionClass;
+    
+    const selectedAnswer = this.selectedAnswers.get(questionId);
+    const options = JSON.parse(question.options);
+    const correctAnswer = options[question.answer.charCodeAt(0) - 65];
+    
+    if (this.isSubmitted) {
+      if (option === correctAnswer) {
+        // Always show correct answer in green after submission
+        optionClass += " bg-green-100 border-green-500";
+      } else if (selectedAnswer === option) {
+        // Show incorrect selected answer in red
+        optionClass += " bg-red-100 border-red-500";
+      } else {
+        optionClass += " border-gray-200";
+      }
+    } else {
+      // Not submitted yet - show selection in blue
+      optionClass += selectedAnswer === option
+        ? " bg-blue-100 border-blue-500"
+        : " hover:bg-gray-50 border-gray-200";
+    }
+    
+    return optionClass;
   }
 }
 

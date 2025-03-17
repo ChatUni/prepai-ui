@@ -1,29 +1,53 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
-import { getAllCourses, getAllInstructors } from '../utils/db';
+import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
 
 class CoursesStore {
   courses = [];
   instructors = [];
+  series = [];
+  instructorSeries = [];
   isLoading = true;
+  isLoadingInstructorSeries = false;
   error = null;
+  instructorSeriesError = null;
+  selectedSeriesId = null;
+  selectedInstructorId = null;
 
   constructor() {
     this.fetchCourses();
     this.fetchInstructors();
+    this.fetchSeries();
     makeObservable(this, {
       courses: observable,
       instructors: observable,
+      series: observable,
+      instructorSeries: observable,
       isLoading: observable,
+      isLoadingInstructorSeries: observable,
       error: observable,
+      instructorSeriesError: observable,
+      selectedSeriesId: observable,
+      selectedInstructorId: observable,
       fetchCourses: action,
       fetchInstructors: action,
+      fetchSeries: action,
+      fetchInstructorSeries: action,
       setCourses: action,
       setInstructors: action,
+      setSeries: action,
+      setInstructorSeries: action,
       setError: action,
+      setInstructorSeriesError: action,
       setLoading: action,
+      setLoadingInstructorSeries: action,
+      setSelectedSeriesId: action,
+      setSelectedInstructorId: action,
       filteredCourses: computed,
+      filteredInstructors: computed,
+      filteredSeries: computed,
       popularCourses: computed,
-      examCourses: computed
+      examCourses: computed,
+      coursesBySeries: computed
     });
   }
 
@@ -80,6 +104,19 @@ class CoursesStore {
     }
   }
 
+  async fetchSeries() {
+    try {
+      // Use the getAllSeries utility function for consistent API access
+      const series = await getAllSeries();
+      console.log('Fetched series:', series);
+      this.setSeries(series);
+    } catch (error) {
+      console.error('Failed to fetch series:', error);
+      console.warn('Using fallback empty series array');
+      this.setSeries([]);
+    }
+  }
+
   setCourses(courses) {
     runInAction(() => {
       // Process courses to ensure they have all required fields
@@ -90,7 +127,8 @@ class CoursesStore {
         isFavorite: !!course.isFavorite,
         recommended: !!course.recommended,
         isVideo: course.isVideo === undefined ? true : !!course.isVideo,
-        transcript: course.transcript || ''
+        transcript: course.transcript || '',
+        series_name: course.series_name || 'Uncategorized' // Add series name if available
       }));
       
       // Update favorites in uiStore
@@ -106,6 +144,12 @@ class CoursesStore {
     });
   }
 
+  setSeries(series) {
+    runInAction(() => {
+      this.series = series;
+    });
+  }
+
   setError(error) {
     runInAction(() => {
       this.error = error;
@@ -118,22 +162,93 @@ class CoursesStore {
     });
   }
 
+  setSelectedSeriesId(seriesId) {
+    runInAction(() => {
+      this.selectedSeriesId = seriesId;
+    });
+  }
+
+  setSelectedInstructorId(instructorId) {
+    runInAction(() => {
+      this.selectedInstructorId = instructorId;
+    });
+  }
+
+  // Fetch series for a specific instructor
+  async fetchInstructorSeries(instructorId) {
+    if (!instructorId) return;
+    
+    this.setLoadingInstructorSeries(true);
+    this.setInstructorSeriesError(null);
+    
+    try {
+      // Use the fetchFromApi utility to maintain consistent API access
+      const series = await fetchFromApi(`/series?instructor=${instructorId}`);
+      console.log('Fetched instructor series:', series);
+      this.setInstructorSeries(series);
+    } catch (error) {
+      console.error('Failed to fetch instructor series:', error);
+      this.setInstructorSeriesError(error.message);
+      this.setInstructorSeries([]);
+    } finally {
+      this.setLoadingInstructorSeries(false);
+    }
+  }
+  
+  // Set instructor ID and fetch their series in one action
+  selectInstructor(instructorId) {
+    this.setSelectedInstructorId(instructorId);
+    if (instructorId) {
+      this.fetchInstructorSeries(instructorId);
+    } else {
+      this.setInstructorSeries([]);
+    }
+  }
+  
+  // Load series by ID in one action
+  selectSeries(seriesId) {
+    this.setSelectedSeriesId(seriesId);
+    // If we have a specific seriesId, we can fetch additional details if needed
+  }
+
+  setInstructorSeries(series) {
+    runInAction(() => {
+      this.instructorSeries = series;
+    });
+  }
+
+  setInstructorSeriesError(error) {
+    runInAction(() => {
+      this.instructorSeriesError = error;
+    });
+  }
+
+  setLoadingInstructorSeries(isLoading) {
+    runInAction(() => {
+      this.isLoadingInstructorSeries = isLoading;
+    });
+  }
+
   get filteredCourses() {
     const searchKeyword = uiStore.searchKeyword.toLowerCase();
     const activeCategory = uiStore.activeCategory;
     const selectedInstructorId = uiStore.selectedInstructorId;
+    const selectedSeriesId = this.selectedSeriesId;
 
     // If we're on the exam page, return filtered exam courses
     if (activeCategory === "考测") {
       return this.examCourses.filter(course => {
         const matchesSearch = !searchKeyword ||
           course.title.toLowerCase().includes(searchKeyword) ||
-          course.instructor.toLowerCase().includes(searchKeyword);
+          (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
+          (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
 
         const matchesInstructor = selectedInstructorId === null ||
           course.instructor === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
 
-        return matchesSearch && matchesInstructor;
+        const matchesSeries = selectedSeriesId === null || course.series_id === selectedSeriesId;
+
+        return matchesSearch && matchesInstructor && matchesSeries;
       });
     }
 
@@ -142,7 +257,8 @@ class CoursesStore {
     return this.courses.filter(course => {
       const matchesSearch = !searchKeyword ||
         course.title.toLowerCase().includes(searchKeyword) ||
-        course.instructor.toLowerCase().includes(searchKeyword);
+        (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
+        (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
 
       // Filter by course type (video or document)
       const matchesCourseType = course.isVideo === courseTypeFilter;
@@ -174,9 +290,11 @@ class CoursesStore {
       }
 
       const matchesInstructor = selectedInstructorId === null ||
-        course.instructor === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
+        course.instructor_name === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
 
-      return matchesSearch && matchesCategory && matchesInstructor && matchesCourseType;
+      const matchesSeries = selectedSeriesId === null || course.series_id === selectedSeriesId;
+
+      return matchesSearch && matchesCategory && matchesInstructor && matchesCourseType && matchesSeries;
     });
   }
 
@@ -211,7 +329,46 @@ class CoursesStore {
     });
   }
 
-  // Removed circular reference getter
+  get filteredInstructors() {
+    const searchKeyword = uiStore.searchKeyword.toLowerCase();
+    
+    if (!searchKeyword) {
+      return this.instructors;
+    }
+    
+    return this.instructors.filter(instructor =>
+      instructor.name.toLowerCase().includes(searchKeyword) ||
+      instructor.description.toLowerCase().includes(searchKeyword)
+    );
+  }
+  
+  get filteredSeries() {
+    const searchKeyword = uiStore.searchKeyword.toLowerCase();
+    const selectedInstructorId = uiStore.selectedInstructorId;
+    
+    return this.series.filter(series => {
+      const matchesSearch = !searchKeyword || 
+        series.name.toLowerCase().includes(searchKeyword) ||
+        (series.desc && series.desc.toLowerCase().includes(searchKeyword)) ||
+        (series.instructor_name && series.instructor_name.toLowerCase().includes(searchKeyword));
+      
+      const matchesInstructor = selectedInstructorId === null || 
+        series.instructor_id === selectedInstructorId;
+      
+      return matchesSearch && matchesInstructor;
+    });
+  }
+
+  get coursesBySeries() {
+    // Group courses by series
+    const groupedCourses = {};
+    
+    this.series.forEach(series => {
+      groupedCourses[series.id] = this.courses.filter(course => course.series_id === series.id);
+    });
+    
+    return groupedCourses;
+  }
 }
 
 const coursesStore = new CoursesStore();

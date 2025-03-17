@@ -24,7 +24,7 @@ const LeftMenu = observer(({ onItemClick }) => {
     }
     
     return [
-      { id: 'private', label: '私教', category: '私教', clickable: true },
+      { id: 'series', label: '系列课程', category: '系列课程', highlight: true, clickable: true, isMainCategory: true },
       { id: 'video', label: '视频课程', category: '视频课程', highlight: true, clickable: true, isVideo: true, isMainCategory: true },
       { id: 'video-recommended', label: '推荐', category: '视频推荐', clickable: true, isVideo: true, parentCategory: '视频课程' },
       { id: 'video-collection', label: '我的收藏', category: '视频收藏', clickable: true, isVideo: true, parentCategory: '视频课程' },
@@ -33,7 +33,8 @@ const LeftMenu = observer(({ onItemClick }) => {
       { id: 'document', label: '文档课程', category: '文档课程', highlight: true, clickable: true, isVideo: false, isMainCategory: true },
       { id: 'document-recommended', label: '推荐', category: '文档推荐', clickable: true, isVideo: false, parentCategory: '文档课程' },
       { id: 'document-collection', label: '我的收藏', category: '文档收藏', clickable: true, isVideo: false, parentCategory: '文档课程' },
-      { id: 'document-history', label: '播放历史', category: '文档历史', clickable: true, isVideo: false, parentCategory: '文档课程' }
+      { id: 'document-history', label: '播放历史', category: '文档历史', clickable: true, isVideo: false, parentCategory: '文档课程' },
+      { id: 'private', label: '私教实时语音辅导', category: '私教', highlight: true, clickable: true, isMainCategory: true },
     ];
   };
 
@@ -60,8 +61,19 @@ const LeftMenu = observer(({ onItemClick }) => {
       navigate('/instructor');
       uiStore.setSelectedInstructorId(null);
       uiStore.setSearchKeyword('');
+      
+      // Collapse other main categories when 私教 is selected
+      setExpandedSection(null);
+    } else if (item.category === '系列课程') {
+      navigate('/series');
+      uiStore.setSelectedInstructorId(null);
+      uiStore.setSearchKeyword('');
+      
+      // Collapse other main categories when 私教 is selected
+      setExpandedSection(null);
     } else if (item.isMainCategory) {
-      setExpandedSection(expandedSection === item.category ? null : item.category);
+      // Always set expanded section to the clicked category, no toggling
+      setExpandedSection(item.category);
       
       // Navigate to home page
       navigate('/');
@@ -88,6 +100,10 @@ const LeftMenu = observer(({ onItemClick }) => {
         
         const isActive = uiStore.activeCategory === item.category;
         const isMainCategory = item.isMainCategory;
+        // Check if this main item is a parent of the active category
+        const isParentOfActive = isMainCategory && menuItems.some(
+          subItem => subItem.parentCategory === item.category && subItem.category === uiStore.activeCategory
+        );
         
         return (
           <div
@@ -95,12 +111,13 @@ const LeftMenu = observer(({ onItemClick }) => {
             className={`
               py-3 px-4 mb-2
               ${item.clickable ? 'cursor-pointer' : 'cursor-default'}
-              ${isMainCategory && item.highlight ? 'bg-blue-500 rounded-md mx-2 text-white' : 'bg-transparent'}
+              ${isMainCategory && item.highlight ?
+                (isActive || isParentOfActive ? 'bg-green-600 rounded-md mx-2 text-white' : 'bg-blue-500 rounded-md mx-2 text-white')
+                : 'bg-transparent'}
               ${!isMainCategory && isActive ? 'text-blue-600' :
                 (!isMainCategory ? 'text-black' : '')}
               ${isMainCategory ? '' : 'pl-8'}
               text-left
-              ${isMainCategory && item.id === 'document' ? 'mt-6' : ''}
               ${item.parentCategory ? 'transition-all duration-200' : ''}
               touch-manipulation
             `}

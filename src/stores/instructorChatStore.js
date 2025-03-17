@@ -1,19 +1,29 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, computed } from 'mobx';
 import db from '../utils/db';
 import realtimeSessionStore from './realtimeSessionStore';
+import coursesStore from './coursesStore';
 
 class InstructorChatStore {
   // Messages stored by instructor ID
   instructorChats = new Map(); // Map of instructor ID -> array of messages
-  activeInstructorId = null;
+  activeInstructorId = 1; // Default to first instructor
   isLoading = false;
   error = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {
+      currentInstructor: computed
+    });
     
     // Subscribe to events from the realtimeSessionStore
     this.setupRealtimeEventListeners();
+  }
+
+  // Computed property to get the current instructor object
+  get currentInstructor() {
+    return coursesStore.instructors.find(instructor =>
+      instructor.id === this.activeInstructorId
+    );
   }
 
   setupRealtimeEventListeners() {

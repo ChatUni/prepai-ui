@@ -3,17 +3,17 @@ import Button from "./Button";
 import { observer } from "mobx-react-lite";
 import realtimeSessionStore from "../../stores/realtimeSessionStore";
 
-function SessionStopped() {
+const SessionStopped = () => {
   // Directly use the realtimeSessionStore
   const startSession = () => realtimeSessionStore.startSession();
   const [isActivating, setIsActivating] = useState(false);
 
-  function handleStartSession() {
+  const handleStartSession = () => {
     if (isActivating) return;
 
     setIsActivating(true);
     startSession();
-  }
+  };
 
   return (
     <div className="flex items-center justify-center w-full h-full">
@@ -25,17 +25,17 @@ function SessionStopped() {
       </Button>
     </div>
   );
-}
+};
 
-function SessionActive() {
+const SessionActive = () => {
   // Directly use the realtimeSessionStore
   // Don't destructure methods to preserve 'this' context
   const [message, setMessage] = useState("");
 
-  function handleSendClientEvent() {
+  const handleSendClientEvent = () => {
     realtimeSessionStore.sendTextMessage(message);
     setMessage("");
-  }
+  };
 
   return (
     <div className="flex items-center justify-center w-full h-full">
@@ -66,9 +66,9 @@ function SessionActive() {
       </Button>
     </div>
   );
-}
+};
 
-function SessionControls() {
+const SessionControls = () => {
   // Directly use the realtimeSessionStore
   const isSessionActive = realtimeSessionStore.isSessionActive;
   return (
@@ -80,7 +80,7 @@ function SessionControls() {
       )}
     </div>
   );
-}
+};
 
 // Export the component wrapped with the MobX observer
 export default observer(SessionControls);

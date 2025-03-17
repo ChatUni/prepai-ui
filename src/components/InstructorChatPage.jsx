@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
-import coursesStore from '../stores/coursesStore';
 import realtimeSessionStore from '../stores/realtimeSessionStore';
 import chatStore from '../stores/chatStore';
+import instructorChatStore from '../stores/instructorChatStore';
 import ChatInput from './ui/ChatInput';
 import SessionControls from './ui/SessionControls';
 
 const InstructorChatPage = observer(() => {
-  const instructor = coursesStore.instructors.find(instructor => instructor.id === 1);
+  const instructor = instructorChatStore.currentInstructor;
   const isSessionActive = realtimeSessionStore.isSessionActive;
   const messages = chatStore.messages;
   const messagesEndRef = useRef(null);

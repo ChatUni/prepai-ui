@@ -5,7 +5,7 @@ import { getApiBaseUrl } from '../config.js';
  * @param {string} endpoint - API endpoint
  * @returns {Promise<any>} - Promise resolving to API response
  */
-async function fetchFromApi(endpoint) {
+export const fetchFromApi = async (endpoint) => {
   try {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
@@ -61,14 +61,14 @@ async function fetchFromApi(endpoint) {
     enhancedError.originalError = error;
     throw enhancedError;
   }
-}
+};
 
 /**
  * Get fallback data for development
  * @param {string} endpoint - API endpoint
  * @returns {Array|Object} - Fallback data
  */
-function getFallbackData(endpoint) {
+const getFallbackData = (endpoint) => {
   console.warn(`No fallback data available for endpoint: ${endpoint}`);
   if (endpoint === '/courses') {
     return [];
@@ -82,39 +82,68 @@ function getFallbackData(endpoint) {
     return [];
   }
   
+  if (endpoint === '/series') {
+    return [];
+  }
+  
+  if (endpoint.startsWith('/series/')) {
+    return {
+      id: parseInt(endpoint.split('/').pop()),
+      name: 'Sample Series',
+      desc: 'This is a sample series for development',
+      instructor_id: 1,
+      instructor_name: 'Sample Instructor',
+      courses: []
+    };
+  }
+  
   return [];
-}
+};
 
 /**
  * Get all courses from the API
  * @returns {Promise<Array>} - Promise resolving to array of courses
  */
-export async function getAllCourses() {
-  return fetchFromApi('/courses');
-}
+export const getAllCourses = async () => fetchFromApi('/courses');
 
 /**
  * Get a course by ID from the API
  * @param {number} id - Course ID
  * @returns {Promise<Object>} - Promise resolving to course object
  */
-export async function getCourseById(id) {
-  return fetchFromApi(`/courses/${id}`);
-}
+export const getCourseById = async (id) => fetchFromApi(`/courses/${id}`);
+
+/**
+ * Get courses by series ID from the API
+ * @param {number} seriesId - Series ID
+ * @returns {Promise<Array>} - Promise resolving to array of courses
+ */
+export const getCoursesBySeriesId = async (seriesId) => fetchFromApi(`/courses?seriesId=${seriesId}`);
 
 /**
  * Get all instructors from the API
  * @returns {Promise<Array>} - Promise resolving to array of instructors
  */
-export async function getAllInstructors() {
-  return fetchFromApi('/instructors');
-}
+export const getAllInstructors = async () => fetchFromApi('/instructors');
+
+/**
+ * Get all series from the API
+ * @returns {Promise<Array>} - Promise resolving to array of series
+ */
+export const getAllSeries = async () => fetchFromApi('/series');
+
+/**
+ * Get a series by ID from the API
+ * @param {number} id - Series ID
+ * @returns {Promise<Object>} - Promise resolving to series object with included courses
+ */
+export const getSeriesById = async (id) => fetchFromApi(`/series/${id}`);
 
 /**
  * Test API connection to verify configuration
  * @returns {Promise<Object>} - Connection test results
  */
-export async function testApiConnection() {
+export const testApiConnection = async () => {
   const apiBaseUrl = getApiBaseUrl();
   
   console.log('Testing API connection...');
@@ -136,12 +165,15 @@ export async function testApiConnection() {
       error: error.message
     };
   }
-}
+};
 
 export default {
   fetchFromApi,
   getAllCourses,
   getCourseById,
+  getCoursesBySeriesId,
   getAllInstructors,
+  getAllSeries,
+  getSeriesById,
   testApiConnection
 };

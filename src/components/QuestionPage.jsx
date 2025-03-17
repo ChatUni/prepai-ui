@@ -44,41 +44,18 @@ const QuestionPage = observer(() => {
       </div>
       {/* Questions List */}
       <div className="space-y-8 flex-1 overflow-y-auto pb-24">
-        {examStore.questions.map((question, index) => {
-          const selectedAnswer = examStore.selectedAnswers.get(question.id);
-          const options = JSON.parse(question.options);
-          
+        {examStore.questionsWithParsedOptions.map((question, index) => {
           return (
             <div key={question.id} className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-medium mb-4">
                 {index + 1}. {question.question}
               </h3>
               <div className="space-y-2">
-                {options.map((option, optIndex) => {
-                  let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
-                  
-                  if (examStore.isSubmitted) {
-                    const correctAnswer = options[optIndex];
-                    if (correctAnswer === options[question.answer.charCodeAt(0) - 65]) {
-                      // Always show correct answer in green after submission
-                      optionClass += " bg-green-100 border-green-500";
-                    } else if (selectedAnswer === option) {
-                      // Show incorrect selected answer in red
-                      optionClass += " bg-red-100 border-red-500";
-                    } else {
-                      optionClass += " border-gray-200";
-                    }
-                  } else {
-                    // Not submitted yet - show selection in blue
-                    optionClass += selectedAnswer === option
-                      ? " bg-blue-100 border-blue-500"
-                      : " hover:bg-gray-50 border-gray-200";
-                  }
-                  
+                {question.parsedOptions.map((option, optIndex) => {
                   return (
                     <div
                       key={optIndex}
-                      className={optionClass}
+                      className={examStore.getOptionClass(question.id, option)}
                       onClick={() => !examStore.isSubmitted && handleOptionClick(question.id, option)}
                     >
                       {option}

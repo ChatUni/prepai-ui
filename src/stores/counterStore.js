@@ -10,9 +10,9 @@ class CounterStore {
     });
   }
 
-  increment() {
+  increment = () => {
     this.count += 1;
-  }
+  };
 }
 
 // Create a singleton instance

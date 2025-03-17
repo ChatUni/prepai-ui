@@ -5,6 +5,36 @@
       "description": "Never put any state inside a React component using useState. All states, derived states, and related actions should be in MobX stores.",
       "severity": "error",
       "category": "state-management"
+    },
+    {
+      "name": "pure-components-only",
+      "description": "All components must be pure components. Absolutely no states and derived/computed states are allowed in components. The only type of effect allowed in components are UI/animation effects.",
+      "severity": "error",
+      "category": "component-architecture"
+    },
+    {
+      "name": "route-params-in-stores",
+      "description": "Route parameters must be handled by stores, not components. Components should never extract or parse route parameters directly. Instead, a dedicated store should synchronize with route parameters and provide all derived state through computed properties. Components should be agnostic to whether data comes from route parameters, API calls, or other sources.",
+      "severity": "error",
+      "category": "routing"
+    },
+    {
+      "name": "derived-state-in-stores",
+      "description": "All derived state must be computed in MobX stores, never in components. This includes filtered/sorted lists, existence checks (e.g., whether an item exists in a collection), transformations, aggregations, calculations, and any other computed values derived from primary state. Components should only consume these pre-computed values from stores via MobX's computed properties, ensuring separation of concerns and optimized rendering.",
+      "severity": "error",
+      "category": "state-management"
+    },
+    {
+      "name": "prefer-arrow-functions",
+      "description": "Use arrow functions instead of regular function declarations or expressions. If a function contains only one statement, write it as a concise arrow function without curly braces and return keyword.",
+      "severity": "error",
+      "category": "code-style"
+    },
+    {
+      "name": "no-mock-data",
+      "description": "Never create or use mock data in the application. Always fetch and use real data from the database. This ensures consistency between development and production environments and prevents discrepancies in behavior.",
+      "severity": "error",
+      "category": "data-management"
     }
   ]
 }

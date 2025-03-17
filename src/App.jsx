@@ -13,6 +13,7 @@ import VideoPlayerPage from './components/VideoPlayerPage';
 import PPTPlayerPage from './components/PPTPlayerPage';
 import ExamPage from './components/ExamPage';
 import QuestionPage from './components/QuestionPage';
+import SeriesPage from './components/SeriesPage';
 import AccountPage from './components/AccountPage';
 import LoginPage from './components/LoginPage';
 import AuthRoute from './components/auth/AuthRoute';
@@ -29,6 +30,7 @@ import coursesStore from './stores/coursesStore';
 import examStore from './stores/examStore';
 import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
+import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
@@ -43,6 +45,11 @@ window.coursesStore = coursesStore;
 const RouteHandler = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Sync route parameters with the store on location change
+  useEffect(() => {
+    routeStore.syncWithLocation(location);
+  }, [location]);
   
   useEffect(() => {
     // Check if we're on the account page or login page - if so, don't redirect
@@ -59,7 +66,9 @@ const RouteHandler = observer(() => {
       navigate('/exam');
     }
     else if (uiStore.activeCategory === '私教' &&
-             !location.pathname.startsWith('/instructor')) {
+             !location.pathname.startsWith('/instructor') &&
+             !location.pathname.startsWith('/series')) {
+      // Allow series paths even when activeCategory is '私教'
       navigate('/instructor');
     }
     // Navigate to home if leaving a special category page
@@ -68,6 +77,7 @@ const RouteHandler = observer(() => {
       (uiStore.activeCategory !== '考测' && location.pathname.startsWith('/exam')) ||
       (uiStore.activeCategory !== '私教' && location.pathname === '/instructor')
     ) {
+      // Redirect to home only for specific pages, not for series
       navigate('/');
     }
   }, [uiStore.activeCategory, location.pathname, navigate]);
@@ -205,6 +215,16 @@ const MainLayout = observer(() => {
                 <Route path="/exam/questions/:courseId" element={
                   <AuthRoute>
                     <QuestionPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series" element={
+                  <AuthRoute>
+                    <SeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/:seriesId" element={
+                  <AuthRoute>
+                    <SeriesPage />
                   </AuthRoute>
                 } />
               </Routes>

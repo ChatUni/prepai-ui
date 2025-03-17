@@ -31,7 +31,7 @@ class VideoPlayerStore {
     });
   }
   
-  setVideoElement(element) {
+  setVideoElement = (element) => {
     // Clean up listeners from the previous element if any
     if (this.videoElement) {
       this.videoElement.removeEventListener('timeupdate', this.timeUpdateHandler);
@@ -44,11 +44,11 @@ class VideoPlayerStore {
     
     // Add event listeners to track video time and state
     if (element) {
-      // Define handlers as bound methods to enable proper removal later
-      this.timeUpdateHandler = this.handleTimeUpdate.bind(this);
-      this.durationChangeHandler = this.handleDurationChange.bind(this);
-      this.playHandler = this.handlePlay.bind(this);
-      this.pauseHandler = this.handlePause.bind(this);
+      // Arrow functions automatically bind to 'this' context
+      this.timeUpdateHandler = this.handleTimeUpdate;
+      this.durationChangeHandler = this.handleDurationChange;
+      this.playHandler = this.handlePlay;
+      this.pauseHandler = this.handlePause;
       
       element.addEventListener('timeupdate', this.timeUpdateHandler);
       element.addEventListener('durationchange', this.durationChangeHandler);
@@ -60,38 +60,38 @@ class VideoPlayerStore {
         this.setCurrentTime(element.currentTime);
       }
     }
-  }
+  };
   
   // Event handlers
-  handleTimeUpdate(e) {
+  handleTimeUpdate = (e) => {
     this.setCurrentTime(e.target.currentTime);
-  }
+  };
   
-  handleDurationChange(e) {
+  handleDurationChange = (e) => {
     this.setDuration(e.target.duration);
-  }
+  };
   
-  handlePlay() {
+  handlePlay = () => {
     this.setIsPlaying(true);
-  }
+  };
   
-  handlePause() {
+  handlePause = () => {
     this.setIsPlaying(false);
-  }
+  };
   
-  setCurrentTime(time) {
+  setCurrentTime = (time) => {
     this.currentTime = time;
-  }
+  };
   
-  setDuration(duration) {
+  setDuration = (duration) => {
     this.duration = duration;
-  }
+  };
   
-  setIsPlaying(isPlaying) {
+  setIsPlaying = (isPlaying) => {
     this.isPlaying = isPlaying;
-  }
+  };
   
-  setTranscript(transcript, format = 'json') {
+  setTranscript = (transcript, format = 'json') => {
     this.originalTranscriptFormat = format;
     
     if (format === 'srt') {
@@ -99,10 +99,10 @@ class VideoPlayerStore {
     } else {
       this.transcript = transcript;
     }
-  }
+  };
   
   // Parse SRT format transcript
-  parseSrtTranscript(srtText) {
+  parseSrtTranscript = (srtText) => {
     if (!srtText) {
       this.transcript = [];
       return;
@@ -149,10 +149,10 @@ class VideoPlayerStore {
     
     // Sort by start time to ensure proper order
     this.transcript = parsedTranscript.sort((a, b) => a.startTime - b.startTime);
-  }
+  };
   
   // Convert SRT time format (00:00:00,000 or 00:00:00.000) to seconds
-  srtTimeToSeconds(timeString) {
+  srtTimeToSeconds = (timeString) => {
     // Handle both comma and period as decimal separators
     const parts = timeString.split(/[,.]/);
     const time = parts[0];
@@ -161,7 +161,7 @@ class VideoPlayerStore {
     const [hours, minutes, seconds] = time.split(':').map(Number);
     
     return hours * 3600 + minutes * 60 + seconds + parseInt(milliseconds) / 1000;
-  }
+  };
   
   // Get the currently active subtitle based on video time
   get currentSubtitle() {
@@ -183,7 +183,7 @@ class VideoPlayerStore {
   }
   
   // Find the closest subtitle if we're between subtitles
-  findClosestSubtitle() {
+  findClosestSubtitle = () => {
     if (!this.transcript || this.transcript.length === 0) return null;
     
     // If we're past the end of the last subtitle, return the last one
@@ -200,7 +200,7 @@ class VideoPlayerStore {
       // Find the next subtitle that will appear
       return this.transcript.find(item => (item.offset / 1000) > this.currentTime) || null;
     }
-  }
+  };
 }
 
 const videoPlayerStore = new VideoPlayerStore();

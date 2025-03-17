@@ -69,7 +69,8 @@ app.get('/api/courses', async (req, res) => {
              c.transcript
       FROM courses c
       LEFT JOIN favorites f ON c.id = f.course_id AND f.user_id = ?
-      LEFT JOIN instructors i ON i.id = c.instructor_id
+      LEFT JOIN series s ON c.series_id = s.id
+      LEFT JOIN instructors i ON i.id = s.instructor_id
     `, [userId]);
     
     res.json(rows);
@@ -95,7 +96,8 @@ app.get('/api/courses/:id', async (req, res) => {
              c.transcript
       FROM courses c
       LEFT JOIN favorites f ON c.id = f.course_id AND f.user_id = ?
-      LEFT JOIN instructors i ON i.id = c.instructor_id
+      LEFT JOIN series s ON c.series_id = s.id
+      LEFT JOIN instructors i ON i.id = s.instructor_id
       WHERE c.id = ?
     `, [userId, courseId]);
     
@@ -213,6 +215,75 @@ app.get('/api/instructors', async (req, res) => {
   } catch (error) {
     console.error('Error fetching instructors:', error);
     res.status(500).json({ error: 'Failed to fetch instructors from database' });
+  }
+});
+
+// API endpoint to get all series
+app.get('/api/series', async (req, res) => {
+  try {
+    // Check if we need to filter by instructor
+    const instructorId = req.query.instructor;
+    
+    let query = `
+      SELECT s.*, i.name as instructor_name, i.description as instructor_bio, i.image as instructor_avatar
+      FROM series s
+      LEFT JOIN instructors i ON s.instructor_id = i.id
+    `;
+    
+    const queryParams = [];
+    
+    // Add instructor filter if provided
+    if (instructorId) {
+      query += ` WHERE s.instructor_id = ?`;
+      queryParams.push(instructorId);
+    }
+    
+    // Add order by clause
+    query += ` ORDER BY s.name`;
+    
+    const [rows] = await pool.execute(query, queryParams);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error fetching series:', error);
+    res.status(500).json({ error: 'Failed to fetch series from database' });
+  }
+});
+
+// API endpoint to get a series by ID
+app.get('/api/series/:id', async (req, res) => {
+  const seriesId = parseInt(req.params.id);
+  
+  try {
+    // First get the series details
+    const [seriesRows] = await pool.execute(`
+      SELECT s.*, i.name as instructor_name, i.description as instructor_bio, i.image as instructor_avatar
+      FROM series s
+      LEFT JOIN instructors i ON s.instructor_id = i.id
+      WHERE s.id = ?
+    `, [seriesId]);
+    
+    if (seriesRows.length === 0) {
+      return res.status(404).json({ error: 'Series not found' });
+    }
+    
+    // Then get the courses in this series
+    const [coursesRows] = await pool.execute(`
+      SELECT c.*
+      FROM courses c
+      WHERE c.series_id = ?
+      ORDER BY c.position, c.title
+    `, [seriesId]);
+    
+    // Combine series with its courses
+    const result = {
+      ...seriesRows[0],
+      courses: coursesRows
+    };
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching series by ID:', error);
+    res.status(500).json({ error: 'Failed to fetch series from database' });
   }
 });
 
