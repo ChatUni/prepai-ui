@@ -19,7 +19,7 @@ const SeriesPage = observer(() => {
   // Access current series from routeStore
   const selectedSeries = routeStore.currentSeries;
   
-  // Get courses for this series, applying any active filters
+  // Get courses for this series, making sure to include all courses regardless of type
   const seriesCourses = selectedSeries ?
     coursesStore.courses.filter(course => {
       // Always filter by series ID
@@ -38,6 +38,7 @@ const SeriesPage = observer(() => {
         (course.instructor_name && course.instructor_name.toLowerCase().includes(searchKeyword)) ||
         (course.description && course.description.toLowerCase().includes(searchKeyword));
       
+      // Don't filter by course type (isVideo) here, we want to show all courses in the series
       return matchesSeries && matchesInstructor && matchesSearch;
     }) :
     [];
@@ -124,14 +125,9 @@ const SeriesPage = observer(() => {
           </div>
         )}
         
-        {/* Add SearchBar for instructor filter and search */}
-        <div className="mb-6">
-          <SearchBar />
-        </div>
-
         {/* Course list */}
         <CourseList
-          title={`Courses in ${selectedSeries?.name || 'this series'}`}
+          title={'课程列表'}
           courses={seriesCourses}
         />
       </div>
@@ -155,7 +151,7 @@ const SeriesPage = observer(() => {
           <p className="text-gray-600 dark:text-gray-400">没有系列课程</p>
         </div>
       ) : (
-        <SeriesList title="" series={coursesStore.filteredSeries} />
+        <SeriesList title="" series={coursesStore.filteredSeries} isAllInstructors={true} />
       )}
     </div>
   );

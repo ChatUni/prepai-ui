@@ -17,28 +17,53 @@ export const fetchFromApi = async (endpoint) => {
     const apiBaseUrl = getApiBaseUrl();
     const url = `${apiBaseUrl}${endpoint}`;
     console.log(`Fetching from: ${url}`);
-    const response = await fetch(url);
     
-    if (!response.ok) {
-      // First, get the content type to check if we're getting HTML instead of JSON
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        const htmlContent = await response.text();
-        console.error('Received HTML instead of JSON:', htmlContent.substring(0, 100) + '...');
-        throw new Error(`API returned HTML instead of JSON. Status: ${response.status}, URL: ${url}`);
+    // Set up a timeout for the fetch request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache', // Prevent caching issues
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      clearTimeout(timeoutId); // Clear the timeout if fetch succeeds
+      
+      if (!response.ok) {
+        // First, get the content type to check if we're getting HTML instead of JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          const htmlContent = await response.text();
+          console.error('Received HTML instead of JSON:', htmlContent.substring(0, 100) + '...');
+          throw new Error(`API returned HTML instead of JSON. Status: ${response.status}, URL: ${url}`);
+        }
+        
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `API request failed with status ${response.status} for URL: ${url}`);
       }
       
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API request failed with status ${response.status} for URL: ${url}`);
-    }
-    
-    // Be more defensive when parsing JSON
-    try {
-      return await response.json();
-    } catch (parseError) {
-      console.error('Failed to parse JSON response:', parseError);
-      const textResponse = await response.text();
-      throw new Error(`Invalid JSON response. First 100 chars: ${textResponse.substring(0, 100)}...`);
+      // Be more defensive when parsing JSON
+      try {
+        return await response.json();
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', parseError);
+        const textResponse = await response.text();
+        throw new Error(`Invalid JSON response. First 100 chars: ${textResponse.substring(0, 100)}...`);
+      }
+    } catch (fetchError) {
+      clearTimeout(timeoutId); // Clear the timeout in case of error
+      
+      // Handle abort error specially
+      if (fetchError.name === 'AbortError') {
+        console.error(`Fetch request to ${url} timed out after 15 seconds`);
+        throw new Error(`Request timed out after 15 seconds. The server might be experiencing issues.`);
+      }
+      
+      throw fetchError;
     }
   } catch (error) {
     console.error('API request error:', error);
@@ -95,6 +120,14 @@ const getFallbackData = (endpoint) => {
       instructor_name: 'Sample Instructor',
       courses: []
     };
+  }
+  
+  if (endpoint === '/assistants') {
+    return [
+      { id: 1, name: 'Math' },
+      { id: 2, name: 'Physics' },
+      { id: 3, name: 'Chemistry' }
+    ];
   }
   
   return [];
@@ -167,6 +200,12 @@ export const testApiConnection = async () => {
   }
 };
 
+/**
+ * Get all assistants from the API
+ * @returns {Promise<Array>} - Promise resolving to array of assistants
+ */
+export const getAllAssistants = async () => fetchFromApi('/assistants');
+
 export default {
   fetchFromApi,
   getAllCourses,
@@ -175,5 +214,6 @@ export default {
   getAllInstructors,
   getAllSeries,
   getSeriesById,
+  getAllAssistants,
   testApiConnection
 };

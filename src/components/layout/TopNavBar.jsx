@@ -34,6 +34,10 @@ const TopNavBar = observer(({ onMenuToggle }) => {
       uiStore.setSelectedInstructorId(null);
       uiStore.setSearchKeyword('');
       navigate('/instructor');
+    } else if (item.id === 'ai') {
+      // For AI assistant page, directly navigate without changing category
+      console.log('Navigating to AI assistant page');
+      navigate('/assistants');
     } else if (item.id === 'my') {
       // For account page, directly navigate without changing category
       console.log('Navigating to account page');

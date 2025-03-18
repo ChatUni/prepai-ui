@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
+import uiStore from './uiStore';
 
 class RouteStore {
   // Route parameters
@@ -82,14 +83,21 @@ class RouteStore {
     // Then update the store state to match the new URL
     // Use action wrappers for all state changes
     runInAction(() => {
-      // Clear instructor ID to prevent staying in instructor context
-      this.instructorId = null;
+      // Don't clear instructor ID when navigating from an instructor page
+      // This preserves context when navigating from instructor to their series
+      
       // Set the series ID
       this.setSeriesId(seriesId);
     });
     
     // Ensure series is selected in the courses store
     coursesStore.selectSeries(seriesId);
+    
+    // Important: Make sure we have courses loaded for this series
+    if (seriesId && coursesStore.courses.length === 0) {
+      // If courses haven't been loaded yet, fetch them
+      coursesStore.fetchCourses();
+    }
     
     // If we have series data and this series has an instructor, make sure that data is loaded
     if (seriesId && coursesStore.series.length > 0) {
@@ -117,6 +125,11 @@ class RouteStore {
   syncWithLocation(location) {
     // Use runInAction to batch all state changes
     runInAction(() => {
+      // Reset all filters on every navigation
+      uiStore.setSearchKeyword('');
+      uiStore.setCourseTypeFilter(true); // Reset to default (video courses)
+      uiStore.setSelectedInstructorId(null);
+      
       const pathSegments = location.pathname.split('/').filter(Boolean);
       
       if (pathSegments.length >= 2) {

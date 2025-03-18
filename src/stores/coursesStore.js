@@ -260,8 +260,11 @@ class CoursesStore {
         (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
         (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
 
-      // Filter by course type (video or document)
-      const matchesCourseType = course.isVideo === courseTypeFilter;
+      // Filter by course type (video or document), but ONLY if not viewing a specific series
+      // When viewing a specific series, we want to show all courses in that series
+      const matchesCourseType = this.selectedSeriesId
+        ? true // Don't filter by type when a series is selected
+        : course.isVideo === courseTypeFilter;
 
       // Special handling for different categories
       let matchesCategory = false;

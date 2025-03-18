@@ -14,6 +14,8 @@ import PPTPlayerPage from './components/PPTPlayerPage';
 import ExamPage from './components/ExamPage';
 import QuestionPage from './components/QuestionPage';
 import SeriesPage from './components/SeriesPage';
+import AssistantsPage from './components/AssistantsPage';
+import AssistantChatPage from './components/AssistantChatPage';
 import AccountPage from './components/AccountPage';
 import LoginPage from './components/LoginPage';
 import AuthRoute from './components/auth/AuthRoute';
@@ -32,6 +34,7 @@ import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
+import './stores/assistantsStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -52,8 +55,13 @@ const RouteHandler = observer(() => {
   }, [location]);
   
   useEffect(() => {
-    // Check if we're on the account page or login page - if so, don't redirect
-    if (location.pathname === '/account' || location.pathname === '/login') {
+    // Check if we're on special pages - if so, don't redirect
+    if (
+      location.pathname === '/account' ||
+      location.pathname === '/login' ||
+      location.pathname === '/assistants' ||
+      location.pathname.startsWith('/assistants/')
+    ) {
       console.log(`On ${location.pathname} page, skipping navigation control`);
       return;
     }
@@ -225,6 +233,16 @@ const MainLayout = observer(() => {
                 <Route path="/series/:seriesId" element={
                   <AuthRoute>
                     <SeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/assistants" element={
+                  <AuthRoute>
+                    <AssistantsPage />
+                  </AuthRoute>
+                } />
+                <Route path="/assistants/:assistantId/chat" element={
+                  <AuthRoute>
+                    <AssistantChatPage />
                   </AuthRoute>
                 } />
               </Routes>

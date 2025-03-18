@@ -14,6 +14,14 @@ const __dirname = dirname(__filename);
 // Load environment variables from .env file
 dotenv.config();
 
+// Log environment variables for debugging (without exposing sensitive values)
+console.log('Environment Variables:');
+console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`- PORT: ${process.env.PORT || '3001 (default)'}`);
+console.log(`- DB_HOST: ${process.env.DB_HOST || 'not set'}`);
+console.log(`- DB_DATABASE: ${process.env.DB_DATABASE || 'not set'}`);
+console.log(`- OPENAI_API_KEY: ${process.env.OPENAI_API_KEY ? 'set' : 'not set'}`);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -27,35 +35,135 @@ app.use('/api/video', videoProcessingRouter);
 // Add realtime token endpoint
 app.use(realtimeTokenRouter);
 
-// Database connection configuration
+// Proxy function requests to Netlify function handlers
+import { handler as openAiChatHandler } from './netlify/functions/api-openai-chat.mjs';
+import { handler as assistantsHandler } from './netlify/functions/api-assistants.mjs';
+
+// Proxy OpenAI chat requests
+app.post('/api/openai-chat', async (req, res) => {
+  try {
+    // Create an event object similar to what Netlify Functions expect
+    const event = {
+      httpMethod: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers
+    };
+    
+    // Call the Netlify function handler
+    const result = await openAiChatHandler(event, {});
+    
+    // Return the response
+    res.status(result.statusCode).set(result.headers).send(result.body);
+  } catch (error) {
+    console.error('Error proxying OpenAI request:', error);
+    res.status(500).json({ error: 'Failed to process OpenAI request' });
+  }
+});
+
+// Proxy assistants requests
+app.get('/api/assistants', async (req, res) => {
+  try {
+    // Create an event object similar to what Netlify Functions expect
+    const event = {
+      httpMethod: 'GET',
+      queryStringParameters: req.query,
+      headers: req.headers
+    };
+    
+    // Call the Netlify function handler
+    const result = await assistantsHandler(event, {});
+    
+    // Return the response
+    res.status(result.statusCode).set(result.headers).send(result.body);
+  } catch (error) {
+    console.error('Error proxying assistants request:', error);
+    res.status(500).json({ error: 'Failed to fetch assistants' });
+  }
+});
+
+// Database connection configuration with improved timeout settings
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD, // Password from .env file
-  database: process.env.DB_DATABASE || 'prepai'
+  database: process.env.DB_DATABASE || 'prepai',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 30000, // Increase connection timeout to 30 seconds
+  acquireTimeout: 30000, // Increase acquire timeout
+  timeout: 60000 // Increase overall timeout
 };
 
 // Create a connection pool
 let pool;
+let dbAvailable = false;
 
 async function initializeDatabase() {
   try {
+    // Log the database configuration (without sensitive info)
+    console.log('Initializing database connection with:');
+    console.log(`- Host: ${process.env.DB_HOST || 'localhost'}`);
+    console.log(`- Port: ${process.env.DB_PORT || 3306}`);
+    console.log(`- User: ${process.env.DB_USER || 'root'}`);
+    console.log(`- Database: ${process.env.DB_DATABASE || 'prepai'}`);
+    
+    // Create the pool with our enhanced configuration
     pool = mysql.createPool(dbConfig);
     console.log('MySQL connection pool created successfully');
     
-    // Test the connection
-    const [rows] = await pool.execute('SELECT 1');
+    // Test the connection with timeout handling
+    const connectionTest = async () => {
+      try {
+        const [rows] = await pool.execute('SELECT 1');
+        return true;
+      } catch (err) {
+        throw err;
+      }
+    };
+    
+    // Create a timeout promise
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database connection test timed out after 10 seconds')), 10000)
+    );
+    
+    // Race the connection test against the timeout
+    await Promise.race([connectionTest(), timeout]);
     console.log('Database connection test successful');
+    dbAvailable = true;
   } catch (error) {
     console.error('Failed to initialize database:', error);
-    process.exit(1);
+    
+    // Enhanced error logging based on error type
+    if (error.code === 'ETIMEDOUT') {
+      console.error('Connection timed out. This may be due to:');
+      console.error('- Network connectivity issues');
+      console.error('- Firewall blocking the connection');
+      console.error('- Database server is down or unreachable');
+      console.error('- Incorrect host/port configuration');
+      console.error(`Current connection details: ${process.env.DB_HOST}:${process.env.DB_PORT}`);
+    } else if (error.code === 'ER_ACCESS_DENIED_ERROR') {
+      console.error('Access denied. Check your database username and password.');
+    } else if (error.code === 'ENOTFOUND') {
+      console.error('Host not found. Check the database hostname.');
+    }
+    
+    console.warn('Will continue without database connection - using mock data for development');
+    dbAvailable = false;
+    // Don't exit the process - allow the app to run with mock data
   }
 }
 
 // API endpoint to get all courses
 app.get('/api/courses', async (req, res) => {
   try {
+    // If database is not available, return mock data
+    if (!dbAvailable) {
+      console.log('Database not available - returning mock courses data');
+      return res.json(getMockData('/courses'));
+    }
+    
     // Get user ID from query parameter, default to 1 for development
     const userId = parseInt(req.query.userId || 1);
     
@@ -76,6 +184,13 @@ app.get('/api/courses', async (req, res) => {
     res.json(rows);
   } catch (error) {
     console.error('Error fetching courses:', error);
+    
+    // Return mock data on error in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Error in database query - returning mock courses data');
+      return res.json(getMockData('/courses'));
+    }
+    
     res.status(500).json({ error: 'Failed to fetch courses from database' });
   }
 });
@@ -218,6 +333,49 @@ app.get('/api/instructors', async (req, res) => {
   }
 });
 
+// API endpoint to get all assistants
+app.get('/api/assistants', async (req, res) => {
+  try {
+    // If database is not available, return mock data
+    if (!dbAvailable) {
+      console.log('Database not available - returning mock assistants data');
+      return res.json(getMockData('/assistants'));
+    }
+    
+    // Try the database query with a timeout
+    const queryPromise = pool.execute('SELECT id, name, greeting, prompt FROM Assistants');
+    
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Database query timed out after 5 seconds')), 5000);
+    });
+    
+    // Race the query against the timeout
+    const [rows] = await Promise.race([queryPromise, timeoutPromise]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error fetching assistants:', error);
+    
+    // Log more diagnostic information
+    if (error.code === 'ETIMEDOUT') {
+      console.error(`Database connection timed out. Host: ${process.env.DB_HOST}, Port: ${process.env.DB_PORT}`);
+      console.error('This may be due to network issues or the database server being unreachable.');
+    }
+    
+    // Return mock data on error in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Error in database query - returning mock assistants data');
+      return res.json(getMockData('/assistants'));
+    }
+    
+    res.status(500).json({
+      error: 'Failed to fetch assistants from database',
+      details: error.message,
+      code: error.code || 'UNKNOWN'
+    });
+  }
+});
+
 // API endpoint to get all series
 app.get('/api/series', async (req, res) => {
   try {
@@ -287,16 +445,71 @@ app.get('/api/series/:id', async (req, res) => {
   }
 });
 
+// Function to generate mock data for development
+function getMockData(endpoint) {
+  console.log(`Generating mock data for endpoint: ${endpoint}`);
+  
+  if (endpoint === '/courses') {
+    return [
+      { id: 1, title: 'Mock Course 1', description: 'A mock course for testing', isVideo: true },
+      { id: 2, title: 'Mock Course 2', description: 'Another mock course', isVideo: false }
+    ];
+  }
+  
+  if (endpoint.startsWith('/courses/')) {
+    const id = parseInt(endpoint.split('/')[2]);
+    return {
+      id,
+      title: `Mock Course ${id}`,
+      description: 'A detailed mock course',
+      isVideo: true
+    };
+  }
+  
+  if (endpoint === '/assistants') {
+    return [
+      {
+        id: 1,
+        name: 'Math',
+        greeting: 'Hello! I\'m your Math assistant. How can I help you with mathematics today?',
+        prompt: 'You are a helpful Math tutor. Provide clear explanations and step-by-step solutions to math problems.'
+      },
+      {
+        id: 2,
+        name: 'Physics',
+        greeting: 'Hi there! I\'m your Physics assistant. What physics concept would you like to explore?',
+        prompt: 'You are a knowledgeable Physics tutor. Explain physics concepts clearly and help with problem-solving.'
+      },
+      {
+        id: 3,
+        name: 'Chemistry',
+        greeting: 'Welcome! I\'m your Chemistry assistant. What chemistry topic are you interested in?',
+        prompt: 'You are a Chemistry expert. Help with chemical equations, concepts, and problem-solving.'
+      }
+    ];
+  }
+  
+  return [];
+}
+
 // Initialize the database and start the server
 async function startServer() {
-  await initializeDatabase();
+  try {
+    await initializeDatabase();
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    console.warn('Continuing without database connection - using mock data');
+  }
   
+  // Always start the server, even if database fails
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Database connection status: ${dbAvailable ? 'Connected' : 'Not connected (using mock data)'}`);
   });
 }
 
 startServer().catch(error => {
   console.error('Failed to start server:', error);
-  process.exit(1);
+  // Don't exit - let's still try to run the server for development purposes
+  console.log('Attempting to continue despite errors...');
 });

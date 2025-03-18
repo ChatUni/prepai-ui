@@ -57,7 +57,7 @@ const InstructorPage = observer(() => {
   };
 
   return (
-    <div className="flex flex-col py-4 pb-20 md:pb-6 px-4 md:px-6">
+    <div className="flex flex-col py-4 pb-20 md:pb-6 px-4 md:px-6 w-full">
       {/* Filter Bar */}
       <div className="mb-4 md:mb-6">
         <SearchBar />
@@ -102,6 +102,7 @@ const InstructorPage = observer(() => {
               <SeriesList
                 title={`${instructor.name}的系列课程`}
                 series={coursesStore.instructorSeries}
+                isAllInstructors={false}
               />
             ) : (
               <div className="text-center py-8">
