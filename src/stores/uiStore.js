@@ -11,6 +11,7 @@ class UIStore {
   userId = 1; // Default user ID for development
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
   parentCategory = null; // Track parent category for subcategories
+  selectedSeriesId = null; // Track selected series ID
   
   // User account information
   userInfo = {
@@ -31,8 +32,10 @@ class UIStore {
       userId: observable,
       courseTypeFilter: observable,
       parentCategory: observable,
+      selectedSeriesId: observable,
       userInfo: observable,
       setSearchKeyword: action,
+      setSelectedSeriesId: action,
       setActiveCategory: action,
       setActiveNavItem: action,
       setSelectedInstructorId: action,
@@ -40,7 +43,8 @@ class UIStore {
       setFavorites: action,
       setCourseTypeFilter: action,
       setParentCategory: action,
-      updateUserInfo: action
+      updateUserInfo: action,
+      resetFilters: action
     });
 
     // Set this store in coursesStore to avoid circular dependencies
@@ -147,13 +151,25 @@ class UIStore {
   setParentCategory(category) {
     this.parentCategory = category;
   }
-
   // Update user information
   updateUserInfo(newUserInfo) {
     this.userInfo = {
       ...this.userInfo,
       ...newUserInfo
     };
+  }
+
+  // Set selected series ID
+  setSelectedSeriesId(seriesId) {
+    this.selectedSeriesId = seriesId;
+  }
+
+  // Reset all filters to their default state
+  resetFilters() {
+    this.searchKeyword = '';
+    this.selectedInstructorId = null;
+    this.selectedSeriesId = null;
+    this.parentCategory = null;
   }
 }
 

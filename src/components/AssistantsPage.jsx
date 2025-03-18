@@ -58,7 +58,7 @@ const AssistantsPage = observer(() => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">AI助理</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

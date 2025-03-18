@@ -14,7 +14,7 @@ export async function handler(event, context) {
     const seriesId = queryParams.seriesId;
     
     let query = `
-      SELECT c.*, s.name as series_name, i.name as instructor_name, i.avatar as instructor_avatar  
+      SELECT c.*, c.isVideo, s.name as series_name, i.name as instructor_name, i.avatar as instructor_avatar
       FROM courses c
       LEFT JOIN series s ON c.series_id = s.id
       LEFT JOIN instructors i ON s.instructor_id = i.id

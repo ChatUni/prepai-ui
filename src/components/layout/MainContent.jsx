@@ -64,7 +64,7 @@ const MainContent = observer(() => {
 
 const MainContentCoursesSection = observer(() => {
   // Determine course type (video vs document)
-  const courseType = uiStore.courseTypeFilter ? '视频' : '文档';
+  const courseType = uiStore.activeCategory.slice(0, 2);
   
   // Determine the title based on the active category
   let mainTitle = `${courseType}课程 (${coursesStore.filteredCourses.length})`;

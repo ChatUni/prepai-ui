@@ -57,7 +57,7 @@ const InstructorPage = observer(() => {
   };
 
   return (
-    <div className="flex flex-col py-4 pb-20 md:pb-6 px-4 md:px-6 w-full">
+    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {/* Filter Bar */}
       <div className="mb-4 md:mb-6">
         <SearchBar />

@@ -31,7 +31,7 @@ const InstructorChatPage = observer(() => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full pb-20 md:pb-6 px-4 md:px-6">
+    <div className="flex-1 flex flex-col w-full h-full p-3 pb-12 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {/* Header with instructor info */}
       <div className="flex items-center py-4 border-b">
         <div className="flex items-center w-full">

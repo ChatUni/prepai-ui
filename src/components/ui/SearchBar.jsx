@@ -16,7 +16,11 @@ const SearchBar = observer(() => {
     const parsedId = instructorId === "" ? null : parseInt(instructorId);
     uiStore.setSelectedInstructorId(parsedId);
     setIsDropdownOpen(false);
-    navigate(parsedId ? `/instructor/${parsedId}` : '/');
+    
+    // Only navigate if not on exam page
+    if (!window.location.pathname.includes('/exam')) {
+      navigate(parsedId ? `/instructor/${parsedId}` : '/');
+    }
   };
 
   const toggleDropdown = () => {

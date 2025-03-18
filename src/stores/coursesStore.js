@@ -126,9 +126,10 @@ class CoursesStore {
         duration: course.duration || '00:00',
         isFavorite: !!course.isFavorite,
         recommended: !!course.recommended,
-        isVideo: course.isVideo === undefined ? true : !!course.isVideo,
+        isVideo: !!course.isVideo, // Convert to boolean but don't default to true
         transcript: course.transcript || '',
-        series_name: course.series_name || 'Uncategorized' // Add series name if available
+        series_name: course.series_name || 'Uncategorized', // Add series name if available
+        instructor_name: course.instructor_name || course.instructor || '' // Ensure instructor_name is set
       }));
       
       // Update favorites in uiStore
@@ -233,7 +234,7 @@ class CoursesStore {
     const searchKeyword = uiStore.searchKeyword.toLowerCase();
     const activeCategory = uiStore.activeCategory;
     const selectedInstructorId = uiStore.selectedInstructorId;
-    const selectedSeriesId = this.selectedSeriesId;
+    const selectedSeriesId = uiStore.selectedSeriesId;
 
     // If we're on the exam page, return filtered exam courses
     if (activeCategory === "考测") {
@@ -243,8 +244,14 @@ class CoursesStore {
           (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
           (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
 
-        const matchesInstructor = selectedInstructorId === null ||
-          course.instructor === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
+        const selectedInstructor = this.instructors.find(instructor => instructor.id === selectedInstructorId);
+        console.log('Filtering course:', {
+          courseInstructor: course.instructor_name,
+          selectedInstructorName: selectedInstructor?.name,
+          matches: !selectedInstructorId || course.instructor_name === selectedInstructor?.name
+        });
+        
+        const matchesInstructor = !selectedInstructorId || course.instructor_name === selectedInstructor?.name;
 
         const matchesSeries = selectedSeriesId === null || course.series_id === selectedSeriesId;
 
@@ -260,11 +267,8 @@ class CoursesStore {
         (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
         (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
 
-      // Filter by course type (video or document), but ONLY if not viewing a specific series
-      // When viewing a specific series, we want to show all courses in that series
-      const matchesCourseType = this.selectedSeriesId
-        ? true // Don't filter by type when a series is selected
-        : course.isVideo === courseTypeFilter;
+      // Always filter by course type (video or document)
+      const matchesCourseType = activeCategory.startsWith(course.isVideo ? "视频" : "文档");
 
       // Special handling for different categories
       let matchesCategory = false;

@@ -53,21 +53,20 @@ const LeftMenu = observer(({ onItemClick }) => {
     // Toggle expanded section for main categories
     if (item.category === '考测') {
       navigate('/exam');
+      uiStore.resetFilters();
       uiStore.setActiveCategory(item.category);
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
     } else if (item.category === '私教') {
       // Navigate to instructor listing page without any specific instructor
       navigate('/instructor');
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
+      uiStore.resetFilters();
+      uiStore.setActiveCategory(item.category);
       
       // Collapse other main categories when 私教 is selected
       setExpandedSection(null);
     } else if (item.category === '系列课程') {
       navigate('/series');
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
+      uiStore.resetFilters();
+      uiStore.setActiveCategory(item.category);
       
       // Collapse other main categories when 私教 is selected
       setExpandedSection(null);
@@ -78,9 +77,9 @@ const LeftMenu = observer(({ onItemClick }) => {
       // Navigate to home page
       navigate('/');
       
-      // Reset instructor selection and search
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
+      // Reset all filters before setting new category
+      uiStore.resetFilters();
+      uiStore.setActiveCategory(item.category);
     }
     
     // Close mobile menu if provided

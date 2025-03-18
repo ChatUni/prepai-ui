@@ -9,7 +9,7 @@ import Button from './ui/Button';
 // Loading indicator with animated dots
 const TypingIndicator = () => {
   return (
-    <div className="flex justify-start mb-4">
+    <div className="flex justify-start mb-4 pl-4">
       <div className="px-4 py-3 rounded-lg bg-gray-200 text-gray-800 rounded-bl-none">
         <div className="flex space-x-1">
           <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
@@ -43,20 +43,22 @@ const AssistantChatMessages = observer(() => {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 pt-4">
       {messages.map((message, index) => (
         <div
           key={message.id || index}
           className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
         >
-          <div className={`px-4 py-3 rounded-lg max-w-[80%] ${
-            message.sender === 'user'
-              ? 'bg-blue-500 text-white rounded-br-none'
-              : 'bg-gray-200 text-gray-800 rounded-bl-none'
-          }`}>
-            <div className="text-sm whitespace-pre-wrap">{message.text}</div>
-            <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
-              {new Date(message.timestamp).toLocaleTimeString()}
+          <div className="pl-4">
+            <div className={`inline-block px-4 py-3 rounded-lg max-w-[80%] ${
+              message.sender === 'user'
+                ? 'bg-blue-500 text-white rounded-br-none'
+                : 'bg-gray-200 text-gray-800 rounded-bl-none'
+            }`}>
+              <div className="text-sm whitespace-pre-wrap">{message.text}</div>
+              <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                {new Date(message.timestamp).toLocaleTimeString()}
+              </div>
             </div>
           </div>
         </div>
@@ -148,7 +150,7 @@ const AssistantChatPage = observer(() => {
   }
   
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full pb-12">
       {/* Header */}
       <div className="flex items-center p-4 border-b">
         <Button onClick={handleBack} className="mr-4">

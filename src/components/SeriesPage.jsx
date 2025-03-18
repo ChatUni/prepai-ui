@@ -58,7 +58,7 @@ const SeriesPage = observer(() => {
     };
     
     return (
-      <div className="container mx-auto px-4 py-6">
+      <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
         <div className="flex items-center mb-6">
           <button
             onClick={handleBackClick}
@@ -136,7 +136,7 @@ const SeriesPage = observer(() => {
   
   // Otherwise, display all available series
   return (
-    <div className="container mx-auto px-4 py-6">      
+    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {/* Add instructor filter and search box */}
       <div className="mb-6">
         <SearchBar />

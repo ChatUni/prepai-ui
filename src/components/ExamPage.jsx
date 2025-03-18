@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import SearchBar from './ui/SearchBar';
 import coursesStore from '../stores/coursesStore';
+import uiStore from '../stores/uiStore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +10,12 @@ const ExamPage = observer(() => {
   
   useEffect(() => {
     coursesStore.fetchCourses();
+    uiStore.setActiveCategory("考测");
+    
+    // Cleanup when component unmounts
+    return () => {
+      uiStore.setActiveCategory("私教"); // Reset to default
+    };
   }, []);
 
   const handleCourseClick = (course) => {
