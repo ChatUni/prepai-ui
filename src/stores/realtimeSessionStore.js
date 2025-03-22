@@ -24,8 +24,8 @@ class RealtimeSessionStore {
 
   async startSession() {
     try {
-      // Get an ephemeral key from the Fastify server
-      const tokenResponse = await fetch(`${BASE_URL}/token`);
+      // Get an ephemeral key from the Netlify function
+      const tokenResponse = await fetch(`${BASE_URL}/realtime-token`);
       const data = await tokenResponse.json();
       const EPHEMERAL_KEY = data.client_secret.value;
 
