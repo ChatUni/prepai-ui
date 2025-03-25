@@ -3,70 +3,58 @@ import Button from "./Button";
 import { observer } from "mobx-react-lite";
 import realtimeSessionStore from "../../stores/realtimeSessionStore";
 
-const SessionStopped = () => {
-  // Directly use the realtimeSessionStore
-  const startSession = () => realtimeSessionStore.startSession();
-  const [isActivating, setIsActivating] = useState(false);
+const SessionStopped = observer(() => {
+  const store = realtimeSessionStore;
+  const { instructions, isTextareaFocused } = store;
 
   const handleStartSession = () => {
-    if (isActivating) return;
-
-    setIsActivating(true);
-    startSession();
+    if (store.isSessionActive) return;
+    store.startSession();
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="flex items-center justify-center w-full h-full gap-4">
+      <textarea
+        value={instructions}
+        onChange={(e) => store.setInstructions(e.target.value)}
+        onFocus={() => store.setTextareaFocus(true)}
+        onBlur={() => store.setTextareaFocus(false)}
+        placeholder="输入指令..."
+        className={`w-full p-2 text-sm border rounded resize-none transition-all duration-200 ${
+          isTextareaFocused ? 'h-32' : 'h-10'
+        }`}
+      />
       <Button
         onClick={handleStartSession}
-        className={isActivating ? "bg-gray-600" : "bg-green-600"}
+        className={store.isSessionActive ? "bg-gray-600" : "bg-green-600"}
       >
-        {isActivating ? "连接中..." : "连接"}
+        {store.isSessionActive ? "连接中..." : "连接"}
       </Button>
     </div>
   );
-};
+});
 
-const SessionActive = () => {
-  // Directly use the realtimeSessionStore
-  // Don't destructure methods to preserve 'this' context
-  const [message, setMessage] = useState("");
-
-  const handleSendClientEvent = () => {
-    realtimeSessionStore.sendTextMessage(message);
-    setMessage("");
-  };
+const SessionActive = observer(() => {
+  const store = realtimeSessionStore;
+  const { instructions, isTextareaFocused } = store;
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
-      {/* <input
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && message.trim()) {
-            handleSendClientEvent();
-          }
-        }}
-        type="text"
-        placeholder="send a text message..."
-        className="border border-gray-200 rounded-full p-4 flex-1"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+    <div className="flex items-center justify-center w-full h-full gap-4">
+      <textarea
+        value={instructions}
+        readOnly
+        onFocus={() => store.setTextareaFocus(true)}
+        onBlur={() => store.setTextareaFocus(false)}
+        className={`w-full p-2 text-sm border rounded resize-none bg-gray-50 transition-all duration-200 ${
+          isTextareaFocused ? 'h-32' : 'h-10'
+        }`}
       />
-      <Button
-        onClick={() => {
-          if (message.trim()) {
-            handleSendClientEvent();
-          }
-        }}
-        className="bg-blue-400"
-      >
-        send text
-      </Button> */}
-      <Button onClick={() => realtimeSessionStore.stopSession()} className="bg-red-400">
+      <Button onClick={() => store.stopSession()} className="bg-red-400">
         断开
       </Button>
     </div>
   );
-};
+});
 
 const SessionControls = () => {
   // Directly use the realtimeSessionStore
