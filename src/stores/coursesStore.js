@@ -78,29 +78,7 @@ class CoursesStore {
       this.setInstructors(instructors);
     } catch (error) {
       console.error('Failed to fetch instructors:', error);
-      console.warn('Using fallback data in development mode');
-      
-      // Add mock instructor data for development
-      const mockInstructors = [
-        {
-          id: 1,
-          name: '宋浩',
-          position: '高等数学教授',
-          institution: '北京大学',
-          image: 'https://randomuser.me/api/portraits/men/32.jpg',
-          description: '高等数学专家，拥有20年教学经验'
-        },
-        {
-          id: 2,
-          name: '李明',
-          position: '量子物理学教授',
-          institution: '清华大学',
-          image: 'https://randomuser.me/api/portraits/men/33.jpg',
-          description: '量子物理学专家，研究领域包括量子计算和量子信息'
-        }
-      ];
-      
-      this.setInstructors(mockInstructors);
+      this.setInstructors([]);
     }
   }
 

@@ -56,38 +56,6 @@ const VideoPlayerPage = observer(() => {
     }
   };
 
-  // Generate a sample SRT transcript for testing
-  const generateSampleSrtTranscript = () => {
-    // Example SRT format transcript
-    return `1
-00:00:00,000 --> 00:00:04,000
-欢迎来到这节课程。
-
-2
-00:00:08,150 --> 00:00:12,030
-很高兴又看到这么多大一的同学。
-
-3
-00:00:15,000 --> 00:00:20,000
-今天我们将讨论一个有趣的话题。
-
-4
-00:00:22,000 --> 00:00:26,500
-希望大家能积极参与讨论。
-
-5
-00:00:30,000 --> 00:00:35,000
-上节课我们讲了基础知识。
-
-6
-00:00:37,000 --> 00:00:42,000
-这节课我们将深入探讨更复杂的内容。
-
-7
-00:00:45,000 --> 00:00:50,000
-请大家准备好笔记本，记录重要信息。`;
-  };
-
   // Function to fetch transcript and generate summary
   const fetchTranscriptAndSummary = async (videoUrl, storedTranscript) => {
     setTranscriptLoading(true);
@@ -133,30 +101,10 @@ const VideoPlayerPage = observer(() => {
       }
       
       console.log(`Processing video: ${videoId}`);
-      
-      // For demonstration, use the sample SRT transcript instead of random mock data
-      setTimeout(() => {
-        // Use our sample SRT transcript
-        const sampleSrtTranscript = generateSampleSrtTranscript();
-        videoPlayerStore.setTranscript(sampleSrtTranscript, 'srt');
-        
-        // Mock summary data
-        const mockSummary = {
-          topics: ['课程介绍', '学习方法', '学生参与', '知识扩展', '课堂互动'],
-          keyPoints: [
-            '这是一个中文课程的示例字幕',
-            '字幕使用SRT格式进行定时显示',
-            '播放器会在适当的时间高亮显示当前字幕',
-            '用户可以点击字幕跳转到相应的视频位置'
-          ],
-          wordCount: 120,
-          readingTime: 1,
-          difficulty: '中'
-        };
-        
-        setSummary(mockSummary);
-        setTranscriptLoading(false);
-      }, 1000);
+      // No transcript available, set empty state
+      videoPlayerStore.setTranscript([], 'json');
+      setSummary(null);
+      setTranscriptLoading(false);
       
     } catch (err) {
       console.error('Error fetching transcript:', err);

@@ -14,7 +14,7 @@ const SessionStopped = observer(() => {
 
   return (
     <div className="flex items-center justify-center w-full h-full gap-4">
-      <textarea
+      {/* <textarea
         value={instructions}
         onChange={(e) => store.setInstructions(e.target.value)}
         onFocus={() => store.setTextareaFocus(true)}
@@ -23,7 +23,7 @@ const SessionStopped = observer(() => {
         className={`w-full p-2 text-sm border rounded resize-none transition-all duration-200 ${
           isTextareaFocused ? 'h-32' : 'h-10'
         }`}
-      />
+      /> */}
       <Button
         onClick={handleStartSession}
         className={store.isSessionActive ? "bg-gray-600" : "bg-green-600"}
@@ -40,7 +40,7 @@ const SessionActive = observer(() => {
 
   return (
     <div className="flex items-center justify-center w-full h-full gap-4">
-      <textarea
+      {/* <textarea
         value={instructions}
         readOnly
         onFocus={() => store.setTextareaFocus(true)}
@@ -48,7 +48,7 @@ const SessionActive = observer(() => {
         className={`w-full p-2 text-sm border rounded resize-none bg-gray-50 transition-all duration-200 ${
           isTextareaFocused ? 'h-32' : 'h-10'
         }`}
-      />
+      /> */}
       <Button onClick={() => store.stopSession()} className="bg-red-400">
         断开
       </Button>

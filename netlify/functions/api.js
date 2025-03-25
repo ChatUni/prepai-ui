@@ -21,6 +21,7 @@ let dbAvailable = false;
 
 // Initialize database connection
 const initializeDatabase = async () => {
+  if (!dbAvailable) {
   try {
     pool = mysql.createPool(getDbConfig());
     const [rows] = await pool.execute('SELECT 1');
@@ -30,27 +31,7 @@ const initializeDatabase = async () => {
     console.error('Failed to initialize database:', error);
     dbAvailable = false;
   }
-};
-
-// Mock data for development/fallback
-const getMockData = (endpoint) => {
-  if (endpoint === '/courses') {
-    return [
-      { id: 1, title: 'Mock Course 1', description: 'A mock course for testing', isVideo: true },
-      { id: 2, title: 'Mock Course 2', description: 'Another mock course', isVideo: false }
-    ];
-  }
-  if (endpoint === '/assistants') {
-    return [
-      {
-        id: 1,
-        name: 'Math',
-        greeting: 'Hello! I\'m your Math assistant.',
-        prompt: 'You are a helpful Math tutor.'
-      }
-    ];
-  }
-  return [];
+}
 };
 
 // Initialize database on cold start
@@ -88,9 +69,7 @@ exports.handler = async (event, context) => {
     // Route handlers
     switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
       case 'GET /courses':
-        if (!dbAvailable) {
-          return { statusCode: 200, headers, body: JSON.stringify(getMockData('/courses')) };
-        }
+        if (!dbAvailable) await initializeDatabase();
         
         const [courseRows] = await pool.execute(`
           SELECT c.*,

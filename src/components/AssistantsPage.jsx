@@ -20,7 +20,7 @@ const AssistantsPage = observer(() => {
   // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
-    e.target.src = '/src/assets/avatar.png'; // Corrected fallback image path
+    e.target.src = '/images/avatar.png'; // Corrected fallback image path
   }, []);
 
   // Show loading state

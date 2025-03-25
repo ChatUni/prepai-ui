@@ -28,39 +28,8 @@ const FavoritesPage = observer(() => {
       } catch (error) {
         console.error('Error fetching favorites:', error);
         
-        // Fallback to using local favorites from uiStore or sample data
-        let localFavorites = [];
-        
-        // Try to get favorites from uiStore
-        if (uiStore.favoriteCourseIds.size > 0) {
-          uiStore.favoriteCourseIds.forEach(id => {
-            const course = window.coursesStore?.courses.find(c => c.id === id);
-            if (course) localFavorites.push({...course, isFavorite: true});
-          });
-        }
-        
-        // If no favorites in uiStore, use sample data for demonstration
-        if (localFavorites.length === 0 && window.coursesStore?.courses?.length > 0) {
-          // Use first 3 courses as sample favorites
-          localFavorites = window.coursesStore.courses.slice(0, 3).map(course => ({
-            ...course,
-            isFavorite: true
-          }));
-          
-          // Add these courses to uiStore.favoriteCourseIds
-          localFavorites.forEach(course => {
-            uiStore.favoriteCourseIds.add(course.id);
-          });
-        }
-        
-        setFavorites(localFavorites);
-        
-        // Only show error if we couldn't get any fallback data
-        if (localFavorites.length === 0) {
-          setError('Failed to load favorites. Please try again later.');
-        } else {
-          setError(null);
-        }
+        setError('Failed to load favorites. Please try again later.');
+        setFavorites([]);
       } finally {
         setIsLoading(false);
       }

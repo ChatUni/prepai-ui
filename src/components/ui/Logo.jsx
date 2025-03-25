@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import logoImage from '../../assets/logo.PNG';
+import logoImage from '../../assets/logo.png';
 
 const Logo = observer(() => {
   return (
