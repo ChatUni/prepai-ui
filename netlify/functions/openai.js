@@ -1,7 +1,8 @@
-const OpenAI = require('openai');
+import OpenAI from 'openai';
+import { parsePathParams } from './utils/pathUtils.js';
 
 // Main handler function
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   // Set default headers
   const headers = {
     'Content-Type': 'application/json',
@@ -21,8 +22,10 @@ exports.handler = async (event, context) => {
       apiKey: process.env.OPENAI_API_KEY
     });
 
+    const { resource, id } = parsePathParams(event.path, 'openai');
+
     // Route handlers
-    switch (`${event.httpMethod} ${event.path}`) {
+    switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
       case 'POST /openai-chat':
         try {
           const body = JSON.parse(event.body);

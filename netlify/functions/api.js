@@ -1,4 +1,5 @@
-const mysql = require('mysql2/promise');
+import mysql from 'mysql2/promise';
+import { parsePathParams } from './utils/pathUtils.js';
 
 // Database configuration
 const getDbConfig = () => ({
@@ -45,21 +46,15 @@ const parseQueryParams = (queryStringParameters) => {
   };
 };
 
-// Helper function to parse path parameters
-const parsePathParams = (path) => {
-  const matches = path.match(/\/api\/([^\/]+)(?:\/([^\/]+))?/);
-  return matches ? { resource: matches[1], id: matches[2] } : { resource: '', id: null };
-};
-
 // Main handler function
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   // Set default headers
   const headers = {
     'Content-Type': 'application/json',
   };
 
   try {
-    const { resource, id } = parsePathParams(event.path);
+    const { resource, id } = parsePathParams(event.path, 'api');
     const { userId, courseId, count, instructor } = parseQueryParams(event.queryStringParameters);
     const body = event.body ? JSON.parse(event.body) : {};
 
