@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { getApiBaseUrl } from '../config.js';
+import { getOpenAIBaseUrl } from '../config.js';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -51,7 +51,7 @@ class AssistantChatStore {
     
     try {
       // Get API base URL
-      const apiBaseUrl = getApiBaseUrl();
+      const apiBaseUrl = getOpenAIBaseUrl();
       
       console.log("Sending message to assistant:", text);
       console.log("Using assistant prompt:", this.selectedAssistant.prompt);
