@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const OpenAI = require('openai');
 
 // Database configuration
 const getDbConfig = () => ({
@@ -17,21 +18,18 @@ const getDbConfig = () => ({
 
 // Create database pool
 let pool;
-let dbAvailable = false;
 
 // Initialize database connection
 const initializeDatabase = async () => {
-  if (!dbAvailable) {
-  try {
-    pool = mysql.createPool(getDbConfig());
-    const [rows] = await pool.execute('SELECT 1');
-    dbAvailable = true;
-    console.log('Database connection successful');
-  } catch (error) {
-    console.error('Failed to initialize database:', error);
-    dbAvailable = false;
+  if (!pool) {
+    try {
+      pool = mysql.createPool(getDbConfig());
+      const [rows] = await pool.execute('SELECT 1');
+      console.log('Database connection successful');
+    } catch (error) {
+      console.error('Failed to initialize database:', error);
+    }
   }
-}
 };
 
 // Initialize database on cold start
@@ -66,11 +64,11 @@ exports.handler = async (event, context) => {
     const { userId, courseId, count, instructor } = parseQueryParams(event.queryStringParameters);
     const body = event.body ? JSON.parse(event.body) : {};
 
+    await initializeDatabase();
+
     // Route handlers
     switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
-      case 'GET /courses':
-        if (!dbAvailable) await initializeDatabase();
-        
+      case 'GET /courses':        
         const [courseRows] = await pool.execute(`
           SELECT c.*,
                  i.name AS instructor,
@@ -169,12 +167,52 @@ exports.handler = async (event, context) => {
         return { statusCode: 200, headers, body: JSON.stringify(instructorRows) };
 
       case 'GET /assistants':
-        if (!dbAvailable) {
-          return { statusCode: 200, headers, body: JSON.stringify(getMockData('/assistants')) };
-        }
-        
         const [assistantRows] = await pool.execute('SELECT id, name, greeting, prompt FROM Assistants');
         return { statusCode: 200, headers, body: JSON.stringify(assistantRows) };
+
+      case 'POST /openai-chat':
+        if (!process.env.OPENAI_API_KEY) {
+          return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'OpenAI API key not configured' })
+          };
+        }
+
+        try {
+          const messages = body.messages;
+          if (!messages || !Array.isArray(messages)) {
+            return {
+              statusCode: 400,
+              headers,
+              body: JSON.stringify({ error: 'Messages array is required' })
+            };
+          }
+
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+          });
+
+          const response = await openai.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages,
+            temperature: 0.7,
+            max_tokens: 1000
+          });
+
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(response)
+          };
+        } catch (error) {
+          console.error('OpenAI API error:', error);
+          return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Failed to get response from OpenAI' })
+          };
+        }
 
       case 'GET /series':
         let seriesQuery = `
