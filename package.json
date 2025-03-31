@@ -19,6 +19,7 @@
     "groq": "^0.0.9",
     "mobx": "^6.13.6",
     "mobx-react-lite": "^4.1.0",
+    "multipart-formdata": "^1.1.0",
     "mysql2": "^3.12.0",
     "node-fetch": "^2.7.0",
     "openai": "^4.90.0",
