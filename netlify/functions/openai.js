@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { parsePathParams } from './utils/pathUtils.js';
 import { parse } from 'multipart-formdata';
+import { getResponseHeaders } from './utils/headers.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -10,10 +11,16 @@ const CHATGPT_MODEL = 'gpt-4o-mini';
 
 // Main handler function
 export const handler = async (event, context) => {
-  // Set default headers
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+  // Handle OPTIONS requests for CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: getResponseHeaders()
+    };
+  }
+
+  // Set response headers
+  const headers = getResponseHeaders();
 
   try {
     // Check if OpenAI API key is configured

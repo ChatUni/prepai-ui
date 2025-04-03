@@ -5,12 +5,24 @@ import {
   generateSummary,
   parseSummary
 } from './utils/videoTranscriptService.js';
+import { getResponseHeaders } from './utils/headers.js';
 
 export const handler = async (event) => {
+  // Handle OPTIONS requests for CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: getResponseHeaders()
+    };
+  }
+
+  const headers = getResponseHeaders();
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -21,6 +33,7 @@ export const handler = async (event) => {
     if (!videoUrl) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: 'Video URL is required' })
       };
     }
@@ -67,6 +80,7 @@ export const handler = async (event) => {
       
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify({
           transcript: formattedTranscript,
           summary
@@ -111,6 +125,7 @@ export const handler = async (event) => {
       
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify({
           transcript: mockTranscript,
           summary: mockSummary
@@ -121,6 +136,7 @@ export const handler = async (event) => {
     console.error('Error processing video:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: error.message })
     };
   }

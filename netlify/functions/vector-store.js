@@ -4,6 +4,7 @@ import path from 'path';
 import { Blob } from 'buffer';
 import { FormData } from '@web-std/form-data';
 import { File } from '@web-std/file';
+import { getResponseHeaders } from './utils/headers.js';
 
 // Database configuration
 const getDbConfig = () => ({
@@ -34,9 +35,15 @@ const initializeDatabase = async () => {
 };
 
 export const handler = async (event, context) => {
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+  // Handle OPTIONS requests for CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: getResponseHeaders()
+    };
+  }
+
+  const headers = getResponseHeaders();
 
   if (event.httpMethod !== 'POST') {
     return {

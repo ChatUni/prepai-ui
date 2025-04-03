@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import { parsePathParams } from './utils/pathUtils.js';
+import { getResponseHeaders } from './utils/headers.js';
 
 // Database configuration
 const getDbConfig = () => ({
@@ -48,10 +49,16 @@ const parseQueryParams = (queryStringParameters) => {
 
 // Main handler function
 export const handler = async (event, context) => {
-  // Set default headers
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+  // Handle OPTIONS requests for CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: getResponseHeaders()
+    };
+  }
+
+  // Set response headers
+  const headers = getResponseHeaders();
 
   try {
     const { resource, id } = parsePathParams(event.path, 'api');
