@@ -247,6 +247,39 @@ export const handler = async (event, context) => {
           };
         }
 
+      case 'DELETE /vector_store_files':
+        try {
+          const body = JSON.parse(event.body);
+          const { vectorStoreId, fileId } = body;
+
+          if (!vectorStoreId || !fileId) {
+            return {
+              statusCode: 400,
+              headers,
+              body: JSON.stringify({ error: 'Vector store ID and file ID are required' })
+            };
+          }
+
+          // First delete the file from the vector store
+          await openai.vectorStores.files.del(vectorStoreId, fileId);
+          
+          // Then delete the actual file
+          await openai.files.del(fileId);
+          
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({ deleted: true, vectorStoreId, fileId })
+          };
+        } catch (error) {
+          console.error('OpenAI API error:', error);
+          return {
+            statusCode: error.status || 500,
+            headers,
+            body: JSON.stringify({ error: error.message || 'Failed to delete vector store file' })
+          };
+        }
+
       case 'POST /file_search':
         try {
           const body = JSON.parse(event.body);
