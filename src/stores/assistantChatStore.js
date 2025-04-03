@@ -58,7 +58,7 @@ class AssistantChatStore {
       
       // Call OpenAI API with the assistant's prompt as system message
       try {
-        const response = await fetch(`${apiBaseUrl}/openai-chat`, {
+        const response = await fetch(`${apiBaseUrl}/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

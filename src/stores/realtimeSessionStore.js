@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { BASE_URL } from '../config.js';
+import coursesStore from './coursesStore';
 
 class RealtimeSessionStore {
   isSessionActive = false;
@@ -9,6 +10,7 @@ class RealtimeSessionStore {
   audioElement = null;
   instructions = '';
   isTextareaFocused = false;
+  currentVectorStoreIds = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -16,6 +18,43 @@ class RealtimeSessionStore {
 
   setInstructions(text) {
     this.instructions = text;
+  }
+
+  // Update vector store IDs when instructor series changes
+  updateVectorStoreIds(instructorId) {
+    runInAction(() => {
+      // Get all series for this instructor
+      const instructorSeries = coursesStore.series.filter(s => s.instructor_id === instructorId);
+      // Extract vector_store_ids, filter out any undefined/null values
+      this.currentVectorStoreIds = instructorSeries
+        .map(s => s.vector_store_id)
+        .filter(id => id != null);
+    });
+  }
+
+  // Call the file search endpoint
+  async searchFiles(question) {
+    try {
+      const response = await fetch(`${BASE_URL}/openai/file_search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          question,
+          vectorStoreId: this.currentVectorStoreIds[0] // Use first vector store for now
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to search files');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('File search error:', error);
+      return null;
+    }
   }
 
   setTextareaFocus(focused) {
@@ -134,7 +173,7 @@ class RealtimeSessionStore {
     }
   }
 
-  sendTextMessage(message) {
+  async sendTextMessage(message) {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -150,7 +189,23 @@ class RealtimeSessionStore {
     };
 
     this.sendClientEvent(event);
-    this.sendClientEvent({ type: "response.create" });
+
+    // If we have vector store IDs available, include the file search tool
+    if (this.currentVectorStoreIds.length > 0) {
+      const toolEvent = {
+        type: "response.create",
+        response: {
+          tools: [{
+            type: "file_search",
+            vector_store_ids: this.currentVectorStoreIds,
+          }]
+        }
+      };
+      this.sendClientEvent(toolEvent);
+    } else {
+      // Otherwise send normal response create event
+      this.sendClientEvent({ type: "response.create" });
+    }
   }
 
   sendInstruction(instruction) {

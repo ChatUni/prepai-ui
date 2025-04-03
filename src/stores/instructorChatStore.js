@@ -99,6 +99,9 @@ class InstructorChatStore {
         // Load any saved chats from localStorage
         this.loadChatsFromLocalStorage();
       }
+
+      // Update vector store IDs in realtimeSessionStore
+      realtimeSessionStore.updateVectorStoreIds(instructorId);
     });
   }
 

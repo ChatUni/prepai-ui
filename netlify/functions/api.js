@@ -59,6 +59,7 @@ export const handler = async (event, context) => {
     const body = event.body ? JSON.parse(event.body) : {};
 
     await initializeDatabase();
+    console.log(`${event.httpMethod} /${resource}${id ? '/:id' : ''}`);
 
     // Route handlers
     switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {

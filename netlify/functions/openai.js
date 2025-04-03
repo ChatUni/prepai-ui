@@ -6,6 +6,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { toFile } from 'openai';
 
+const CHATGPT_MODEL = 'gpt-4o-mini';
+
 // Main handler function
 export const handler = async (event, context) => {
   // Set default headers
@@ -44,7 +46,7 @@ export const handler = async (event, context) => {
           }
 
           const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
+            model: CHATGPT_MODEL,
             messages,
             temperature: 0.7,
             max_tokens: 1000
@@ -235,6 +237,42 @@ export const handler = async (event, context) => {
             statusCode: error.status || 500,
             headers,
             body: JSON.stringify({ error: error.message || 'Failed to add file to vector store' })
+          };
+        }
+
+      case 'POST /file_search':
+        try {
+          const body = JSON.parse(event.body);
+          const { question, vectorStoreId } = body;
+
+          if (!question || !vectorStoreId) {
+            return {
+              statusCode: 400,
+              headers,
+              body: JSON.stringify({ error: 'Question and vector store ID are required' })
+            };
+          }
+
+          const response = await openai.responses.create({
+            model: CHATGPT_MODEL,
+            input: question,
+            tools: [{
+              type: 'file_search',
+              vector_store_ids: [vectorStoreId],
+            }]
+          });
+
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(response)
+          };
+        } catch (error) {
+          console.error('OpenAI API error:', error);
+          return {
+            statusCode: error.status || 500,
+            headers,
+            body: JSON.stringify({ error: error.message || 'Failed to search files' })
           };
         }
 
