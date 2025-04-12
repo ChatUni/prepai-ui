@@ -1,38 +1,10 @@
-import mysql from 'mysql2/promise';
 import fs from 'fs';
 import path from 'path';
 import { Blob } from 'buffer';
 import { FormData } from '@web-std/form-data';
 import { File } from '@web-std/file';
 import { getResponseHeaders } from './utils/headers.js';
-
-// Database configuration
-const getDbConfig = () => ({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE || 'prepai',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-// Create database pool
-let pool;
-
-// Initialize database connection
-const initializeDatabase = async () => {
-  if (!pool) {
-    try {
-      pool = mysql.createPool(getDbConfig());
-      await pool.execute('SELECT 1');
-      console.log('Database connection successful');
-    } catch (error) {
-      console.error('Failed to initialize database:', error);
-    }
-  }
-};
+import { get, save, remove, flat, maxId } from './utils/db.js';
 
 export const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
@@ -63,7 +35,6 @@ export const handler = async (event, context) => {
   }
 
   try {
-    await initializeDatabase();
 
     // 1. Get series details with instructor
     const [seriesRows] = await pool.execute(`

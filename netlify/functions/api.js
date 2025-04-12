@@ -1,12 +1,8 @@
 import { parsePathParams } from './utils/pathUtils.js';
 import { getResponseHeaders } from './utils/headers.js';
+import { get, save, remove, flat, maxId } from './utils/db.js';
 import { tap } from './utils';
 
-const API = (type, doc, agg) => `https://freshroad.netlify.app/.netlify/functions/api?db=prepai&type=${type}&doc=${doc}${agg ? `&agg=${encodeURIComponent(agg)}` : ''}`
-const get = doc => fetch(API('doc', doc)).then(res => res.json())
-const flat = (doc, agg) => fetch(API('flat', doc, tap(agg))).then(res => res.json())
-const post = (doc, data) => fetch(API('save', doc), { method: 'POST', body: JSON.stringify(data) }).then(res => res.json())
-const res = body => ({ statusCode: 200, headers: getResponseHeaders(), body: JSON.stringify(body) })
 
 // Main handler function
 export const handler = async (event, context) => {
@@ -23,7 +19,7 @@ export const handler = async (event, context) => {
 
   try {
     const { resource, id } = parsePathParams(event.path, 'api');
-    const { clientId, seriesId, courseId, instructorId } = event.queryStringParameters;
+    const { clientId, userId, seriesId, courseId, instructorId } = event.queryStringParameters;
     const body = event.body ? JSON.parse(event.body) : {};
 
     console.log(`${event.httpMethod} /${resource}${id ? '/:id' : ''}`);
@@ -37,46 +33,23 @@ export const handler = async (event, context) => {
         const courses = await flat('courses', `m_id=${id}&f_series|series,instructor`)
         return res(courses);
       case 'POST /favorites/toggle':
-        if (!body.courseId) {
-          return { statusCode: 400, headers, body: JSON.stringify({ error: 'Course ID is required' }) };
-        }
+        const favCourses = await flat('favorites', `m_course_id=${courseId},user_id=${userId}`)
 
-        const [existingFavorites] = await pool.execute(
-          'SELECT id FROM favorites WHERE user_id = ? AND course_id = ?',
-          [body.userId || 1, body.courseId]
-        );
-
-        if (existingFavorites.length > 0) {
-          await pool.execute(
-            'DELETE FROM favorites WHERE user_id = ? AND course_id = ?',
-            [body.userId || 1, body.courseId]
-          );
-          return { statusCode: 200, headers, body: JSON.stringify({ isFavorite: false, message: 'Removed from favorites' }) };
+        if (favCourses.length > 0) {
+          await remove('favorites', favCourses[0].id);
+          return res({ isFavorite: false, message: 'Removed from favorites' });
         } else {
-          await pool.execute(
-            'INSERT INTO favorites (user_id, course_id) VALUES (?, ?)',
-            [body.userId || 1, body.courseId]
-          );
-          return { statusCode: 200, headers, body: JSON.stringify({ isFavorite: true, message: 'Added to favorites' }) };
+          const newId = await maxId('favorites')
+          await save('favorites', { id: newId, user_id: userId, course_id: courseId })
+          return res({ isFavorite: true, message: 'Added to favorites' });
         }
 
       case 'GET /favorites':
         const favorites = await get('favorites')
         return res(favorites);
       case 'GET /questions/random':
-        if (!courseId) {
-          return { statusCode: 400, headers, body: JSON.stringify({ error: 'Course ID is required' }) };
-        }
-
-        const [questionRows] = await pool.execute(`
-          SELECT id, question, options, answer, course_id
-          FROM questions
-          WHERE course_id = ?
-          ORDER BY RAND()
-          LIMIT ${count || 10}
-        `, [courseId]);
-
-        const processedQuestions = questionRows.map(row => ({
+        const questions = await flat('questions', 'r_10')
+        const processedQuestions = questions.map(row => ({
           ...row,
           options: JSON.stringify(Object.values(row.options))
         }));
