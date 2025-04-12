@@ -24,7 +24,7 @@ class RealtimeSessionStore {
   updateVectorStoreIds(instructorId) {
     runInAction(() => {
       // Get all series for this instructor
-      const instructorSeries = coursesStore.series.filter(s => s.instructor_id === instructorId);
+      const instructorSeries = coursesStore.series.filter(s => s.instructor?.id === instructorId);
       // Extract vector_store_ids, filter out any undefined/null values
       this.currentVectorStoreIds = instructorSeries
         .map(s => s.vector_store_id)

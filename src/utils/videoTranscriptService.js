@@ -1,7 +1,7 @@
 // This file contains browser-compatible utility functions for video transcript processing
 // Server-side functions are moved to server/videoProcessing.js
 
-// Helper function to extract YouTube video ID from URL
+// Helper functions to extract video IDs and generate playable URLs
 export const getYoutubeId = (url) => {
   if (!url) return null;
   
@@ -10,6 +10,38 @@ export const getYoutubeId = (url) => {
   const match = url.match(regExp);
   
   return (match && match[2].length === 11) ? match[2] : null;
+};
+
+// Helper function to extract Google Drive file ID from URL
+export const getGoogleDriveId = (url) => {
+  if (!url) return null;
+  
+  // Match Google Drive URL patterns
+  // Examples:
+  // https://drive.google.com/file/d/FILE_ID/view
+  // https://drive.google.com/open?id=FILE_ID
+  const patterns = [
+    /\/file\/d\/([^/]+)/,  // Pattern for /file/d/ URLs
+    /[?&]id=([^&]+)/       // Pattern for ?id= parameter
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+};
+
+// Helper function to generate direct playable URL for Google Drive videos
+export const getGoogleDriveDirectUrl = (url) => {
+  const fileId = getGoogleDriveId(url);
+  if (!fileId) return null;
+  
+  // Generate direct link using Google Drive's direct download URL
+  return `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${import.meta.env.VITE_GOOGLE_API_KEY}`;
 };
 
 // Function to download audio from YouTube using ytdl-core and fluent-ffmpeg

@@ -28,28 +28,28 @@ async function updateCoursesWithYouTubeVideos() {
     // Add video_url column if it doesn't exist
     await addVideoUrlColumnIfNeeded(connection);
     
-    // Check if instructor_id column exists
+    // Check if instructor?.id column exists
     const [columns] = await connection.execute(`
       SELECT COLUMN_NAME
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = 'prepai_courses'
       AND TABLE_NAME = 'courses'
-      AND COLUMN_NAME = 'instructor_id'
+      AND COLUMN_NAME = 'instructor?.id'
     `);
     
     let courses = [];
     
     if (columns.length > 0) {
-      // If instructor_id column exists, use it to join with instructors
-      console.log('Using instructor_id to fetch courses with instructor information');
+      // If instructor?.id column exists, use it to join with instructors
+      console.log('Using instructor?.id to fetch courses with instructor information');
       [courses] = await connection.execute(`
-        SELECT c.id, c.title, i.name as instructor_name
+        SELECT c.id, c.title, i.name as instructor?.name
         FROM courses c
-        JOIN instructors i ON c.instructor_id = i.id
+        JOIN instructors i ON c.instructor?.id = i.id
       `);
     } else {
-      // If instructor_id doesn't exist, assume we have instructor column
-      console.log('Instructor_id column not found, checking for instructor column');
+      // If instructor?.id doesn't exist, assume we have instructor column
+      console.log('instructor?.id column not found, checking for instructor column');
       const [instrColumns] = await connection.execute(`
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -62,14 +62,14 @@ async function updateCoursesWithYouTubeVideos() {
         // Use instructor column directly
         console.log('Using instructor column to fetch courses');
         [courses] = await connection.execute(`
-          SELECT id, title, instructor as instructor_name
+          SELECT id, title, instructor as instructor?.name
           FROM courses
         `);
       } else {
         // Neither column exists, fetch just id and title
         console.log('No instructor information found, fetching only course data');
         [courses] = await connection.execute(`
-          SELECT id, title, 'Unknown' as instructor_name
+          SELECT id, title, 'Unknown' as instructor?.name
           FROM courses
         `);
       }
@@ -120,11 +120,11 @@ async function addVideoUrlColumnIfNeeded(connection) {
 
 async function updateCourseWithYouTubeVideo(connection, course) {
   try {
-    const { id, title, instructor_name } = course;
+    const { id, title, instructor?.name } = course;
     console.log(`Updating course: ${title} (ID: ${id})`);
     
     // Search for a YouTube video based on the course title and instructor
-    const searchQuery = `${title} ${instructor_name} lecture`;
+    const searchQuery = `${title} ${instructor?.name} lecture`;
     const videoData = await searchYouTubeVideo(searchQuery);
     
     if (!videoData) {

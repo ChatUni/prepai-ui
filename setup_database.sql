@@ -30,13 +30,13 @@ SELECT IF(@tableExists = 0,
     'WARNING: courses table does not exist. Please create the courses table first.',
     'courses table exists, continuing with setup.') AS message;
 
--- Add instructor_id column to courses table if it doesn't exist and the courses table exists
+-- Add instructor?.id column to courses table if it doesn't exist and the courses table exists
 SELECT COUNT(*) INTO @columnExists FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = 'courses' AND COLUMN_NAME = 'instructor_id' AND @tableExists > 0;
+WHERE TABLE_NAME = 'courses' AND COLUMN_NAME = 'instructor?.id' AND @tableExists > 0;
 
 SET @query = IF(@columnExists = 0 AND @tableExists > 0,
-                'ALTER TABLE courses ADD COLUMN instructor_id INT',
-                'SELECT "instructor_id column already exists or courses table does not exist"');
+                'ALTER TABLE courses ADD COLUMN instructor?.id INT',
+                'SELECT "instructor?.id column already exists or courses table does not exist"');
 PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
@@ -55,17 +55,17 @@ SELECT COUNT(*) INTO @hasInstructorColumn
 FROM INFORMATION_SCHEMA.COLUMNS 
 WHERE TABLE_NAME = 'courses' AND COLUMN_NAME = 'instructor' AND @tableExists > 0;
 
--- Update instructor_id in courses table based on instructor name if both columns exist
+-- Update instructor?.id in courses table based on instructor name if both columns exist
 SET @query = IF(@hasInstructorColumn > 0 AND @columnExists > 0,
-                'UPDATE courses SET instructor_id = 1 WHERE instructor = "陈浩老师"',
-                'SELECT "Cannot update instructor_id: missing columns or courses table"');
+                'UPDATE courses SET instructor?.id = 1 WHERE instructor = "陈浩老师"',
+                'SELECT "Cannot update instructor?.id: missing columns or courses table"');
 PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 SET @query = IF(@hasInstructorColumn > 0 AND @columnExists > 0,
-                'UPDATE courses SET instructor_id = 2 WHERE instructor = "子森"',
-                'SELECT "Cannot update instructor_id: missing columns or courses table"');
+                'UPDATE courses SET instructor?.id = 2 WHERE instructor = "子森"',
+                'SELECT "Cannot update instructor?.id: missing columns or courses table"');
 PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;

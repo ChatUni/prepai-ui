@@ -87,7 +87,28 @@ class CoursesStore {
       // Use the getAllSeries utility function for consistent API access
       const series = await getAllSeries();
       console.log('Fetched series:', series);
-      this.setSeries(series);
+      
+      // Validate and sanitize series data
+      const validSeries = Array.isArray(series) ? series.map(item => {
+        if (!item || typeof item !== 'object') {
+          console.error('Invalid series item:', item);
+          return null;
+        }
+        
+        return {
+          id: item.id || item._id, // Handle both id formats
+          name: typeof item.name === 'string' ? item.name : '',
+          desc: typeof item.desc === 'string' ? item.desc : '',
+          cover: typeof item.cover === 'string' ? item.cover : '',
+          instructor: item.instructor && typeof item.instructor === 'object' ? {
+            id: item.instructor.id || item.instructor._id,
+            name: typeof item.instructor.name === 'string' ? item.instructor.name : '',
+            image: typeof item.instructor.image === 'string' ? item.instructor.image : ''
+          } : null
+        };
+      }).filter(Boolean) : [];
+      
+      this.setSeries(validSeries);
     } catch (error) {
       console.error('Failed to fetch series:', error);
       console.warn('Using fallback empty series array');
@@ -98,17 +119,7 @@ class CoursesStore {
   setCourses(courses) {
     runInAction(() => {
       // Process courses to ensure they have all required fields
-      this.courses = courses.map(course => ({
-        ...course,
-        keywords: course.keywords || '',
-        duration: course.duration || '00:00',
-        isFavorite: !!course.isFavorite,
-        recommended: !!course.recommended,
-        isVideo: !!course.isVideo, // Convert to boolean but don't default to true
-        transcript: course.transcript || '',
-        series_name: course.series_name || 'Uncategorized', // Add series name if available
-        instructor_name: course.instructor_name || course.instructor || '' // Ensure instructor_name is set
-      }));
+      this.courses = courses;
       
       // Update favorites in uiStore
       if (uiStore.setFavorites) {
@@ -162,7 +173,7 @@ class CoursesStore {
     
     try {
       // Use the fetchFromApi utility to maintain consistent API access
-      const series = await fetchFromApi(`/series?instructor=${instructorId}`);
+      const series = await fetchFromApi(`/series?instructorId=${instructorId}`);
       console.log('Fetched instructor series:', series);
       this.setInstructorSeries(series);
     } catch (error) {
@@ -219,19 +230,19 @@ class CoursesStore {
       return this.examCourses.filter(course => {
         const matchesSearch = !searchKeyword ||
           course.title.toLowerCase().includes(searchKeyword) ||
-          (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
-          (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
+          (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
+          (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
         const selectedInstructor = this.instructors.find(instructor => instructor.id === selectedInstructorId);
         console.log('Filtering course:', {
-          courseInstructor: course.instructor_name,
+          courseInstructor: course.instructor?.name,
           selectedInstructorName: selectedInstructor?.name,
-          matches: !selectedInstructorId || course.instructor_name === selectedInstructor?.name
+          matches: !selectedInstructorId || course.instructor?.name === selectedInstructor?.name
         });
         
-        const matchesInstructor = !selectedInstructorId || course.instructor_name === selectedInstructor?.name;
+        const matchesInstructor = !selectedInstructorId || course.instructor?.name === selectedInstructor?.name;
 
-        const matchesSeries = selectedSeriesId === null || course.series_id === selectedSeriesId;
+        const matchesSeries = selectedSeriesId === null || course.series?.id === selectedSeriesId;
 
         return matchesSearch && matchesInstructor && matchesSeries;
       });
@@ -242,8 +253,8 @@ class CoursesStore {
     return this.courses.filter(course => {
       const matchesSearch = !searchKeyword ||
         course.title.toLowerCase().includes(searchKeyword) ||
-        (course.instructor && course.instructor.toLowerCase().includes(searchKeyword)) ||
-        (course.series_name && course.series_name.toLowerCase().includes(searchKeyword));
+        (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
+        (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
       // Always filter by course type (video or document)
       const matchesCourseType = activeCategory.startsWith(course.isVideo ? "视频" : "文档");
@@ -275,9 +286,9 @@ class CoursesStore {
       }
 
       const matchesInstructor = selectedInstructorId === null ||
-        course.instructor_name === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
+        course.instructor?.name === this.instructors.find(instructor => instructor.id === selectedInstructorId)?.name;
 
-      const matchesSeries = selectedSeriesId === null || course.series_id === selectedSeriesId;
+      const matchesSeries = selectedSeriesId === null || course.series?.id === selectedSeriesId;
 
       return matchesSearch && matchesCategory && matchesInstructor && matchesCourseType && matchesSeries;
     });
@@ -328,17 +339,28 @@ class CoursesStore {
   }
   
   get filteredSeries() {
+    if (!Array.isArray(this.series)) {
+      console.error('series is not an array:', this.series);
+      return [];
+    }
+    
     const searchKeyword = uiStore.searchKeyword.toLowerCase();
     const selectedInstructorId = uiStore.selectedInstructorId;
     
     return this.series.filter(series => {
-      const matchesSearch = !searchKeyword || 
-        series.name.toLowerCase().includes(searchKeyword) ||
-        (series.desc && series.desc.toLowerCase().includes(searchKeyword)) ||
-        (series.instructor_name && series.instructor_name.toLowerCase().includes(searchKeyword));
+      // Skip any non-object series items
+      if (!series || typeof series !== 'object') {
+        console.error('Invalid series item:', series);
+        return false;
+      }
       
-      const matchesInstructor = selectedInstructorId === null || 
-        series.instructor_id === selectedInstructorId;
+      const matchesSearch = !searchKeyword ||
+        (typeof series.name === 'string' && series.name.toLowerCase().includes(searchKeyword)) ||
+        (typeof series.desc === 'string' && series.desc.toLowerCase().includes(searchKeyword)) ||
+        (series.instructor && typeof series.instructor.name === 'string' && series.instructor.name.toLowerCase().includes(searchKeyword));
+      
+      const matchesInstructor = selectedInstructorId === null ||
+        (series.instructor && series.instructor.id === selectedInstructorId);
       
       return matchesSearch && matchesInstructor;
     });
@@ -349,7 +371,7 @@ class CoursesStore {
     const groupedCourses = {};
     
     this.series.forEach(series => {
-      groupedCourses[series.id] = this.courses.filter(course => course.series_id === series.id);
+      groupedCourses[series.id] = this.courses.filter(course => course.series?.id === series.id);
     });
     
     return groupedCourses;

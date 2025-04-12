@@ -160,7 +160,7 @@ const CourseCard = observer(({ course }) => {
         <h3 className="font-medium text-sm sm:text-base line-clamp-2">{course.title}</h3>
         
         {/* Course Instructor */}
-        <p className="text-gray-600 text-xs sm:text-sm mt-1">{course.instructor}</p>
+        <p className="text-gray-600 text-xs sm:text-sm mt-1">{course.instructor?.name}</p>
         
         {/* Keywords - Show on all screens now */}
         <div className="flex flex-wrap gap-1 mt-1.5 sm:mt-2">

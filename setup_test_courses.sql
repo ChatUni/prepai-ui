@@ -44,12 +44,12 @@ INSERT INTO courses (id, title, instructor, image, viewCount, category, keywords
 (7, 'Quantum Computing', '子森', 'https://via.placeholder.com/300x200/3B82F6/FFFFFF?text=Computing', 1650, '私教', 'physics,quantum,computing', '58:25', TRUE),
 (8, 'Quantum Entanglement', '子森', 'https://via.placeholder.com/300x200/3B82F6/FFFFFF?text=Entanglement', 1950, '私教', 'physics,quantum,entanglement', '42:15', FALSE);
 
--- Add instructor_id column if it doesn't exist
-ALTER TABLE courses ADD COLUMN IF NOT EXISTS instructor_id INT;
+-- Add instructor?.id column if it doesn't exist
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS instructor?.id INT;
 
--- Set instructor_id based on instructor names
-UPDATE courses SET instructor_id = 1 WHERE instructor = '陈浩老师';
-UPDATE courses SET instructor_id = 2 WHERE instructor = '子森';
+-- Set instructor?.id based on instructor names
+UPDATE courses SET instructor?.id = 1 WHERE instructor = '陈浩老师';
+UPDATE courses SET instructor?.id = 2 WHERE instructor = '子森';
 
 -- Show the results for verification
 SELECT 'Instructors:' AS '';

@@ -112,14 +112,7 @@ const getFallbackData = (endpoint) => {
   }
   
   if (endpoint.startsWith('/series/')) {
-    return {
-      id: parseInt(endpoint.split('/').pop()),
-      name: 'Sample Series',
-      desc: 'This is a sample series for development',
-      instructor_id: 1,
-      instructor_name: 'Sample Instructor',
-      courses: []
-    };
+    return null;
   }
   
   if (endpoint === '/assistants') {

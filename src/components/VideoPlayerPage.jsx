@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import coursesStore from '../stores/coursesStore';
 import videoPlayerStore from '../stores/videoPlayerStore';
 import uiStore from '../stores/uiStore';
-import { getYoutubeId } from '../utils/videoTranscriptService';
+import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../utils/videoTranscriptService';
 
 const VideoPlayerPage = observer(() => {
   const { courseId } = useParams();
@@ -373,27 +373,47 @@ const VideoPlayerPage = observer(() => {
         <div className="flex-grow order-1 md:order-1 md:max-w-[calc(100%-24rem)] flex flex-col">
           <div className="aspect-video bg-black rounded overflow-hidden relative">
             
-            {getYoutubeId(course.video_url) ? (
-              <div className="w-full h-full relative">
-                <div id="youtube-player" className="absolute inset-0"></div>
-              </div>
-            ) : (
-              <video
-                ref={(el) => {
-                  videoRef.current = el;
-                  if (el && !videoPlayerStore.videoElement) {
-                    videoPlayerStore.setVideoElement(el);
-                  }
-                }}
-                className="w-full h-full"
-                controls
-                autoPlay
-                src={course.video_url}
-                poster={course.image}
-              >
-                Your browser does not support the video tag.
-              </video>
-            )}
+            {(() => {
+              // Determine video type and handle accordingly
+              if (getYoutubeId(course.video_url)) {
+                return (
+                  <div className="w-full h-full relative">
+                    <div id="youtube-player" className="absolute inset-0"></div>
+                  </div>
+                );
+              }
+
+              // Handle Google Drive videos with iframe
+              if (getGoogleDriveId(course.video_url)) {
+                const fileId = getGoogleDriveId(course.video_url);
+                return (
+                  <iframe
+                    src={`https://drive.google.com/file/d/${fileId}/preview`}
+                    className="w-full h-full border-0"
+                    allow="autoplay"
+                  ></iframe>
+                );
+              }
+
+              // For other video sources, use the video tag
+              return (
+                <video
+                  ref={(el) => {
+                    videoRef.current = el;
+                    if (el && !videoPlayerStore.videoElement) {
+                      videoPlayerStore.setVideoElement(el);
+                    }
+                  }}
+                  className="w-full h-full"
+                  controls
+                  autoPlay
+                  src={course.video_url}
+                  poster={course.image}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              );
+            })()}
           </div>
           
           {/* Course title and info now below the video */}
@@ -401,7 +421,7 @@ const VideoPlayerPage = observer(() => {
             <h1 className="text-2xl font-bold mb-2">{course.title}</h1>
             
             <div className="flex text-sm text-gray-600">
-              <div className="mr-4">讲师: {course.instructor}</div>
+              <div className="mr-4">讲师: {course.instructor?.name}</div>
               <div className="mr-4">时长: {course.duration}</div>
               <div>观看次数: {course.viewCount}</div>
             </div>

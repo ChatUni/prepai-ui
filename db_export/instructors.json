@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "陈浩老师",
+    "description": "知名数学讲师，擅长高数、线性代数、概率论与数理统计等课程。",
+    "image": "https://res.cloudinary.com/daqc8bim3/image/upload/v1740925234/tutor1.png"
+  },
+  {
+    "id": 2,
+    "name": "子森",
+    "description": "资深物理学讲师，专注于量子力学及其相关领域的研究和教学。",
+    "image": "https://res.cloudinary.com/daqc8bim3/image/upload/v1740925234/tutor1.png"
+  }
+]

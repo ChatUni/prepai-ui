@@ -67,9 +67,9 @@ export const handler = async (event, context) => {
 
     // 1. Get series details with instructor
     const [seriesRows] = await pool.execute(`
-      SELECT s.*, i.name as instructor_name
+      SELECT s.*, i.name as instructor?.name
       FROM series s
-      LEFT JOIN instructors i ON s.instructor_id = i.id
+      LEFT JOIN instructors i ON s.instructor?.id = i.id
       WHERE s.id = ?
     `, [parseInt(id)]);
 
@@ -99,11 +99,11 @@ export const handler = async (event, context) => {
     const [coursesRows] = await pool.execute(`
       SELECT id, title, transcript
       FROM courses
-      WHERE series_id = ?
+      WHERE series?.id = ?
     `, [parseInt(id)]);
 
     // 3. Create vector store
-    const vectorStoreName = `${series.instructor_name} - ${series.name}`;
+    const vectorStoreName = `${series.instructor?.name} - ${series.name}`;
     const vectorStoreResponse = await fetch(`${event.rawUrl.split('/vector-store/')[0]}/openai/vector_stores`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

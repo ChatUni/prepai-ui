@@ -3,7 +3,7 @@ UPDATE courses SET isVideo = TRUE;
 
 -- Add new records with isVideo = false (non-video courses)
 INSERT INTO courses 
-(id, title, image, viewCount, category, keywords, duration, recommended, video_url, instructor_id, isVideo) 
+(id, title, image, viewCount, category, keywords, duration, recommended, video_url, instructor?.id, isVideo) 
 VALUES 
 (
   17,

@@ -32,7 +32,7 @@ CREATE TABLE `courses` (
   `duration` varchar(50) DEFAULT '2.0 集',
   `recommended` tinyint(1) DEFAULT '0',
   `video_url` varchar(255) DEFAULT NULL,
-  `instructor_id` int DEFAULT NULL,
+  `instructor?.id` int DEFAULT NULL,
   `isVideo` tinyint(1) DEFAULT '1',
   `date_added` datetime DEFAULT CURRENT_TIMESTAMP,
   `transcript` text,
