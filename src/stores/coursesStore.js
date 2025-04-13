@@ -118,13 +118,8 @@ class CoursesStore {
 
   setCourses(courses) {
     runInAction(() => {
-      // Process courses to ensure they have all required fields
+      // Just set the courses without modifying favorites
       this.courses = courses;
-      
-      // Update favorites in uiStore
-      if (uiStore.setFavorites) {
-        uiStore.setFavorites(this.courses);
-      }
     });
   }
 
