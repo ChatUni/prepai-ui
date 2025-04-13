@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, runInAction, computed } from 'mobx';
 import { getApiBaseUrl } from '../config.js';
+import { tap } from '../../netlify/functions/utils/index.js';
 
 class ExamStore {
   questions = [];
