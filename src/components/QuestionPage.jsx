@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import examStore from '../stores/examStore';
+import { tap } from '../../netlify/functions/utils';
 
 const QuestionPage = observer(() => {
   const { courseId } = useParams();
@@ -12,18 +13,26 @@ const QuestionPage = observer(() => {
   };
   
   useEffect(() => {
-    examStore.fetchQuestions(courseId);
+    const fetchData = async () => {
+      try {
+        await examStore.fetchQuestions(courseId);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+    
+    fetchData();
     
     // Cleanup when component unmounts
     return () => {
       examStore.resetExam();
     };
-  }, [courseId]);
+  }, [courseId, navigate]);
   
   const handleOptionClick = (questionId, option) => {
     examStore.selectAnswer(questionId, option);
   };
-  
+tap('q')
   return (
     <div className="container mx-auto px-4 py-8 pb-20 md:pb-8 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
@@ -44,28 +53,33 @@ const QuestionPage = observer(() => {
       </div>
       {/* Questions List */}
       <div className="space-y-8 flex-1 overflow-y-auto pb-24">
-        {examStore.questionsWithParsedOptions.map((question, index) => {
-          return (
+        {examStore.questionsWithParsedOptions.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-500">
+              <p className="text-xl">暂无可用的问题</p>
+              <p className="mt-2">请稍后再试</p>
+            </div>
+          </div>
+        ) : (
+          examStore.questionsWithParsedOptions.map((question, index) => (
             <div key={question.id} className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-medium mb-4">
                 {index + 1}. {question.question}
               </h3>
               <div className="space-y-2">
-                {question.parsedOptions.map((option, optIndex) => {
-                  return (
-                    <div
-                      key={optIndex}
-                      className={examStore.getOptionClass(question.id, option)}
-                      onClick={() => !examStore.isSubmitted && handleOptionClick(question.id, option)}
-                    >
-                      {option}
-                    </div>
-                  );
-                })}
+                {question.parsedOptions.map((option, optIndex) => (
+                  <div
+                    key={optIndex}
+                    className={examStore.getOptionClass(question.id, option)}
+                    onClick={() => !examStore.isSubmitted && handleOptionClick(question.id, option)}
+                  >
+                    {option}
+                  </div>
+                ))}
               </div>
             </div>
-          );
-        })}
+          ))
+        )}
       </div>
       
       {/* Results Dialog */}

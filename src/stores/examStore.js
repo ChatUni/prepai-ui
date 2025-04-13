@@ -26,28 +26,22 @@ class ExamStore {
     });
   }
   async fetchQuestions(courseId) {
-    try {
-      const apiBaseUrl = getApiBaseUrl();
-      const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch questions');
-      }
-      
-      const questions = await response.json();
-      
-      runInAction(() => {
-        this.questions = questions;
-        this.selectedAnswers.clear();
-        this.isSubmitted = false;
-      });
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-      runInAction(() => {
-        this.questions = [];
-        this.selectedAnswers.clear();
-        this.isSubmitted = false;
-      });
+    const apiBaseUrl = getApiBaseUrl();
+    const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch questions');
     }
+    
+    const questions = await response.json();
+    
+    runInAction(() => {
+      this.questions = questions;
+      this.selectedAnswers.clear();
+      this.isSubmitted = false;
+    });
+    
+    return questions;
   }
   
   selectAnswer(questionId, option) {

@@ -21,11 +21,12 @@ export const handler = async (event, context) => {
     const { resource, id } = parsePathParams(event.path, 'api');
     const { clientId, userId, seriesId, courseId, instructorId } = event.queryStringParameters;
     const body = event.body ? JSON.parse(event.body) : {};
+    const route = `${event.httpMethod} /${resource}${id ? (isNaN(+id) ? `/${id}` : '/:id') : ''}`
 
-    console.log(`${event.httpMethod} /${resource}${id ? '/:id' : ''}`);
+    console.log(`Route: ${route}, Resource: ${resource}, id: ${id}`);
 
     // Route handlers
-    switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
+    switch (route) {
       case 'GET /courses':
         const coursesInSeries = await flat('courses', `${seriesId ? `m_series_id=${seriesId}&` : ''}f_series|series,instructor`)
         return res(coursesInSeries);
@@ -40,7 +41,7 @@ export const handler = async (event, context) => {
           return res({ isFavorite: false, message: 'Removed from favorites' });
         } else {
           const newId = await maxId('favorites')
-          await save('favorites', { id: newId, user_id: userId, course_id: courseId })
+          await save('favorites', { id: newId, user_id: +userId, course_id: +courseId })
           return res({ isFavorite: true, message: 'Added to favorites' });
         }
 
@@ -48,7 +49,7 @@ export const handler = async (event, context) => {
         const favorites = await get('favorites')
         return res(favorites);
       case 'GET /questions/random':
-        const questions = await flat('questions', 'r_10')
+        const questions = await flat('questions', 'r_size=10')
         const processedQuestions = questions.map(row => ({
           ...row,
           options: JSON.stringify(Object.values(row.options))

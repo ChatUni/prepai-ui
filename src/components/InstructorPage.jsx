@@ -5,6 +5,7 @@ import routeStore from '../stores/routeStore';
 import { useNavigate } from 'react-router-dom';
 import SeriesList from './ui/SeriesList';
 import SearchBar from './ui/SearchBar';
+import { tap } from '../../netlify/functions/utils';
 
 const InstructorCard = ({ instructor, onClick }) => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const InstructorPage = observer(() => {
     // Use routeStore instead of direct navigation
     routeStore.navigateToInstructor(selectedInstructor.id, navigate);
   };
-
+tap('i')
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {/* Filter Bar */}

@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
+import { tap } from '../../netlify/functions/utils';
 
 class CoursesStore {
   courses = [];
@@ -229,11 +230,11 @@ class CoursesStore {
           (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
         const selectedInstructor = this.instructors.find(instructor => instructor.id === selectedInstructorId);
-        console.log('Filtering course:', {
-          courseInstructor: course.instructor?.name,
-          selectedInstructorName: selectedInstructor?.name,
-          matches: !selectedInstructorId || course.instructor?.name === selectedInstructor?.name
-        });
+        // console.log('Filtering course:', {
+        //   courseInstructor: course.instructor?.name,
+        //   selectedInstructorName: selectedInstructor?.name,
+        //   matches: !selectedInstructorId || course.instructor?.name === selectedInstructor?.name
+        // });
         
         const matchesInstructor = !selectedInstructorId || course.instructor?.name === selectedInstructor?.name;
 

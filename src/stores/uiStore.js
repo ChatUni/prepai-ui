@@ -65,7 +65,7 @@ class UIStore {
       }
       
       const favorites = await response.json();
-      const favoriteIds = new Set(favorites.map(course => course.id));
+      const favoriteIds = new Set(favorites.map(f => f.course_id));
 
       runInAction(() => {
         this.favoriteCourseIds = favoriteIds;
