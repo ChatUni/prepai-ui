@@ -3,7 +3,7 @@ import path from 'path';
 import { Blob } from 'buffer';
 import { FormData } from '@web-std/form-data';
 import { File } from '@web-std/file';
-import { getResponseHeaders } from './utils/headers.js';
+import { getResponseHeaders } from './utils/http.js';
 import { get, save, remove, flat, maxId } from './utils/db.js';
 
 export const handler = async (event, context) => {
@@ -37,22 +37,16 @@ export const handler = async (event, context) => {
   try {
 
     // 1. Get series details with instructor
-    const [seriesRows] = await pool.execute(`
-      SELECT s.*, i.name as instructor?.name
-      FROM series s
-      LEFT JOIN instructors i ON s.instructor?.id = i.id
-      WHERE s.id = ?
-    `, [parseInt(id)]);
+    const allSeries = await flat('series', `m_id=${id}`);
+    const series = allSeries?.[0];
 
-    if (seriesRows.length === 0) {
-      return { 
-        statusCode: 404, 
-        headers, 
-        body: JSON.stringify({ error: 'Series not found' }) 
+    if (!series) {
+      return {
+        statusCode: 404,
+        headers,
+        body: JSON.stringify({ error: 'Series not found' })
       };
     }
-
-    const series = seriesRows[0];
 
     // Delete existing vector store if it exists
     if (series.vector_store_id) {
@@ -67,11 +61,7 @@ export const handler = async (event, context) => {
     }
 
     // 2. Get all courses for this series
-    const [coursesRows] = await pool.execute(`
-      SELECT id, title, transcript
-      FROM courses
-      WHERE series?.id = ?
-    `, [parseInt(id)]);
+    const coursesRows = await flat('courses', `m_series_id=${id}`);
 
     // 3. Create vector store
     const vectorStoreName = `${series.instructor?.name} - ${series.name}`;
@@ -88,11 +78,8 @@ export const handler = async (event, context) => {
     const vectorStore = await vectorStoreResponse.json();
 
     // 4. Save vector store ID to series table
-    await pool.execute(`
-      UPDATE series
-      SET vector_store_id = ?
-      WHERE id = ?
-    `, [vectorStore.id, parseInt(id)]);
+    series.vector_store_id = vectorStore.id;
+    await save('series', series);
 
     // 5. Process each course transcript
     for (const course of coursesRows) {

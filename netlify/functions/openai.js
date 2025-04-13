@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { parsePathParams } from './utils/pathUtils.js';
 import { parse } from 'multipart-formdata';
-import { getResponseHeaders } from './utils/headers.js';
+import { getResponseHeaders } from './utils/http.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

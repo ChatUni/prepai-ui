@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { getResponseHeaders } from './utils/headers.js';
+import { getResponseHeaders } from './utils/http.js';
 
 export const handler = async (event) => {
   // Handle OPTIONS requests for CORS preflight

@@ -1,5 +1,5 @@
 import { parsePathParams } from './utils/pathUtils.js';
-import { getResponseHeaders } from './utils/headers.js';
+import { getResponseHeaders, res } from './utils/http.js';
 import { get, save, remove, flat, maxId } from './utils/db.js';
 import { tap } from './utils';
 

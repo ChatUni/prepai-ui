@@ -1,6 +1,7 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 import { setUIStore } from './coursesStore';
 import { getApiBaseUrl } from '../config.js';
+import { tap } from '../../netlify/functions/utils/index.js';
 
 class UIStore {
   searchKeyword = '';
@@ -65,7 +66,7 @@ class UIStore {
       
       const favorites = await response.json();
       const favoriteIds = new Set(favorites.map(course => course.id));
-      
+
       runInAction(() => {
         this.favoriteCourseIds = favoriteIds;
       });
@@ -94,15 +95,11 @@ class UIStore {
   async toggleFavorite(courseId) {
     try {
       const apiBaseUrl = getApiBaseUrl();
-      const response = await fetch(`${apiBaseUrl}/favorites/toggle`, {
+      const response = await fetch(`${apiBaseUrl}/favorites/toggle?userId=${this.userId}&courseId=${courseId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          userId: this.userId,
-          courseId: courseId
-        }),
       });
       
       if (!response.ok) {

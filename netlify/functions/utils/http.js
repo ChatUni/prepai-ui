@@ -5,3 +5,5 @@ export const getResponseHeaders = () => ({
   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
 });
+
+export const res = body => ({ statusCode: 200, headers: getResponseHeaders(), body: JSON.stringify(body) })
