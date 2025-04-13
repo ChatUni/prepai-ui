@@ -4,7 +4,7 @@ import { tap } from '../../netlify/functions/utils/index.js';
 
 class ExamStore {
   questions = [];
-  selectedAnswers = new Map(); // Map of questionId -> selected option
+  selectedAnswers = observable.map({}); // Map of questionId -> selected option
   isSubmitted = false;
   showResults = false;
   examResults = { correct: 0, incorrect: 0 };
@@ -22,9 +22,14 @@ class ExamStore {
       resetExam: action,
       closeResults: action,
       questionsWithParsedOptions: computed,
-      getOptionClass: action,
-      isCorrectAnswer: action
+      getOptionClass: computed,
+      isCorrectAnswer: action,
+      getSelectedAnswer: computed
     });
+  }
+
+  get getSelectedAnswer() {
+    return (questionId) => this.selectedAnswers.get(questionId);
   }
   async fetchQuestions(courseId) {
     const apiBaseUrl = getApiBaseUrl();
@@ -47,7 +52,9 @@ class ExamStore {
   
   selectAnswer(questionId, option) {
     if (!this.isSubmitted) {
-      this.selectedAnswers.set(questionId, option);
+      runInAction(() => {
+        this.selectedAnswers.set(questionId, option);
+      });
     }
   }
   
@@ -56,7 +63,7 @@ class ExamStore {
     let incorrect = 0;
     
     this.questions.forEach(question => {
-      const selectedAnswer = this.selectedAnswers.get(question.id);
+      const selectedAnswer = this.getSelectedAnswer(question.id);
       if (selectedAnswer) {
         const options = JSON.parse(question.options);
         if (selectedAnswer === options[question.answer.charCodeAt(0) - 65]) {
@@ -105,34 +112,35 @@ class ExamStore {
     return option === options[question.answer.charCodeAt(0) - 65];
   }
   
-  // Method to get the appropriate class for an option
-  getOptionClass(questionId, option) {
-    let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
-    const question = this.questions.find(q => q.id === questionId);
-    if (!question) return optionClass;
-    
-    const selectedAnswer = this.selectedAnswers.get(questionId);
-    const options = JSON.parse(question.options);
-    const correctAnswer = options[question.answer.charCodeAt(0) - 65];
-    
-    if (this.isSubmitted) {
-      if (option === correctAnswer) {
-        // Always show correct answer in green after submission
-        optionClass += " bg-green-100 border-green-500";
-      } else if (selectedAnswer === option) {
-        // Show incorrect selected answer in red
-        optionClass += " bg-red-100 border-red-500";
+  get getOptionClass() {
+    return (questionId, option) => {
+      let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
+      const question = this.questions.find(q => q.id === questionId);
+      if (!question) return optionClass;
+      
+      const selectedAnswer = this.getSelectedAnswer(questionId);
+      const options = JSON.parse(question.options);
+      const correctAnswer = options[question.answer.charCodeAt(0) - 65];
+      
+      if (this.isSubmitted) {
+        if (option === correctAnswer) {
+          // Always show correct answer in green after submission
+          optionClass += " bg-green-100 border-green-500";
+        } else if (selectedAnswer === option) {
+          // Show incorrect selected answer in red
+          optionClass += " bg-red-100 border-red-500";
+        } else {
+          optionClass += " border-gray-200";
+        }
       } else {
-        optionClass += " border-gray-200";
+        // Not submitted yet - show selection in blue
+        optionClass += selectedAnswer === option
+          ? " bg-blue-100 border-blue-500"
+          : " hover:bg-gray-50 border-gray-200";
       }
-    } else {
-      // Not submitted yet - show selection in blue
-      optionClass += selectedAnswer === option
-        ? " bg-blue-100 border-blue-500"
-        : " hover:bg-gray-50 border-gray-200";
-    }
-    
-    return optionClass;
+      
+      return optionClass;
+    };
   }
 }
 
