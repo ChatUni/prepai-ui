@@ -60,7 +60,8 @@ const RouteHandler = observer(() => {
       location.pathname === '/account' ||
       location.pathname === '/login' ||
       location.pathname === '/assistants' ||
-      location.pathname.startsWith('/assistants/')
+      location.pathname.startsWith('/assistants/') ||
+      location.pathname.startsWith('/exam/questions/') // Add this line to exclude exam question pages
     ) {
       console.log(`On ${location.pathname} page, skipping navigation control`);
       return;
@@ -82,7 +83,7 @@ const RouteHandler = observer(() => {
     // Navigate to home if leaving a special category page
     else if (
       (uiStore.activeCategory !== '收藏' && location.pathname === '/favorites') ||
-      (uiStore.activeCategory !== '考测' && location.pathname.startsWith('/exam')) ||
+      (uiStore.activeCategory !== '考测' && location.pathname === '/exam') ||
       (uiStore.activeCategory !== '私教' && location.pathname === '/instructor')
     ) {
       // Redirect to home only for specific pages, not for series
