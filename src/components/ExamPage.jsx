@@ -4,19 +4,21 @@ import coursesStore from '../stores/coursesStore';
 import uiStore from '../stores/uiStore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import languageStore from '../stores/languageStore';
 
 const ExamPage = observer(() => {
   const navigate = useNavigate();
+  const { t } = languageStore;
   
   useEffect(() => {
     coursesStore.fetchCourses();
-    uiStore.setActiveCategory("考测");
+    uiStore.setActiveCategory(t('menu.categories.testing'));
     
     // Cleanup when component unmounts
     return () => {
-      uiStore.setActiveCategory("私教"); // Reset to default
+      uiStore.setActiveCategory(t('menu.categories.private')); // Reset to default
     };
-  }, []);
+  }, [t]); // Add t as dependency to re-run when language changes
 
   const handleCourseClick = (course) => {
     console.log('Course clicked:', course);
@@ -43,10 +45,16 @@ const ExamPage = observer(() => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-medium text-gray-900">{course.title}</h3>
-                  <p className="text-sm text-gray-500">讲师: {course.instructor?.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {t('menu.instructor_label')}: {
+                      typeof course.instructor === 'string'
+                        ? course.instructor
+                        : course.instructor?.name || t('menu.categories.unknownInstructor')
+                    }
+                  </p>
                 </div>
                 <div className="text-sm text-gray-500">
-                  {new Date(course.date_added).toLocaleDateString('zh-CN')}
+                  {new Date(course.date_added).toLocaleDateString(t('menu.categories.dateLocale'))}
                 </div>
               </div>
             </div>

@@ -2,11 +2,12 @@ import { makeObservable, observable, action, runInAction } from 'mobx';
 import { setUIStore } from './coursesStore';
 import { getApiBaseUrl } from '../config.js';
 import { tap } from '../../netlify/functions/utils/index.js';
+import languageStore from './languageStore';
 
 class UIStore {
   searchKeyword = '';
-  activeCategory = '私教'; // Default to '私教' (Private Tutoring)
-  activeNavItem = '私教'; // Default to '私教' (Private Tutoring)
+  activeCategory = '';
+  activeNavItem = '';
   selectedInstructorId = null;
   favoriteCourseIds = new Set(); // Store favorite course IDs
   userId = 1; // Default user ID for development

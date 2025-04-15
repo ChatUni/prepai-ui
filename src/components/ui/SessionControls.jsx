@@ -2,9 +2,11 @@ import { useState } from "react";
 import Button from "./Button";
 import { observer } from "mobx-react-lite";
 import realtimeSessionStore from "../../stores/realtimeSessionStore";
+import languageStore from "../../stores/languageStore";
 
 const SessionStopped = observer(() => {
   const store = realtimeSessionStore;
+  const { t } = languageStore;
   const { instructions, isTextareaFocused } = store;
 
   const handleStartSession = () => {
@@ -19,7 +21,7 @@ const SessionStopped = observer(() => {
         onChange={(e) => store.setInstructions(e.target.value)}
         onFocus={() => store.setTextareaFocus(true)}
         onBlur={() => store.setTextareaFocus(false)}
-        placeholder="输入指令..."
+        placeholder={t('session.enterInstructions')}
         className={`w-full p-2 text-sm border rounded resize-none transition-all duration-200 ${
           isTextareaFocused ? 'h-32' : 'h-10'
         }`}
@@ -28,7 +30,7 @@ const SessionStopped = observer(() => {
         onClick={handleStartSession}
         className={store.isSessionActive ? "bg-gray-600" : "bg-green-600"}
       >
-        {store.isSessionActive ? "连接中..." : "连接"}
+        {store.isSessionActive ? t('session.connecting') : t('session.connect')}
       </Button>
     </div>
   );
@@ -36,6 +38,7 @@ const SessionStopped = observer(() => {
 
 const SessionActive = observer(() => {
   const store = realtimeSessionStore;
+  const { t } = languageStore;
   const { instructions, isTextareaFocused } = store;
 
   return (
@@ -50,7 +53,7 @@ const SessionActive = observer(() => {
         }`}
       /> */}
       <Button onClick={() => store.stopSession()} className="bg-red-400">
-        断开
+        {t('session.disconnect')}
       </Button>
     </div>
   );

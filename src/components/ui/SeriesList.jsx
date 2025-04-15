@@ -1,8 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import SeriesCard from './SeriesCard';
+import languageStore from '../../stores/languageStore';
 
 const SeriesList = observer(({ title, series, isAllInstructors = false }) => {
+  const { t } = languageStore;
   return (
     <div className="w-full">
       {title && (
@@ -16,7 +18,7 @@ const SeriesList = observer(({ title, series, isAllInstructors = false }) => {
       </div>
       
       <div className="mt-3 md:mt-4 text-gray-500 text-xs md:text-sm">
-        显示 {series.length} 个系列
+        {t('series.seriesCount', { count: series.length })}
       </div>
     </div>
   );

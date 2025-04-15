@@ -5,8 +5,10 @@ import chatStore from '../stores/chatStore';
 import instructorChatStore from '../stores/instructorChatStore';
 import ChatInput from './ui/ChatInput';
 import SessionControls from './ui/SessionControls';
+import languageStore from '../stores/languageStore';
 
 const InstructorChatPage = observer(() => {
+  const { t } = languageStore;
   const instructor = instructorChatStore.currentInstructor;
   const isSessionActive = realtimeSessionStore.isSessionActive;
   const messages = chatStore.messages;
@@ -42,7 +44,7 @@ const InstructorChatPage = observer(() => {
           />
           <div className='flex-grow'>
             <h2 className="text-xl font-bold">{instructor?.name}</h2>
-            <p className="text-sm text-gray-600">实时聊天</p>
+            <p className="text-sm text-gray-600">{t('menu.categories.instructor.chat.realTimeChat')}</p>
           </div>
           <div className="bg-white">
             <SessionControls />
@@ -87,7 +89,7 @@ const InstructorChatPage = observer(() => {
           <ChatInput
             onSendMessage={handleSendMessage}
             disabled={!isSessionActive}
-            placeholder="输入消息..."
+            placeholder={t('menu.categories.instructor.chat.inputMessage')}
           />
         </div>
       </div>

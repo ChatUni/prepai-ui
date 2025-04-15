@@ -1,0 +1,159 @@
+{
+  "common": {
+    "search": "検索",
+    "submit": "送信",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功"
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "loginError": "メールアドレスまたはパスワードが無効です"
+  },
+  "menu": {
+    "home": "ホーム",
+    "courses": "コース",
+    "series": "シリーズ",
+    "favorites": "お気に入り",
+    "account": "アカウント",
+    "assistants": "アシスタント",
+    "instructor": "講師",
+    "instructor_label": "講師",
+    "testing": "テスト",
+    "private": "個人指導",
+    "ai": "AIアシスタント",
+    "my": "マイページ",
+    "account_page": {
+      "guest": "ゲスト",
+      "my_vip": "マイVIP",
+      "exam_records": "テスト履歴",
+      "customer_service": "カスタマーサービス",
+      "coupons": "クーポン",
+      "logout": "ログアウト",
+      "valid_until": "有効期限"
+    },
+    "categories": {
+      "testing": "テスト",
+      "videoCourses": "ビデオコース",
+      "favorites": "お気に入り",
+      "private": "個人指導",
+      "seriesCourses": "シリーズコース",
+      "documentCourses": "ドキュメントコース",
+      "recommended": "おすすめ",
+      "myFavorites": "お気に入り",
+      "playHistory": "再生履歴",
+      "privateInstruction": "個人指導リアルタイム音声",
+      "video": "ビデオ",
+      "document": "ドキュメント",
+      "courses": "コース",
+      "mostViewed": "人気",
+      "titleFormat": "{type}{category} ({count})",
+      "instructor": "講師",
+      "dateLocale": "ja-JP",
+      "loading": "読み込み中...",
+      "back": "戻る",
+      "error": "エラー",
+      "video": {
+        "loadingSubtitles": "字幕を読み込み中...",
+        "noSubtitles": "字幕が見つかりません",
+        "noSummary": "要約データがありません",
+        "tabs": {
+          "subtitles": "字幕",
+          "summary": "要約",
+          "courseInfo": "コース情報"
+        },
+        "courseInfo": {
+          "instructor": "講師",
+          "duration": "時間",
+          "viewCount": "視聴回数",
+          "category": "カテゴリー",
+          "keywords": "キーワード",
+          "courseIntro": "コース紹介"
+        },
+        "summary": {
+          "mainTopics": "主なトピック",
+          "keyPoints": "重要ポイント",
+          "contentInfo": "コンテンツ情報",
+          "wordCount": "単語数",
+          "readingTime": "読了時間",
+          "readingTimeUnit": "分",
+          "difficulty": "難易度"
+        }
+      },
+      "instructor": {
+        "voiceGuidance": "リアルタイム音声指導",
+        "instructorsTitle": "講師リアルタイム音声指導",
+        "seriesTitle": "{name}のコースシリーズ",
+        "chat": {
+          "realTimeChat": "リアルタイムチャット",
+          "inputMessage": "メッセージを入力..."
+        }
+      },
+      "assistant": {
+        "noMessages": "メッセージ履歴がありません",
+        "loading": "AIアシスタントを読み込み中...",
+        "loadingFailed": "読み込みに失敗しました",
+        "retry": "再試行",
+        "notFound": "AIアシスタントが見つかりません",
+        "back": "戻る",
+        "inputQuestion": "質問を入力してください..."
+      }
+    }
+  },
+  "course": {
+    "addCourse": "コースを追加",
+    "editCourse": "コースを編集",
+    "deleteCourse": "コースを削除",
+    "courseTitle": "コースタイトル",
+    "courseDescription": "コース説明",
+    "courseCount": "{count}件のコースを表示",
+    "practiceQuestions": "練習問題",
+    "addToFavorites": "お気に入りに追加",
+    "removeFromFavorites": "お気に入りから削除",
+    "pptFormat": "PPT",
+    "moreKeywords": "+{count}"
+  },
+  "series": {
+    "seriesCount": "{count}件のシリーズを表示",
+    "unknownInstructor": "不明な講師",
+    "noDescription": "説明なし",
+    "courseCount": "{count}件のコース"
+  },
+  "search": {
+    "allInstructors": "全ての講師",
+    "searchPlaceholder": "コースを検索..."
+  },
+  "chat": {
+    "sendMessage": "メッセージを送信",
+    "typeMessage": "メッセージを入力...",
+    "connecting": "接続中...",
+    "connected": "接続済み",
+    "disconnected": "切断",
+    "send": "送信",
+    "inputPlaceholder": "メッセージを入力..."
+  },
+  "session": {
+    "enterInstructions": "指示を入力...",
+    "connecting": "接続中...",
+    "connect": "接続",
+    "disconnect": "切断"
+  },
+  "exam": {
+    "back": "戻る",
+    "submit": "提出",
+    "noQuestions": "問題がありません",
+    "tryAgain": "後でもう一度お試しください",
+    "results": "試験結果",
+    "correctAnswers": "正解",
+    "incorrectAnswers": "不正解",
+    "unanswered": "未回答",
+    "close": "閉じる"
+  }
+}

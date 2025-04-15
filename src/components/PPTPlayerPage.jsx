@@ -2,8 +2,10 @@ import { observer } from 'mobx-react-lite';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import coursesStore from '../stores/coursesStore';
+import languageStore from '../stores/languageStore';
 
 const PPTPlayerPage = observer(() => {
+  const { t } = languageStore;
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
@@ -119,7 +121,7 @@ const PPTPlayerPage = observer(() => {
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">加载中...</p>
+            <p className="text-gray-600">{t('menu.categories.loading')}</p>
           </div>
         </div>
       </div>
@@ -133,10 +135,10 @@ const PPTPlayerPage = observer(() => {
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
-          返回
+          {t('menu.categories.back')}
         </button>
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>错误: {error}</p>
+          <p>{t('menu.categories.error')}: {error}</p>
         </div>
       </div>
     );
@@ -148,7 +150,7 @@ const PPTPlayerPage = observer(() => {
         <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
-        Back
+        {t('menu.categories.back')}
       </button>
       
       <div className="bg-gray-100 w-full flex-grow flex flex-col items-center justify-center relative">

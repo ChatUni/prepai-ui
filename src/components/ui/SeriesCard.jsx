@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import coursesStore from '../../stores/coursesStore';
 import routeStore from '../../stores/routeStore';
+import languageStore from '../../stores/languageStore';
 
 const SeriesCard = observer(({ series }) => {
+  const { t } = languageStore;
   const navigate = useNavigate();
   
   // Validate series object
@@ -77,16 +79,16 @@ const SeriesCard = observer(({ series }) => {
                 <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
               </div>
             )}
-            <span className="text-sm text-gray-600 dark:text-gray-300">{instructor?.name || 'Unknown Instructor'}</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">{instructor?.name || t('series.unknownInstructor')}</span>
           </div>
           
           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 h-10 mb-2">
-            {desc || 'No description available'}
+            {desc || t('series.noDescription')}
           </p>
           
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-blue-600 dark:text-blue-400">
-              {courseCount} 个课程
+              {t('series.courseCount', { count: courseCount })}
             </span>
           </div>
         </div>

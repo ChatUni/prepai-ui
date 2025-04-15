@@ -3,8 +3,10 @@ import { useState } from 'react';
 import uiStore from '../../stores/uiStore';
 import coursesStore from '../../stores/coursesStore';
 import { useNavigate } from 'react-router-dom';
+import languageStore from '../../stores/languageStore';
 
 const SearchBar = observer(() => {
+  const { t } = languageStore;
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -37,7 +39,7 @@ const SearchBar = observer(() => {
           <span className="truncate max-w-[200px]">
             {uiStore.selectedInstructorId
               ? coursesStore.instructors.find(i => i.id === uiStore.selectedInstructorId)?.name
-              : "所有老师"}
+              : t('search.allInstructors')}
           </span>
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 flex-shrink-0"
@@ -62,7 +64,7 @@ const SearchBar = observer(() => {
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${!uiStore.selectedInstructorId ? 'bg-blue-50' : ''}`}
                 onClick={() => handleInstructorFilter("")}
               >
-                所有老师
+                {t('search.allInstructors')}
               </li>
               {coursesStore.instructors.map(instructor => (
                 <li
@@ -98,7 +100,7 @@ const SearchBar = observer(() => {
         <input
           type="text"
           className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none"
-          placeholder="搜索课程..."
+          placeholder={t('search.searchPlaceholder')}
           value={uiStore.searchKeyword}
           onChange={handleSearch}
         />

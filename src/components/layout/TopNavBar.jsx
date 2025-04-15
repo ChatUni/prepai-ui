@@ -2,6 +2,8 @@ import { observer } from 'mobx-react-lite';
 import Logo from '../ui/Logo';
 import uiStore from '../../stores/uiStore';
 import userStore from '../../stores/userStore';
+import languageStore from '../../stores/languageStore';
+import LanguageSelector from '../ui/LanguageSelector';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
@@ -9,26 +11,27 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const navigate = useNavigate();
   const isVideoPlayerPage = location.pathname.startsWith('/video/');
   const isLoggedIn = userStore.userInfo.isLoggedIn;
+  const { t } = languageStore;
   
   const navItems = [
-    { id: 'testing', label: '考测' },
-    { id: 'private', label: '私教' },
-    { id: 'ai', label: 'AI助理' },
-    { id: 'my', label: '我的' }
+    { id: 'testing', label: t('menu.testing') },
+    { id: 'private', label: t('menu.private') },
+    { id: 'ai', label: t('menu.ai') },
+    { id: 'my', label: t('menu.my') }
   ];
 
   const handleNavClick = (item) => {
     uiStore.setActiveNavItem(item.label);
     
     if (item.id === 'testing') {
-      uiStore.setActiveCategory('考测');
+      uiStore.setActiveCategory(t('menu.categories.testing'));
       // Reset other states when switching to exam mode
       uiStore.setSelectedInstructorId(null);
       uiStore.setSearchKeyword('');
       uiStore.setParentCategory(null);
       navigate('/exam');
     } else if (item.id === 'private') {
-      uiStore.setActiveCategory('视频课程');
+      uiStore.setActiveCategory(t('menu.categories.videoCourses'));
       uiStore.setCourseTypeFilter(true); // Set to video courses
       uiStore.setParentCategory(null);
       uiStore.setSelectedInstructorId(null);
@@ -97,10 +100,15 @@ const TopNavBar = observer(({ onMenuToggle }) => {
                 onClick={handleLoginClick}
                 className="text-sm text-blue-600 hover:text-blue-800"
               >
-                登录
+                {t('auth.login')}
               </button>
             )}
           </div>
+        </div>
+
+        {/* Language selector */}
+        <div className="absolute right-16 md:right-4 top-4">
+          <LanguageSelector />
         </div>
         
         {/* Flexible middle section with desktop navigation items */}
@@ -160,7 +168,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
               className="text-sm font-medium cursor-pointer flex flex-col items-center text-blue-600"
               onClick={handleLoginClick}
             >
-              <div>登录</div>
+              <div>{t('auth.login')}</div>
             </div>
           ) : (
             // Show navigation items when logged in

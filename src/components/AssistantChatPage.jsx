@@ -5,6 +5,7 @@ import ChatInput from './ui/ChatInput';
 import assistantsStore from '../stores/assistantsStore';
 import assistantChatStore from '../stores/assistantChatStore';
 import Button from './ui/Button';
+import languageStore from '../stores/languageStore';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -26,6 +27,7 @@ const AssistantChatMessages = observer(() => {
   const messagesEndRef = useRef(null);
   const messages = assistantChatStore.messages;
   const isLoading = assistantChatStore.loading;
+  const { t } = languageStore;
 
   // Auto-scroll to bottom when new messages arrive or when loading state changes
   useEffect(() => {
@@ -37,7 +39,7 @@ const AssistantChatMessages = observer(() => {
   if (messages.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        没有消息历史记录
+        {t('menu.assistant.noMessages')}
       </div>
     );
   }
@@ -75,6 +77,7 @@ const AssistantChatMessages = observer(() => {
 const AssistantChatPage = observer(() => {
   const { assistantId } = useParams();
   const navigate = useNavigate();
+  const { t } = languageStore;
   
   // Fetch all assistants if needed
   useEffect(() => {
@@ -117,7 +120,7 @@ const AssistantChatPage = observer(() => {
   if (assistantsStore.loading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">正在加载AI助理...</div>
+        <div className="text-xl text-gray-600">{t('menu.assistant.loading')}</div>
       </div>
     );
   }
@@ -126,7 +129,7 @@ const AssistantChatPage = observer(() => {
   if (assistantsStore.error) {
     return (
       <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="text-xl text-red-600 mb-4">加载失败</div>
+        <div className="text-xl text-red-600 mb-4">{t('menu.assistant.loadingFailed')}</div>
         <div className="text-gray-600">{assistantsStore.error}</div>
         <button
           onClick={() => assistantsStore.fetchAssistants()}

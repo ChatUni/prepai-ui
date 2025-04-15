@@ -1,8 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import Button from './Button';
+import languageStore from '../../stores/languageStore';
 
-const ChatInput = observer(({ onSendMessage, disabled = false, placeholder = "输入消息..." }) => {
+const ChatInput = observer(({ onSendMessage, disabled = false, placeholder }) => {
+  const { t } = languageStore;
+  // Use provided placeholder or default to translation
+  const inputPlaceholder = placeholder || t('chat.inputPlaceholder');
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e) => {
@@ -19,7 +23,7 @@ const ChatInput = observer(({ onSendMessage, disabled = false, placeholder = "�
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder={placeholder}
+        placeholder={inputPlaceholder}
         className="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={disabled}
       />
@@ -28,7 +32,7 @@ const ChatInput = observer(({ onSendMessage, disabled = false, placeholder = "�
         className={!disabled && message.trim() ? 'bg-green-600' : 'bg-gray-400 cursor-not-allowed'}
         disabled={disabled || !message.trim()}
       >
-        发送
+        {t('chat.send')}
       </Button>
     </form>
   );

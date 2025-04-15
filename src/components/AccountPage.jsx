@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import userStore from '../stores/userStore';
+import languageStore from '../stores/languageStore';
 import DEFAULT_AVATAR from '../assets/avatar.png';
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
+  const t = languageStore.t;
   
   useEffect(() => {
     // Log for debugging
@@ -77,7 +79,7 @@ const AccountPage = observer(() => {
             
             {/* User Info */}
             <div className="ml-4">
-              <h2 className="text-xl font-semibold">游客</h2>
+              <h2 className="text-xl font-semibold">{t('menu.account_page.guest')}</h2>
               <p className="text-gray-600">ID: 53</p>
             </div>
           </div>
@@ -97,8 +99,8 @@ const AccountPage = observer(() => {
         >
           <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
             <div>
-              <span className="text-base mr-2">我的VIP</span>
-              <span className="text-gray-500 text-sm">有效期至2025-12-27 10:33:52</span>
+              <span className="text-base mr-2">{t('menu.account_page.my_vip')}</span>
+              <span className="text-gray-500 text-sm">{t('menu.account_page.valid_until')} 2025-12-27 10:33:52</span>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -112,7 +114,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('exams')}
         >
           <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>我的考试记录</span>
+            <span>{t('menu.account_page.exam_records')}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
             </svg>
@@ -125,7 +127,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('service')}
         >
           <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>联系客服</span>
+            <span>{t('menu.account_page.customer_service')}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
             </svg>
@@ -138,7 +140,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('coupons')}
         >
           <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>优惠券</span>
+            <span>{t('menu.account_page.coupons')}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
             </svg>
@@ -151,7 +153,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('logout')}
         >
           <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>退出登录</span>
+            <span>{t('menu.account_page.logout')}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
             </svg>

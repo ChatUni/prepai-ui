@@ -1,0 +1,159 @@
+{
+  "common": {
+    "search": "Search",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loginError": "Invalid email or password"
+  },
+  "menu": {
+    "home": "Home",
+    "courses": "Courses",
+    "series": "Series",
+    "favorites": "Favorites",
+    "account": "Account",
+    "assistants": "Assistants",
+    "instructor": "Instructor",
+    "instructor_label": "Instructor",
+    "testing": "Testing",
+    "private": "Private",
+    "ai": "AI Assistant",
+    "my": "My Account",
+    "account_page": {
+      "guest": "Guest",
+      "my_vip": "My VIP",
+      "exam_records": "My Exam Records",
+      "customer_service": "Contact Customer Service",
+      "coupons": "Coupons",
+      "logout": "Logout",
+      "valid_until": "Valid until"
+    },
+    "categories": {
+      "testing": "Testing",
+      "videoCourses": "Video Courses",
+      "favorites": "Favorites",
+      "private": "Private",
+      "seriesCourses": "Series Courses",
+      "documentCourses": "Document Courses",
+      "recommended": "Recommended",
+      "myFavorites": "My Favorites",
+      "playHistory": "Play History",
+      "privateInstruction": "Private Real-time Voice Instruction",
+      "video": "Video",
+      "document": "Document",
+      "courses": "Courses",
+      "mostViewed": "Most Viewed",
+      "titleFormat": "{type} {category} ({count})",
+      "instructor": "Instructor",
+      "dateLocale": "en-US",
+      "loading": "Loading...",
+      "back": "Back",
+      "error": "Error",
+      "video": {
+        "loadingSubtitles": "Loading subtitles...",
+        "noSubtitles": "No subtitles found",
+        "noSummary": "No summary data available",
+        "tabs": {
+          "subtitles": "Subtitles",
+          "summary": "Summary",
+          "courseInfo": "Course Info"
+        },
+        "courseInfo": {
+          "instructor": "Instructor",
+          "duration": "Duration",
+          "viewCount": "Views",
+          "category": "Category",
+          "keywords": "Keywords",
+          "courseIntro": "Course Introduction"
+        },
+        "summary": {
+          "mainTopics": "Main Topics",
+          "keyPoints": "Key Points",
+          "contentInfo": "Content Information",
+          "wordCount": "Word Count",
+          "readingTime": "Reading Time",
+          "readingTimeUnit": "minutes",
+          "difficulty": "Difficulty Level"
+        }
+      },
+      "instructor": {
+        "voiceGuidance": "Real-time Voice Guidance",
+        "instructorsTitle": "Instructor Real-time Voice Guidance",
+        "seriesTitle": "{name}'s Course Series",
+        "chat": {
+          "realTimeChat": "Real-time Chat",
+          "inputMessage": "Type your message..."
+        }
+      },
+      "assistant": {
+        "noMessages": "No message history",
+        "loading": "Loading AI Assistant...",
+        "loadingFailed": "Loading failed",
+        "retry": "Retry",
+        "notFound": "AI Assistant not found",
+        "back": "Back",
+        "inputQuestion": "Enter your question..."
+      }
+    }
+  },
+  "course": {
+    "addCourse": "Add Course",
+    "editCourse": "Edit Course",
+    "deleteCourse": "Delete Course",
+    "courseTitle": "Course Title",
+    "courseDescription": "Course Description",
+    "courseCount": "Showing {count} courses",
+    "practiceQuestions": "Practice questions",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "pptFormat": "PPT",
+    "moreKeywords": "+{count}"
+  },
+  "series": {
+    "seriesCount": "Showing {count} series",
+    "unknownInstructor": "Unknown Instructor",
+    "noDescription": "No description available",
+    "courseCount": "{count} courses"
+  },
+  "search": {
+    "allInstructors": "All Instructors",
+    "searchPlaceholder": "Search courses..."
+  },
+  "chat": {
+    "sendMessage": "Send Message",
+    "typeMessage": "Type your message...",
+    "connecting": "Connecting...",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "send": "Send",
+    "inputPlaceholder": "Type your message..."
+  },
+  "session": {
+    "enterInstructions": "Enter instructions...",
+    "connecting": "Connecting...",
+    "connect": "Connect",
+    "disconnect": "Disconnect"
+  },
+  "exam": {
+    "back": "Back",
+    "submit": "Submit",
+    "noQuestions": "No questions available",
+    "tryAgain": "Please try again later",
+    "results": "Exam Results",
+    "correctAnswers": "Correct Answers",
+    "incorrectAnswers": "Incorrect Answers",
+    "unanswered": "Unanswered",
+    "close": "Close"
+  }
+}

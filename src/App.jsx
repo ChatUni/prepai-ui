@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import './App.css';
 import { useState } from 'react';
+import languageStore from './stores/languageStore';
 
 // Import components
 import TopNavBar from './components/layout/TopNavBar';
@@ -38,6 +39,7 @@ import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
 import './stores/assistantsStore';
+import './stores/languageStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -51,6 +53,7 @@ window.coursesStore = coursesStore;
 const RouteHandler = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = languageStore;
   
   // Sync route parameters with the store on location change
   useEffect(() => {
@@ -71,23 +74,23 @@ const RouteHandler = observer(() => {
     }
     
     // Handle navigation based on active category
-    if (uiStore.activeCategory === '收藏' && location.pathname !== '/favorites') {
+    if (uiStore.activeCategory === t('menu.categories.favorites') && location.pathname !== '/favorites') {
       navigate('/favorites');
     }
-    else if (uiStore.activeCategory === '考测' && !location.pathname.startsWith('/exam')) {
+    else if (uiStore.activeCategory === t('menu.categories.testing') && !location.pathname.startsWith('/exam')) {
       navigate('/exam');
     }
-    else if (uiStore.activeCategory === '私教' &&
+    else if (uiStore.activeCategory === t('menu.categories.private') &&
              !location.pathname.startsWith('/instructor') &&
              !location.pathname.startsWith('/series')) {
-      // Allow series paths even when activeCategory is '私教'
+      // Allow series paths even when activeCategory is private
       navigate('/instructor');
     }
     // Navigate to home if leaving a special category page
     else if (
-      (uiStore.activeCategory !== '收藏' && location.pathname === '/favorites') ||
-      (uiStore.activeCategory !== '考测' && location.pathname === '/exam') ||
-      (uiStore.activeCategory !== '私教' && location.pathname === '/instructor')
+      (uiStore.activeCategory !== t('menu.categories.favorites') && location.pathname === '/favorites') ||
+      (uiStore.activeCategory !== t('menu.categories.testing') && location.pathname === '/exam') ||
+      (uiStore.activeCategory !== t('menu.categories.private') && location.pathname === '/instructor')
     ) {
       // Redirect to home only for specific pages, not for series
       navigate('/');

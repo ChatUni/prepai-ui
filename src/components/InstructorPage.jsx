@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import SeriesList from './ui/SeriesList';
 import SearchBar from './ui/SearchBar';
 import { tap } from '../../netlify/functions/utils';
+import languageStore from '../stores/languageStore';
 
 const InstructorCard = ({ instructor, onClick }) => {
   const navigate = useNavigate();
+  const { t } = languageStore;
   
   const handleChatClick = (e) => {
     e.stopPropagation(); // Prevent triggering the card onClick
@@ -35,7 +37,7 @@ const InstructorCard = ({ instructor, onClick }) => {
         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
-        实时语音辅导
+        {t('menu.categories.instructor.voiceGuidance')}
       </button>
     </div>
   );
@@ -43,6 +45,7 @@ const InstructorCard = ({ instructor, onClick }) => {
 
 const InstructorPage = observer(() => {
   const navigate = useNavigate();
+  const { t } = languageStore;
   
   // Get current instructor from the route store
   const instructor = routeStore.currentInstructor;
@@ -84,7 +87,7 @@ const InstructorPage = observer(() => {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                实时语音辅导
+                {t('menu.categories.instructor.voiceGuidance')}
               </button>
             </div>
           </div>
@@ -101,7 +104,7 @@ const InstructorPage = observer(() => {
               </div>
             ) : coursesStore.instructorSeries.length > 0 ? (
               <SeriesList
-                title={`${instructor.name}的系列课程`}
+                title={t('menu.categories.instructor.seriesTitle', { name: instructor.name })}
                 series={coursesStore.instructorSeries}
                 isAllInstructors={false}
               />
@@ -116,7 +119,7 @@ const InstructorPage = observer(() => {
         // All instructors grid view
         <div>
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-4">老师实时语音辅导</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('menu.categories.instructor.instructorsTitle')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {coursesStore.filteredInstructors.map(instructor => (
                 <InstructorCard

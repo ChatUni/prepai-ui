@@ -3,8 +3,10 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import examStore from '../stores/examStore';
 import { tap } from '../../netlify/functions/utils';
+import languageStore from '../stores/languageStore';
 
 const QuestionPage = observer(() => {
+  const { t } = languageStore;
   const { courseId } = useParams();
   const navigate = useNavigate();
 
@@ -40,14 +42,14 @@ const QuestionPage = observer(() => {
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
-          返回
+          {t('exam.back')}
         </button>
         {!examStore.isSubmitted && (
           <button
             onClick={() => examStore.submitExam()}
             className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
-            提交
+            {t('exam.submit')}
           </button>
         )}
       </div>
@@ -56,8 +58,8 @@ const QuestionPage = observer(() => {
         {examStore.questionsWithParsedOptions.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-500">
-              <p className="text-xl">暂无可用的问题</p>
-              <p className="mt-2">请稍后再试</p>
+              <p className="text-xl">{t('exam.noQuestions')}</p>
+              <p className="mt-2">{t('exam.tryAgain')}</p>
             </div>
           </div>
         ) : (
@@ -86,19 +88,19 @@ const QuestionPage = observer(() => {
       {examStore.showResults && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <h3 className="text-xl font-medium mb-4">考试结果</h3>
+            <h3 className="text-xl font-medium mb-4">{t('exam.results')}</h3>
             <div className="space-y-2 mb-6">
-              <p className="text-green-600">正确答案: {examStore.examResults.correct}</p>
-              <p className="text-red-600">错误答案: {examStore.examResults.incorrect}</p>
+              <p className="text-green-600">{t('exam.correctAnswers')}: {examStore.examResults.correct}</p>
+              <p className="text-red-600">{t('exam.incorrectAnswers')}: {examStore.examResults.incorrect}</p>
               <p className="text-gray-600">
-                未作答: {examStore.questions.length - (examStore.examResults.correct + examStore.examResults.incorrect)}
+                {t('exam.unanswered')}: {examStore.questions.length - (examStore.examResults.correct + examStore.examResults.incorrect)}
               </p>
             </div>
             <button
               onClick={() => examStore.closeResults()}
               className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
             >
-              关闭
+              {t('exam.close')}
             </button>
           </div>
         </div>

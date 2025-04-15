@@ -5,8 +5,10 @@ import coursesStore from '../stores/coursesStore';
 import videoPlayerStore from '../stores/videoPlayerStore';
 import uiStore from '../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../utils/videoTranscriptService';
+import languageStore from '../stores/languageStore';
 
 const VideoPlayerPage = observer(() => {
+  const { t } = languageStore;
   const { courseId } = useParams();
   const navigate = useNavigate();
   const videoRef = useRef(null);
@@ -335,7 +337,7 @@ const VideoPlayerPage = observer(() => {
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">加载中...</p>
+            <p className="text-gray-600">{t('menu.categories.loading')}</p>
           </div>
         </div>
       </div>
@@ -349,10 +351,10 @@ const VideoPlayerPage = observer(() => {
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
-          返回
+          {t('menu.categories.back')}
         </button>
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>错误: {error}</p>
+          <p>{t('menu.categories.error')}: {error}</p>
         </div>
       </div>
     );
@@ -421,9 +423,9 @@ const VideoPlayerPage = observer(() => {
             <h1 className="text-2xl font-bold mb-2">{course.title}</h1>
             
             <div className="flex text-sm text-gray-600">
-              <div className="mr-4">讲师: {course.instructor?.name}</div>
-              <div className="mr-4">时长: {course.duration}</div>
-              <div>观看次数: {course.viewCount}</div>
+              <div className="mr-4">{t('menu.categories.video.courseInfo.instructor')}: {course.instructor?.name}</div>
+              <div className="mr-4">{t('menu.categories.video.courseInfo.duration')}: {course.duration}</div>
+              <div>{t('menu.categories.video.courseInfo.viewCount')}: {course.viewCount}</div>
             </div>
           </div>
         </div>
@@ -440,7 +442,7 @@ const VideoPlayerPage = observer(() => {
               }`}
               onClick={() => setActiveTab('subtitles')}
             >
-              字幕
+              {t('menu.categories.video.tabs.subtitles')}
             </button>
             <button
               className={`flex-1 py-3 text-center font-medium ${
@@ -450,7 +452,7 @@ const VideoPlayerPage = observer(() => {
               }`}
               onClick={() => setActiveTab('summary')}
             >
-              总结
+              {t('menu.categories.video.tabs.summary')}
             </button>
             <button
               className={`flex-1 py-3 text-center font-medium ${
@@ -460,7 +462,7 @@ const VideoPlayerPage = observer(() => {
               }`}
               onClick={() => setActiveTab('introduction')}
             >
-              课程介绍
+              {t('menu.categories.video.tabs.courseInfo')}
             </button>
           </div>
           
@@ -470,7 +472,7 @@ const VideoPlayerPage = observer(() => {
               <div className="flex justify-center items-center h-64">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <p className="text-gray-600">获取字幕中...</p>
+                  <p className="text-gray-600">{t('menu.categories.video.loadingSubtitles')}</p>
                 </div>
               </div>
             ) : activeTab === 'subtitles' ? (
@@ -550,14 +552,14 @@ const VideoPlayerPage = observer(() => {
                     );
                   })
                 ) : (
-                  <div className="text-gray-500 italic">没有找到字幕</div>
+                  <div className="text-gray-500 italic">{t('menu.categories.video.noSubtitles')}</div>
                 )}
               </div>
             ) : activeTab === 'summary' ? (
               <div className="space-y-4">
                 {summary ? (
                   <>
-                    <h3 className="font-medium text-lg">主要话题</h3>
+                    <h3 className="font-medium text-lg">{t('menu.categories.video.summary.mainTopics')}</h3>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {summary.topics.map((topic, index) => (
                         <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
@@ -566,28 +568,28 @@ const VideoPlayerPage = observer(() => {
                       ))}
                     </div>
                     
-                    <h3 className="font-medium text-lg mt-4">关键要点</h3>
+                    <h3 className="font-medium text-lg mt-4">{t('menu.categories.video.summary.keyPoints')}</h3>
                     <ul className="list-disc pl-5 space-y-2 text-gray-700 mt-2">
                       {summary.keyPoints.map((point, index) => (
                         <li key={index}>{point}</li>
                       ))}
                     </ul>
                     
-                    <h3 className="font-medium text-lg mt-6">内容信息</h3>
+                    <h3 className="font-medium text-lg mt-6">{t('menu.categories.video.summary.contentInfo')}</h3>
                     <div className="space-y-2 mt-2">
                       <p className="text-gray-700">
-                        <span className="font-medium">单词数:</span> {summary.wordCount}
+                        <span className="font-medium">{t('menu.categories.video.summary.wordCount')}:</span> {summary.wordCount}
                       </p>
                       <p className="text-gray-700">
-                        <span className="font-medium">阅读时间:</span> {summary.readingTime} 分钟
+                        <span className="font-medium">{t('menu.categories.video.summary.readingTime')}:</span> {summary.readingTime} {t('menu.categories.video.summary.readingTimeUnit')}
                       </p>
                       <p className="text-gray-700">
-                        <span className="font-medium">难度系数:</span> {summary.difficulty}
+                        <span className="font-medium">{t('menu.categories.video.summary.difficulty')}:</span> {summary.difficulty}
                       </p>
                     </div>
                   </>
                 ) : (
-                  <div className="text-gray-500 italic">没有摘要数据可用</div>
+                  <div className="text-gray-500 italic">{t('menu.categories.video.noSummary')}</div>
                 )}
               </div>
             ) : (
@@ -595,12 +597,12 @@ const VideoPlayerPage = observer(() => {
                 <div className="text-gray-700">
                   {course.category && (
                     <div className="mb-2">
-                      <span className="font-medium">分类:</span> {course.category}
+                      <span className="font-medium">{t('menu.video.courseInfo.category')}:</span> {course.category}
                     </div>
                   )}
                   {course.keywords && (
                     <div className="flex flex-wrap gap-1 mb-2">
-                      <span className="font-medium">关键词:</span>
+                      <span className="font-medium">{t('menu.video.courseInfo.keywords')}:</span>
                       {course.keywords.split(',').map((keyword, idx) => (
                         <span key={idx} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
                           {keyword.trim()}
@@ -622,16 +624,16 @@ const VideoPlayerPage = observer(() => {
       
       {/* Course Description - only visible on desktop */}
       <div className="hidden md:block bg-gray-50 p-4 rounded">
-        <h2 className="text-lg font-semibold mb-2">课程介绍</h2>
+        <h2 className="text-lg font-semibold mb-2">{t('menu.categories.video.courseInfo.courseIntro')}</h2>
         <div className="text-gray-700">
           {course.category && (
             <div className="mb-2">
-              <span className="font-medium">分类:</span> {course.category}
+              <span className="font-medium">{t('menu.categories.video.courseInfo.category')}:</span> {course.category}
             </div>
           )}
           {course.keywords && (
             <div className="flex flex-wrap gap-1 mb-2">
-              <span className="font-medium">关键词:</span>
+              <span className="font-medium">{t('menu.categories.video.courseInfo.keywords')}:</span>
               {course.keywords.split(',').map((keyword, idx) => (
                 <span key={idx} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
                   {keyword.trim()}

@@ -1,6 +1,7 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
 import { tap } from '../../netlify/functions/utils';
+import languageStore from './languageStore';
 
 class CoursesStore {
   courses = [];
@@ -119,8 +120,11 @@ class CoursesStore {
 
   setCourses(courses) {
     runInAction(() => {
-      // Just set the courses without modifying favorites
-      this.courses = courses;
+      // Format courses to ensure instructor data is properly structured
+      this.courses = courses.map(course => ({
+        ...course,
+        instructor: typeof course.instructor === 'object' ? course.instructor.name : course.instructor
+      }));
     });
   }
 
@@ -221,8 +225,10 @@ class CoursesStore {
     const selectedInstructorId = uiStore.selectedInstructorId;
     const selectedSeriesId = uiStore.selectedSeriesId;
 
+    const { t } = languageStore;
+    
     // If we're on the exam page, return filtered exam courses
-    if (activeCategory === "考测") {
+    if (activeCategory === t('menu.categories.testing')) {
       return this.examCourses.filter(course => {
         const matchesSearch = !searchKeyword ||
           course.title.toLowerCase().includes(searchKeyword) ||
@@ -230,14 +236,7 @@ class CoursesStore {
           (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
         const selectedInstructor = this.instructors.find(instructor => instructor.id === selectedInstructorId);
-        // console.log('Filtering course:', {
-        //   courseInstructor: course.instructor?.name,
-        //   selectedInstructorName: selectedInstructor?.name,
-        //   matches: !selectedInstructorId || course.instructor?.name === selectedInstructor?.name
-        // });
-        
         const matchesInstructor = !selectedInstructorId || course.instructor?.name === selectedInstructor?.name;
-
         const matchesSeries = selectedSeriesId === null || course.series?.id === selectedSeriesId;
 
         return matchesSearch && matchesInstructor && matchesSeries;
@@ -245,7 +244,6 @@ class CoursesStore {
     }
 
     // Original filtering logic for other pages
-    const courseTypeFilter = uiStore.courseTypeFilter;
     return this.courses.filter(course => {
       const matchesSearch = !searchKeyword ||
         course.title.toLowerCase().includes(searchKeyword) ||
@@ -253,7 +251,9 @@ class CoursesStore {
         (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
       // Always filter by course type (video or document)
-      const matchesCourseType = activeCategory.startsWith(course.isVideo ? "视频" : "文档");
+      const matchesCourseType = activeCategory.includes(
+        course.isVideo ? t('menu.categories.video') : t('menu.categories.document')
+      );
 
       // Special handling for different categories
       let matchesCategory = false;
@@ -261,20 +261,20 @@ class CoursesStore {
       if (!activeCategory) {
         // No category filter
         matchesCategory = true;
-      } else if (activeCategory === "视频课程") {
-        // Show all video courses for "视频课程"
+      } else if (activeCategory === t('menu.categories.videoCourses')) {
+        // Show all video courses
         matchesCategory = true;
-      } else if (activeCategory === "文档课程") {
-        // Show all document courses for "文档课程"
+      } else if (activeCategory === t('menu.categories.documentCourses')) {
+        // Show all document courses
         matchesCategory = true;
-      } else if (activeCategory === "视频推荐" || activeCategory === "文档推荐") {
-        // Show only recommended courses for the respective type
+      } else if (activeCategory.includes(t('menu.categories.recommended'))) {
+        // Show only recommended courses
         matchesCategory = course.recommended === true;
-      } else if (activeCategory === "视频收藏" || activeCategory === "文档收藏") {
+      } else if (activeCategory.includes(t('menu.categories.favorites'))) {
         // Show only favorited courses
         matchesCategory = uiStore.favoriteCourseIds.has(course.id);
-      } else if (activeCategory === "视频历史" || activeCategory === "文档历史") {
-        // For now, treat history same as all courses for the respective type
+      } else if (activeCategory.includes(t('menu.categories.playHistory'))) {
+        // For now, treat history same as all courses
         matchesCategory = true;
       } else {
         // Normal category matching

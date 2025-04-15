@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import CourseCard from './CourseCard';
+import languageStore from '../../stores/languageStore';
 
 const CourseList = observer(({ title, courses }) => {
+  const { t } = languageStore;
   // Better mobile optimization
   return (
     <div className="w-full">
@@ -18,7 +20,7 @@ const CourseList = observer(({ title, courses }) => {
       
       {/* Course count indicator */}
       <div className="mt-3 md:mt-4 text-gray-500 text-xs md:text-sm">
-        显示 {courses.length} 个课程
+        {t('course.courseCount', { count: courses.length })}
       </div>
     </div>
   );

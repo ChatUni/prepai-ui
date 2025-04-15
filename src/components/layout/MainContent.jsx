@@ -6,16 +6,18 @@ import uiStore from '../../stores/uiStore';
 import InstructorPage from '../InstructorPage';
 import ExamPage from '../ExamPage';
 import SeriesPage from '../SeriesPage';
+import languageStore from '../../stores/languageStore';
 
 const MainContent = observer(() => {
+  const { t } = languageStore;
   // Show exam page when in exam mode
-  if (uiStore.activeNavItem === '考测') {
+  if (uiStore.activeNavItem === t('menu.categories.testing')) {
     return <ExamPage />;
   }
   
   // Check if we're in a specific course category (video or document)
-  const isVideoCourseCategory = uiStore.activeCategory.includes('视频');
-  const isDocCourseCategory = uiStore.activeCategory.includes('文档');
+  const isVideoCourseCategory = uiStore.activeCategory.includes(t('menu.categories.video'));
+  const isDocCourseCategory = uiStore.activeCategory.includes(t('menu.categories.document'));
   
   // If we're in a specific course category view, show the original course content
   if (isVideoCourseCategory || isDocCourseCategory) {
@@ -63,20 +65,26 @@ const MainContent = observer(() => {
 });
 
 const MainContentCoursesSection = observer(() => {
-  // Determine course type (video vs document)
-  const courseType = uiStore.activeCategory.slice(0, 2);
+  const { t } = languageStore;
   
-  // Determine the title based on the active category
-  let mainTitle = `${courseType}课程 (${coursesStore.filteredCourses.length})`;
+  // Determine if we're in video or document mode
+  const isVideoMode = uiStore.activeCategory.includes(t('menu.categories.video'));
   
-  // Change the title based on active category
-  if (uiStore.activeCategory.includes('推荐')) {
-    mainTitle = `${courseType}推荐 (${coursesStore.filteredCourses.length})`;
-  } else if (uiStore.activeCategory.includes('收藏')) {
-    mainTitle = `${courseType}收藏 (${coursesStore.filteredCourses.length})`;
-  } else if (uiStore.activeCategory.includes('历史')) {
-    mainTitle = `${courseType}播放历史 (${coursesStore.filteredCourses.length})`;
+  // Get the type text
+  const typeText = isVideoMode ? 'Video' : 'Document';
+  
+  // Get the category text
+  let categoryText = 'Courses';
+  if (uiStore.activeCategory.includes(t('menu.categories.recommended'))) {
+    categoryText = 'Recommended';
+  } else if (uiStore.activeCategory.includes(t('menu.categories.favorites'))) {
+    categoryText = 'Favorites';
+  } else if (uiStore.activeCategory.includes(t('menu.categories.playHistory'))) {
+    categoryText = 'Play History';
   }
+  
+  // Construct the title directly
+  const mainTitle = `${typeText} ${categoryText} (${coursesStore.filteredCourses.length})`;
   
   return (
     <>
@@ -87,7 +95,7 @@ const MainContentCoursesSection = observer(() => {
       
       {/* Most Viewed Section */}
       <div className="border-t border-gray-200 pt-4 md:pt-6 mt-6 md:mt-8">
-        <CourseList title="最多人看" courses={coursesStore.popularCourses} />
+        <CourseList title={t('menu.categories.mostViewed')} courses={coursesStore.popularCourses} />
       </div>
     </>
   );

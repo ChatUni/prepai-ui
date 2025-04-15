@@ -2,39 +2,41 @@ import { observer } from 'mobx-react-lite';
 import uiStore from '../../stores/uiStore';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import languageStore from '../../stores/languageStore';
 
 const LeftMenu = observer(({ onItemClick }) => {
+  const t = languageStore.t;
   const navigate = useNavigate();
   const [expandedSection, setExpandedSection] = useState(null);
   
   // Initialize expanded section based on active category
   useEffect(() => {
-    if (uiStore.activeCategory.includes('视频')) {
-      setExpandedSection('视频课程');
-    } else if (uiStore.activeCategory.includes('文档')) {
-      setExpandedSection('文档课程');
+    if (uiStore.activeCategory.includes(t('menu.categories.video'))) {
+      setExpandedSection(t('menu.categories.videoCourses'));
+    } else if (uiStore.activeCategory.includes(t('menu.categories.document'))) {
+      setExpandedSection(t('menu.categories.documentCourses'));
     }
   }, []);
   
   const getMenuItems = () => {
-    if (uiStore.activeNavItem === '考测') {
+    if (uiStore.activeNavItem === t('menu.categories.testing')) {
       return [
-        { id: 'exam', label: '考测', category: '考测', clickable: false }
+        { id: 'exam', label: t('menu.categories.testing'), category: t('menu.categories.testing'), clickable: false }
       ];
     }
     
     return [
-      { id: 'series', label: '系列课程', category: '系列课程', highlight: true, clickable: true, isMainCategory: true },
-      { id: 'video', label: '视频课程', category: '视频课程', highlight: true, clickable: true, isVideo: true, isMainCategory: true },
-      { id: 'video-recommended', label: '推荐', category: '视频推荐', clickable: true, isVideo: true, parentCategory: '视频课程' },
-      { id: 'video-collection', label: '我的收藏', category: '视频收藏', clickable: true, isVideo: true, parentCategory: '视频课程' },
-      { id: 'video-history', label: '播放历史', category: '视频历史', clickable: true, isVideo: true, parentCategory: '视频课程' },
+      { id: 'series', label: t('menu.categories.seriesCourses'), category: t('menu.categories.seriesCourses'), highlight: true, clickable: true, isMainCategory: true },
+      { id: 'video', label: t('menu.categories.videoCourses'), category: t('menu.categories.videoCourses'), highlight: true, clickable: true, isVideo: true, isMainCategory: true },
+      { id: 'video-recommended', label: t('menu.categories.recommended'), category: `Video Recommended`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
+      { id: 'video-collection', label: t('menu.categories.myFavorites'), category: `Video Favorites`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
+      { id: 'video-history', label: t('menu.categories.playHistory'), category: `Video Play History`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
       // Document course section
-      { id: 'document', label: '文档课程', category: '文档课程', highlight: true, clickable: true, isVideo: false, isMainCategory: true },
-      { id: 'document-recommended', label: '推荐', category: '文档推荐', clickable: true, isVideo: false, parentCategory: '文档课程' },
-      { id: 'document-collection', label: '我的收藏', category: '文档收藏', clickable: true, isVideo: false, parentCategory: '文档课程' },
-      { id: 'document-history', label: '播放历史', category: '文档历史', clickable: true, isVideo: false, parentCategory: '文档课程' },
-      { id: 'private', label: '私教实时语音辅导', category: '私教', highlight: true, clickable: true, isMainCategory: true },
+      { id: 'document', label: t('menu.categories.documentCourses'), category: t('menu.categories.documentCourses'), highlight: true, clickable: true, isVideo: false, isMainCategory: true },
+      { id: 'document-recommended', label: t('menu.categories.recommended'), category: `Document Recommended`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
+      { id: 'document-collection', label: t('menu.categories.myFavorites'), category: `Document Favorites`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
+      { id: 'document-history', label: t('menu.categories.playHistory'), category: `Document Play History`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
+      { id: 'private', label: t('menu.categories.privateInstruction'), category: t('menu.categories.private'), highlight: true, clickable: true, isMainCategory: true },
     ];
   };
 
@@ -51,19 +53,19 @@ const LeftMenu = observer(({ onItemClick }) => {
     }
     
     // Toggle expanded section for main categories
-    if (item.category === '考测') {
+    if (item.category === t('menu.categories.testing')) {
       navigate('/exam');
       uiStore.resetFilters();
       uiStore.setActiveCategory(item.category);
-    } else if (item.category === '私教') {
+    } else if (item.category === t('menu.categories.private')) {
       // Navigate to instructor listing page without any specific instructor
       navigate('/instructor');
       uiStore.resetFilters();
       uiStore.setActiveCategory(item.category);
       
-      // Collapse other main categories when 私教 is selected
+      // Collapse other main categories when private is selected
       setExpandedSection(null);
-    } else if (item.category === '系列课程') {
+    } else if (item.category === t('menu.categories.seriesCourses')) {
       navigate('/series');
       uiStore.resetFilters();
       uiStore.setActiveCategory(item.category);
