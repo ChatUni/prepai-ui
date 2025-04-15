@@ -2,6 +2,14 @@ import { parsePathParams } from './utils/pathUtils.js';
 import { getResponseHeaders, res } from './utils/http.js';
 import { get, save, remove, flat, maxId } from './utils/db.js';
 import { tap } from './utils';
+import multipart from 'multipart-formdata';
+import fs from 'fs';
+import path from 'path';
+import { cdupload } from './utils/cloudinary.js';
+import { promisify } from 'util';
+
+const writeFile = promisify(fs.writeFile);
+const unlink = promisify(fs.unlink);
 
 
 // Main handler function
@@ -19,9 +27,50 @@ export const handler = async (event, context) => {
 
   try {
     const { resource, id } = parsePathParams(event.path, 'api');
-    const { clientId, userId, seriesId, courseId, instructorId } = event.queryStringParameters;
-    const body = event.body ? JSON.parse(event.body) : {};
+    const { clientId, userId, seriesId, courseId, instructorId } = event.queryStringParameters || {};
     const route = `${event.httpMethod} /${resource}${id ? (isNaN(+id) ? `/${id}` : '/:id') : ''}`
+    
+    console.log(`Route: ${route}, Resource: ${resource}, id: ${id}`);
+
+    // Handle file upload separately since it's not JSON
+    if (route === 'POST /cloudinary_upload') {
+      const contentType = event.headers['content-type'] || event.headers['Content-Type'];
+      const { files, folder } = tap(multipart.parse(event.body, contentType));
+      
+      if (!files || !files.length) {
+        return res({ error: 'No file provided' }, 400);
+      }
+
+      const file = files[0];
+      const tempPath = path.join('/tmp', `upload-${Date.now()}-${file.filename}`);
+
+      try {
+        // Save file to temp location
+        await writeFile(tempPath, file.content);
+
+        // Upload to Cloudinary with optional folder
+        const result = await cdupload(tempPath, folder);
+
+        // Clean up temp file
+        await unlink(tempPath);
+
+        return res({
+          url: result.secure_url,
+          public_id: result.public_id
+        });
+      } catch (error) {
+        // Clean up temp file in case of error
+        try {
+          await unlink(tempPath);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+        throw error;
+      }
+    }
+
+    // For non-file upload routes, parse body as JSON
+    const body = event.body ? JSON.parse(event.body) : {};
 
     console.log(`Route: ${route}, Resource: ${resource}, id: ${id}`);
 
@@ -73,15 +122,23 @@ export const handler = async (event, context) => {
         const series = await flat('series', `m_id=${id}`)
         return res(series);
 
+      case 'POST /series':
+        if (body.id) {
+          // Update existing series
+          await save('series', body);
+          return res({ message: 'Series updated successfully' });
+        } else {
+          // Create new series
+          const newId = await maxId('series');
+          await save('series', { ...body, id: newId });
+          return res({ message: 'Series created successfully', id: newId });
+        }
+
       default:
-        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
+        return res({ error: 'Not found' }, 404);
     }
   } catch (error) {
     console.error('Error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Internal server error' })
-    };
+    return res({ error: 'Internal server error' }, 500)
   }
 };

@@ -1,7 +1,7 @@
 import { tap } from '.';
 
-//const HOST = 'https://freshroad.netlify.app'
-const HOST = 'http://localhost:701'
+const HOST = 'https://freshroad.netlify.app'
+//const HOST = 'http://localhost:701'
 const API = (type, doc, { agg, id } = {}) => `${HOST}/.netlify/functions/api?db=prepai&type=${type}&doc=${doc}${agg ? `&agg=${encodeURIComponent(agg)}` : ''}${id ? `&id=${id}` : ''}`
 export const get = doc => fetch(tap(API('doc', doc), 'GET')).then(res => res.json())
 export const flat = (doc, agg) => fetch(tap(API('flat', doc, { agg }), 'GET')).then(res => res.json())

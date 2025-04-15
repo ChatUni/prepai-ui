@@ -1,11 +1,20 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import db from '../utils/db';
+import { getApiBaseUrl } from '../config';
 
 class AssistantsStore {
   // Assistants data
   assistants = [];
   loading = false;
   error = null;
+  
+  // New assistant form state
+  newAssistant = {
+    name: '',
+    greeting: '',
+    prompt: '',
+    iconUrl: ''
+  };
   
   constructor() {
     makeAutoObservable(this);
@@ -93,7 +102,57 @@ class AssistantsStore {
     this.assistants = [];
     this.loading = false;
     this.error = null;
+    this.resetNewAssistant();
   }
+
+  // New assistant form methods
+  setNewAssistantField = (field, value) => {
+    this.newAssistant[field] = value;
+  };
+
+  resetNewAssistant = () => {
+    this.newAssistant = {
+      name: '',
+      greeting: '',
+      prompt: '',
+      iconUrl: ''
+    };
+  };
+
+  createAssistant = async () => {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/assistants`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.newAssistant)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create assistant: ${response.statusText}`);
+      }
+
+      const newAssistant = await response.json();
+      
+      runInAction(() => {
+        this.assistants.push(newAssistant);
+        this.resetNewAssistant();
+        this.loading = false;
+      });
+
+      return newAssistant;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.loading = false;
+      });
+      throw error;
+    }
+  };
 }
 
 // Create and export a singleton instance

@@ -6,4 +6,4 @@ export const getResponseHeaders = () => ({
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
 });
 
-export const res = body => ({ statusCode: 200, headers: getResponseHeaders(), body: JSON.stringify(body) })
+export const res = (body, code = 200) => ({ statusCode: code, headers: getResponseHeaders(), body: JSON.stringify(body) })

@@ -14,7 +14,10 @@ import PPTPlayerPage from './components/PPTPlayerPage';
 import ExamPage from './components/ExamPage';
 import QuestionPage from './components/QuestionPage';
 import SeriesPage from './components/SeriesPage';
+import EditSeriesPage from './components/EditSeriesPage';
+import AddCoursePage from './components/AddCoursePage';
 import AssistantsPage from './components/AssistantsPage';
+import AddAssistantPage from './components/AddAssistantPage';
 import AssistantChatPage from './components/AssistantChatPage';
 import AccountPage from './components/AccountPage';
 import LoginPage from './components/LoginPage';
@@ -226,6 +229,16 @@ const MainLayout = observer(() => {
                     <QuestionPage />
                   </AuthRoute>
                 } />
+                <Route path="/series/new" element={
+                  <AuthRoute>
+                    <EditSeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/:id/edit" element={
+                  <AuthRoute>
+                    <EditSeriesPage />
+                  </AuthRoute>
+                } />
                 <Route path="/series" element={
                   <AuthRoute>
                     <SeriesPage />
@@ -236,9 +249,19 @@ const MainLayout = observer(() => {
                     <SeriesPage />
                   </AuthRoute>
                 } />
+                <Route path="/series/:seriesId/add-course" element={
+                  <AuthRoute>
+                    <AddCoursePage />
+                  </AuthRoute>
+                } />
                 <Route path="/assistants" element={
                   <AuthRoute>
                     <AssistantsPage />
+                  </AuthRoute>
+                } />
+                <Route path="/assistants/add" element={
+                  <AuthRoute>
+                    <AddAssistantPage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants/:assistantId/chat" element={
