@@ -137,6 +137,20 @@
   },
   "course": {
     "addCourse": "コースを追加",
+    "add": {
+      "title": "新規コースを追加",
+      "courseName": "コース名",
+      "courseDescription": "コース説明",
+      "coverImage": "カバー画像",
+      "selectImage": "画像を選択",
+      "changeImage": "画像を変更",
+      "fileSelected": "ファイルが選択されました",
+      "courseVideo": "コース動画",
+      "selectVideo": "動画を選択",
+      "changeVideo": "動画を変更",
+      "saving": "保存中...",
+      "save": "コースを追加"
+    },
     "editCourse": "コースを編集",
     "deleteCourse": "コースを削除",
     "courseTitle": "コースタイトル",
@@ -150,6 +164,8 @@
   },
   "series": {
     "selectTitle": "シリーズを選択",
+    "selectToEdit": "編集するシリーズを選択",
+    "edit": "シリーズを編集",
     "edit": {
       "loading": "読み込み中...",
       "editTitle": "シリーズを編集",

@@ -34,7 +34,45 @@ class SeriesStore {
   }
 
   setCurrentSeries = (series) => {
-    this.currentSeries = series;
+    // Ensure consistent data structure
+    this.currentSeries = {
+      id: series.id || series._id || null,
+      name: series.name || '',
+      desc: series.desc || '',
+      cover: series.cover || '',
+      instructor: series.instructor ? {
+        id: series.instructor.id || series.instructor._id,
+        name: series.instructor.name || '',
+        image: series.instructor.image || ''
+      } : null
+    };
+  }
+
+  fetchSeries = async () => {
+    try {
+      this.isLoading = true;
+      const response = await fetch('/api/series');
+      const data = await response.json();
+      runInAction(() => {
+        this.series = data.map(series => ({
+          id: series.id || series._id,
+          name: series.name || '',
+          desc: series.desc || '',
+          cover: series.cover || '',
+          instructor: series.instructor ? {
+            id: series.instructor.id || series.instructor._id,
+            name: series.instructor.name || '',
+            image: series.instructor.image || ''
+          } : null
+        }));
+        this.isLoading = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.isLoading = false;
+      });
+    }
   }
 
   fetchInstructors = async () => {
@@ -57,10 +95,42 @@ class SeriesStore {
   fetchSeriesById = async (id) => {
     try {
       this.isLoading = true;
+      
+      // First get the series data
       const response = await fetch(`/api/series/${id}`);
       const data = await response.json();
+      
+      if (!data || !data[0]) {
+        throw new Error('Series not found');
+      }
+
+      const series = data[0];
+      console.log('API Response:', series); // Debug log
+
+      // Get instructor details if we have an instructor ID
+      let instructorDetails = null;
+      const instructorId = series.instructor_id || (series.instructor && series.instructor.id);
+      if (instructorId) {
+        const instructorResponse = await fetch(`/api/instructors/${instructorId}`);
+        const instructorData = await instructorResponse.json();
+        if (instructorData) {
+          instructorDetails = {
+            id: instructorData.id || instructorData._id,
+            name: instructorData.name || '',
+            image: instructorData.image || ''
+          };
+        }
+      }
+
       runInAction(() => {
-        this.currentSeries = data[0];
+        this.currentSeries = {
+          id: series.id || series._id,
+          name: series.name || '',
+          desc: series.desc || '',
+          cover: series.cover || '',
+          instructor: instructorDetails || series.instructor || null
+        };
+        console.log('Set currentSeries:', this.currentSeries); // Debug log
         this.isLoading = false;
       });
     } catch (error) {
@@ -94,11 +164,14 @@ class SeriesStore {
     try {
       this.isLoading = true;
       
+      // Parse instructor data from FormData
+      const instructor = JSON.parse(formData.get('instructor'));
+      
       // Convert FormData to JSON for API
       const seriesData = {
         name: formData.get('name'),
-        description: formData.get('description'),
-        instructor_id: parseInt(formData.get('instructor_id')),
+        desc: formData.get('description'), // Map description to desc
+        instructor // Use the full instructor object
       };
 
       if (formData.get('id')) {
@@ -130,7 +203,7 @@ class SeriesStore {
           },
           body: JSON.stringify({
             id: seriesId,
-            cover_image: imageUrl,
+            cover: imageUrl, // Map cover_image to cover
             ...seriesData
           }),
         });

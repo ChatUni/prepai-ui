@@ -1,43 +1,66 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { seriesStore } from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
+import { tap } from '../../netlify/functions/utils';
 
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const seriesId = seriesStore.currentSeriesId;
+  const { id: seriesId } = useParams(); // Get ID directly from URL params
 
   useEffect(() => {
+    // First load instructors
     seriesStore.fetchInstructors();
-    if (seriesId) {
-      seriesStore.fetchSeriesById(seriesId);
-    } else {
-      seriesStore.setCurrentSeries({
-        name: '',
-        description: '',
-        instructor_id: '',
-        cover_image: ''
-      });
-    }
+  }, []); // Only fetch instructors once
+
+  useEffect(() => {
+    const loadSeries = async () => {
+      if (seriesId) {
+        await seriesStore.fetchSeriesById(seriesId);
+        console.log('Current series:', seriesStore.currentSeries); // Debug log
+      } else {
+        seriesStore.setCurrentSeries({
+          name: '',
+          desc: '',
+          instructor: null,
+          cover: ''
+        });
+      }
+    };
+    loadSeries();
   }, [seriesId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     
-    // Convert instructor_id to number
-    const instructorId = formData.get('instructor_id');
-    formData.set('instructor_id', parseInt(instructorId));
+    // Convert instructor_id to number and create instructor object
+    const instructorId = parseInt(formData.get('instructor_id'));
+    const selectedInstructor = seriesStore.instructors.find(i => i.id === instructorId);
+    
+    // Create a new FormData with the correct structure
+    const newFormData = new FormData();
+    newFormData.append('name', formData.get('name'));
+    newFormData.append('description', formData.get('description'));
+    newFormData.append('instructor', JSON.stringify({
+      id: instructorId,
+      name: selectedInstructor?.name || '',
+      image: selectedInstructor?.image || ''
+    }));
+    
+    if (formData.get('cover_image')) {
+      newFormData.append('cover_image', formData.get('cover_image'));
+    }
     
     // Add series ID if editing
     if (seriesId) {
-      formData.append('id', parseInt(seriesId));
+      newFormData.append('id', parseInt(seriesId));
     }
 
     try {
-      await seriesStore.saveSeries(formData, navigate);
+      await seriesStore.saveSeries(newFormData, navigate);
     } catch (error) {
       console.error(t('series.edit.saveError'), error);
       // TODO: Add proper error message display to user
@@ -47,7 +70,7 @@ const EditSeriesPage = observer(() => {
   if (seriesStore.isLoading) {
     return <div className="p-4">{t('series.edit.loading')}</div>;
   }
-
+tap(seriesStore.currentSeries)
   return (
     <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">
@@ -60,7 +83,7 @@ const EditSeriesPage = observer(() => {
           </label>
           <select
             name="instructor_id"
-            defaultValue={seriesStore.currentSeries?.instructor_id || ''}
+            defaultValue={seriesStore.currentSeries?.instructor?.id || ''}
             className="w-full p-2 border rounded"
             required
           >
@@ -92,7 +115,7 @@ const EditSeriesPage = observer(() => {
           </label>
           <textarea
             name="description"
-            defaultValue={seriesStore.currentSeries?.description || ''}
+            defaultValue={seriesStore.currentSeries?.desc || ''}
             className="w-full p-2 border rounded h-32"
             required
           />
@@ -132,10 +155,10 @@ const EditSeriesPage = observer(() => {
               </div>
             )}
           </div>
-          {(seriesStore.selectedImagePreview || seriesStore.currentSeries?.cover_image) && (
+          {(seriesStore.selectedImagePreview || seriesStore.currentSeries?.cover) && (
             <div className="mt-2">
               <img
-                src={seriesStore.selectedImagePreview || seriesStore.currentSeries.cover_image}
+                src={seriesStore.selectedImagePreview || seriesStore.currentSeries.cover}
                 alt={t('series.edit.coverPreview')}
                 className="max-w-full h-auto rounded-lg shadow-lg"
                 style={{ maxHeight: '200px' }}

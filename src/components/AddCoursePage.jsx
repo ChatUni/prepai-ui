@@ -3,10 +3,12 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate, useParams } from 'react-router-dom';
 import { seriesStore } from '../stores/seriesStore';
 import { newCourseStore } from '../stores/newCourseStore';
+import languageStore from '../stores/languageStore';
 
 const AddCoursePage = observer(() => {
   const { seriesId } = useParams();
   const navigate = useNavigate();
+  const { t } = languageStore;
 
   useEffect(() => {
     seriesStore.fetchSeriesById(seriesId);
@@ -25,7 +27,7 @@ const AddCoursePage = observer(() => {
   };
 
   if (seriesStore.isLoading || !seriesStore.currentSeries) {
-    return <div className="p-4">加载中...</div>;
+    return <div className="p-4">{t('common.loading')}</div>;
   }
 
   const { currentSeries } = seriesStore;
@@ -56,12 +58,12 @@ const AddCoursePage = observer(() => {
 
       {/* New Course Form */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6">添加新课程</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('course.add.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Course Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              课程名称
+              {t('course.add.courseName')}
             </label>
             <input
               type="text"
@@ -76,7 +78,7 @@ const AddCoursePage = observer(() => {
           {/* Course Description */}
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              课程描述
+              {t('course.add.courseDescription')}
             </label>
             <textarea
               id="description"
@@ -91,7 +93,7 @@ const AddCoursePage = observer(() => {
           {/* Cover Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              封面图片
+              {t('course.add.coverImage')}
             </label>
             <div className="relative">
               <input
@@ -109,12 +111,12 @@ const AddCoursePage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {newCourseStore.coverImagePreview ? '更改图片' : '选择图片'}
+                  {newCourseStore.coverImagePreview ? t('course.add.changeImage') : t('course.add.selectImage')}
                 </span>
               </label>
               {newCourseStore.coverImagePreview && (
                 <div className="mt-2 text-sm text-gray-500">
-                  已选择文件
+                  {t('course.add.fileSelected')}
                 </div>
               )}
             </div>
@@ -122,7 +124,7 @@ const AddCoursePage = observer(() => {
               <div className="mt-2">
                 <img
                   src={newCourseStore.coverImagePreview}
-                  alt="封面预览"
+                  alt={t('course.add.coverImage')}
                   className="max-w-full h-auto rounded-lg shadow-lg"
                   style={{ maxHeight: '200px' }}
                 />
@@ -133,7 +135,7 @@ const AddCoursePage = observer(() => {
           {/* Video Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              课程视频
+              {t('course.add.courseVideo')}
             </label>
             <div className="relative">
               <input
@@ -152,12 +154,12 @@ const AddCoursePage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {newCourseStore.videoFile ? '更改视频' : '选择视频'}
+                  {newCourseStore.videoFile ? t('course.add.changeVideo') : t('course.add.selectVideo')}
                 </span>
               </label>
               {newCourseStore.videoFile && (
                 <div className="mt-2 text-sm text-gray-500">
-                  已选择文件: {newCourseStore.videoFile.name}
+                  {t('course.add.fileSelected')}: {newCourseStore.videoFile.name}
                 </div>
               )}
             </div>
@@ -169,7 +171,7 @@ const AddCoursePage = observer(() => {
           )}
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-10">
             <button
               type="submit"
               disabled={newCourseStore.isLoading}
@@ -177,7 +179,7 @@ const AddCoursePage = observer(() => {
                 newCourseStore.isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {newCourseStore.isLoading ? '保存中...' : '添加课程'}
+              {newCourseStore.isLoading ? t('course.add.saving') : t('course.add.save')}
             </button>
           </div>
         </form>

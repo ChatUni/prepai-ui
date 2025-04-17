@@ -72,7 +72,18 @@ const SeriesPage = observer(() => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries?.name || selectedSeries?.id || 'Series'}</h1>
+          <div className="flex items-center">
+            <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries?.name || selectedSeries?.id || 'Series'}</h1>
+            <button
+              onClick={() => navigate(`/series/select?mode=edit&seriesId=${selectedSeries.id}`)}
+              className="ml-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              {t('series.edit')}
+            </button>
+          </div>
         </div>
         
         {selectedSeries && (

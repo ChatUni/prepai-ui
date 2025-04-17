@@ -137,6 +137,20 @@
   },
   "course": {
     "addCourse": "Add Course",
+    "add": {
+      "title": "Add New Course",
+      "courseName": "Course Name",
+      "courseDescription": "Course Description",
+      "coverImage": "Cover Image",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "courseVideo": "Course Video",
+      "selectVideo": "Select Video",
+      "changeVideo": "Change Video",
+      "saving": "Saving...",
+      "save": "Add Course"
+    },
     "editCourse": "Edit Course",
     "deleteCourse": "Delete Course",
     "courseTitle": "Course Title",
@@ -150,6 +164,8 @@
   },
   "series": {
     "selectTitle": "Select a Series",
+    "selectToEdit": "Select Series to Edit",
+    "edit": "Edit Series",
     "edit": {
       "loading": "Loading...",
       "editTitle": "Edit Series",

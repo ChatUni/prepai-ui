@@ -137,6 +137,20 @@
   },
   "course": {
     "addCourse": "添加课程",
+    "add": {
+      "title": "添加新课程",
+      "courseName": "课程名称",
+      "courseDescription": "课程描述",
+      "coverImage": "封面图片",
+      "selectImage": "选择图片",
+      "changeImage": "更改图片",
+      "fileSelected": "已选择文件",
+      "courseVideo": "课程视频",
+      "selectVideo": "选择视频",
+      "changeVideo": "更改视频",
+      "saving": "保存中...",
+      "save": "添加课程"
+    },
     "editCourse": "编辑课程",
     "deleteCourse": "删除课程",
     "courseTitle": "课程标题",
@@ -150,6 +164,8 @@
   },
   "series": {
     "selectTitle": "选择系列",
+    "selectToEdit": "选择要编辑的系列",
+    "edit": "编辑系列",
     "edit": {
       "loading": "加载中...",
       "editTitle": "编辑系列",

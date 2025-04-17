@@ -157,7 +157,12 @@ class RouteStore {
             this.setInstructorId(routeId);
             break;
           case 'series':
-            this.setSeriesId(routeId);
+            if (pathSegments[2] && pathSegments[3] === 'edit') {
+              // Handle /series/:id/edit route
+              this.setSeriesId(pathSegments[2]);
+            } else {
+              this.setSeriesId(routeId);
+            }
             break;
           case 'video':
           case 'ppt':
