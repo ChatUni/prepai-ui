@@ -8,6 +8,7 @@ class ExamStore {
   isSubmitted = false;
   showResults = false;
   examResults = { correct: 0, incorrect: 0 };
+  isLoading = false;
   
   constructor() {
     makeObservable(this, {
@@ -16,6 +17,7 @@ class ExamStore {
       isSubmitted: observable,
       showResults: observable,
       examResults: observable,
+      isLoading: observable,
       fetchQuestions: action,
       selectAnswer: action,
       submitExam: action,
@@ -32,8 +34,10 @@ class ExamStore {
     return (questionId) => this.selectedAnswers.get(questionId);
   }
   async fetchQuestions(courseId) {
-    const apiBaseUrl = getApiBaseUrl();
-    const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
+    this.isLoading = true;
+    try {
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch questions');
@@ -48,6 +52,13 @@ class ExamStore {
     });
     
     return questions;
+    } catch (error) {
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
   }
   
   selectAnswer(questionId, option) {

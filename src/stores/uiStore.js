@@ -6,13 +6,12 @@ import languageStore from './languageStore';
 
 class UIStore {
   searchKeyword = '';
-  activeCategory = '';
   activeNavItem = '';
+  activeCategory = '';
   selectedInstructorId = null;
   favoriteCourseIds = new Set(); // Store favorite course IDs
   userId = 1; // Default user ID for development
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
-  parentCategory = null; // Track parent category for subcategories
   selectedSeriesId = null; // Track selected series ID
   
   // User account information
@@ -27,24 +26,22 @@ class UIStore {
   constructor() {
     makeObservable(this, {
       searchKeyword: observable,
-      activeCategory: observable,
       activeNavItem: observable,
+      activeCategory: observable,
       selectedInstructorId: observable,
       favoriteCourseIds: observable,
       userId: observable,
       courseTypeFilter: observable,
-      parentCategory: observable,
       selectedSeriesId: observable,
       userInfo: observable,
       setSearchKeyword: action,
       setSelectedSeriesId: action,
-      setActiveCategory: action,
       setActiveNavItem: action,
+      setActiveCategory: action,
       setSelectedInstructorId: action,
       toggleFavorite: action,
       setFavorites: action,
       setCourseTypeFilter: action,
-      setParentCategory: action,
       updateUserInfo: action,
       resetFilters: action
     });
@@ -78,10 +75,6 @@ class UIStore {
 
   setSearchKeyword(keyword) {
     this.searchKeyword = keyword;
-  }
-
-  setActiveCategory(category) {
-    this.activeCategory = category;
   }
 
   setActiveNavItem(item) {
@@ -145,10 +138,6 @@ class UIStore {
     this.courseTypeFilter = isVideo;
   }
   
-  // Set parent category for sub-menu items
-  setParentCategory(category) {
-    this.parentCategory = category;
-  }
   // Update user information
   updateUserInfo(newUserInfo) {
     this.userInfo = {
@@ -167,7 +156,10 @@ class UIStore {
     this.searchKeyword = '';
     this.selectedInstructorId = null;
     this.selectedSeriesId = null;
-    this.parentCategory = null;
+  }
+  // Set active category
+  setActiveCategory(category) {
+    this.activeCategory = category;
   }
 }
 

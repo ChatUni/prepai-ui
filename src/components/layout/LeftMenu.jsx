@@ -9,34 +9,30 @@ const LeftMenu = observer(({ onItemClick }) => {
   const navigate = useNavigate();
   const [expandedSection, setExpandedSection] = useState(null);
   
-  // Initialize expanded section based on active category
+  // Initialize expanded section based on current route
   useEffect(() => {
-    if (uiStore.activeCategory.includes(t('menu.categories.video'))) {
-      setExpandedSection(t('menu.categories.videoCourses'));
-    } else if (uiStore.activeCategory.includes(t('menu.categories.document'))) {
-      setExpandedSection(t('menu.categories.documentCourses'));
+    const path = window.location.pathname;
+    if (path.includes('/video')) {
+      setExpandedSection('videoCourses');
+    } else if (path.includes('/ppt')) {
+      setExpandedSection('documentCourses');
     }
   }, []);
   
   const getMenuItems = () => {
-    if (uiStore.activeNavItem === t('menu.categories.testing')) {
-      return [
-        { id: 'exam', label: t('menu.categories.testing'), category: t('menu.categories.testing'), clickable: false }
-      ];
-    }
-    
     return [
-      { id: 'series', label: t('menu.categories.seriesCourses'), category: t('menu.categories.seriesCourses'), highlight: true, clickable: true, isMainCategory: true },
-      { id: 'video', label: t('menu.categories.videoCourses'), category: t('menu.categories.videoCourses'), highlight: true, clickable: true, isVideo: true, isMainCategory: true },
-      { id: 'video-recommended', label: t('menu.categories.recommended'), category: `Video Recommended`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
-      { id: 'video-collection', label: t('menu.categories.myFavorites'), category: `Video Favorites`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
-      { id: 'video-history', label: t('menu.categories.playHistory'), category: `Video Play History`, clickable: true, isVideo: true, parentCategory: t('menu.categories.videoCourses') },
+      { id: 'exam', label: t('menu.categories.testing'), category: 'testing', highlight: true, clickable: true, isMainCategory: true },
+      { id: 'series', label: t('menu.categories.seriesCourses'), category: 'seriesCourses', highlight: true, clickable: true, isMainCategory: true },
+      { id: 'video', label: t('menu.categories.videoCourses'), category: 'videoCourses', highlight: true, clickable: true, isVideo: true, isMainCategory: true },
+      { id: 'video-recommended', label: t('menu.categories.recommended'), category: 'videoRecommended', clickable: true, isVideo: true, parentCategory: 'videoCourses' },
+      { id: 'video-collection', label: t('menu.categories.myFavorites'), category: 'videoFavorites', clickable: true, isVideo: true, parentCategory: 'videoCourses' },
+      { id: 'video-history', label: t('menu.categories.playHistory'), category: 'videoPlayHistory', clickable: true, isVideo: true, parentCategory: 'videoCourses' },
       // Document course section
-      { id: 'document', label: t('menu.categories.documentCourses'), category: t('menu.categories.documentCourses'), highlight: true, clickable: true, isVideo: false, isMainCategory: true },
-      { id: 'document-recommended', label: t('menu.categories.recommended'), category: `Document Recommended`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
-      { id: 'document-collection', label: t('menu.categories.myFavorites'), category: `Document Favorites`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
-      { id: 'document-history', label: t('menu.categories.playHistory'), category: `Document Play History`, clickable: true, isVideo: false, parentCategory: t('menu.categories.documentCourses') },
-      { id: 'private', label: t('menu.categories.privateInstruction'), category: t('menu.categories.private'), highlight: true, clickable: true, isMainCategory: true },
+      { id: 'document', label: t('menu.categories.documentCourses'), category: 'documentCourses', highlight: true, clickable: true, isVideo: false, isMainCategory: true },
+      { id: 'document-recommended', label: t('menu.categories.recommended'), category: 'documentRecommended', clickable: true, isVideo: false, parentCategory: 'documentCourses' },
+      { id: 'document-collection', label: t('menu.categories.myFavorites'), category: 'documentFavorites', clickable: true, isVideo: false, parentCategory: 'documentCourses' },
+      { id: 'document-history', label: t('menu.categories.playHistory'), category: 'documentPlayHistory', clickable: true, isVideo: false, parentCategory: 'documentCourses' },
+      { id: 'private', label: t('menu.categories.privateInstruction'), category: 'private', highlight: true, clickable: true, isMainCategory: true },
     ];
   };
 
@@ -44,45 +40,48 @@ const LeftMenu = observer(({ onItemClick }) => {
 
   const handleMenuClick = (item) => {
     if (!item.clickable) return;
-    
-    uiStore.setActiveCategory(item.category);
-    uiStore.setCourseTypeFilter(item.isVideo);
-    
-    if (item.parentCategory) {
-      uiStore.setParentCategory(item.parentCategory);
+
+    // Handle navigation based on item type
+    switch (item.id) {
+      case 'exam':
+        navigate('/exam');
+        break;
+      case 'series':
+        navigate('/series');
+        break;
+      case 'private':
+        navigate('/instructor');
+        setExpandedSection(null);
+        break;
+      case 'video':
+      case 'document':
+        setExpandedSection(item.category);
+        navigate('/');
+        break;
+      case 'video-recommended':
+      case 'document-recommended':
+        navigate('/');
+        break;
+      case 'video-collection':
+      case 'document-collection':
+        navigate('/favorites');
+        break;
+      case 'video-history':
+      case 'document-history':
+        navigate('/');
+        break;
     }
-    
-    // Toggle expanded section for main categories
-    if (item.category === t('menu.categories.testing')) {
-      navigate('/exam');
-      uiStore.resetFilters();
-      uiStore.setActiveCategory(item.category);
-    } else if (item.category === t('menu.categories.private')) {
-      // Navigate to instructor listing page without any specific instructor
-      navigate('/instructor');
-      uiStore.resetFilters();
-      uiStore.setActiveCategory(item.category);
-      
-      // Collapse other main categories when private is selected
-      setExpandedSection(null);
-    } else if (item.category === t('menu.categories.seriesCourses')) {
-      navigate('/series');
-      uiStore.resetFilters();
-      uiStore.setActiveCategory(item.category);
-      
-      // Collapse other main categories when 私教 is selected
-      setExpandedSection(null);
-    } else if (item.isMainCategory) {
-      // Always set expanded section to the clicked category, no toggling
-      setExpandedSection(item.category);
-      
-      // Navigate to home page
-      navigate('/');
-      
-      // Reset all filters before setting new category
-      uiStore.resetFilters();
-      uiStore.setActiveCategory(item.category);
+
+    // Update course type filter based on item type
+    if (item.isVideo !== undefined) {
+      uiStore.setCourseTypeFilter(item.isVideo);
     }
+
+    // Reset filters when navigating
+    uiStore.resetFilters();
+    
+    // Update active nav item for UI purposes
+    uiStore.setActiveNavItem(item.category);
     
     // Close mobile menu if provided
     if (onItemClick) {
@@ -99,11 +98,22 @@ const LeftMenu = observer(({ onItemClick }) => {
           return null;
         }
         
-        const isActive = uiStore.activeCategory === item.category;
+        const path = window.location.pathname;
+        const isActive = (
+          (item.id === 'exam' && path.startsWith('/exam')) ||
+          (item.id === 'series' && path.startsWith('/series')) ||
+          (item.id === 'private' && path.startsWith('/instructor')) ||
+          (item.id === 'video' && path === '/' && uiStore.courseTypeFilter) ||
+          (item.id === 'document' && path === '/' && !uiStore.courseTypeFilter) ||
+          (item.id.includes('collection') && path === '/favorites') ||
+          (item.id === 'video-recommended' && path === '/' && uiStore.courseTypeFilter) ||
+          (item.id === 'document-recommended' && path === '/' && !uiStore.courseTypeFilter)
+        );
+        
         const isMainCategory = item.isMainCategory;
-        // Check if this main item is a parent of the active category
-        const isParentOfActive = isMainCategory && menuItems.some(
-          subItem => subItem.parentCategory === item.category && subItem.category === uiStore.activeCategory
+        const isParentOfActive = isMainCategory && (
+          (item.category === 'videoCourses' && path === '/' && uiStore.courseTypeFilter) ||
+          (item.category === 'documentCourses' && path === '/' && !uiStore.courseTypeFilter)
         );
         
         return (

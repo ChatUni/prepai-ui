@@ -21,34 +21,27 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   ];
 
   const handleNavClick = (item) => {
+    // Update active nav item for UI highlighting
     uiStore.setActiveNavItem(item.label);
     
-    if (item.id === 'testing') {
-      uiStore.setActiveCategory(t('menu.categories.testing'));
-      // Reset other states when switching to exam mode
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
-      uiStore.setParentCategory(null);
-      navigate('/exam');
-    } else if (item.id === 'private') {
-      uiStore.setActiveCategory(t('menu.categories.videoCourses'));
-      uiStore.setCourseTypeFilter(true); // Set to video courses
-      uiStore.setParentCategory(null);
-      uiStore.setSelectedInstructorId(null);
-      uiStore.setSearchKeyword('');
-      navigate('/instructor');
-    } else if (item.id === 'ai') {
-      // For AI assistant page, directly navigate without changing category
-      console.log('Navigating to AI assistant page');
-      navigate('/assistants');
-    } else if (item.id === 'my') {
-      // For account page, directly navigate without changing category
-      console.log('Navigating to account page');
-      // Adding explicit timeout for navigation to ensure UI updates first
-      setTimeout(() => {
-        console.log('Timeout navigation to account page');
+    // Reset filters when navigating
+    uiStore.resetFilters();
+    
+    // Handle navigation based on item type
+    switch (item.id) {
+      case 'testing':
+        navigate('/exam');
+        break;
+      case 'private':
+        uiStore.setCourseTypeFilter(true); // Set to video courses
+        navigate('/instructor');
+        break;
+      case 'ai':
+        navigate('/assistants');
+        break;
+      case 'my':
         navigate('/account');
-      }, 100);
+        break;
     }
   };
   

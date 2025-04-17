@@ -98,7 +98,7 @@ export const handler = async (event, context) => {
         const favorites = await get('favorites')
         return res(favorites);
       case 'GET /questions/random':
-        const questions = await flat('questions', 'r_size=10')
+        const questions = await flat('questions', `m_course_id=${courseId}&r_size=10`)
         const processedQuestions = questions.map(row => ({
           ...row,
           options: JSON.stringify(Object.values(row.options))

@@ -21,6 +21,7 @@ import AssistantsPage from './components/AssistantsPage';
 import AddAssistantPage from './components/AddAssistantPage';
 import AssistantChatPage from './components/AssistantChatPage';
 import AccountPage from './components/AccountPage';
+import AdminPage from './components/AdminPage';
 import LoginPage from './components/LoginPage';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthWrapper from './components/auth/AuthWrapper';
@@ -45,57 +46,19 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import { useEffect } from 'react';
 import uiStore from './stores/uiStore';
 import db from './utils/db';
+import SeriesSelectPage from './components/SeriesSelectPage';
 
 // Make coursesStore available globally for debugging and fallback
 window.coursesStore = coursesStore;
 
-// RouteHandler component to handle navigation based on active category
+// RouteHandler component to sync route store with current location
 const RouteHandler = observer(() => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { t } = languageStore;
   
   // Sync route parameters with the store on location change
   useEffect(() => {
     routeStore.syncWithLocation(location);
   }, [location]);
-  
-  useEffect(() => {
-    // Check if we're on special pages - if so, don't redirect
-    if (
-      location.pathname === '/account' ||
-      location.pathname === '/login' ||
-      location.pathname === '/assistants' ||
-      location.pathname.startsWith('/assistants/') ||
-      location.pathname.startsWith('/exam/questions/') // Add this line to exclude exam question pages
-    ) {
-      console.log(`On ${location.pathname} page, skipping navigation control`);
-      return;
-    }
-    
-    // Handle navigation based on active category
-    if (uiStore.activeCategory === t('menu.categories.favorites') && location.pathname !== '/favorites') {
-      navigate('/favorites');
-    }
-    else if (uiStore.activeCategory === t('menu.categories.testing') && !location.pathname.startsWith('/exam')) {
-      navigate('/exam');
-    }
-    else if (uiStore.activeCategory === t('menu.categories.private') &&
-             !location.pathname.startsWith('/instructor') &&
-             !location.pathname.startsWith('/series')) {
-      // Allow series paths even when activeCategory is private
-      navigate('/instructor');
-    }
-    // Navigate to home if leaving a special category page
-    else if (
-      (uiStore.activeCategory !== t('menu.categories.favorites') && location.pathname === '/favorites') ||
-      (uiStore.activeCategory !== t('menu.categories.testing') && location.pathname === '/exam') ||
-      (uiStore.activeCategory !== t('menu.categories.private') && location.pathname === '/instructor')
-    ) {
-      // Redirect to home only for specific pages, not for series
-      navigate('/');
-    }
-  }, [uiStore.activeCategory, location.pathname, navigate]);
   
   return null;
 });
@@ -106,7 +69,7 @@ const MainLayout = observer(() => {
   const location = useLocation();
   
   // Check if we're on the account page
-  const isAccountPage = location.pathname === '/account';
+  const isSpecialLayoutPage = location.pathname === '/account' || location.pathname === '/admin';
   
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -146,13 +109,18 @@ const MainLayout = observer(() => {
       
       {/* Main content layout */}
       <div className="flex flex-1 overflow-y-auto">
-        {/* For account page, we use a different layout without the left menu */}
-        {isAccountPage ? (
+        {/* For account and admin pages, we use a different layout without the left menu */}
+        {isSpecialLayoutPage ? (
           <div className="flex w-full justify-center items-center overflow-y-auto bg-gray-100">
             <Routes>
               <Route path="/account" element={
                 <AuthRoute>
                   <AccountPage />
+                </AuthRoute>
+              } />
+              <Route path="/admin" element={
+                <AuthRoute>
+                  <AdminPage />
                 </AuthRoute>
               } />
             </Routes>
@@ -189,7 +157,7 @@ const MainLayout = observer(() => {
                 {/* Protected routes */}
                 <Route path="/" element={
                   <AuthRoute>
-                    <MainContent />
+                    <SeriesPage />
                   </AuthRoute>
                 } />
                 <Route path="/instructor" element={
@@ -250,6 +218,11 @@ const MainLayout = observer(() => {
                 <Route path="/series/:seriesId" element={
                   <AuthRoute>
                     <SeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/select" element={
+                  <AuthRoute>
+                    <SeriesSelectPage />
                   </AuthRoute>
                 } />
                 <Route path="/series/:seriesId/add-course" element={

@@ -5,19 +5,17 @@ import uiStore from '../stores/uiStore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import languageStore from '../stores/languageStore';
+import { tap } from '../../netlify/functions/utils';
 
 const ExamPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
+  tap('ExamPage');
   
   useEffect(() => {
     coursesStore.fetchCourses();
-    uiStore.setActiveCategory(t('menu.categories.testing'));
-    
-    // Cleanup when component unmounts
-    return () => {
-      uiStore.setActiveCategory(t('menu.categories.private')); // Reset to default
-    };
+    uiStore.setActiveCategory('testing');
+    uiStore.setActiveNavItem('testing');
   }, [t]); // Add t as dependency to re-run when language changes
 
   const handleCourseClick = (course) => {
@@ -36,7 +34,11 @@ const ExamPage = observer(() => {
       </div>
       <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
         <div className="divide-y divide-gray-200 overflow-y-auto h-full">
-          {filteredCourses.map(course => (
+          {coursesStore.isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-gray-500">{t('common.loading')}</div>
+            </div>
+          ) : filteredCourses.map(course => (
             <div 
               key={course.id} 
               className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
@@ -59,6 +61,11 @@ const ExamPage = observer(() => {
               </div>
             </div>
           ))}
+          {!coursesStore.isLoading && filteredCourses.length === 0 && (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-gray-500">{t('common.no_results')}</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -10,17 +10,17 @@ import languageStore from '../../stores/languageStore';
 
 const MainContent = observer(() => {
   const { t } = languageStore;
-  // Show exam page when in exam mode
-  if (uiStore.activeNavItem === t('menu.categories.testing')) {
+  // Use location to determine what to render
+  const location = window.location.pathname;
+
+  // Show appropriate content based on route
+  if (location === '/exam') {
     return <ExamPage />;
-  }
-  
-  // Check if we're in a specific course category (video or document)
-  const isVideoCourseCategory = uiStore.activeCategory.includes(t('menu.categories.video'));
-  const isDocCourseCategory = uiStore.activeCategory.includes(t('menu.categories.document'));
-  
-  // If we're in a specific course category view, show the original course content
-  if (isVideoCourseCategory || isDocCourseCategory) {
+  } else if (location === '/instructor') {
+    return <InstructorPage />;
+  } else if (location === '/series' || location.startsWith('/series/')) {
+    return <SeriesPage />;
+  } else if (location === '/') {
     return (
       <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
         <div className="mb-4 md:mb-6">
@@ -60,30 +60,24 @@ const MainContent = observer(() => {
     );
   }
   
-  // Otherwise, show the SeriesPage as the home page
+  // Default to SeriesPage for any unhandled routes
   return <SeriesPage />;
 });
 
 const MainContentCoursesSection = observer(() => {
   const { t } = languageStore;
+  const location = window.location.pathname;
   
-  // Determine if we're in video or document mode
-  const isVideoMode = uiStore.activeCategory.includes(t('menu.categories.video'));
+  // Determine content type based on courseTypeFilter
+  const typeText = uiStore.courseTypeFilter ? 'Video' : 'Document';
   
-  // Get the type text
-  const typeText = isVideoMode ? 'Video' : 'Document';
-  
-  // Get the category text
+  // Get the category text based on route
   let categoryText = 'Courses';
-  if (uiStore.activeCategory.includes(t('menu.categories.recommended'))) {
-    categoryText = 'Recommended';
-  } else if (uiStore.activeCategory.includes(t('menu.categories.favorites'))) {
+  if (location === '/favorites') {
     categoryText = 'Favorites';
-  } else if (uiStore.activeCategory.includes(t('menu.categories.playHistory'))) {
-    categoryText = 'Play History';
   }
   
-  // Construct the title directly
+  // Construct the title
   const mainTitle = `${typeText} ${categoryText} (${coursesStore.filteredCourses.length})`;
   
   return (

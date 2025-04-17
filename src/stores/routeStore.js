@@ -138,50 +138,32 @@ class RouteStore {
   }
   
   // Sync route store with current location
-  // Sync route store with current location
   syncWithLocation(location) {
     // Use runInAction to batch all state changes
     runInAction(() => {
-      // Reset all filters on every navigation
-      uiStore.setSearchKeyword('');
-      uiStore.setCourseTypeFilter(true); // Reset to default (video courses)
-      uiStore.setSelectedInstructorId(null);
-      
       const pathSegments = location.pathname.split('/').filter(Boolean);
+      
+      // Clear all IDs by default
+      this.instructorId = null;
+      this.seriesId = null;
+      this.courseId = null;
       
       if (pathSegments.length >= 2) {
         const [routeType, routeId] = pathSegments;
         
-        // We need to handle route types differently rather than just resetting everything
+        // Set appropriate ID based on route type
         switch (routeType) {
           case 'instructor':
-            // For instructor routes, we clear other IDs and set only the instructor ID
-            this.seriesId = null;
-            this.courseId = null;
             this.setInstructorId(routeId);
             break;
           case 'series':
-            // For series routes, we clear the instructor ID to prevent going back to instructor page
-            this.instructorId = null;
-            this.courseId = null;
             this.setSeriesId(routeId);
             break;
           case 'video':
           case 'ppt':
             this.setCourseId(routeId);
             break;
-          default:
-            // For other routes, clear all IDs
-            this.instructorId = null;
-            this.seriesId = null;
-            this.courseId = null;
-            break;
         }
-      } else {
-        // For root or other non-entity routes, clear all IDs
-        this.instructorId = null;
-        this.seriesId = null;
-        this.courseId = null;
       }
     });
   }

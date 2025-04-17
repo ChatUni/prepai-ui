@@ -2,9 +2,11 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import assistantsStore from '../stores/assistantsStore';
+import languageStore from '../stores/languageStore';
 
 const AssistantsPage = observer(() => {
   const navigate = useNavigate();
+  const { t } = languageStore;
   
   // Fetch assistants data on component mount
   useEffect(() => {
@@ -27,7 +29,7 @@ const AssistantsPage = observer(() => {
   if (assistantsStore.loading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">正在加载AI助理...</div>
+        <div className="text-xl text-gray-600">{t('menu.categories.assistant.loading')}</div>
       </div>
     );
   }
@@ -36,13 +38,13 @@ const AssistantsPage = observer(() => {
   if (assistantsStore.error) {
     return (
       <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="text-xl text-red-600 mb-4">加载失败</div>
+        <div className="text-xl text-red-600 mb-4">{t('menu.categories.assistant.loadingFailed')}</div>
         <div className="text-gray-600">{assistantsStore.error}</div>
         <button
           onClick={() => assistantsStore.fetchAssistants()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
         >
-          重试
+          {t('menu.categories.assistant.retry')}
         </button>
       </div>
     );
@@ -52,7 +54,7 @@ const AssistantsPage = observer(() => {
   if (!assistantsStore.assistants.length) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">暂无AI助理</div>
+        <div className="text-xl text-gray-600">{t('menu.categories.assistant.notFound')}</div>
       </div>
     );
   }
@@ -60,12 +62,12 @@ const AssistantsPage = observer(() => {
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">AI助理</h1>
+        <h1 className="text-2xl font-bold text-gray-800">{t('menu.ai')}</h1>
         <button
           onClick={() => navigate('/assistants/add')}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Add Assistant
+          {t('course.addCourse')}
         </button>
       </div>
       

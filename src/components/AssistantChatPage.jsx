@@ -135,7 +135,7 @@ const AssistantChatPage = observer(() => {
           onClick={() => assistantsStore.fetchAssistants()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
         >
-          重试
+          {t('menu.categories.assistant.retry')}
         </button>
       </div>
     );
@@ -147,7 +147,7 @@ const AssistantChatPage = observer(() => {
   if (!assistant) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">未找到AI助理</div>
+        <div className="text-xl text-gray-600">{t('menu.categories.assistant.notFound')}</div>
       </div>
     );
   }
@@ -157,7 +157,7 @@ const AssistantChatPage = observer(() => {
       {/* Header */}
       <div className="flex items-center p-4 border-b">
         <Button onClick={handleBack} className="mr-4">
-          返回
+          {t('menu.categories.assistant.back')}
         </Button>
         <h1 className="text-xl font-semibold">{assistant.name}</h1>
       </div>
@@ -172,7 +172,7 @@ const AssistantChatPage = observer(() => {
         <ChatInput 
           onSendMessage={handleSendMessage} 
           disabled={assistantChatStore.loading}
-          placeholder="输入您的问题..."
+          placeholder={t('menu.categories.assistant.inputQuestion')}
         />
       </div>
     </div>

@@ -220,23 +220,27 @@ class CoursesStore {
   }
 
   get filteredCourses() {
-    const searchKeyword = uiStore.searchKeyword.toLowerCase();
-    const activeCategory = uiStore.activeCategory;
-    const selectedInstructorId = uiStore.selectedInstructorId;
-    const selectedSeriesId = uiStore.selectedSeriesId;
+    // Safely access uiStore properties with defaults
+    const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
+    const activeCategory = uiStore.activeCategory || '';
+    const selectedInstructorId = uiStore.selectedInstructorId || null;
+    const selectedSeriesId = uiStore.selectedSeriesId || null;
 
     const { t } = languageStore;
     
-    // If we're on the exam page, return filtered exam courses
-    if (activeCategory === t('menu.categories.testing')) {
+    // If we're on the exam page (using category ID instead of translated string)
+    if (activeCategory === 'testing') {
       return this.examCourses.filter(course => {
         const matchesSearch = !searchKeyword ||
           course.title.toLowerCase().includes(searchKeyword) ||
-          (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
+          (typeof course.instructor === 'string'
+            ? course.instructor.toLowerCase().includes(searchKeyword)
+            : course.instructor?.name?.toLowerCase().includes(searchKeyword)) ||
           (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
         const selectedInstructor = this.instructors.find(instructor => instructor.id === selectedInstructorId);
-        const matchesInstructor = !selectedInstructorId || course.instructor?.name === selectedInstructor?.name;
+        const matchesInstructor = !selectedInstructorId ||
+          (typeof course.instructor === 'string' ? course.instructor === selectedInstructor?.name : course.instructor?.name === selectedInstructor?.name);
         const matchesSeries = selectedSeriesId === null || course.series?.id === selectedSeriesId;
 
         return matchesSearch && matchesInstructor && matchesSeries;
@@ -250,10 +254,10 @@ class CoursesStore {
         (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
         (course.series?.name && course.series?.name.toLowerCase().includes(searchKeyword));
 
-      // Always filter by course type (video or document)
-      const matchesCourseType = activeCategory.includes(
-        course.isVideo ? t('menu.categories.video') : t('menu.categories.document')
-      );
+      // Always filter by course type using constant identifiers
+      const matchesCourseType = activeCategory && typeof activeCategory === 'string'
+        ? activeCategory.includes(course.isVideo ? 'video' : 'document')
+        : true; // If no active category, don't filter by course type
 
       // Special handling for different categories
       let matchesCategory = false;
@@ -261,19 +265,19 @@ class CoursesStore {
       if (!activeCategory) {
         // No category filter
         matchesCategory = true;
-      } else if (activeCategory === t('menu.categories.videoCourses')) {
+      } else if (activeCategory === 'videoCourses') {
         // Show all video courses
         matchesCategory = true;
-      } else if (activeCategory === t('menu.categories.documentCourses')) {
+      } else if (activeCategory === 'documentCourses') {
         // Show all document courses
         matchesCategory = true;
-      } else if (activeCategory.includes(t('menu.categories.recommended'))) {
+      } else if (activeCategory === 'recommended') {
         // Show only recommended courses
         matchesCategory = course.recommended === true;
-      } else if (activeCategory.includes(t('menu.categories.favorites'))) {
+      } else if (activeCategory === 'favorites') {
         // Show only favorited courses
-        matchesCategory = uiStore.favoriteCourseIds.has(course.id);
-      } else if (activeCategory.includes(t('menu.categories.playHistory'))) {
+        matchesCategory = uiStore.favoriteCourseIds ? uiStore.favoriteCourseIds.has(course.id) : false;
+      } else if (activeCategory === 'playHistory') {
         // For now, treat history same as all courses
         matchesCategory = true;
       } else {
@@ -322,15 +326,15 @@ class CoursesStore {
   }
 
   get filteredInstructors() {
-    const searchKeyword = uiStore.searchKeyword.toLowerCase();
+    const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
     
     if (!searchKeyword) {
       return this.instructors;
     }
     
     return this.instructors.filter(instructor =>
-      instructor.name.toLowerCase().includes(searchKeyword) ||
-      instructor.description.toLowerCase().includes(searchKeyword)
+      (instructor.name || '').toLowerCase().includes(searchKeyword) ||
+      (instructor.description || '').toLowerCase().includes(searchKeyword)
     );
   }
   
@@ -340,8 +344,8 @@ class CoursesStore {
       return [];
     }
     
-    const searchKeyword = uiStore.searchKeyword.toLowerCase();
-    const selectedInstructorId = uiStore.selectedInstructorId;
+    const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
+    const selectedInstructorId = uiStore.selectedInstructorId || null;
     
     return this.series.filter(series => {
       // Skip any non-object series items
@@ -378,9 +382,13 @@ const coursesStore = new CoursesStore();
 export default coursesStore;
 
 // This will be defined later
-let uiStore = { searchKeyword: '', activeCategory: '' };
+let uiStore = { searchKeyword: '', activeCategory: '', activeNavItem: '' };
 
 // Import and set the uiStore after it's created to avoid circular dependencies
 export const setUIStore = (store) => {
+  if (!store) {
+    console.error('Attempted to set undefined uiStore');
+    return;
+  }
   uiStore = store;
 };

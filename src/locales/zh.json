@@ -36,8 +36,19 @@
       "exam_records": "我的考试记录",
       "customer_service": "联系客服",
       "coupons": "优惠券",
+      "admin_portal": "管理后台",
       "logout": "退出登录",
       "valid_until": "有效期至"
+    },
+    "admin_page": {
+      "title": "管理后台",
+      "new_instructor": "新增讲师",
+      "edit_instructor": "编辑讲师",
+      "new_series": "新增系列",
+      "edit_series": "编辑系列",
+      "add_course_to_series": "添加课程到系列",
+      "add_assistant": "新增助手",
+      "edit_assistant": "编辑助手"
     },
     "categories": {
       "testing": "考测",
@@ -88,8 +99,8 @@
         }
       },
       "instructor": {
-        "voiceGuidance": "实时语音辅导",
-        "instructorsTitle": "老师实时语音辅导",
+        "voiceGuidance": "实时聊天",
+        "instructorsTitle": "老师实时聊天",
         "seriesTitle": "{name}的系列课程",
         "chat": {
           "realTimeChat": "实时聊天",
@@ -107,6 +118,23 @@
       }
     }
   },
+  "assistant": {
+    "add": {
+      "title": "添加新助手",
+      "name": "名称",
+      "greeting": "问候语",
+      "prompt": "提示词",
+      "icon": "图标",
+      "selectImage": "选择图片",
+      "changeImage": "更改图片",
+      "fileSelected": "已选择文件",
+      "iconPreview": "助手图标预览",
+      "creating": "创建中...",
+      "create": "创建助手",
+      "uploadError": "上传图片失败",
+      "createError": "创建助手失败"
+    }
+  },
   "course": {
     "addCourse": "添加课程",
     "editCourse": "编辑课程",
@@ -121,10 +149,34 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "selectTitle": "选择系列",
+    "edit": {
+      "loading": "加载中...",
+      "editTitle": "编辑系列",
+      "createTitle": "创建新系列",
+      "instructor": "讲师",
+      "selectInstructor": "请选择讲师",
+      "name": "系列名称",
+      "description": "描述",
+      "coverImage": "封面图片",
+      "selectImage": "选择图片",
+      "changeImage": "更改图片",
+      "fileSelected": "已选择文件",
+      "coverPreview": "封面预览",
+      "saving": "保存中...",
+      "saveSeries": "保存系列",
+      "saveError": "保存系列失败"
+    },
     "seriesCount": "显示 {count} 个系列",
     "unknownInstructor": "未知讲师",
     "noDescription": "暂无描述",
-    "courseCount": "{count} 个课程"
+    "courseCount": "{count} 个课程",
+    "aboutThisSeries": "关于这个系列",
+    "noCover": "无封面",
+    "loading": "加载系列课程...",
+    "loadingError": "加载系列课程时出错",
+    "noSeries": "没有系列课程",
+    "courseList": "课程列表"
   },
   "search": {
     "allInstructors": "所有老师",

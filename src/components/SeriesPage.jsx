@@ -7,9 +7,13 @@ import SearchBar from './ui/SearchBar';
 import coursesStore from '../stores/coursesStore';
 import routeStore from '../stores/routeStore';
 import uiStore from '../stores/uiStore';
+import languageStore from '../stores/languageStore';
+import { tap } from '../../netlify/functions/utils';
 
 const SeriesPage = observer(() => {
   const navigate = useNavigate();
+  const { t } = languageStore;
+  tap('SeriesPage');
   
   // Make sure we load series data if not already loaded
   if (coursesStore.series.length === 0) {
@@ -85,7 +89,7 @@ const SeriesPage = observer(() => {
                   />
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-700 w-full h-48 flex items-center justify-center">
-                    <span className="text-gray-500 dark:text-gray-400">无封面</span>
+                    <span className="text-gray-500 dark:text-gray-400">{t('series.noCover')}</span>
                   </div>
                 )}
               </div>
@@ -94,7 +98,7 @@ const SeriesPage = observer(() => {
               <div className="md:w-1/2">
                 {/* Series description */}
                 <div className="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h2 className="text-xl font-semibold mb-3">关于这个系列</h2>
+                  <h2 className="text-xl font-semibold mb-3">{t('series.aboutThisSeries')}</h2>
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
                     {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : 'No description available for this series.'}
                   </p>
@@ -128,7 +132,7 @@ const SeriesPage = observer(() => {
         
         {/* Course list */}
         <CourseList
-          title={'课程列表'}
+          title={t('series.courseList')}
           courses={seriesCourses}
         />
       </div>
@@ -145,17 +149,17 @@ const SeriesPage = observer(() => {
       
       {coursesStore.isLoading ? (
         <div className="text-center py-10">
-          <p className="text-gray-600 dark:text-gray-400">加载系列课程...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('series.loading')}</p>
         </div>
       ) : (
         <>
           {!Array.isArray(coursesStore.filteredSeries) ? (
             <div className="text-center py-10">
-              <p className="text-gray-600 dark:text-gray-400">加载系列课程时出错</p>
+              <p className="text-gray-600 dark:text-gray-400">{t('series.loadingError')}</p>
             </div>
           ) : coursesStore.filteredSeries.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-600 dark:text-gray-400">没有系列课程</p>
+              <p className="text-gray-600 dark:text-gray-400">{t('series.noSeries')}</p>
             </div>
           ) : (
             <SeriesList title="" series={coursesStore.filteredSeries} isAllInstructors={true} />

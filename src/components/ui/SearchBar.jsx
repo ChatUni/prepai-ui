@@ -19,8 +19,8 @@ const SearchBar = observer(() => {
     uiStore.setSelectedInstructorId(parsedId);
     setIsDropdownOpen(false);
     
-    // Only navigate if not on exam page
-    if (!window.location.pathname.includes('/exam')) {
+    // Only navigate if not on exam or series page
+    if (!window.location.pathname.includes('/exam') && !window.location.pathname.includes('/series')) {
       navigate(parsedId ? `/instructor/${parsedId}` : '/');
     }
   };

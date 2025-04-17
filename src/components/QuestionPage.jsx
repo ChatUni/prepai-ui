@@ -55,7 +55,11 @@ const QuestionPage = observer(() => {
       </div>
       {/* Questions List */}
       <div className="space-y-8 flex-1 overflow-y-auto pb-24">
-        {examStore.questionsWithParsedOptions.length === 0 ? (
+        {examStore.isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-500">{t('common.loading')}</div>
+          </div>
+        ) : examStore.questionsWithParsedOptions.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-500">
               <p className="text-xl">{t('exam.noQuestions')}</p>

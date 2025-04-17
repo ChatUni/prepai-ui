@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import assistantsStore from '../stores/assistantsStore';
+import languageStore from '../stores/languageStore';
 
 const AddAssistantPage = observer(() => {
+  const { t } = languageStore;
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -29,7 +31,7 @@ const AddAssistantPage = observer(() => {
         });
         
         if (!response.ok) {
-          throw new Error('Failed to upload image');
+          throw new Error(t('assistant.add.uploadError'));
         }
         
         const { url } = await response.json();
@@ -43,13 +45,13 @@ const AddAssistantPage = observer(() => {
   return (
     <div className="flex-1 p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">添加新助手</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('assistant.add.title')}</h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              名称
+              {t('assistant.add.name')}
             </label>
             <input
               id="name"
@@ -64,7 +66,7 @@ const AddAssistantPage = observer(() => {
           {/* Greeting Input */}
           <div>
             <label htmlFor="greeting" className="block text-sm font-medium text-gray-700 mb-1">
-              问候语
+              {t('assistant.add.greeting')}
             </label>
             <input
               id="greeting"
@@ -79,7 +81,7 @@ const AddAssistantPage = observer(() => {
           {/* Prompt Input */}
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-1">
-              提示词
+              {t('assistant.add.prompt')}
             </label>
             <textarea
               id="prompt"
@@ -93,7 +95,7 @@ const AddAssistantPage = observer(() => {
           {/* Icon Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              图标
+              {t('assistant.add.icon')}
             </label>
             <div className="relative">
               <input
@@ -112,12 +114,12 @@ const AddAssistantPage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {assistantsStore.newAssistant.iconUrl ? '更改图片' : '选择图片'}
+                  {assistantsStore.newAssistant.iconUrl ? t('assistant.add.changeImage') : t('assistant.add.selectImage')}
                 </span>
               </label>
               {assistantsStore.newAssistant.iconUrl && (
                 <div className="mt-2 text-sm text-gray-500">
-                  已选择文件
+                  {t('assistant.add.fileSelected')}
                 </div>
               )}
             </div>
@@ -125,7 +127,7 @@ const AddAssistantPage = observer(() => {
               <div className="mt-2">
                 <img
                   src={assistantsStore.newAssistant.iconUrl}
-                  alt="助手图标预览"
+                  alt={t('assistant.add.iconPreview')}
                   className="w-24 h-24 object-cover rounded-full"
                 />
               </div>
@@ -144,7 +146,7 @@ const AddAssistantPage = observer(() => {
               onClick={() => navigate('/assistants')}
               className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
-              取消
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -153,7 +155,7 @@ const AddAssistantPage = observer(() => {
                 assistantsStore.loading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {assistantsStore.loading ? '创建中...' : '创建助手'}
+              {assistantsStore.loading ? t('assistant.add.creating') : t('assistant.add.create')}
             </button>
           </div>
         </form>

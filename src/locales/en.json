@@ -36,8 +36,19 @@
       "exam_records": "My Exam Records",
       "customer_service": "Contact Customer Service",
       "coupons": "Coupons",
+      "admin_portal": "Admin Portal",
       "logout": "Logout",
       "valid_until": "Valid until"
+    },
+    "admin_page": {
+      "title": "Admin Portal",
+      "new_instructor": "New Instructor",
+      "edit_instructor": "Edit Instructor",
+      "new_series": "New Series",
+      "edit_series": "Edit Series",
+      "add_course_to_series": "Add Course to Series",
+      "add_assistant": "Add Assistant",
+      "edit_assistant": "Edit Assistant"
     },
     "categories": {
       "testing": "Testing",
@@ -88,8 +99,8 @@
         }
       },
       "instructor": {
-        "voiceGuidance": "Real-time Voice Guidance",
-        "instructorsTitle": "Instructor Real-time Voice Guidance",
+        "voiceGuidance": "Real-time Chat",
+        "instructorsTitle": "Instructor Real-time Chat",
         "seriesTitle": "{name}'s Course Series",
         "chat": {
           "realTimeChat": "Real-time Chat",
@@ -107,6 +118,23 @@
       }
     }
   },
+  "assistant": {
+    "add": {
+      "title": "Add New Assistant",
+      "name": "Name",
+      "greeting": "Greeting",
+      "prompt": "Prompt",
+      "icon": "Icon",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "iconPreview": "Assistant icon preview",
+      "creating": "Creating...",
+      "create": "Create Assistant",
+      "uploadError": "Failed to upload image",
+      "createError": "Failed to create assistant"
+    }
+  },
   "course": {
     "addCourse": "Add Course",
     "editCourse": "Edit Course",
@@ -121,10 +149,34 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "selectTitle": "Select a Series",
+    "edit": {
+      "loading": "Loading...",
+      "editTitle": "Edit Series",
+      "createTitle": "Create New Series",
+      "instructor": "Instructor",
+      "selectInstructor": "Please select an instructor",
+      "name": "Series Name",
+      "description": "Description",
+      "coverImage": "Cover Image",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "coverPreview": "Cover preview",
+      "saving": "Saving...",
+      "saveSeries": "Save Series",
+      "saveError": "Failed to save series"
+    },
     "seriesCount": "Showing {count} series",
     "unknownInstructor": "Unknown Instructor",
     "noDescription": "No description available",
-    "courseCount": "{count} courses"
+    "courseCount": "{count} courses",
+    "aboutThisSeries": "About this Series",
+    "noCover": "No Cover",
+    "loading": "Loading series...",
+    "loadingError": "Error loading series",
+    "noSeries": "No series available",
+    "courseList": "Course List"
   },
   "search": {
     "allInstructors": "All Instructors",
