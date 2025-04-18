@@ -122,6 +122,10 @@
     "chat": "Chat"
   },
   "assistants": {
+    "chat": "Chat",
+    "edit": {
+      "button": "Edit"
+    },
     "selectToEdit": "Select Assistant to Edit",
     "add": {
       "title": "Add New Assistant",

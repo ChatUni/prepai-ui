@@ -38,7 +38,7 @@ class AssistantsStore {
       console.error('Error fetching assistants:', error);
       
       runInAction(() => {
-        this.error = errorMessage;
+        this.error = error.message;
         this.loading = false;
       });
     }
@@ -59,7 +59,7 @@ class AssistantsStore {
     this.assistants = [];
     this.loading = false;
     this.error = null;
-    this.resetNewAssistant();
+    this.resetAssistant();
   }
 
   // Assistant form methods
@@ -110,7 +110,7 @@ class AssistantsStore {
         this.loading = false;
       });
 
-      return newAssistant;
+      return savedAssistant;
     } catch (error) {
       runInAction(() => {
         this.error = error.message;
@@ -119,6 +119,10 @@ class AssistantsStore {
       throw error;
     }
   };
+  
+  setAssistant(id) {
+    this.currentAssistant = this.assistants.find(a => a.id === id) || {};
+  }
 }
 
 // Create and export a singleton instance

@@ -122,6 +122,10 @@
     "chat": "对话"
   },
   "assistants": {
+    "chat": "对话",
+    "edit": {
+      "button": "编辑"
+    },
     "selectToEdit": "选择要编辑的助手",
     "add": {
       "title": "添加新助手",

@@ -122,6 +122,10 @@
     "chat": "チャット"
   },
   "assistants": {
+    "chat": "チャット",
+    "edit": {
+      "button": "編集"
+    },
     "selectToEdit": "編集するアシスタントを選択",
     "add": {
       "title": "新規アシスタントを追加",

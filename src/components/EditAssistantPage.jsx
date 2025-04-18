@@ -10,21 +10,8 @@ const EditAssistantPage = observer(() => {
   const { id } = useParams();
 
   useEffect(() => {
-    const initializePage = async () => {
-      if (id) {
-        try {
-          await assistantsStore.loadAssistant(id);
-        } catch (error) {
-          console.error('Failed to load assistant:', error);
-          navigate('/assistants');
-        }
-      } else {
-        assistantsStore.resetAssistant();
-      }
-    };
-
-    initializePage();
-  }, [id, navigate]);
+    assistantsStore.setAssistant(id);
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +37,7 @@ const EditAssistantPage = observer(() => {
         });
         
         if (!response.ok) {
-          throw new Error(t('assistant.edit.uploadError'));
+          throw new Error(t('assistants.edit.uploadError'));
         }
         
         const { url } = await response.json();
@@ -65,14 +52,14 @@ const EditAssistantPage = observer(() => {
     <div className="flex-1 p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          {assistantsStore.isEditMode ? t('assistant.edit.title') : t('assistant.add.title')}
+          {assistantsStore.isEditMode ? t('assistants.edit.title') : t('assistants.add.title')}
         </h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.edit.name')}
+              {t('assistants.edit.name')}
             </label>
             <input
               id="name"
@@ -87,7 +74,7 @@ const EditAssistantPage = observer(() => {
           {/* Greeting Input */}
           <div>
             <label htmlFor="greeting" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.edit.greeting')}
+              {t('assistants.edit.greeting')}
             </label>
             <input
               id="greeting"
@@ -102,7 +89,7 @@ const EditAssistantPage = observer(() => {
           {/* Prompt Input */}
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.edit.prompt')}
+              {t('assistants.edit.prompt')}
             </label>
             <textarea
               id="prompt"
@@ -116,7 +103,7 @@ const EditAssistantPage = observer(() => {
           {/* Icon Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.edit.icon')}
+              {t('assistants.edit.icon')}
             </label>
             <div className="relative">
               <input
@@ -135,12 +122,12 @@ const EditAssistantPage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {assistantsStore.currentAssistant.iconUrl ? t('assistant.edit.changeImage') : t('assistant.edit.selectImage')}
+                  {assistantsStore.currentAssistant.iconUrl ? t('assistants.edit.changeImage') : t('assistants.edit.selectImage')}
                 </span>
               </label>
               {assistantsStore.currentAssistant.iconUrl && (
                 <div className="mt-2 text-sm text-gray-500">
-                  {t('assistant.edit.fileSelected')}
+                  {t('assistants.edit.fileSelected')}
                 </div>
               )}
             </div>
@@ -148,7 +135,7 @@ const EditAssistantPage = observer(() => {
               <div className="mt-2">
                 <img
                   src={assistantsStore.currentAssistant.iconUrl}
-                  alt={t('assistant.edit.iconPreview')}
+                  alt={t('assistants.edit.iconPreview')}
                   className="w-24 h-24 object-cover rounded-full"
                 />
               </div>
@@ -177,8 +164,8 @@ const EditAssistantPage = observer(() => {
               }`}
             >
               {assistantsStore.loading 
-                ? (assistantsStore.isEditMode ? t('assistant.edit.saving') : t('assistant.add.creating'))
-                : (assistantsStore.isEditMode ? t('assistant.edit.save') : t('assistant.add.create'))
+                ? (assistantsStore.isEditMode ? t('assistants.edit.saving') : t('assistants.add.creating'))
+                : (assistantsStore.isEditMode ? t('assistants.edit.save') : t('assistants.add.create'))
               }
             </button>
           </div>

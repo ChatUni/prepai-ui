@@ -21,8 +21,6 @@ const AssistantSelectPage = observer(() => {
   }, []);
 
   const handleAssistantClick = (assistant) => {
-    // Set current assistant and navigate to edit page
-    assistantsStore.loadAssistant(assistant.id);
     navigate(`/assistants/${assistant.id}/edit`);
   };
 

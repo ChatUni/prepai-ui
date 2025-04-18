@@ -246,7 +246,7 @@ const MainLayout = observer(() => {
                     <EditAssistantPage />
                   </AuthRoute>
                 } />
-                <Route path="/assistants/edit/:id" element={
+                <Route path="/assistants/:id/edit" element={
                   <AuthRoute>
                     <EditAssistantPage />
                   </AuthRoute>
