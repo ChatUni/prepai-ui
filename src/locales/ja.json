@@ -119,6 +119,10 @@
     }
   },
   "assistant": {
+    "chat": "チャット"
+  },
+  "assistants": {
+    "selectToEdit": "編集するアシスタントを選択",
     "add": {
       "title": "新規アシスタントを追加",
       "name": "名前",
@@ -133,6 +137,21 @@
       "create": "アシスタントを作成",
       "uploadError": "画像のアップロードに失敗しました",
       "createError": "アシスタントの作成に失敗しました"
+    },
+    "edit": {
+      "title": "アシスタントを編集",
+      "name": "名前",
+      "greeting": "挨拶",
+      "prompt": "プロンプト",
+      "icon": "アイコン",
+      "selectImage": "画像を選択",
+      "changeImage": "画像を変更",
+      "fileSelected": "ファイルが選択されました",
+      "iconPreview": "アシスタントのアイコンプレビュー",
+      "saving": "保存中...",
+      "save": "アシスタントを保存",
+      "uploadError": "画像のアップロードに失敗しました",
+      "saveError": "アシスタントの保存に失敗しました"
     }
   },
   "course": {

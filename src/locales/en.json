@@ -119,6 +119,10 @@
     }
   },
   "assistant": {
+    "chat": "Chat"
+  },
+  "assistants": {
+    "selectToEdit": "Select Assistant to Edit",
     "add": {
       "title": "Add New Assistant",
       "name": "Name",
@@ -133,6 +137,21 @@
       "create": "Create Assistant",
       "uploadError": "Failed to upload image",
       "createError": "Failed to create assistant"
+    },
+    "edit": {
+      "title": "Edit Assistant",
+      "name": "Name",
+      "greeting": "Greeting",
+      "prompt": "Prompt",
+      "icon": "Icon",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "iconPreview": "Assistant icon preview",
+      "saving": "Saving...",
+      "save": "Save Assistant",
+      "uploadError": "Failed to upload image",
+      "saveError": "Failed to save assistant"
     }
   },
   "course": {

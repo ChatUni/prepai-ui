@@ -31,7 +31,7 @@ const AdminPage = observer(() => {
         navigate('/assistants/add');
         break;
       case 'edit-assistant':
-        navigate('/assistants');
+        navigate('/assistants/select?mode=edit');
         break;
       default:
         break;

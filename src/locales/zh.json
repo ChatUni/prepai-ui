@@ -119,6 +119,10 @@
     }
   },
   "assistant": {
+    "chat": "对话"
+  },
+  "assistants": {
+    "selectToEdit": "选择要编辑的助手",
     "add": {
       "title": "添加新助手",
       "name": "名称",
@@ -133,6 +137,21 @@
       "create": "创建助手",
       "uploadError": "上传图片失败",
       "createError": "创建助手失败"
+    },
+    "edit": {
+      "title": "编辑助手",
+      "name": "名称",
+      "greeting": "问候语",
+      "prompt": "提示词",
+      "icon": "图标",
+      "selectImage": "选择图片",
+      "changeImage": "更改图片",
+      "fileSelected": "已选择文件",
+      "iconPreview": "助手图标预览",
+      "saving": "保存中...",
+      "save": "保存助手",
+      "uploadError": "上传图片失败",
+      "saveError": "保存助手失败"
     }
   },
   "course": {

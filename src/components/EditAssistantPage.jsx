@@ -1,20 +1,39 @@
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import assistantsStore from '../stores/assistantsStore';
 import languageStore from '../stores/languageStore';
 
-const AddAssistantPage = observer(() => {
+const EditAssistantPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const initializePage = async () => {
+      if (id) {
+        try {
+          await assistantsStore.loadAssistant(id);
+        } catch (error) {
+          console.error('Failed to load assistant:', error);
+          navigate('/assistants');
+        }
+      } else {
+        assistantsStore.resetAssistant();
+      }
+    };
+
+    initializePage();
+  }, [id, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await assistantsStore.createAssistant();
+      await assistantsStore.saveAssistant();
       navigate('/assistants');
     } catch (error) {
       // Error is already handled in store
-      console.error('Failed to create assistant:', error);
+      console.error('Failed to save assistant:', error);
     }
   };
 
@@ -31,11 +50,11 @@ const AddAssistantPage = observer(() => {
         });
         
         if (!response.ok) {
-          throw new Error(t('assistant.add.uploadError'));
+          throw new Error(t('assistant.edit.uploadError'));
         }
         
         const { url } = await response.json();
-        assistantsStore.setNewAssistantField('iconUrl', url);
+        assistantsStore.setAssistantField('iconUrl', url);
       } catch (error) {
         console.error('Failed to upload file:', error);
       }
@@ -45,19 +64,21 @@ const AddAssistantPage = observer(() => {
   return (
     <div className="flex-1 p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('assistant.add.title')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+          {assistantsStore.isEditMode ? t('assistant.edit.title') : t('assistant.add.title')}
+        </h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.add.name')}
+              {t('assistant.edit.name')}
             </label>
             <input
               id="name"
               type="text"
-              value={assistantsStore.newAssistant.name}
-              onChange={(e) => assistantsStore.setNewAssistantField('name', e.target.value)}
+              value={assistantsStore.currentAssistant.name}
+              onChange={(e) => assistantsStore.setAssistantField('name', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -66,13 +87,13 @@ const AddAssistantPage = observer(() => {
           {/* Greeting Input */}
           <div>
             <label htmlFor="greeting" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.add.greeting')}
+              {t('assistant.edit.greeting')}
             </label>
             <input
               id="greeting"
               type="text"
-              value={assistantsStore.newAssistant.greeting}
-              onChange={(e) => assistantsStore.setNewAssistantField('greeting', e.target.value)}
+              value={assistantsStore.currentAssistant.greeting}
+              onChange={(e) => assistantsStore.setAssistantField('greeting', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -81,12 +102,12 @@ const AddAssistantPage = observer(() => {
           {/* Prompt Input */}
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.add.prompt')}
+              {t('assistant.edit.prompt')}
             </label>
             <textarea
               id="prompt"
-              value={assistantsStore.newAssistant.prompt}
-              onChange={(e) => assistantsStore.setNewAssistantField('prompt', e.target.value)}
+              value={assistantsStore.currentAssistant.prompt}
+              onChange={(e) => assistantsStore.setAssistantField('prompt', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
               required
             />
@@ -95,7 +116,7 @@ const AddAssistantPage = observer(() => {
           {/* Icon Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('assistant.add.icon')}
+              {t('assistant.edit.icon')}
             </label>
             <div className="relative">
               <input
@@ -104,7 +125,7 @@ const AddAssistantPage = observer(() => {
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
-                required
+                required={!assistantsStore.currentAssistant.iconUrl}
               />
               <label
                 htmlFor="icon"
@@ -114,20 +135,20 @@ const AddAssistantPage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {assistantsStore.newAssistant.iconUrl ? t('assistant.add.changeImage') : t('assistant.add.selectImage')}
+                  {assistantsStore.currentAssistant.iconUrl ? t('assistant.edit.changeImage') : t('assistant.edit.selectImage')}
                 </span>
               </label>
-              {assistantsStore.newAssistant.iconUrl && (
+              {assistantsStore.currentAssistant.iconUrl && (
                 <div className="mt-2 text-sm text-gray-500">
-                  {t('assistant.add.fileSelected')}
+                  {t('assistant.edit.fileSelected')}
                 </div>
               )}
             </div>
-            {assistantsStore.newAssistant.iconUrl && (
+            {assistantsStore.currentAssistant.iconUrl && (
               <div className="mt-2">
                 <img
-                  src={assistantsStore.newAssistant.iconUrl}
-                  alt={t('assistant.add.iconPreview')}
+                  src={assistantsStore.currentAssistant.iconUrl}
+                  alt={t('assistant.edit.iconPreview')}
                   className="w-24 h-24 object-cover rounded-full"
                 />
               </div>
@@ -155,7 +176,10 @@ const AddAssistantPage = observer(() => {
                 assistantsStore.loading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {assistantsStore.loading ? t('assistant.add.creating') : t('assistant.add.create')}
+              {assistantsStore.loading 
+                ? (assistantsStore.isEditMode ? t('assistant.edit.saving') : t('assistant.add.creating'))
+                : (assistantsStore.isEditMode ? t('assistant.edit.save') : t('assistant.add.create'))
+              }
             </button>
           </div>
         </form>
@@ -164,4 +188,4 @@ const AddAssistantPage = observer(() => {
   );
 });
 
-export default AddAssistantPage;
+export default EditAssistantPage;

@@ -75,55 +75,11 @@ export const fetchFromApi = async (endpoint) => {
       console.error('For Netlify functions, make sure they are deployed correctly');
     }
     
-    // Return empty array as fallback for development
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Using fallback data in development mode');
-      return getFallbackData(endpoint);
-    }
-    
     // Add more context to the error
     const enhancedError = new Error(`API request failed for endpoint ${endpoint}: ${error.message}`);
     enhancedError.originalError = error;
     throw enhancedError;
   }
-};
-
-/**
- * Get fallback data for development
- * @param {string} endpoint - API endpoint
- * @returns {Array|Object} - Fallback data
- */
-const getFallbackData = (endpoint) => {
-  console.warn(`No fallback data available for endpoint: ${endpoint}`);
-  if (endpoint === '/courses') {
-    return [];
-  }
-  
-  if (endpoint.startsWith('/courses/')) {
-    return null;
-  }
-  
-  if (endpoint === '/instructors') {
-    return [];
-  }
-  
-  if (endpoint === '/series') {
-    return [];
-  }
-  
-  if (endpoint.startsWith('/series/')) {
-    return null;
-  }
-  
-  if (endpoint === '/assistants') {
-    return [
-      { id: 1, name: 'Math' },
-      { id: 2, name: 'Physics' },
-      { id: 3, name: 'Chemistry' }
-    ];
-  }
-  
-  return [];
 };
 
 /**
@@ -199,6 +155,13 @@ export const testApiConnection = async () => {
  */
 export const getAllAssistants = async () => fetchFromApi('/assistants');
 
+/**
+ * Get an assistant by ID from the API
+ * @param {number} id - Assistant ID
+ * @returns {Promise<Object>} - Promise resolving to assistant object
+ */
+export const getAssistant = async (id) => fetchFromApi(`/assistants/${id}`);
+
 export default {
   fetchFromApi,
   getAllCourses,
@@ -208,5 +171,6 @@ export default {
   getAllSeries,
   getSeriesById,
   getAllAssistants,
+  getAssistant,
   testApiConnection
 };

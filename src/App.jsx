@@ -18,7 +18,8 @@ import SeriesPage from './components/SeriesPage';
 import EditSeriesPage from './components/EditSeriesPage';
 import AddCoursePage from './components/AddCoursePage';
 import AssistantsPage from './components/AssistantsPage';
-import AddAssistantPage from './components/AddAssistantPage';
+import AssistantSelectPage from './components/AssistantSelectPage';
+import EditAssistantPage from './components/EditAssistantPage';
 import AssistantChatPage from './components/AssistantChatPage';
 import AccountPage from './components/AccountPage';
 import AdminPage from './components/AdminPage';
@@ -230,6 +231,11 @@ const MainLayout = observer(() => {
                     <AddCoursePage />
                   </AuthRoute>
                 } />
+                <Route path="/assistants/select" element={
+                  <AuthRoute>
+                    <AssistantSelectPage />
+                  </AuthRoute>
+                } />
                 <Route path="/assistants" element={
                   <AuthRoute>
                     <AssistantsPage />
@@ -237,7 +243,12 @@ const MainLayout = observer(() => {
                 } />
                 <Route path="/assistants/add" element={
                   <AuthRoute>
-                    <AddAssistantPage />
+                    <EditAssistantPage />
+                  </AuthRoute>
+                } />
+                <Route path="/assistants/edit/:id" element={
+                  <AuthRoute>
+                    <EditAssistantPage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants/:assistantId/chat" element={

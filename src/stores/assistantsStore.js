@@ -9,37 +9,26 @@ class AssistantsStore {
   error = null;
   
   // New assistant form state
-  newAssistant = {
+  currentAssistant = {
+    id: null,
     name: '',
     greeting: '',
     prompt: '',
     iconUrl: ''
   };
+
+  isEditMode = false;
   
   constructor() {
     makeAutoObservable(this);
   }
-  
-  /**
-   * Fetch all assistants from the API
-   * @param {number} retryCount - Number of retry attempts (default: 0)
-   * @param {number} timeout - Timeout in milliseconds (default: 15000)
-   */
-  async fetchAssistants(retryCount = 0, timeout = 15000) {
+
+  async fetchAssistants() {
     this.loading = true;
     this.error = null;
     
     try {
-      // Create a timeout promise
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out. Database connection may be unavailable.')), timeout);
-      });
-      
-      // Race the actual fetch against the timeout
-      const assistants = await Promise.race([
-        db.getAllAssistants(),
-        timeoutPromise
-      ]);
+      const assistants = await db.getAllAssistants();
       
       runInAction(() => {
         this.assistants = assistants || [];
@@ -48,41 +37,9 @@ class AssistantsStore {
     } catch (error) {
       console.error('Error fetching assistants:', error);
       
-      // Check if we should retry on timeout
-      if (error.message.includes('timed out') && retryCount < 2) {
-        console.log(`Retrying fetch assistants (attempt ${retryCount + 1})...`);
-        runInAction(() => {
-          this.error = `Connection timed out. Retrying (attempt ${retryCount + 1})...`;
-        });
-        
-        // Retry with exponential backoff
-        setTimeout(() => {
-          this.fetchAssistants(retryCount + 1, timeout * 1.5);
-        }, 1000 * (retryCount + 1));
-        return;
-      }
-      
-      // Format user-friendly error message based on error type
-      let errorMessage = error.message;
-      if (error.message.includes('ETIMEDOUT') || error.message.includes('timed out')) {
-        errorMessage = '数据库连接超时。请检查网络连接或联系管理员。';
-      } else if (error.message.includes('NetworkError')) {
-        errorMessage = '网络错误。请检查您的互联网连接。';
-      }
-      
       runInAction(() => {
         this.error = errorMessage;
         this.loading = false;
-        
-        // In development mode, set fallback data
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Using fallback assistants data');
-          this.assistants = [
-            { id: 1, name: 'Math' },
-            { id: 2, name: 'Physics' },
-            { id: 3, name: 'Chemistry' }
-          ];
-        }
       });
     }
   }
@@ -105,42 +62,51 @@ class AssistantsStore {
     this.resetNewAssistant();
   }
 
-  // New assistant form methods
-  setNewAssistantField = (field, value) => {
-    this.newAssistant[field] = value;
+  // Assistant form methods
+  setAssistantField = (field, value) => {
+    this.currentAssistant[field] = value;
   };
 
-  resetNewAssistant = () => {
-    this.newAssistant = {
+  resetAssistant = () => {
+    this.currentAssistant = {
+      id: null,
       name: '',
       greeting: '',
       prompt: '',
       iconUrl: ''
     };
+    this.isEditMode = false;
   };
 
-  createAssistant = async () => {
+  saveAssistant = async () => {
     this.loading = true;
     this.error = null;
 
     try {
-      const response = await fetch(`${getApiBaseUrl()}/assistants`, {
+      const response = await fetch(`${getApiBaseUrl()}/assistants/${this.currentAssistant.id || ''}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.newAssistant)
+        body: JSON.stringify(this.currentAssistant)
       });
 
       if (!response.ok) {
         throw new Error(`Failed to create assistant: ${response.statusText}`);
       }
 
-      const newAssistant = await response.json();
+      const savedAssistant = await response.json();
       
       runInAction(() => {
-        this.assistants.push(newAssistant);
-        this.resetNewAssistant();
+        if (this.isEditMode) {
+          const index = this.assistants.findIndex(a => a.id === savedAssistant.id);
+          if (index !== -1) {
+            this.assistants[index] = savedAssistant;
+          }
+        } else {
+          this.assistants.push(savedAssistant);
+        }
+        this.resetAssistant();
         this.loading = false;
       });
 
