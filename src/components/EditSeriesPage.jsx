@@ -70,7 +70,7 @@ const EditSeriesPage = observer(() => {
   if (seriesStore.isLoading) {
     return <div className="p-4">{t('series.edit.loading')}</div>;
   }
-tap(seriesStore.currentSeries)
+
   return (
     <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">
@@ -136,7 +136,6 @@ tap(seriesStore.currentSeries)
                 seriesStore.setSelectedImagePreview(file);
               }}
               className="hidden"
-              required={!seriesStore.currentSeries?.cover_image}
             />
             <label
               htmlFor="cover_image"

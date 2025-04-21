@@ -110,10 +110,10 @@ const EditAssistantPage = observer(() => {
               <input
                 type="file"
                 id="icon"
+                name="icon"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
-                required={!assistantsStore.currentAssistant.iconUrl}
               />
               <label
                 htmlFor="icon"

@@ -123,14 +123,9 @@ export const handler = async (event, context) => {
         return res(series);
 
       case 'POST /save':
-        if (body.id) {
-          await save(doc, body);
-          return res({ message: `${doc} updated successfully` });
-        } else {
-          const newId = await maxId(doc);
-          await save(doc, { ...body, id: newId });
-          return res({ message: `${doc} created successfully`, id: newId });
-        }
+        if (!body.id) body.id = await maxId(doc)
+        await save(doc, body);
+        return res(body);
 
       default:
         return res({ error: 'Not found' }, 404);

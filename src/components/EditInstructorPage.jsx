@@ -127,7 +127,6 @@ const EditInstructorPage = observer(() => {
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
-                required={!instructorsStore.currentInstructor.iconUrl}
               />
               <label
                 htmlFor="icon"
