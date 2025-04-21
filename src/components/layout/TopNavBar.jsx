@@ -16,6 +16,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const navItems = [
     { id: 'testing', label: t('menu.testing') },
     { id: 'private', label: t('menu.private') },
+    { id: 'series', label: t('menu.series') },
     { id: 'ai', label: t('menu.ai') },
     { id: 'my', label: t('menu.my') }
   ];
@@ -33,6 +34,9 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         navigate('/exam');
         break;
       case 'private':
+        navigate('/instructors');
+        break;
+      case 'series':
         uiStore.setCourseTypeFilter(true); // Set to video courses
         navigate('/series');
         break;
