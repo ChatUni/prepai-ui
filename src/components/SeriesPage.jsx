@@ -13,7 +13,6 @@ import { tap } from '../../netlify/functions/utils';
 const SeriesPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
-  tap('SeriesPage');
   
   // Make sure we load series data if not already loaded
   if (coursesStore.series.length === 0) {
@@ -119,9 +118,9 @@ const SeriesPage = observer(() => {
                 {selectedSeries.instructor && (
                   <div className="flex items-center mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                     <div className="flex-shrink-0">
-                      {selectedSeries.instructor.image ? (
+                      {selectedSeries.instructor.iconUrl ? (
                         <img
-                          src={selectedSeries.instructor.image}
+                          src={selectedSeries.instructor.iconUrl}
                           alt={selectedSeries.instructor.name}
                           className="w-12 h-12 rounded-full mr-4"
                         />

@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import coursesStore from '../../stores/coursesStore';
 import routeStore from '../../stores/routeStore';
 import languageStore from '../../stores/languageStore';
+import { tap } from '../../../netlify/functions/utils';
 
 const SeriesCard = observer(({ series }) => {
   const { t } = languageStore;
@@ -38,7 +39,7 @@ const SeriesCard = observer(({ series }) => {
   const instructor = series.instructor && typeof series.instructor === 'object' ? {
     id: series.instructor.id || series.instructor._id,
     name: typeof series.instructor.name === 'string' ? series.instructor.name : '',
-    image: typeof series.instructor.image === 'string' ? series.instructor.image : ''
+    iconUrl: typeof series.instructor.iconUrl === 'string' ? series.instructor.iconUrl : ''
   } : null;
 
   const handleSeriesClick = (e) => {
@@ -48,7 +49,7 @@ const SeriesCard = observer(({ series }) => {
     // Use the improved routeStore method for navigation
     routeStore.navigateToSeries(seriesId, navigate);
   };
-  
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div
@@ -68,9 +69,9 @@ const SeriesCard = observer(({ series }) => {
         
         <div className="p-3">
           <div className="flex items-center mb-2">
-            {instructor?.image ? (
+            {instructor?.iconUrl ? (
               <img
-                src={instructor.image}
+                src={instructor.iconUrl}
                 alt={instructor.name}
                 className="w-6 h-6 rounded-full mr-2"
               />

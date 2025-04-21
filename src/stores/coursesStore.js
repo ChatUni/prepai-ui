@@ -88,29 +88,8 @@ class CoursesStore {
     try {
       // Use the getAllSeries utility function for consistent API access
       const series = await getAllSeries();
-      console.log('Fetched series:', series);
-      
-      // Validate and sanitize series data
-      const validSeries = Array.isArray(series) ? series.map(item => {
-        if (!item || typeof item !== 'object') {
-          console.error('Invalid series item:', item);
-          return null;
-        }
-        
-        return {
-          id: item.id || item._id, // Handle both id formats
-          name: typeof item.name === 'string' ? item.name : '',
-          desc: typeof item.desc === 'string' ? item.desc : '',
-          cover: typeof item.cover === 'string' ? item.cover : '',
-          instructor: item.instructor && typeof item.instructor === 'object' ? {
-            id: item.instructor.id || item.instructor._id,
-            name: typeof item.instructor.name === 'string' ? item.instructor.name : '',
-            image: typeof item.instructor.image === 'string' ? item.instructor.image : ''
-          } : null
-        };
-      }).filter(Boolean) : [];
-      
-      this.setSeries(validSeries);
+      console.log('Fetched series:', series);      
+      this.setSeries(series);
     } catch (error) {
       console.error('Failed to fetch series:', error);
       console.warn('Using fallback empty series array');
@@ -121,10 +100,7 @@ class CoursesStore {
   setCourses(courses) {
     runInAction(() => {
       // Format courses to ensure instructor data is properly structured
-      this.courses = courses.map(course => ({
-        ...course,
-        instructor: typeof course.instructor === 'object' ? course.instructor.name : course.instructor
-      }));
+      this.courses = courses;
     });
   }
 
@@ -334,7 +310,7 @@ class CoursesStore {
     
     return this.instructors.filter(instructor =>
       (instructor.name || '').toLowerCase().includes(searchKeyword) ||
-      (instructor.description || '').toLowerCase().includes(searchKeyword)
+      (instructor.bio || '').toLowerCase().includes(searchKeyword)
     );
   }
   

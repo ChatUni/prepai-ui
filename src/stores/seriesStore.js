@@ -34,18 +34,7 @@ class SeriesStore {
   }
 
   setCurrentSeries = (series) => {
-    // Ensure consistent data structure
-    this.currentSeries = {
-      id: series.id || series._id || null,
-      name: series.name || '',
-      desc: series.desc || '',
-      cover: series.cover || '',
-      instructor: series.instructor ? {
-        id: series.instructor.id || series.instructor._id,
-        name: series.instructor.name || '',
-        image: series.instructor.image || ''
-      } : null
-    };
+    this.currentSeries = series;
   }
 
   fetchSeries = async () => {
@@ -54,34 +43,7 @@ class SeriesStore {
       const response = await fetch('/api/series');
       const data = await response.json();
       runInAction(() => {
-        this.series = data.map(series => ({
-          id: series.id || series._id,
-          name: series.name || '',
-          desc: series.desc || '',
-          cover: series.cover || '',
-          instructor: series.instructor ? {
-            id: series.instructor.id || series.instructor._id,
-            name: series.instructor.name || '',
-            image: series.instructor.image || ''
-          } : null
-        }));
-        this.isLoading = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-        this.isLoading = false;
-      });
-    }
-  }
-
-  fetchInstructors = async () => {
-    try {
-      this.isLoading = true;
-      const response = await fetch('/api/instructors');
-      const data = await response.json();
-      runInAction(() => {
-        this.instructors = data;
+        this.series = data;
         this.isLoading = false;
       });
     } catch (error) {
@@ -107,29 +69,8 @@ class SeriesStore {
       const series = data[0];
       console.log('API Response:', series); // Debug log
 
-      // Get instructor details if we have an instructor ID
-      let instructorDetails = null;
-      const instructorId = series.instructor_id || (series.instructor && series.instructor.id);
-      if (instructorId) {
-        const instructorResponse = await fetch(`/api/instructors/${instructorId}`);
-        const instructorData = await instructorResponse.json();
-        if (instructorData) {
-          instructorDetails = {
-            id: instructorData.id || instructorData._id,
-            name: instructorData.name || '',
-            image: instructorData.image || ''
-          };
-        }
-      }
-
       runInAction(() => {
-        this.currentSeries = {
-          id: series.id || series._id,
-          name: series.name || '',
-          desc: series.desc || '',
-          cover: series.cover || '',
-          instructor: instructorDetails || series.instructor || null
-        };
+        this.currentSeries = series;
         console.log('Set currentSeries:', this.currentSeries); // Debug log
         this.isLoading = false;
       });
