@@ -63,12 +63,6 @@ const InstructorPage = observer(() => {
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">{t('instructors.title')}</h1>
-        <button
-          onClick={() => navigate('/instructors/new')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {t('instructors.add.button')}
-        </button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -88,6 +82,7 @@ const InstructorPage = observer(() => {
               </div>
               <h2 className="text-xl font-semibold text-center mb-2">{instructor.name}</h2>
               <p className="text-gray-600 text-sm text-center mb-3">{instructor.title}</p>
+              <p className="text-gray-600 text-sm text-center mb-3">{instructor.bio}</p>
               <div className="flex space-x-2">
                 <button
                   onClick={() => navigate(`/instructor/${instructor.id}/chat`)}
@@ -99,12 +94,6 @@ const InstructorPage = observer(() => {
                     </svg>
                     {t('instructors.chat')}
                   </div>
-                </button>
-                <button
-                  onClick={() => navigate(`/instructors/${instructor.id}/edit`)}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                >
-                  {t('instructors.edit.button')}
                 </button>
               </div>
             </div>

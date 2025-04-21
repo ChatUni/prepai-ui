@@ -91,7 +91,7 @@ class InstructorsStore {
     this.error = null;
 
     try {
-      const response = await fetch(`${getApiBaseUrl()}/instructors/${this.currentInstructor.id || ''}`, {
+      const response = await fetch(`${getApiBaseUrl()}/save?doc=instructors`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
