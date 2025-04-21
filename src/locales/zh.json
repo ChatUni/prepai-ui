@@ -132,7 +132,7 @@
     "loadingFailed": "加载讲师列表失败",
     "retry": "重试",
     "notFound": "未找到讲师",
-    "chat": "对话",
+    "chat": "实时聊天",
     "add": {
       "button": "添加讲师",
       "title": "添加新讲师",

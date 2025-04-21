@@ -138,7 +138,7 @@
     "loadingFailed": "Failed to load instructors",
     "retry": "Retry",
     "notFound": "No instructors found",
-    "chat": "Chat",
+    "chat": "Real-time Chat",
     "add": {
       "button": "Add Instructor",
       "title": "Add New Instructor",
