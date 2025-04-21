@@ -13,10 +13,10 @@ const AdminPage = observer(() => {
     
     switch(action) {
       case 'new-instructor':
-        // TODO: Navigate to new instructor page
+        navigate('/instructors/new');
         break;
       case 'edit-instructor':
-        // TODO: Navigate to edit instructor page
+        navigate('/instructors/select?mode=edit');
         break;
       case 'new-series':
         navigate('/series/new');

@@ -162,12 +162,51 @@ export const getAllAssistants = async () => fetchFromApi('/assistants');
  */
 export const getAssistant = async (id) => fetchFromApi(`/assistants/${id}`);
 
+/**
+ * Get an instructor by ID from the API
+ * @param {number} id - Instructor ID
+ * @returns {Promise<Object>} - Promise resolving to instructor object
+ */
+export const getInstructor = async (id) => fetchFromApi(`/instructors/${id}`);
+
+/**
+ * Save instructor data to the API (create or update)
+ * @param {Object} data - Instructor data to save
+ * @param {number} [data.id] - Instructor ID (if updating)
+ * @returns {Promise<Object>} - Promise resolving to saved instructor object
+ */
+export const saveInstructor = async (data) => {
+  const method = data.id ? 'PUT' : 'POST';
+  const url = data.id ? `/instructors/${data.id}` : '/instructors';
+  
+  try {
+    const response = await fetch(`${getApiBaseUrl()}${url}`, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to save instructor: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error saving instructor:', error);
+    throw error;
+  }
+};
+
 export default {
   fetchFromApi,
   getAllCourses,
   getCourseById,
   getCoursesBySeriesId,
   getAllInstructors,
+  getInstructor,
+  saveInstructor,
   getAllSeries,
   getSeriesById,
   getAllAssistants,

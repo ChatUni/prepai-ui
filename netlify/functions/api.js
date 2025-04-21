@@ -27,7 +27,7 @@ export const handler = async (event, context) => {
 
   try {
     const { resource, id } = parsePathParams(event.path, 'api');
-    const { clientId, userId, seriesId, courseId, instructorId } = event.queryStringParameters || {};
+    const { clientId, userId, seriesId, courseId, instructorId, doc } = event.queryStringParameters || {};
     const route = `${event.httpMethod} /${resource}${id ? (isNaN(+id) ? `/${id}` : '/:id') : ''}`
     
     console.log(`Route: ${route}, Resource: ${resource}, id: ${id}`);
@@ -122,16 +122,14 @@ export const handler = async (event, context) => {
         const series = await flat('series', `m_id=${id}`)
         return res(series);
 
-      case 'POST /series':
+      case 'POST /save':
         if (body.id) {
-          // Update existing series
-          await save('series', body);
-          return res({ message: 'Series updated successfully' });
+          await save(doc, body);
+          return res({ message: `${doc} updated successfully` });
         } else {
-          // Create new series
-          const newId = await maxId('series');
-          await save('series', { ...body, id: newId });
-          return res({ message: 'Series created successfully', id: newId });
+          const newId = await maxId(doc);
+          await save(doc, { ...body, id: newId });
+          return res({ message: `${doc} created successfully`, id: newId });
         }
 
       default:

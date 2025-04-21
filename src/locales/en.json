@@ -8,7 +8,8 @@
     "edit": "Edit",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "no_results": "No results found"
   },
   "auth": {
     "login": "Login",
@@ -102,6 +103,9 @@
         "voiceGuidance": "Real-time Chat",
         "instructorsTitle": "Instructor Real-time Chat",
         "seriesTitle": "{name}'s Course Series",
+        "search": {
+          "placeholder": "Search instructors by name, title, or expertise..."
+        },
         "chat": {
           "realTimeChat": "Real-time Chat",
           "inputMessage": "Type your message..."
@@ -119,7 +123,44 @@
     }
   },
   "assistant": {
-    "chat": "Chat"
+    "chat": "Chat",
+    "search": {
+      "placeholder": "Search assistants by name, greeting, or prompt..."
+    }
+  },
+  "instructors": {
+    "title": "Instructors",
+    "selectToEdit": "Select Instructor to Edit",
+    "search": {
+      "placeholder": "Search instructors by name, title, or expertise..."
+    },
+    "loading": "Loading instructors...",
+    "loadingFailed": "Failed to load instructors",
+    "retry": "Retry",
+    "notFound": "No instructors found",
+    "chat": "Chat",
+    "add": {
+      "button": "Add Instructor",
+      "title": "Add New Instructor",
+      "creating": "Creating...",
+      "create": "Create Instructor"
+    },
+    "edit": {
+      "button": "Edit",
+      "title": "Edit Instructor",
+      "name": "Name",
+      "titleField": "Title",
+      "bio": "Biography",
+      "expertise": "Areas of Expertise",
+      "icon": "Profile Photo",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "iconPreview": "Instructor photo preview",
+      "saving": "Saving...",
+      "save": "Save Instructor",
+      "uploadError": "Failed to upload image"
+    }
   },
   "assistants": {
     "chat": "Chat",

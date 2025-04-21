@@ -34,7 +34,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         break;
       case 'private':
         uiStore.setCourseTypeFilter(true); // Set to video courses
-        navigate('/instructor');
+        navigate('/series');
         break;
       case 'ai':
         navigate('/assistants');

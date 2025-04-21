@@ -2,22 +2,38 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import db from '../utils/db';
 import { getApiBaseUrl } from '../config';
 
+const defaultAssistant = {
+  id: null,
+  name: '',
+  greeting: '',
+  prompt: '',
+  iconUrl: ''
+};
+
 class AssistantsStore {
   // Assistants data
   assistants = [];
   loading = false;
   error = null;
   
+  // Search filter
+  searchQuery = '';
+  
   // New assistant form state
-  currentAssistant = {
-    id: null,
-    name: '',
-    greeting: '',
-    prompt: '',
-    iconUrl: ''
-  };
+  currentAssistant = {...defaultAssistant}
 
   isEditMode = false;
+
+  get filteredAssistants() {
+    if (!this.searchQuery) return this.assistants;
+    
+    const query = this.searchQuery.toLowerCase();
+    return this.assistants.filter(assistant =>
+      assistant.name?.toLowerCase().includes(query) ||
+      assistant.greeting?.toLowerCase().includes(query) ||
+      assistant.prompt?.toLowerCase().includes(query)
+    );
+  }
   
   constructor() {
     makeAutoObservable(this);
@@ -62,6 +78,11 @@ class AssistantsStore {
     this.resetAssistant();
   }
 
+  // Search method
+  setSearchQuery = (query) => {
+    this.searchQuery = query;
+  };
+
   // Assistant form methods
   setAssistantField = (field, value) => {
     this.currentAssistant[field] = value;
@@ -83,7 +104,7 @@ class AssistantsStore {
     this.error = null;
 
     try {
-      const response = await fetch(`${getApiBaseUrl()}/assistants/${this.currentAssistant.id || ''}`, {
+      const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +142,8 @@ class AssistantsStore {
   };
   
   setAssistant(id) {
-    this.currentAssistant = this.assistants.find(a => a.id === id) || {};
+    this.currentAssistant = this.assistants.find(a => a.id === +(id || 0)) || {...defaultAssistant} ;
+    this.isEditMode = !!id;
   }
 }
 

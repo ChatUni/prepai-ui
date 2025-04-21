@@ -8,7 +8,8 @@
     "edit": "編集",
     "loading": "読み込み中...",
     "error": "エラー",
-    "success": "成功"
+    "success": "成功",
+    "no_results": "結果が見つかりません"
   },
   "auth": {
     "login": "ログイン",
@@ -102,6 +103,9 @@
         "voiceGuidance": "リアルタイムチャット",
         "instructorsTitle": "講師リアルタイムチャット",
         "seriesTitle": "{name}のコースシリーズ",
+        "search": {
+          "placeholder": "名前、役職、専門分野で講師を検索..."
+        },
         "chat": {
           "realTimeChat": "リアルタイムチャット",
           "inputMessage": "メッセージを入力..."
@@ -118,8 +122,45 @@
       }
     }
   },
+  "instructors": {
+    "title": "講師一覧",
+    "selectToEdit": "編集する講師を選択",
+    "search": {
+      "placeholder": "名前、役職、専門分野で講師を検索..."
+    },
+    "loading": "講師一覧を読み込み中...",
+    "loadingFailed": "講師一覧の読み込みに失敗しました",
+    "retry": "再試行",
+    "notFound": "講師が見つかりません",
+    "chat": "チャット",
+    "add": {
+      "button": "講師を追加",
+      "title": "新規講師を追加",
+      "creating": "作成中...",
+      "create": "講師を作成"
+    },
+    "edit": {
+      "button": "編集",
+      "title": "講師を編集",
+      "name": "名前",
+      "titleField": "役職",
+      "bio": "経歴",
+      "expertise": "専門分野",
+      "icon": "プロフィール画像",
+      "selectImage": "画像を選択",
+      "changeImage": "画像を変更",
+      "fileSelected": "ファイルが選択されました",
+      "iconPreview": "講師のプロフィール画像プレビュー",
+      "saving": "保存中...",
+      "save": "講師を保存",
+      "uploadError": "画像のアップロードに失敗しました"
+    }
+  },
   "assistant": {
-    "chat": "チャット"
+    "chat": "チャット",
+    "search": {
+      "placeholder": "名前、挨拶、プロンプトでアシスタントを検索..."
+    }
   },
   "assistants": {
     "chat": "チャット",

@@ -17,9 +17,11 @@ import QuestionPage from './components/QuestionPage';
 import SeriesPage from './components/SeriesPage';
 import EditSeriesPage from './components/EditSeriesPage';
 import AddCoursePage from './components/AddCoursePage';
+import InstructorSelectPage from './components/InstructorSelectPage';
 import AssistantsPage from './components/AssistantsPage';
 import AssistantSelectPage from './components/AssistantSelectPage';
 import EditAssistantPage from './components/EditAssistantPage';
+import EditInstructorPage from './components/EditInstructorPage';
 import AssistantChatPage from './components/AssistantChatPage';
 import AccountPage from './components/AccountPage';
 import AdminPage from './components/AdminPage';
@@ -41,6 +43,7 @@ import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
 import './stores/assistantsStore';
+import './stores/instructorsStore';
 import './stores/languageStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
@@ -161,17 +164,27 @@ const MainLayout = observer(() => {
                     <SeriesPage />
                   </AuthRoute>
                 } />
-                <Route path="/instructor" element={
+                <Route path="/instructors" element={
                   <AuthRoute>
                     <InstructorPage />
                   </AuthRoute>
                 } />
-                <Route path="/instructor/:instructorId" element={
+                <Route path="/instructors/new" element={
                   <AuthRoute>
-                    <InstructorPage />
+                    <EditInstructorPage />
                   </AuthRoute>
                 } />
-                <Route path="/instructor/:instructorId/chat" element={
+                <Route path="/instructors/select" element={
+                  <AuthRoute>
+                    <InstructorSelectPage />
+                  </AuthRoute>
+                } />
+                <Route path="/instructors/:id/edit" element={
+                  <AuthRoute>
+                    <EditInstructorPage />
+                  </AuthRoute>
+                } />
+                <Route path="/instructor/:id/chat" element={
                   <AuthRoute>
                     <InstructorChatPage />
                   </AuthRoute>
