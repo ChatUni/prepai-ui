@@ -229,6 +229,11 @@ const MainLayout = observer(() => {
                     <SeriesPage />
                   </AuthRoute>
                 } />
+                <Route path="/series/instructor/:id" element={
+                  <AuthRoute>
+                    <SeriesPage />
+                  </AuthRoute>
+                } />
                 <Route path="/series/:seriesId" element={
                   <AuthRoute>
                     <SeriesPage />

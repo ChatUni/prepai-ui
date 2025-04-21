@@ -83,7 +83,7 @@ const EditSeriesPage = observer(() => {
           </label>
           <select
             name="instructor_id"
-            defaultValue={seriesStore.currentSeries?.instructor?.id || ''}
+            defaultValue={seriesStore.currentSeries?.instructor_id || ''}
             className="w-full p-2 border rounded"
             required
           >

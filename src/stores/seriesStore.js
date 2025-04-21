@@ -40,6 +40,7 @@ class SeriesStore {
   fetchSeries = async () => {
     try {
       this.isLoading = true;
+      await this.fetchInstructors();
       const response = await fetch('/api/series');
       const data = await response.json();
       runInAction(() => {
@@ -58,7 +59,7 @@ class SeriesStore {
     try {
       this.isLoading = true;
       
-      // First get the series data
+      await this.fetchInstructors();
       const response = await fetch(`/api/series/${id}`);
       const data = await response.json();
       
@@ -72,6 +73,7 @@ class SeriesStore {
       runInAction(() => {
         this.currentSeries = series;
         console.log('Set currentSeries:', this.currentSeries); // Debug log
+        console.log(this.instructors)
         this.isLoading = false;
       });
     } catch (error) {
@@ -82,10 +84,29 @@ class SeriesStore {
     }
   }
 
+  fetchInstructors = async () => {
+    if (this.instructors.length === 0) {
+      try {
+        this.isLoading = true;
+        const response = await fetch('/api/instructors');
+        const data = await response.json();
+        runInAction(() => {
+          this.instructors = data;
+          this.isLoading = false;
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.error = error.message;
+          this.isLoading = false;
+        });
+      }
+    }
+  }
+
   uploadToCloudinary = async (file, seriesId) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('folder', `prepai/${seriesId}`);
+    formData.append('folder', `prepai/series/${seriesId}`);
 
     const response = await fetch(`/api/cloudinary_upload`, {
       method: 'POST',
@@ -101,6 +122,14 @@ class SeriesStore {
     return data.secure_url;
   }
 
+  saveSeriesPost = data => fetch('/api/save?doc=series', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  }).then(r => r.json());
+
   saveSeries = async (formData, navigate) => {
     try {
       this.isLoading = true;
@@ -112,51 +141,28 @@ class SeriesStore {
       const seriesData = {
         name: formData.get('name'),
         desc: formData.get('description'), // Map description to desc
-        instructor // Use the full instructor object
+        instructor_id: instructor.id
       };
 
       if (formData.get('id')) {
         seriesData.id = parseInt(formData.get('id'));
       }
 
-      // First save the series to get an ID if it's a new series
-      const response = await fetch('/api/series', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(seriesData),
-      });
-      
-      const data = await response.json();
+      const data = await this.saveSeriesPost(seriesData);      
       const seriesId = data.id;
 
-      // Handle file upload to Cloudinary if a new image is provided
       const coverImage = formData.get('cover_image');
       if (coverImage instanceof File) {
         const imageUrl = await this.uploadToCloudinary(coverImage, seriesId);
-        
-        // Update the series with the Cloudinary URL
-        const updateResponse = await fetch('/api/series', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: seriesId,
-            cover: imageUrl, // Map cover_image to cover
-            ...seriesData
-          }),
-        });
-        
-        await updateResponse.json();
+        seriesData.cover = imageUrl;
+        await this.saveSeriesPost(seriesData);
       }
 
       runInAction(() => {
         this.isLoading = false;
         routeStore.navigateToSeries(seriesId, navigate);
       });
-      return data;
+      return seriesData;
     } catch (error) {
       runInAction(() => {
         this.error = error.message;

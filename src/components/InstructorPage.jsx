@@ -3,6 +3,7 @@ import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import instructorsStore from '../stores/instructorsStore';
 import languageStore from '../stores/languageStore';
+import routeStore from '../stores/routeStore';
 
 const InstructorPage = observer(() => {
   const navigate = useNavigate();
@@ -69,7 +70,8 @@ const InstructorPage = observer(() => {
         {instructorsStore.instructors.map(instructor => (
           <div
             key={instructor.id}
-            className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105"
+            className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 cursor-pointer"
+            onClick={() => routeStore.navigateToSeriesWithInstructor(instructor.id, navigate)}
           >
             <div className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">

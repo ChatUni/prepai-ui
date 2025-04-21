@@ -27,7 +27,8 @@ class RouteStore {
       // Navigation actions that coordinate with the store
       navigateToInstructor: action,
       navigateToSeries: action,
-      navigateToCourse: action
+      navigateToCourse: action,
+      navigateToSeriesWithInstructor: action
     });
   }
   
@@ -153,7 +154,11 @@ class RouteStore {
             this.setInstructorId(routeId);
             break;
           case 'series':
-            if (pathSegments[2] && pathSegments[3] === 'edit') {
+            if (pathSegments[2] === 'instructor' && pathSegments[3]) {
+              // Handle /series/instructor/:id route
+              this.setInstructorId(pathSegments[3]);
+              uiStore.setSelectedInstructorId(pathSegments[3]);
+            } else if (pathSegments[2] && pathSegments[3] === 'edit') {
               // Handle /series/:id/edit route
               this.setSeriesId(pathSegments[2]);
             } else {
@@ -166,6 +171,14 @@ class RouteStore {
             break;
         }
       }
+    });
+  }
+  // Navigate to series page with instructor selected
+  navigateToSeriesWithInstructor(instructorId, navigate) {
+    if (navigate) navigate(`/series/instructor/${instructorId}`);
+    runInAction(() => {
+      this.setInstructorId(instructorId);
+      uiStore.setSelectedInstructorId(instructorId);
     });
   }
 }

@@ -35,7 +35,7 @@ export const handler = async (event, context) => {
     // Handle file upload separately since it's not JSON
     if (route === 'POST /cloudinary_upload') {
       const contentType = event.headers['content-type'] || event.headers['Content-Type'];
-      const { files, folder } = tap(multipart.parse(event.body, contentType));
+      const { files, folder } = multipart.parse(tap(event.body, 'upload'), contentType);
       
       if (!files || !files.length) {
         return res({ error: 'No file provided' }, 400);

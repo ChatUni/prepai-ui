@@ -16,8 +16,6 @@ const SeriesSelectPage = observer(() => {
   const editSeriesId = searchParams.get('seriesId');
 
   useEffect(() => {
-    // Load series and instructors data
-    seriesStore.fetchInstructors();
     if (seriesStore.series.length === 0) {
       seriesStore.fetchSeries();
     }
