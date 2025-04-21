@@ -149,6 +149,11 @@ const SeriesPage = observer(() => {
     );
   }
   
+  // Get selected instructor details
+  const selectedInstructor = uiStore.selectedInstructorId ?
+    coursesStore.instructors.find(i => i.id === uiStore.selectedInstructorId) :
+    null;
+
   // Otherwise, display all available series
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
@@ -156,6 +161,30 @@ const SeriesPage = observer(() => {
       <div className="mb-6">
         <SearchBar />
       </div>
+
+      {/* Show instructor card if one is selected */}
+      {selectedInstructor && (
+        <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              {selectedInstructor.iconUrl ? (
+                <img
+                  src={selectedInstructor.iconUrl}
+                  alt={selectedInstructor.name}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-300 mr-4 flex items-center justify-center">
+                  <span className="text-xl text-gray-600">{selectedInstructor.name?.[0]?.toUpperCase()}</span>
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg">{selectedInstructor.name}</h3>
+            </div>
+          </div>
+        </div>
+      )}
       
       {coursesStore.isLoading ? (
         <div className="text-center py-10">
