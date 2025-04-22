@@ -119,7 +119,7 @@ class SeriesStore {
     }
 
     const data = await response.json();
-    return data.secure_url;
+    return data.url;
   }
 
   saveSeriesPost = data => fetch('/api/save?doc=series', {

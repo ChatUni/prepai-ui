@@ -1,8 +1,7 @@
 import { parsePathParams } from './utils/pathUtils.js';
 import { getResponseHeaders, res } from './utils/http.js';
 import { get, save, remove, flat, maxId } from './utils/db.js';
-import { tap } from './utils';
-import multipart from 'multipart-formdata';
+import Busboy from 'busboy';
 import fs from 'fs';
 import path from 'path';
 import { cdupload } from './utils/cloudinary.js';
@@ -35,38 +34,80 @@ export const handler = async (event, context) => {
     // Handle file upload separately since it's not JSON
     if (route === 'POST /cloudinary_upload') {
       const contentType = event.headers['content-type'] || event.headers['Content-Type'];
-      const { files, folder } = multipart.parse(tap(event.body, 'upload'), contentType);
-      
-      if (!files || !files.length) {
-        return res({ error: 'No file provided' }, 400);
+      console.log('Content-Type:', contentType);
+
+      // Convert base64 body to buffer if needed
+      let bodyBuffer = event.body;
+      if (event.isBase64Encoded) {
+        bodyBuffer = Buffer.from(event.body, 'base64');
+      } else {
+        bodyBuffer = Buffer.from(event.body);
       }
 
-      const file = files[0];
-      const tempPath = path.join('/tmp', `upload-${Date.now()}-${file.filename}`);
+      return await new Promise((resolve, reject) => {
+        const busboy = Busboy({ headers: { 'content-type': contentType } });
+        let uploadPromise = null;
+        let folder = null;
 
-      try {
-        // Save file to temp location
-        await writeFile(tempPath, file.content);
+        busboy.on('file', async (fieldname, file, { filename, encoding, mimeType }) => {
+          if (fieldname === 'file') {
+            const tempPath = path.join('/tmp', `upload-${Date.now()}-${filename}`);
+            const writeStream = fs.createWriteStream(tempPath);
+            
+            file.pipe(writeStream);
 
-        // Upload to Cloudinary with optional folder
-        const result = await cdupload(tempPath, folder);
-
-        // Clean up temp file
-        await unlink(tempPath);
-
-        return res({
-          url: result.secure_url,
-          public_id: result.public_id
+            uploadPromise = new Promise((resolveUpload, rejectUpload) => {
+              writeStream.on('finish', async () => {
+                try {
+                  const result = await cdupload(tempPath, folder);
+                  await unlink(tempPath);
+                  resolveUpload(result);
+                } catch (error) {
+                  await unlink(tempPath).catch(() => {});
+                  rejectUpload(error);
+                }
+              });
+              
+              writeStream.on('error', async (error) => {
+                await unlink(tempPath).catch(() => {});
+                rejectUpload(error);
+              });
+            });
+          }
         });
-      } catch (error) {
-        // Clean up temp file in case of error
-        try {
-          await unlink(tempPath);
-        } catch (e) {
-          // Ignore cleanup errors
-        }
-        throw error;
-      }
+
+        busboy.on('field', (fieldname, value) => {
+          if (fieldname === 'folder') {
+            folder = value;
+          }
+        });
+
+        busboy.on('finish', async () => {
+          try {
+            if (!uploadPromise) {
+              resolve(res({ error: 'No file provided' }, 400));
+              return;
+            }
+            
+            const result = await uploadPromise;
+            resolve(res({
+              url: result.secure_url,
+              public_id: result.public_id
+            }));
+          } catch (error) {
+            console.error('Upload error:', error);
+            resolve(res({ error: 'Upload failed: ' + error.message }, 500));
+          }
+        });
+
+        busboy.on('error', (error) => {
+          console.error('Parsing error:', error);
+          resolve(res({ error: 'Failed to parse upload: ' + error.message }, 400));
+        });
+
+        busboy.write(bodyBuffer);
+        busboy.end();
+      });
     }
 
     // For non-file upload routes, parse body as JSON
