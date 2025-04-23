@@ -154,11 +154,11 @@ class AssistantsStore {
       // First save the assistant data
       const assistantData = {
         id: this.currentAssistant.id,
-        name: formData.get('name'),
-        greeting: formData.get('greeting'),
-        prompt: formData.get('prompt'),
+        name: this.currentAssistant.name,
+        greeting: this.currentAssistant.greeting,
+        prompt: this.currentAssistant.prompt,
         iconUrl: this.currentAssistant.iconUrl,
-        model: formData.get('model')
+        model: this.currentAssistant.model
       };
 
       const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {

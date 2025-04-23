@@ -15,7 +15,13 @@ const EditAssistantPage = observer(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData();
+    
+    // Only append the icon file if one was selected
+    const iconInput = e.target.querySelector('input[type="file"]');
+    if (iconInput && iconInput.files[0]) {
+      formData.append('icon', iconInput.files[0]);
+    }
     
     try {
       await assistantsStore.saveAssistant(formData);

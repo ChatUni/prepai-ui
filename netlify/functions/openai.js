@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import { toFile } from 'openai';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
-const CHATGPT_MODEL = 'gpt-4-turbo-preview';
+const CHATGPT_MODEL = 'gpt-4o-mini';
 
 // Main handler function
 export const handler = async (event, context) => {
@@ -79,7 +79,7 @@ export const handler = async (event, context) => {
               headers: {
                 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://github.com/nanli-7/prepai-ui'
+                //'HTTP-Referer': 'https://github.com/nanli-7/prepai-ui'
               },
               body: JSON.stringify({
                 model,
