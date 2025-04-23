@@ -196,7 +196,9 @@
       "saving": "Saving...",
       "save": "Save Assistant",
       "uploadError": "Failed to upload image",
-      "saveError": "Failed to save assistant"
+      "saveError": "Failed to save assistant",
+      "model": "AI Model",
+      "selectModel": "Select an AI model"
     }
   },
   "course": {
@@ -287,5 +289,10 @@
     "incorrectAnswers": "Incorrect Answers",
     "unanswered": "Unanswered",
     "close": "Close"
+  },
+  "tools": {
+    "purchasedCourses": "Purchased",
+    "courseCategories": "Categories",
+    "myMessages": "My Messages"
   }
 }

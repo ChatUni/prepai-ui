@@ -58,12 +58,15 @@ class AssistantChatStore {
       
       // Call OpenAI API with the assistant's prompt as system message
       try {
-        const response = await fetch(`${apiBaseUrl}/chat`, {
+        // Determine if we should use OpenRouter based on whether a model is selected
+        const useOpenRouter = !!this.selectedAssistant.model;
+        const response = await fetch(`${apiBaseUrl}/chat${useOpenRouter ? '?api=openrouter' : ''}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            model: this.selectedAssistant.model,
             messages: [
               { role: 'system', content: this.selectedAssistant.prompt },
               ...this.messages.map(msg => ({
@@ -77,7 +80,7 @@ class AssistantChatStore {
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Error response from API:", errorText);
-          throw new Error(`OpenAI API request failed with status ${response.status}: ${errorText}`);
+          throw new Error(`${useOpenRouter ? 'OpenRouter' : 'OpenAI'} API request failed with status ${response.status}: ${errorText}`);
         }
         
         const data = await response.json();
@@ -94,7 +97,7 @@ class AssistantChatStore {
           this.loading = false;
         });
       } catch (error) {
-        console.error("Error sending message to OpenAI:", error);
+        console.error(`Error sending message to ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}:`, error);
         runInAction(() => {
           this.error = error.message;
           this.loading = false;
@@ -104,7 +107,7 @@ class AssistantChatStore {
       runInAction(() => {
         this.error = error.message;
         this.loading = false;
-        console.error('Error sending message to OpenAI:', error);
+        console.error(`Error sending message to ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}:`, error);
       });
     }
   }

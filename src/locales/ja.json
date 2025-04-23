@@ -196,7 +196,9 @@
       "saving": "保存中...",
       "save": "アシスタントを保存",
       "uploadError": "画像のアップロードに失敗しました",
-      "saveError": "アシスタントの保存に失敗しました"
+      "saveError": "アシスタントの保存に失敗しました",
+      "model": "AIモデル",
+      "selectModel": "AIモデルを選択"
     }
   },
   "course": {
@@ -281,5 +283,10 @@
     "incorrectAnswers": "不正解",
     "unanswered": "未回答",
     "close": "閉じる"
+  },
+  "tools": {
+    "purchasedCourses": "購入済みコース",
+    "courseCategories": "コース分類",
+    "myMessages": "メッセージ"
   }
 }

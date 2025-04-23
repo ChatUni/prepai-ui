@@ -7,7 +7,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { toFile } from 'openai';
 
-const CHATGPT_MODEL = 'gpt-4o-mini';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
+const CHATGPT_MODEL = 'gpt-4-turbo-preview';
 
 // Main handler function
 export const handler = async (event, context) => {
@@ -23,27 +24,39 @@ export const handler = async (event, context) => {
   const headers = getResponseHeaders();
 
   try {
-    // Check if OpenAI API key is configured
-    if (!process.env.OPENAI_API_KEY) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'OpenAI API key not configured' })
-      };
+    const { resource, id } = parsePathParams(event.path, 'openai');
+    const useOpenRouter = event.queryStringParameters?.api === 'openrouter';
+
+    // Initialize appropriate client based on API choice
+    if (useOpenRouter) {
+      if (!process.env.OPENROUTER_API_KEY) {
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ error: 'OpenRouter API key not configured' })
+        };
+      }
+    } else {
+      if (!process.env.OPENAI_API_KEY) {
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ error: 'OpenAI API key not configured' })
+        };
+      }
     }
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    const { resource, id } = parsePathParams(event.path, 'openai');
-
     // Route handlers
     switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
       case 'POST /chat':
         try {
           const body = JSON.parse(event.body);
-          const messages = body.messages;
+          const { messages, model } = body;
+          
           if (!messages || !Array.isArray(messages)) {
             return {
               statusCode: 400,
@@ -52,24 +65,62 @@ export const handler = async (event, context) => {
             };
           }
 
-          const response = await openai.chat.completions.create({
-            model: CHATGPT_MODEL,
-            messages,
-            temperature: 0.7,
-            max_tokens: 1000
-          });
+          if (useOpenRouter) {
+            if (!model) {
+              return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Model is required for OpenRouter' })
+              };
+            }
 
-          return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify(response)
-          };
+            const response = await fetch(`${OPENROUTER_API_URL}/chat/completions`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://github.com/nanli-7/prepai-ui'
+              },
+              body: JSON.stringify({
+                model,
+                messages,
+                temperature: 0.7,
+                max_tokens: 1000
+              })
+            });
+
+            if (!response.ok) {
+              throw new Error(`OpenRouter API error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return {
+              statusCode: 200,
+              headers,
+              body: JSON.stringify(data)
+            };
+          } else {
+            const response = await openai.chat.completions.create({
+              model: model || CHATGPT_MODEL,
+              messages,
+              temperature: 0.7,
+              max_tokens: 1000
+            });
+
+            return {
+              statusCode: 200,
+              headers,
+              body: JSON.stringify(response)
+            };
+          }
         } catch (error) {
-          console.error('OpenAI API error:', error);
+          console.error(useOpenRouter ? 'OpenRouter API error:' : 'OpenAI API error:', error);
           return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Failed to get response from OpenAI' })
+            body: JSON.stringify({
+              error: `Failed to get response from ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}`
+            })
           };
         }
 
@@ -399,11 +450,11 @@ export const handler = async (event, context) => {
           };
         }
 
-      default:
-        return { 
-          statusCode: 404, 
-          headers, 
-          body: JSON.stringify({ error: 'Not found' }) 
+        default:
+          return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ error: 'Not found' })
         };
     }
   } catch (error) {

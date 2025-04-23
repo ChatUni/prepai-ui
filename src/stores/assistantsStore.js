@@ -27,7 +27,8 @@ const defaultAssistant = {
   name: '',
   greeting: '',
   prompt: '',
-  iconUrl: ''
+  iconUrl: '',
+  model: ''
 };
 
 class AssistantsStore {
@@ -35,6 +36,10 @@ class AssistantsStore {
   assistants = [];
   loading = false;
   error = null;
+  
+  // OpenRouter models
+  models = [];
+  loadingModels = false;
   
   // Search filter
   searchQuery = '';
@@ -57,6 +62,7 @@ class AssistantsStore {
   
   constructor() {
     makeAutoObservable(this);
+    this.fetchOpenRouterModels();
   }
 
   async fetchAssistants() {
@@ -109,13 +115,7 @@ class AssistantsStore {
   };
 
   resetAssistant = () => {
-    this.currentAssistant = {
-      id: null,
-      name: '',
-      greeting: '',
-      prompt: '',
-      iconUrl: ''
-    };
+    this.currentAssistant = {...defaultAssistant};
     this.isEditMode = false;
   };
 
@@ -157,7 +157,8 @@ class AssistantsStore {
         name: formData.get('name'),
         greeting: formData.get('greeting'),
         prompt: formData.get('prompt'),
-        iconUrl: this.currentAssistant.iconUrl
+        iconUrl: this.currentAssistant.iconUrl,
+        model: formData.get('model')
       };
 
       const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
@@ -217,6 +218,35 @@ class AssistantsStore {
   setAssistant(id) {
     this.currentAssistant = this.assistants.find(a => a.id === +(id || 0)) || {...defaultAssistant} ;
     this.isEditMode = !!id;
+  }
+  async fetchOpenRouterModels() {
+    this.loadingModels = true;
+    this.error = null;
+    
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/models', {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch models: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      runInAction(() => {
+        // Filter for free models only
+        this.models = data.data.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
+        this.loadingModels = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.loadingModels = false;
+      });
+    }
   }
 }
 

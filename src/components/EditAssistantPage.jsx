@@ -84,6 +84,28 @@ const EditAssistantPage = observer(() => {
             />
           </div>
 
+          {/* Model Selection */}
+          <div>
+            <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('assistants.edit.model')}
+            </label>
+            <select
+              id="model"
+              name="model"
+              value={assistantsStore.currentAssistant.model}
+              onChange={(e) => assistantsStore.setAssistantField('model', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">{t('assistants.edit.selectModel')}</option>
+              {assistantsStore.models.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Icon Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

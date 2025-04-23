@@ -196,7 +196,9 @@
       "saving": "保存中...",
       "save": "保存助手",
       "uploadError": "上传图片失败",
-      "saveError": "保存助手失败"
+      "saveError": "保存助手失败",
+      "model": "AI模型",
+      "selectModel": "选择AI模型"
     }
   },
   "course": {
@@ -287,5 +289,10 @@
     "incorrectAnswers": "错误答案",
     "unanswered": "未作答",
     "close": "关闭"
+  },
+  "tools": {
+    "purchasedCourses": "已购课程",
+    "courseCategories": "课程分类",
+    "myMessages": "我的消息"
   }
 }

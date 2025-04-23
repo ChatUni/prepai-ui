@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import SeriesList from './ui/SeriesList';
@@ -8,11 +8,21 @@ import coursesStore from '../stores/coursesStore';
 import routeStore from '../stores/routeStore';
 import uiStore from '../stores/uiStore';
 import languageStore from '../stores/languageStore';
+import carouselStore from '../stores/carouselStore';
 import { tap } from '../../netlify/functions/utils';
 
 const SeriesPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
+
+  // Start carousel rotation when on series list page
+  useEffect(() => {
+    const shouldStartCarousel = !routeStore.seriesId && coursesStore.series.length > 0;
+    if (shouldStartCarousel) {
+      carouselStore.startRotation();
+    }
+    return () => carouselStore.cleanup();
+  }, [routeStore.seriesId, coursesStore.series.length]);
   
   // Make sure we load series data if not already loaded
   if (coursesStore.series.length === 0) {
@@ -81,16 +91,20 @@ const SeriesPage = observer(() => {
             {/* Desktop layout: Flex container for image and info */}
             <div className="flex flex-col md:flex-row md:gap-6">
               {/* Left column: Series cover image */}
-              <div className="md:w-1/2 mb-6 md:mb-0 rounded-lg overflow-hidden shadow-lg" style={{ maxHeight: '400px' }}>
+              <div className="md:w-1/2 mb-6 md:mb-0 rounded-lg overflow-hidden shadow-lg">
                 {typeof selectedSeries.cover === 'string' ? (
-                  <img
-                    src={selectedSeries.cover}
-                    alt={selectedSeries.name || ''}
-                    className="w-full h-auto object-cover"
-                  />
+                  <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
+                    <img
+                      src={selectedSeries.cover}
+                      alt={selectedSeries.name || ''}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="bg-gray-200 dark:bg-gray-700 w-full h-48 flex items-center justify-center">
-                    <span className="text-gray-500 dark:text-gray-400">{t('series.noCover')}</span>
+                  <div className="relative pb-[56.25%] bg-gray-200 dark:bg-gray-700"> {/* 16:9 aspect ratio */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-gray-500 dark:text-gray-400">{t('series.noCover')}</span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -148,6 +162,61 @@ const SeriesPage = observer(() => {
   // Otherwise, display all available series
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
+      {/* Carousel */}
+      {carouselStore.images.length > 0 && (
+        <div className="mb-8 rounded-lg overflow-hidden shadow-lg relative">
+          <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
+            <img
+              src={carouselStore.images[carouselStore.currentImageIndex]}
+              alt="Series Cover"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+          {carouselStore.images.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+              {carouselStore.images.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index === carouselStore.currentImageIndex
+                      ? 'bg-white'
+                      : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tools Navigation */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="flex flex-col items-center cursor-pointer" onClick={() => navigate('/favorites')}>
+          <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-2 hover:bg-blue-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('tools.purchasedCourses')}</span>
+        </div>
+        <div className="flex flex-col items-center cursor-pointer" onClick={() => navigate('/series')}>
+          <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center mb-2 hover:bg-emerald-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('tools.courseCategories')}</span>
+        </div>
+        <div className="flex flex-col items-center cursor-pointer" onClick={() => navigate('/account')}>
+          <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center mb-2 hover:bg-amber-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('tools.myMessages')}</span>
+        </div>
+      </div>
+
       {/* Add instructor filter and search box */}
       <div className="mb-6">
         <SearchBar />
