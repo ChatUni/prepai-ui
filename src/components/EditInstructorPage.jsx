@@ -15,36 +15,19 @@ const EditInstructorPage = observer(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    
     try {
-      await instructorsStore.saveInstructor();
+      await instructorsStore.saveInstructor(formData);
       navigate('/instructors');
     } catch (error) {
       console.error('Failed to save instructor:', error);
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (!response.ok) {
-          throw new Error(t('instructors.edit.uploadError'));
-        }
-        
-        const { url } = await response.json();
-        instructorsStore.setInstructorField('iconUrl', url);
-      } catch (error) {
-        console.error('Failed to upload file:', error);
-      }
-    }
+    instructorsStore.setSelectedImagePreview(file);
   };
 
   return (
@@ -145,10 +128,10 @@ const EditInstructorPage = observer(() => {
                 </div>
               )}
             </div>
-            {instructorsStore.currentInstructor.iconUrl && (
+            {(instructorsStore.selectedImagePreview || instructorsStore.currentInstructor.iconUrl) && (
               <div className="mt-2">
                 <img
-                  src={instructorsStore.currentInstructor.iconUrl}
+                  src={instructorsStore.selectedImagePreview || instructorsStore.currentInstructor.iconUrl}
                   alt={t('instructors.edit.iconPreview')}
                   className="w-24 h-24 object-cover rounded-full"
                 />

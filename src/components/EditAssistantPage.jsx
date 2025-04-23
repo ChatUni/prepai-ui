@@ -15,8 +15,10 @@ const EditAssistantPage = observer(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    
     try {
-      await assistantsStore.saveAssistant();
+      await assistantsStore.saveAssistant(formData);
       navigate('/assistants');
     } catch (error) {
       // Error is already handled in store
@@ -24,28 +26,9 @@ const EditAssistantPage = observer(() => {
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (!response.ok) {
-          throw new Error(t('assistants.edit.uploadError'));
-        }
-        
-        const { url } = await response.json();
-        assistantsStore.setAssistantField('iconUrl', url);
-      } catch (error) {
-        console.error('Failed to upload file:', error);
-      }
-    }
+    assistantsStore.setSelectedImagePreview(file);
   };
 
   return (
@@ -132,10 +115,10 @@ const EditAssistantPage = observer(() => {
                 </div>
               )}
             </div>
-            {assistantsStore.currentAssistant.iconUrl && (
+            {(assistantsStore.selectedImagePreview || assistantsStore.currentAssistant.iconUrl) && (
               <div className="mt-2">
                 <img
-                  src={assistantsStore.currentAssistant.iconUrl}
+                  src={assistantsStore.selectedImagePreview || assistantsStore.currentAssistant.iconUrl}
                   alt={t('assistants.edit.iconPreview')}
                   className="w-24 h-24 object-cover rounded-full"
                 />

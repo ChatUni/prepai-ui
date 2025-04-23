@@ -2,6 +2,26 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import db from '../utils/db';
 import { getApiBaseUrl } from '../config';
 
+// Helper function for cloudinary upload
+const uploadToCloudinary = async (file, folder) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('folder', folder);
+
+  const response = await fetch(`/api/cloudinary_upload`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Cloudinary upload failed: ${error.message}`);
+  }
+
+  const data = await response.json();
+  return data.url;
+};
+
 const defaultAssistant = {
   id: null,
   name: '',
@@ -99,17 +119,53 @@ class AssistantsStore {
     this.isEditMode = false;
   };
 
-  saveAssistant = async () => {
+  uploadAssistantIcon = async (file, assistantId) => {
+    try {
+      return await uploadToCloudinary(file, `prepai/assistants/${assistantId}`);
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
+  };
+
+  selectedImagePreview = null;
+
+  setSelectedImagePreview = (file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        runInAction(() => {
+          this.selectedImagePreview = reader.result;
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.selectedImagePreview = null;
+    }
+  };
+
+  saveAssistant = async (formData) => {
     this.loading = true;
     this.error = null;
 
     try {
+      // First save the assistant data
+      const assistantData = {
+        id: this.currentAssistant.id,
+        name: formData.get('name'),
+        greeting: formData.get('greeting'),
+        prompt: formData.get('prompt'),
+        iconUrl: this.currentAssistant.iconUrl
+      };
+
       const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.currentAssistant)
+        body: JSON.stringify(assistantData)
       });
 
       if (!response.ok) {
@@ -117,6 +173,22 @@ class AssistantsStore {
       }
 
       const savedAssistant = await response.json();
+
+      // If there's a new icon file, upload it
+      const iconFile = formData.get('icon');
+      if (iconFile instanceof File) {
+        const imageUrl = await this.uploadAssistantIcon(iconFile, savedAssistant.id);
+        savedAssistant.iconUrl = imageUrl;
+        
+        // Update the assistant with the new icon URL
+        await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(savedAssistant)
+        });
+      }
       
       runInAction(() => {
         if (this.isEditMode) {
@@ -128,6 +200,7 @@ class AssistantsStore {
           this.assistants.push(savedAssistant);
         }
         this.resetAssistant();
+        this.selectedImagePreview = null;
         this.loading = false;
       });
 

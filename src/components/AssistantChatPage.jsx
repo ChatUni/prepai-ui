@@ -155,10 +155,15 @@ const AssistantChatPage = observer(() => {
   return (
     <div className="flex flex-col h-full pb-12">
       {/* Header */}
-      <div className="flex items-center p-4 border-b">
-        <Button onClick={handleBack} className="mr-4">
-          {t('menu.categories.assistant.back')}
-        </Button>
+      <div
+        className="flex items-center p-4 border-b cursor-pointer hover:bg-gray-50"
+        onClick={handleBack}
+      >
+        <img
+          src={assistant.iconUrl}
+          alt={assistant.name}
+          className="w-8 h-8 rounded-full mr-4 object-cover"
+        />
         <h1 className="text-xl font-semibold">{assistant.name}</h1>
       </div>
       
