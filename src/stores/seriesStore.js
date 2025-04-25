@@ -8,10 +8,14 @@ class SeriesStore {
   isLoading = false;
   error = null;
   selectedImagePreview = null;
+  isDropdownOpen = false;
+  selectedCategory = '';
 
   constructor() {
     makeAutoObservable(this, {
-      currentSeriesId: computed
+      currentSeriesId: computed,
+      uniqueCategories: computed,
+      selectedCategory: observable
     });
   }
 
@@ -33,8 +37,34 @@ class SeriesStore {
     return routeStore.seriesId;
   }
 
+  get uniqueCategories() {
+    const categories = this.series
+      .map(series => series.category)
+      .filter(category => category); // Filter out null/undefined
+    return [...new Set(categories)].sort();
+  }
+
   setCurrentSeries = (series) => {
     this.currentSeries = series;
+    this.selectedCategory = series?.category || '';
+  }
+
+  toggleDropdown = () => {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown = () => {
+    this.isDropdownOpen = false;
+  }
+
+  setSelectedCategory = (category, closeDropdown = false) => {
+    this.selectedCategory = category;
+    if (closeDropdown) {
+      this.isDropdownOpen = false;
+    }
+    if (this.currentSeries) {
+      this.currentSeries.category = category;
+    }
   }
 
   fetchSeries = async () => {
@@ -137,7 +167,8 @@ class SeriesStore {
       // Convert FormData to JSON for API
       const seriesData = {
         name: formData.get('name'),
-        desc: formData.get('description') // Map description to desc
+        desc: formData.get('description'), // Map description to desc
+        category: formData.get('category')
       };
 
       if (formData.get('id')) {

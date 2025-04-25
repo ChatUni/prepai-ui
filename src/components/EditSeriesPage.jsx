@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { seriesStore } from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
@@ -9,6 +9,24 @@ const EditSeriesPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
   const { id: seriesId } = useParams(); // Get ID directly from URL params
+  const dropdownRef = useRef(null);
+
+  // Handle click outside to close dropdown
+  // Fetch all series to populate categories
+  useEffect(() => {
+    seriesStore.fetchSeries();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        seriesStore.closeDropdown();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const loadSeries = async () => {
@@ -20,7 +38,8 @@ const EditSeriesPage = observer(() => {
           name: '',
           desc: '',
           instructor: null,
-          cover: ''
+          cover: '',
+          category: ''
         });
       }
     };
@@ -78,14 +97,58 @@ const EditSeriesPage = observer(() => {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            {t('series.edit.description')}
+            {t('series.edit.category')}
           </label>
-          <textarea
-            name="description"
-            defaultValue={seriesStore.currentSeries?.desc || ''}
-            className="w-full p-2 border rounded h-32"
-            required
-          />
+          <div className="relative" ref={dropdownRef}>
+            <div className="flex">
+              <input
+                type="text"
+                name="category"
+                value={seriesStore.selectedCategory}
+                onChange={(e) => seriesStore.setSelectedCategory(e.target.value, false)}
+                onClick={() => seriesStore.toggleDropdown()}
+                className="w-full p-2 border rounded-l bg-white"
+                placeholder={t('series.edit.categoryPlaceholder')}
+              />
+              <button
+                type="button"
+                onClick={() => seriesStore.toggleDropdown()}
+                className="px-2 border border-l-0 rounded-r bg-white"
+              >
+                <svg
+                  className={`w-5 h-5 transition-transform ${seriesStore.isDropdownOpen ? 'transform rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            {seriesStore.isDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
+                {seriesStore.uniqueCategories.length > 0 ? (
+                  seriesStore.uniqueCategories.map((category) => (
+                    <button
+                      key={category}
+                      type="button"
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                        category === seriesStore.selectedCategory ? 'bg-gray-50' : ''
+                      }`}
+                      onClick={() => seriesStore.setSelectedCategory(category, true)}
+                    >
+                      {category}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-gray-500 italic">
+                    {t('series.edit.noCategories')}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         <div>
@@ -131,6 +194,18 @@ const EditSeriesPage = observer(() => {
               />
             </div>
           )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t('series.edit.description')}
+          </label>
+          <textarea
+            name="description"
+            defaultValue={seriesStore.currentSeries?.desc || ''}
+            className="w-full p-2 border rounded h-32"
+            required
+          />
         </div>
 
         <button

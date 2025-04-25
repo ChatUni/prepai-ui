@@ -177,24 +177,7 @@ const CourseCard = observer(({ course }) => {
             </div>
           )}
           <p className="text-gray-600 text-xs sm:text-sm">{course.instructor?.name}</p>
-        </div>
-        
-        {/* Keywords - Show on all screens now */}
-        <div className="flex flex-wrap gap-1 mt-1.5 sm:mt-2">
-          {keywords.slice(0, 2).map((keyword, index) => (
-            <span
-              key={`${course.id}-keyword-${index}`}
-              className="bg-gray-100 text-gray-600 text-[10px] sm:text-xs px-1.5 py-0.5 rounded"
-            >
-              {keyword}
-            </span>
-          ))}
-          {keywords.length > 2 && (
-            <span className="text-[10px] sm:text-xs text-gray-500">
-              {t('course.moreKeywords', { count: keywords.length - 2 })}
-            </span>
-          )}
-        </div>
+        </div>        
       </div>
     </div>
   );
