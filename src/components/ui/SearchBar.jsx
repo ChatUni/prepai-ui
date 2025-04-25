@@ -8,7 +8,8 @@ import languageStore from '../../stores/languageStore';
 const SearchBar = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isInstructorDropdownOpen, setIsInstructorDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   const handleSearch = (e) => {
     uiStore.setSearchKeyword(e.target.value);
@@ -17,7 +18,7 @@ const SearchBar = observer(() => {
   const handleInstructorFilter = (instructorId) => {
     const parsedId = instructorId === "" ? null : parseInt(instructorId);
     uiStore.setSelectedInstructorId(parsedId);
-    setIsDropdownOpen(false);
+    setIsInstructorDropdownOpen(false);
     
     // Only navigate if not on exam or series page
     if (!window.location.pathname.includes('/exam') && !window.location.pathname.includes('/series')) {
@@ -25,16 +26,27 @@ const SearchBar = observer(() => {
     }
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const handleCategoryFilter = (category) => {
+    uiStore.setActiveCategory(category);
+    setIsCategoryDropdownOpen(false);
+  };
+
+  const toggleInstructorDropdown = () => {
+    setIsInstructorDropdownOpen(!isInstructorDropdownOpen);
+    setIsCategoryDropdownOpen(false);
+  };
+
+  const toggleCategoryDropdown = () => {
+    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+    setIsInstructorDropdownOpen(false);
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center w-full max-w-2xl gap-2 sm:gap-0">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center w-full max-w-3xl gap-2 sm:gap-0">
       <div className="relative w-full sm:w-auto sm:mr-2 mb-2 sm:mb-0">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
-          onClick={toggleDropdown}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-l flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
+          onClick={toggleInstructorDropdown}
         >
           <span className="truncate max-w-[200px]">
             {uiStore.selectedInstructorId
@@ -52,12 +64,12 @@ const SearchBar = observer(() => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              d={isDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+              d={isInstructorDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
             />
           </svg>
         </button>
         
-        {isDropdownOpen && (
+        {isInstructorDropdownOpen && (
           <div className="absolute z-10 mt-1 w-full sm:min-w-full bg-white rounded-md shadow-lg">
             <ul className="py-1 max-h-60 overflow-y-auto">
               <li
@@ -73,6 +85,53 @@ const SearchBar = observer(() => {
                   onClick={() => handleInstructorFilter(instructor.id)}
                 >
                   {instructor.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      
+      <div className="relative w-full sm:w-auto sm:mr-2 mb-2 sm:mb-0">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-r flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
+          onClick={toggleCategoryDropdown}
+        >
+          <span className="truncate max-w-[200px]">
+            {uiStore.activeCategory || t('search.allCategories')}
+          </span>
+          <svg
+            className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d={isCategoryDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+            />
+          </svg>
+        </button>
+        
+        {isCategoryDropdownOpen && (
+          <div className="absolute z-10 mt-1 w-full sm:min-w-full bg-white rounded-md shadow-lg">
+            <ul className="py-1 max-h-60 overflow-y-auto">
+              <li
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${!uiStore.activeCategory ? 'bg-blue-50' : ''}`}
+                onClick={() => handleCategoryFilter("")}
+              >
+                {t('search.allCategories')}
+              </li>
+              {coursesStore.uniqueCategories.map(category => (
+                <li
+                  key={category}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${uiStore.activeCategory === category ? 'bg-blue-50' : ''}`}
+                  onClick={() => handleCategoryFilter(category)}
+                >
+                  {category}
                 </li>
               ))}
             </ul>

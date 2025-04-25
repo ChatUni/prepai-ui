@@ -262,6 +262,7 @@
   },
   "search": {
     "allInstructors": "全ての講師",
+    "allCategories": "全てのカテゴリー",
     "searchPlaceholder": "コースを検索..."
   },
   "chat": {

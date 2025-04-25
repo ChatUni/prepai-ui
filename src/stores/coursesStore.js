@@ -49,7 +49,8 @@ class CoursesStore {
       popularCourses: computed,
       examCourses: computed,
       coursesBySeries: computed,
-      getSeriesInstructors: computed
+      getSeriesInstructors: computed,
+      uniqueCategories: computed
     });
   }
 
@@ -374,6 +375,13 @@ class CoursesStore {
         .map(id => this.instructors.find(instructor => instructor.id === id || instructor._id === id))
         .filter(instructor => instructor); // Filter out any undefined instructors
     };
+  }
+
+  get uniqueCategories() {
+    const categories = this.series
+      .map(series => series.category)
+      .filter(category => category); // Filter out null/undefined
+    return [...new Set(categories)].sort();
   }
 }
 
