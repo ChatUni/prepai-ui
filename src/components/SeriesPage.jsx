@@ -14,6 +14,7 @@ import { tap } from '../../netlify/functions/utils';
 const SeriesPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
+  const [activeTab, setActiveTab] = React.useState('about'); // 'about' or 'courses'
 
   // Start carousel rotation when on series list page
   useEffect(() => {
@@ -89,11 +90,9 @@ const SeriesPage = observer(() => {
         </div>
         
         {selectedSeries && (
-          <div className="mb-8">
-            {/* Desktop layout: Flex container for image and info */}
-            <div className="flex flex-col md:flex-row md:gap-6">
-              {/* Left column: Series cover image */}
-              <div className="md:w-1/2 mb-6 md:mb-0 rounded-lg overflow-hidden shadow-lg">
+          <>
+            {/* Series cover image */}
+            <div className="mb-6 rounded-lg overflow-hidden shadow-lg">
                 {typeof selectedSeries.cover === 'string' ? (
                   <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
                     <img
@@ -109,13 +108,37 @@ const SeriesPage = observer(() => {
                     </div>
                   </div>
                 )}
-              </div>
-              
-              {/* Right column: Series info and instructor */}
-              <div className="md:w-1/2">
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+              <button
+                className={`py-2 px-4 font-medium text-sm ${
+                  activeTab === 'about'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setActiveTab('about')}
+              >
+                {t('series.aboutThisSeries')}
+              </button>
+              <button
+                className={`py-2 px-4 font-medium text-sm ${
+                  activeTab === 'courses'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setActiveTab('courses')}
+              >
+                {t('series.courseList')}
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'about' ? (
+              <div>
                 {/* Series description */}
                 <div className="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h2 className="text-xl font-semibold mb-3">{t('series.aboutThisSeries')}</h2>
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
                     {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : 'No description available for this series.'}
                   </p>
@@ -143,15 +166,13 @@ const SeriesPage = observer(() => {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
+            ) : (
+              <CourseList
+                courses={seriesCourses}
+              />
+            )}
+          </>
         )}
-        
-        {/* Course list */}
-        <CourseList
-          title={t('series.courseList')}
-          courses={seriesCourses}
-        />
       </div>
     );
   }

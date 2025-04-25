@@ -64,13 +64,13 @@ const CourseCard = observer(({ course }) => {
   
   return (
     <div
-      className="flex flex-col w-full relative group cursor-pointer mb-4"
+      className="flex flex-col w-full relative group cursor-pointer mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
       {/* Course Image */}
-      <div className="bg-amber-300 rounded-lg overflow-hidden aspect-video mb-2 relative shadow-sm">
+      <div className="bg-amber-300 overflow-hidden aspect-video relative shadow-sm">
         <img
           src={course.image || "https://via.placeholder.com/300x200/F59E0B/FFFFFF?text=Course"}
           alt={course.title}
@@ -157,12 +157,27 @@ const CourseCard = observer(({ course }) => {
       </div>
       
       {/* Course Details */}
-      <div className="px-0.5">
+      <div className="p-3">
         {/* Course Title */}
         <h3 className="font-medium text-sm sm:text-base line-clamp-2">{course.title}</h3>
         
         {/* Course Instructor */}
-        <p className="text-gray-600 text-xs sm:text-sm mt-1">{course.instructor?.name}</p>
+        <div className="flex items-center mt-1">
+          {course.instructor?.iconUrl ? (
+            <img
+              src={course.instructor.iconUrl}
+              alt={course.instructor?.name}
+              className="w-5 h-5 sm:w-6 sm:h-6 rounded-full mr-1.5"
+            />
+          ) : (
+            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-300 mr-1.5 flex items-center justify-center">
+              <span className="text-xs text-gray-600">
+                {course.instructor?.name?.[0]?.toUpperCase() || '?'}
+              </span>
+            </div>
+          )}
+          <p className="text-gray-600 text-xs sm:text-sm">{course.instructor?.name}</p>
+        </div>
         
         {/* Keywords - Show on all screens now */}
         <div className="flex flex-wrap gap-1 mt-1.5 sm:mt-2">
