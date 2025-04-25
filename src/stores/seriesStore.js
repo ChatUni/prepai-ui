@@ -134,14 +134,10 @@ class SeriesStore {
     try {
       this.isLoading = true;
       
-      // Parse instructor data from FormData
-      const instructor = JSON.parse(formData.get('instructor'));
-      
       // Convert FormData to JSON for API
       const seriesData = {
         name: formData.get('name'),
-        desc: formData.get('description'), // Map description to desc
-        instructor_id: instructor.id
+        desc: formData.get('description') // Map description to desc
       };
 
       if (formData.get('id')) {

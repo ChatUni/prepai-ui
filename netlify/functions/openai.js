@@ -79,7 +79,6 @@ export const handler = async (event, context) => {
               headers: {
                 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                //'HTTP-Referer': 'https://github.com/nanli-7/prepai-ui'
               },
               body: JSON.stringify({
                 model,

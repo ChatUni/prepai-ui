@@ -11,7 +11,11 @@ const AddCoursePage = observer(() => {
   const { t } = languageStore;
 
   useEffect(() => {
-    seriesStore.fetchSeriesById(seriesId);
+    const loadData = async () => {
+      await seriesStore.fetchInstructors();
+      await seriesStore.fetchSeriesById(seriesId);
+    };
+    loadData();
     return () => {
       newCourseStore.reset();
     };
@@ -60,6 +64,26 @@ const AddCoursePage = observer(() => {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold mb-6">{t('course.add.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Instructor Selection */}
+          <div>
+            <label htmlFor="instructor" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('course.add.instructor')}
+            </label>
+            <select
+              id="instructor"
+              value={newCourseStore.instructorId || ''}
+              onChange={(e) => newCourseStore.setInstructorId(parseInt(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">{t('course.add.selectInstructor')}</option>
+              {seriesStore.instructors.map(instructor => (
+                <option key={instructor.id} value={instructor.id}>
+                  {instructor.name}
+                </option>
+              ))}
+            </select>
+          </div>
           {/* Course Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">

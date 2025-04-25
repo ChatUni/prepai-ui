@@ -24,10 +24,12 @@ const SeriesPage = observer(() => {
     return () => carouselStore.cleanup();
   }, [routeStore.seriesId, coursesStore.series.length]);
   
-  // Make sure we load series data if not already loaded
-  if (coursesStore.series.length === 0) {
-    coursesStore.fetchSeries();
-  }
+  // Load series data if not already loaded
+  useEffect(() => {
+    if (coursesStore.series.length === 0) {
+      coursesStore.fetchSeries();
+    }
+  }, []); // Empty dependency array means this only runs once on mount
   
   // Access current series from routeStore
   const selectedSeries = routeStore.currentSeries;

@@ -118,10 +118,10 @@ export const handler = async (event, context) => {
     // Route handlers
     switch (route) {
       case 'GET /courses':
-        const coursesInSeries = await flat('courses', `${seriesId ? `m_series_id=${seriesId}&` : ''}f_series|series,instructor`)
+        const coursesInSeries = await flat('courses', `${seriesId ? `m_series_id=${seriesId}&` : ''}f_series|series&f_instructor`)
         return res(coursesInSeries);
       case 'GET /courses/:id':
-        const courses = await flat('courses', `m_id=${id}&f_series|series,instructor`)
+        const courses = await flat('courses', `m_id=${id}&f_series|series&f_instructor`)
         return res(courses);
       case 'POST /favorites/toggle':
         const favCourses = await flat('favorites', `m_course_id=${courseId},user_id=${userId}`)
@@ -156,7 +156,7 @@ export const handler = async (event, context) => {
         return res(assistants);
 
       case 'GET /series':
-        const seriesOfInstructor = await flat('series', `${instructorId ? `m_instructor_id=${instructorId}&` : ''}f_instructor`);
+        const seriesOfInstructor = await flat('series', 'f_+course&p_id,name,desc,cover,courses.id,courses.instructor_id');
         return res(seriesOfInstructor);
 
       case 'GET /series/:id':

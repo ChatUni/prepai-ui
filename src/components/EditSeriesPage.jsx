@@ -11,11 +11,6 @@ const EditSeriesPage = observer(() => {
   const { id: seriesId } = useParams(); // Get ID directly from URL params
 
   useEffect(() => {
-    // First load instructors
-    seriesStore.fetchInstructors();
-  }, []); // Only fetch instructors once
-
-  useEffect(() => {
     const loadSeries = async () => {
       if (seriesId) {
         await seriesStore.fetchSeriesById(seriesId);
@@ -36,19 +31,10 @@ const EditSeriesPage = observer(() => {
     e.preventDefault();
     const formData = new FormData(e.target);
     
-    // Convert instructor_id to number and create instructor object
-    const instructorId = parseInt(formData.get('instructor_id'));
-    const selectedInstructor = seriesStore.instructors.find(i => i.id === instructorId);
-    
     // Create a new FormData with the correct structure
     const newFormData = new FormData();
     newFormData.append('name', formData.get('name'));
     newFormData.append('description', formData.get('description'));
-    newFormData.append('instructor', JSON.stringify({
-      id: instructorId,
-      name: selectedInstructor?.name || '',
-      image: selectedInstructor?.image || ''
-    }));
     
     if (formData.get('cover_image')) {
       newFormData.append('cover_image', formData.get('cover_image'));
@@ -77,25 +63,6 @@ const EditSeriesPage = observer(() => {
         {seriesId ? t('series.edit.editTitle') : t('series.edit.createTitle')}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-4xl mx-auto">
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.instructor')}
-          </label>
-          <select
-            name="instructor_id"
-            defaultValue={seriesStore.currentSeries?.instructor_id || ''}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="">{t('series.edit.selectInstructor')}</option>
-            {seriesStore.instructors.map(instructor => (
-              <option key={instructor.id} value={instructor.id}>
-                {instructor.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div>
           <label className="block text-sm font-medium mb-1">
             {t('series.edit.name')}

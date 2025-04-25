@@ -8,6 +8,7 @@ class NewCourseStore {
   coverImage = null;
   coverImagePreview = null;
   videoFile = null;
+  instructorId = null;
   isLoading = false;
   error = null;
 
@@ -48,7 +49,12 @@ class NewCourseStore {
     this.coverImage = null;
     this.coverImagePreview = null;
     this.videoFile = null;
+    this.instructorId = null;
     this.error = null;
+  }
+
+  setInstructorId = (id) => {
+    this.instructorId = id;
   }
 
   saveCourse = async (seriesId, navigate) => {
@@ -101,6 +107,7 @@ class NewCourseStore {
         name: this.name,
         description: this.description,
         series_id: seriesId,
+        instructor_id: this.instructorId,
         video_url: videoUrl,
         cover_image: coverUrl,
         isVideo: !!videoUrl

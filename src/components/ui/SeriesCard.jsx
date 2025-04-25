@@ -35,12 +35,8 @@ const SeriesCard = observer(({ series }) => {
   // Default image if none is provided
   const coverImage = cover || 'https://via.placeholder.com/300x200?text=Series';
   
-  // Validate instructor object
-  const instructor = series.instructor && typeof series.instructor === 'object' ? {
-    id: series.instructor.id || series.instructor._id,
-    name: typeof series.instructor.name === 'string' ? series.instructor.name : '',
-    iconUrl: typeof series.instructor.iconUrl === 'string' ? series.instructor.iconUrl : ''
-  } : null;
+  // Get all instructors for this series
+  const instructors = coursesStore.getSeriesInstructors(series);
 
   const handleSeriesClick = (e) => {
     // Ensure the event doesn't propagate to parent elements
@@ -68,19 +64,28 @@ const SeriesCard = observer(({ series }) => {
         </div>
         
         <div className="p-3">
-          <div className="flex items-center mb-2">
-            {instructor?.iconUrl ? (
-              <img
-                src={instructor.iconUrl}
-                alt={instructor.name}
-                className="w-6 h-6 rounded-full mr-2"
-              />
-            ) : (
-              <div className="w-6 h-6 rounded-full bg-gray-300 mr-2 flex items-center justify-center">
-                <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {instructors.length > 0 ? instructors.map((instructor, index) => (
+              <div key={instructor.id || instructor._id} className="flex items-center">
+                {instructor?.iconUrl ? (
+                  <img
+                    src={instructor.iconUrl}
+                    alt={instructor.name}
+                    className="w-6 h-6 rounded-full mr-1"
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-gray-300 mr-1 flex items-center justify-center">
+                    <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
+                  </div>
+                )}
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  {instructor?.name}
+                  {index < instructors.length - 1 && ", "}
+                </span>
               </div>
+            )) : (
+              <span className="text-sm text-gray-600 dark:text-gray-300">{t('series.unknownInstructor')}</span>
             )}
-            <span className="text-sm text-gray-600 dark:text-gray-300">{instructor?.name || t('series.unknownInstructor')}</span>
           </div>
           
           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 h-10 mb-2">
