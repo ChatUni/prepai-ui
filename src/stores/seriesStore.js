@@ -8,6 +8,8 @@ class SeriesStore {
   isLoading = false;
   error = null;
   selectedImagePreview = null;
+  selectedDescImagePreview = null;
+  descType = 'text'; // 'text' or 'image'
   isDropdownOpen = false;
   selectedCategory = '';
 
@@ -17,6 +19,13 @@ class SeriesStore {
       uniqueCategories: computed,
       selectedCategory: observable
     });
+  }
+
+  setDescType = (type) => {
+    this.descType = type;
+    if (type === 'text' && this.selectedDescImagePreview) {
+      this.selectedDescImagePreview = null;
+    }
   }
 
   setSelectedImagePreview = (file) => {
@@ -30,6 +39,20 @@ class SeriesStore {
       reader.readAsDataURL(file);
     } else {
       this.selectedImagePreview = null;
+    }
+  }
+
+  setSelectedDescImagePreview = (file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        runInAction(() => {
+          this.selectedDescImagePreview = reader.result;
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.selectedDescImagePreview = null;
     }
   }
 
@@ -47,6 +70,19 @@ class SeriesStore {
   setCurrentSeries = (series) => {
     this.currentSeries = series;
     this.selectedCategory = series?.category || '';
+    
+    // Determine if the current description is an image URL
+    if (series?.desc && (
+      series.desc.startsWith('http://') ||
+      series.desc.startsWith('https://') ||
+      series.desc.startsWith('data:image/')
+    )) {
+      this.descType = 'image';
+      this.selectedDescImagePreview = series.desc;
+    } else {
+      this.descType = 'text';
+      this.selectedDescImagePreview = null;
+    }
   }
 
   toggleDropdown = () => {
@@ -167,7 +203,6 @@ class SeriesStore {
       // Convert FormData to JSON for API
       const seriesData = {
         name: formData.get('name'),
-        desc: formData.get('description'), // Map description to desc
         category: formData.get('category')
       };
 
@@ -175,14 +210,30 @@ class SeriesStore {
         seriesData.id = parseInt(formData.get('id'));
       }
 
-      const data = await this.saveSeriesPost(seriesData);      
+      // Handle description based on type
+      if (this.descType === 'text') {
+        seriesData.desc = formData.get('description');
+      }
+
+      const data = await this.saveSeriesPost(seriesData);
       const seriesId = data.id;
 
+      // Handle cover image upload
       const coverImage = formData.get('cover_image');
       if (coverImage instanceof File) {
         const imageUrl = await this.uploadToCloudinary(coverImage, seriesId);
         seriesData.cover = imageUrl;
         await this.saveSeriesPost(seriesData);
+      }
+
+      // Handle description image upload
+      if (this.descType === 'image') {
+        const descImage = formData.get('desc_image');
+        if (descImage instanceof File) {
+          const imageUrl = await this.uploadToCloudinary(descImage, seriesId, `${seriesId}_detail`);
+          seriesData.desc = imageUrl;
+          await this.saveSeriesPost(seriesData);
+        }
       }
 
       runInAction(() => {

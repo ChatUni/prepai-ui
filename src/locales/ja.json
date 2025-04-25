@@ -240,6 +240,10 @@
       "selectInstructor": "講師を選択してください",
       "name": "シリーズ名",
       "description": "説明",
+      "descriptionType": {
+        "text": "テキスト",
+        "image": "画像"
+      },
       "category": "カテゴリー",
       "categoryPlaceholder": "カテゴリーを選択または入力",
       "coverImage": "カバー画像",

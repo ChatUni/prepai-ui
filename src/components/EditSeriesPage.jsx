@@ -77,11 +77,11 @@ const EditSeriesPage = observer(() => {
   }
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full h-full flex flex-col">
       <h1 className="text-2xl font-bold mb-4">
         {seriesId ? t('series.edit.editTitle') : t('series.edit.createTitle')}
       </h1>
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-4xl mx-auto flex-1 flex flex-col">
         <div>
           <label className="block text-sm font-medium mb-1">
             {t('series.edit.name')}
@@ -190,31 +190,96 @@ const EditSeriesPage = observer(() => {
                 src={seriesStore.selectedImagePreview || seriesStore.currentSeries.cover}
                 alt={t('series.edit.coverPreview')}
                 className="max-w-full h-auto rounded-lg shadow-lg"
-                style={{ maxHeight: '200px' }}
               />
             </div>
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.description')}
-          </label>
-          <textarea
-            name="description"
-            defaultValue={seriesStore.currentSeries?.desc || ''}
-            className="w-full p-2 border rounded h-32"
-            required
-          />
+        <div className="flex-1 overflow-auto">
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium">
+              {t('series.edit.description')}
+            </label>
+            <div className="flex gap-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="desc_type"
+                  value="text"
+                  checked={seriesStore.descType === 'text'}
+                  onChange={(e) => seriesStore.setDescType(e.target.value)}
+                  className="form-radio h-4 w-4 text-blue-600"
+                />
+                <span className="ml-2 text-sm">{t('series.edit.descriptionType.text')}</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="desc_type"
+                  value="image"
+                  checked={seriesStore.descType === 'image'}
+                  onChange={(e) => seriesStore.setDescType(e.target.value)}
+                  className="form-radio h-4 w-4 text-blue-600"
+                />
+                <span className="ml-2 text-sm">{t('series.edit.descriptionType.image')}</span>
+              </label>
+            </div>
+          </div>
+
+          {seriesStore.descType === 'text' ? (
+            <textarea
+              name="description"
+              defaultValue={seriesStore.currentSeries?.desc || ''}
+              className="w-full p-2 border rounded h-32"
+              required={seriesStore.descType === 'text'}
+            />
+          ) : (
+            <div className="relative">
+              <input
+                type="file"
+                id="desc_image"
+                name="desc_image"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  seriesStore.setSelectedDescImagePreview(file);
+                }}
+                className="hidden"
+                required={seriesStore.descType === 'image'}
+              />
+              <label
+                htmlFor="desc_image"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-gray-600">
+                  {seriesStore.selectedDescImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
+                </span>
+              </label>
+              {seriesStore.selectedDescImagePreview && (
+                <div className="mt-2">
+                  <img
+                    src={seriesStore.selectedDescImagePreview}
+                    alt={t('series.edit.descriptionPreview')}
+                    className="max-w-full h-auto rounded-lg shadow-lg"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          disabled={seriesStore.isLoading}
-        >
-          {seriesStore.isLoading ? t('series.edit.saving') : t('series.edit.saveSeries')}
-        </button>
+        <div className="sticky bottom-0 bg-white mb-15">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={seriesStore.isLoading}
+          >
+            {seriesStore.isLoading ? t('series.edit.saving') : t('series.edit.saveSeries')}
+          </button>
+        </div>
       </form>
     </div>
   );

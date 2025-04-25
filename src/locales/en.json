@@ -240,6 +240,10 @@
       "selectInstructor": "Please select an instructor",
       "name": "Series Name",
       "description": "Description",
+      "descriptionType": {
+        "text": "Text",
+        "image": "Image"
+      },
       "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
       "coverImage": "Cover Image",

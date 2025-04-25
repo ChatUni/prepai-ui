@@ -240,6 +240,10 @@
       "selectInstructor": "请选择讲师",
       "name": "系列名称",
       "description": "描述",
+      "descriptionType": {
+        "text": "文字",
+        "image": "图片"
+      },
       "category": "分类",
       "categoryPlaceholder": "选择或输入分类",
       "coverImage": "封面图片",
