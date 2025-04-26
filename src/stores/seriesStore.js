@@ -1,5 +1,7 @@
 import { makeAutoObservable, runInAction, computed, observable } from 'mobx';
 import routeStore from './routeStore';
+import coursesStore from './coursesStore';
+import uiStore from './uiStore';
 
 class SeriesStore {
   series = [];
@@ -18,7 +20,9 @@ class SeriesStore {
     makeAutoObservable(this, {
       currentSeriesId: computed,
       uniqueCategories: computed,
-      selectedCategory: observable
+      selectedCategory: observable,
+      filteredSeriesCourses: computed,
+      currentSeriesFromRoute: computed
     });
   }
 
@@ -252,6 +256,46 @@ class SeriesStore {
         this.isLoading = false;
       });
       throw error;
+    }
+  }
+  get currentSeriesFromRoute() {
+    return routeStore.currentSeries;
+  }
+
+  get filteredSeriesCourses() {
+    const currentSeries = this.currentSeriesFromRoute;
+    if (!currentSeries) return [];
+
+    return coursesStore.courses.filter(course => {
+      // Always filter by series ID
+      const matchesSeries = course.series?.id === currentSeries.id;
+
+      // Apply instructor filter if one is selected
+      const selectedInstructorId = uiStore?.selectedInstructorId;
+      const matchesInstructor = !selectedInstructorId ||
+        course.instructor?.id === selectedInstructorId ||
+        course.instructor?.name === coursesStore.instructors.find(i => i.id === selectedInstructorId)?.name;
+      
+      // Apply search filter if there's a search keyword
+      const searchKeyword = uiStore?.searchKeyword?.toLowerCase() || '';
+      const matchesSearch = !searchKeyword ||
+        course.title.toLowerCase().includes(searchKeyword) ||
+        (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
+        (course.description && course.description.toLowerCase().includes(searchKeyword));
+      
+      return matchesSeries && matchesInstructor && matchesSearch;
+    });
+  }
+
+  handleBackNavigation = (navigate) => {
+    // If we came from an instructor page, we'll go back to that instructor
+    const currentSeries = this.currentSeriesFromRoute;
+    if (currentSeries?.instructor?.id) {
+      routeStore.navigateToInstructor(currentSeries.instructor?.id, navigate);
+    } else {
+      // Otherwise, go to the main series page
+      navigate('/series');
+      routeStore.setSeriesId(null);
     }
   }
 }

@@ -1,51 +1,16 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+import { IoChevronBack } from 'react-icons/io5';
 import CourseList from './ui/CourseList';
-import coursesStore from '../stores/coursesStore';
-import routeStore from '../stores/routeStore';
 import seriesStore from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
-import uiStore from '../stores/uiStore';
 
 const SeriesDetailPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
-  const selectedSeries = routeStore.currentSeries;
-
-  // Get courses for this series
-  const seriesCourses = selectedSeries ?
-    coursesStore.courses.filter(course => {
-      // Always filter by series ID
-      const matchesSeries = course.series?.id === selectedSeries.id;
-
-      // Apply instructor filter if one is selected
-      const selectedInstructorId = uiStore?.selectedInstructorId;
-      const matchesInstructor = !selectedInstructorId ||
-        course.instructor?.id === selectedInstructorId ||
-        course.instructor?.name === coursesStore.instructors.find(i => i.id === selectedInstructorId)?.name;
-      
-      // Apply search filter if there's a search keyword
-      const searchKeyword = uiStore?.searchKeyword?.toLowerCase() || '';
-      const matchesSearch = !searchKeyword ||
-        course.title.toLowerCase().includes(searchKeyword) ||
-        (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
-        (course.description && course.description.toLowerCase().includes(searchKeyword));
-      
-      return matchesSeries && matchesInstructor && matchesSearch;
-    }) :
-    [];
-
-  const handleBackClick = () => {
-    // If we came from an instructor page, we'll go back to that instructor
-    if (selectedSeries?.instructor?.id) {
-      routeStore.navigateToInstructor(selectedSeries.instructor?.id, navigate);
-    } else {
-      // Otherwise, go to the main series page
-      navigate('/series');
-      routeStore.setSeriesId(null);
-    }
-  };
+  const selectedSeries = seriesStore.currentSeriesFromRoute;
+  const seriesCourses = seriesStore.filteredSeriesCourses;
 
   if (!selectedSeries) {
     return null;
@@ -55,12 +20,10 @@ const SeriesDetailPage = observer(() => {
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <div className="flex items-center mb-6">
         <button
-          onClick={handleBackClick}
+          onClick={() => seriesStore.handleBackNavigation(navigate)}
           className="mr-4 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-full"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <IoChevronBack className="h-5 w-5" />
         </button>
         <div className="flex items-center">
           <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries.name || selectedSeries.id || 'Series'}</h1>
@@ -119,28 +82,6 @@ const SeriesDetailPage = observer(() => {
               {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : 'No description available for this series.'}
             </p>
           </div>
-          
-          {/* Instructor info */}
-          {selectedSeries.instructor && (
-            <div className="flex items-center mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-              <div className="flex-shrink-0">
-                {selectedSeries.instructor.iconUrl ? (
-                  <img
-                    src={selectedSeries.instructor.iconUrl}
-                    alt={selectedSeries.instructor.name}
-                    className="w-12 h-12 rounded-full mr-4"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-gray-300 mr-4 flex items-center justify-center">
-                    <span className="text-xl text-gray-600">{selectedSeries.instructor.name?.[0]?.toUpperCase()}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">{selectedSeries.instructor.name}</h3>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
         <CourseList courses={seriesCourses} />
