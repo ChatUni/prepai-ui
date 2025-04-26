@@ -45,6 +45,7 @@ import './stores/instructorChatStore';
 import './stores/assistantsStore';
 import './stores/instructorsStore';
 import './stores/languageStore';
+import './stores/seriesStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';

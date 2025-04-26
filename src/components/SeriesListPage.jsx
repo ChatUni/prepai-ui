@@ -12,14 +12,6 @@ const SeriesListPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
 
-  // Start carousel rotation
-  React.useEffect(() => {
-    if (coursesStore.series.length > 0) {
-      carouselStore.startRotation();
-    }
-    return () => carouselStore.cleanup();
-  }, [coursesStore.series.length]);
-
   // Load series data if not already loaded
   React.useEffect(() => {
     if (coursesStore.series.length === 0) {
@@ -27,10 +19,15 @@ const SeriesListPage = observer(() => {
     }
   }, []);
 
+  // Get carousel images from series covers
+  const carouselImages = coursesStore.series
+    .filter(series => typeof series.cover === 'string')
+    .map(series => series.cover);
+
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {/* Carousel */}
-      <Carousel />
+      <Carousel images={carouselImages} />
 
       {/* Tools Navigation */}
       <div className="grid grid-cols-3 gap-4 mb-8">

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { seriesStore } from '../stores/seriesStore';
+import seriesStore from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
 import uiStore from '../stores/uiStore';
 import SearchBar from './ui/SearchBar';

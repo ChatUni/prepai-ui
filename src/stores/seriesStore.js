@@ -256,4 +256,5 @@ class SeriesStore {
   }
 }
 
-export const seriesStore = new SeriesStore();
+const seriesStore = new SeriesStore();
+export default seriesStore;

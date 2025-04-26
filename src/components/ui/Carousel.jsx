@@ -1,9 +1,23 @@
-import React from 'react';
-import { observer } from 'mobx-react-lite';
-import carouselStore from '../../stores/carouselStore';
+import React, { useState, useEffect } from 'react';
 
-const Carousel = observer(() => {
-  if (carouselStore.images.length === 0) {
+const Carousel = ({ images, intervalDuration = 5000 }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+
+    const rotate = () => {
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
+    };
+
+    const intervalId = setInterval(rotate, intervalDuration);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [images, intervalDuration]);
+
+  if (!images || images.length === 0) {
     return null;
   }
 
@@ -11,18 +25,18 @@ const Carousel = observer(() => {
     <div className="mb-8 rounded-lg overflow-hidden shadow-lg relative">
       <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
         <img
-          src={carouselStore.images[carouselStore.currentImageIndex]}
-          alt="Series Cover"
+          src={images[currentImageIndex]}
+          alt="Carousel Image"
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
-      {carouselStore.images.length > 1 && (
+      {images.length > 1 && (
         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-          {carouselStore.images.map((_, index) => (
+          {images.map((_, index) => (
             <div
               key={index}
               className={`w-2 h-2 rounded-full ${
-                index === carouselStore.currentImageIndex
+                index === currentImageIndex
                   ? 'bg-white'
                   : 'bg-white/50'
               }`}
@@ -32,6 +46,6 @@ const Carousel = observer(() => {
       )}
     </div>
   );
-});
+};
 
 export default Carousel;

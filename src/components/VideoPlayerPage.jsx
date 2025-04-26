@@ -473,9 +473,10 @@ const VideoPlayerPage = observer(() => {
               isLoading={transcriptLoading}
               customMessage={transcriptLoading ? t('menu.categories.video.loadingSubtitles') : null}
             >
-              {activeTab === 'subtitles' ? (
+              <div>
+                {activeTab === 'subtitles' ? (
                 <div className="space-y-2">
-                {videoPlayerStore.transcript.length > 0 ? (
+                  {videoPlayerStore.transcript.length > 0 ? (
                   videoPlayerStore.transcript.map((item, index) => {
                     // Check if this is the current subtitle
                     const isActive = videoPlayerStore.currentSubtitle &&
@@ -615,7 +616,9 @@ const VideoPlayerPage = observer(() => {
                   )}
                 </div>
               </div>
-            )}
+                )}
+              </div>
+            </LoadingState>
           </div>
         </div>
       </div>

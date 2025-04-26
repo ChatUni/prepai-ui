@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { seriesStore } from './seriesStore';
+import seriesStore from './seriesStore';
 import routeStore from './routeStore';
 
 class NewCourseStore {
@@ -144,4 +144,5 @@ class NewCourseStore {
   }
 }
 
-export const newCourseStore = new NewCourseStore();
+const newCourseStore = new NewCourseStore();
+export default newCourseStore;
