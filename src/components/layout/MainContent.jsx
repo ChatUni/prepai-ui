@@ -7,6 +7,7 @@ import InstructorPage from '../InstructorPage';
 import ExamPage from '../ExamPage';
 import SeriesPage from '../SeriesPage';
 import languageStore from '../../stores/languageStore';
+import LoadingState from '../ui/LoadingState';
 
 const MainContent = observer(() => {
   const { t } = languageStore;
@@ -27,35 +28,19 @@ const MainContent = observer(() => {
           <SearchBar />
         </div>
         
-        {/* Loading State */}
-        {coursesStore.isLoading && (
-          <div className="flex justify-center items-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-sm md:text-base">Loading courses from database...</p>
-            </div>
-          </div>
-        )}
-        
-        {/* Error State */}
-        {!coursesStore.isLoading && coursesStore.error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 md:px-4 md:py-3 rounded relative mb-4 md:mb-6 text-sm md:text-base" role="alert">
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{coursesStore.error}</span>
-          </div>
-        )}
-        
-        {/* Content when loaded successfully */}
-        {!coursesStore.isLoading && !coursesStore.error && coursesStore.courses.length > 0 && (
+        <LoadingState
+          isLoading={coursesStore.isLoading}
+          isError={!!coursesStore.error}
+          isEmpty={!coursesStore.isLoading && !coursesStore.error && coursesStore.courses.length === 0}
+          customMessage={
+            coursesStore.isLoading ? "Loading courses from database..." :
+            coursesStore.error ? coursesStore.error :
+            coursesStore.courses.length === 0 ? "No courses found in the database." :
+            null
+          }
+        >
           <MainContentCoursesSection />
-        )}
-        
-        {/* No courses found */}
-        {!coursesStore.isLoading && !coursesStore.error && coursesStore.courses.length === 0 && (
-          <div className="text-center py-8 md:py-12">
-            <p className="text-gray-600 text-base md:text-lg">No courses found in the database.</p>
-          </div>
-        )}
+        </LoadingState>
       </div>
     );
   }

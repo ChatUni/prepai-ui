@@ -6,6 +6,7 @@ import assistantsStore from '../stores/assistantsStore';
 import assistantChatStore from '../stores/assistantChatStore';
 import Button from './ui/Button';
 import languageStore from '../stores/languageStore';
+import LoadingState from './ui/LoadingState';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -36,15 +37,7 @@ const AssistantChatMessages = observer(() => {
     }
   }, [messages.length, isLoading]);
 
-  if (messages.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full text-gray-500">
-        {t('menu.assistant.noMessages')}
-      </div>
-    );
-  }
-
-  return (
+  const chatContent = (
     <div className="space-y-4 pt-4">
       {messages.map((message, index) => (
         <div
@@ -71,6 +64,15 @@ const AssistantChatMessages = observer(() => {
       
       <div ref={messagesEndRef} />
     </div>
+  );
+
+  return (
+    <LoadingState
+      isEmpty={messages.length === 0}
+      customMessage={messages.length === 0 ? t('menu.assistant.noMessages') : null}
+    >
+      {chatContent}
+    </LoadingState>
   );
 });
 
@@ -115,44 +117,20 @@ const AssistantChatPage = observer(() => {
   const handleBack = () => {
     navigate('/assistants');
   };
-  
-  // Show loading state for assistants
-  if (assistantsStore.loading) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">{t('menu.assistant.loading')}</div>
-      </div>
-    );
-  }
-  
-  // Show error state
-  if (assistantsStore.error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="text-xl text-red-600 mb-4">{t('menu.assistant.loadingFailed')}</div>
-        <div className="text-gray-600">{assistantsStore.error}</div>
-        <button
-          onClick={() => assistantsStore.fetchAssistants()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
-        >
-          {t('menu.categories.assistant.retry')}
-        </button>
-      </div>
-    );
-  }
-  
-  // Get the selected assistant
-  const assistant = assistantChatStore.selectedAssistant;
-  
-  if (!assistant) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">{t('menu.categories.assistant.notFound')}</div>
-      </div>
-    );
-  }
-  
-  return (
+
+  const errorContent = assistantsStore.error && (
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <div className="text-gray-600 mt-2">{assistantsStore.error}</div>
+      <button
+        onClick={() => assistantsStore.fetchAssistants()}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+      >
+        {t('menu.categories.assistant.retry')}
+      </button>
+    </div>
+  );
+
+  const mainContent = assistantChatStore.selectedAssistant && (
     <div className="flex flex-col h-full pb-12">
       {/* Header */}
       <div
@@ -160,11 +138,11 @@ const AssistantChatPage = observer(() => {
         onClick={handleBack}
       >
         <img
-          src={assistant.iconUrl}
-          alt={assistant.name}
+          src={assistantChatStore.selectedAssistant.iconUrl}
+          alt={assistantChatStore.selectedAssistant.name}
           className="w-8 h-8 rounded-full mr-4 object-cover"
         />
-        <h1 className="text-xl font-semibold">{assistant.name}</h1>
+        <h1 className="text-xl font-semibold">{assistantChatStore.selectedAssistant.name}</h1>
       </div>
       
       {/* Chat messages area */}
@@ -181,6 +159,22 @@ const AssistantChatPage = observer(() => {
         />
       </div>
     </div>
+  );
+  
+  return (
+    <LoadingState
+      isLoading={assistantsStore.loading}
+      isError={!!assistantsStore.error}
+      isEmpty={!assistantsStore.loading && !assistantsStore.error && !assistantChatStore.selectedAssistant}
+      customMessage={
+        assistantsStore.loading ? t('menu.assistant.loading') :
+        assistantsStore.error ? t('menu.assistant.loadingFailed') :
+        !assistantChatStore.selectedAssistant ? t('menu.categories.assistant.notFound') :
+        null
+      }
+    >
+      {assistantsStore.error ? errorContent : mainContent}
+    </LoadingState>
   );
 });
 

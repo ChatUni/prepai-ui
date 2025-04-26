@@ -4,11 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { seriesStore } from '../stores/seriesStore';
 import { newCourseStore } from '../stores/newCourseStore';
 import languageStore from '../stores/languageStore';
+import LoadingState from './ui/LoadingState';
 
 const AddCoursePage = observer(() => {
   const { seriesId } = useParams();
   const navigate = useNavigate();
   const { t } = languageStore;
+  const { currentSeries } = seriesStore;
 
   useEffect(() => {
     const loadData = async () => {
@@ -30,13 +32,7 @@ const AddCoursePage = observer(() => {
     }
   };
 
-  if (seriesStore.isLoading || !seriesStore.currentSeries) {
-    return <div className="p-4">{t('common.loading')}</div>;
-  }
-
-  const { currentSeries } = seriesStore;
-
-  return (
+  const content = (
     <div className="container mx-auto p-4 max-w-4xl">
       {/* Series Details Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -52,9 +48,6 @@ const AddCoursePage = observer(() => {
           </div>
           <div className="md:col-span-2">
             <h3 className="text-xl font-semibold mb-2">{currentSeries.name}</h3>
-            {/* <p className="text-gray-600 mb-2">
-              讲师: {currentSeries.instructor?.name}
-            </p> */}
             <p className="text-gray-700">{currentSeries.description}</p>
           </div>
         </div>
@@ -84,6 +77,7 @@ const AddCoursePage = observer(() => {
               ))}
             </select>
           </div>
+
           {/* Course Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -209,6 +203,15 @@ const AddCoursePage = observer(() => {
         </form>
       </div>
     </div>
+  );
+
+  return (
+    <LoadingState
+      isLoading={seriesStore.isLoading || !seriesStore.currentSeries}
+      customMessage={t('common.loading')}
+    >
+      {content}
+    </LoadingState>
   );
 });
 

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SeriesList from './ui/SeriesList';
 import SearchBar from './ui/SearchBar';
 import Carousel from './ui/Carousel';
+import LoadingState from './ui/LoadingState';
 import coursesStore from '../stores/coursesStore';
 import languageStore from '../stores/languageStore';
 
@@ -65,25 +66,13 @@ const SeriesListPage = observer(() => {
       </div>
 
       {/* Series List */}
-      {coursesStore.isLoading ? (
-        <div className="text-center py-10">
-          <p className="text-gray-600 dark:text-gray-400">{t('series.loading')}</p>
-        </div>
-      ) : (
-        <>
-          {!Array.isArray(coursesStore.filteredSeries) ? (
-            <div className="text-center py-10">
-              <p className="text-gray-600 dark:text-gray-400">{t('series.loadingError')}</p>
-            </div>
-          ) : coursesStore.filteredSeries.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-600 dark:text-gray-400">{t('series.noSeries')}</p>
-            </div>
-          ) : (
-            <SeriesList title="" series={coursesStore.filteredSeries} isAllInstructors={true} />
-          )}
-        </>
-      )}
+      <LoadingState
+        isLoading={coursesStore.isLoading}
+        isError={!Array.isArray(coursesStore.filteredSeries)}
+        isEmpty={Array.isArray(coursesStore.filteredSeries) && coursesStore.filteredSeries.length === 0}
+      >
+        <SeriesList title="" series={coursesStore.filteredSeries} isAllInstructors={true} />
+      </LoadingState>
     </div>
   );
 });

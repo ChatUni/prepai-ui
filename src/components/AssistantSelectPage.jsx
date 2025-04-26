@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import assistantsStore from '../stores/assistantsStore';
 import languageStore from '../stores/languageStore';
 import AssistantSearchBar from './ui/AssistantSearchBar';
+import LoadingState from './ui/LoadingState';
 
 const AssistantSelectPage = observer(() => {
   const navigate = useNavigate();
@@ -34,33 +35,30 @@ const AssistantSelectPage = observer(() => {
       </div>
       <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
         <div className="divide-y divide-gray-200 overflow-y-auto h-full">
-          {assistantsStore.loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">{t('common.loading')}</div>
-            </div>
-          ) : assistantsStore.filteredAssistants.map(assistant => (
-            <div
-              key={assistant.id}
-              onClick={() => handleAssistantClick(assistant)}
-              className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">{assistant.name}</h3>
-                  {assistant.greeting && (
-                    <p className="text-sm text-gray-500">
-                      {assistant.greeting}
-                    </p>
-                  )}
+          <LoadingState
+            isLoading={assistantsStore.loading}
+            isEmpty={!assistantsStore.loading && assistantsStore.filteredAssistants.length === 0}
+            customMessage={assistantsStore.loading ? t('common.loading') : t('common.no_results')}
+          >
+            {assistantsStore.filteredAssistants.map(assistant => (
+              <div
+                key={assistant.id}
+                onClick={() => handleAssistantClick(assistant)}
+                className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">{assistant.name}</h3>
+                    {assistant.greeting && (
+                      <p className="text-sm text-gray-500">
+                        {assistant.greeting}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          {!assistantsStore.loading && assistantsStore.filteredAssistants.length === 0 && (
-            <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">{t('common.no_results')}</div>
-            </div>
-          )}
+            ))}
+          </LoadingState>
         </div>
       </div>
     </div>

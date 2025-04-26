@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { seriesStore } from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
 import { tap } from '../../netlify/functions/utils';
+import LoadingState from './ui/LoadingState';
 
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
@@ -72,11 +73,7 @@ const EditSeriesPage = observer(() => {
     }
   };
 
-  if (seriesStore.isLoading) {
-    return <div className="p-4">{t('series.edit.loading')}</div>;
-  }
-
-  return (
+  const content = (
     <div className="p-4 w-full h-full flex flex-col">
       <h1 className="text-2xl font-bold mb-4">
         {seriesId ? t('series.edit.editTitle') : t('series.edit.createTitle')}
@@ -282,6 +279,15 @@ const EditSeriesPage = observer(() => {
         </div>
       </form>
     </div>
+  );
+
+  return (
+    <LoadingState
+      isLoading={seriesStore.isLoading}
+      customMessage={t('series.edit.loading')}
+    >
+      {content}
+    </LoadingState>
   );
 });
 

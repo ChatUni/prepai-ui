@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import instructorsStore from '../stores/instructorsStore';
 import languageStore from '../stores/languageStore';
 import InstructorSearchBar from './ui/InstructorSearchBar';
+import LoadingState from './ui/LoadingState';
 
 const InstructorSelectPage = observer(() => {
   const navigate = useNavigate();
@@ -34,38 +35,39 @@ const InstructorSelectPage = observer(() => {
       </div>
       <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
         <div className="divide-y divide-gray-200 overflow-y-auto h-full">
-          {instructorsStore.loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">{t('common.loading')}</div>
-            </div>
-          ) : instructorsStore.filteredInstructors.map(instructor => (
-            <div
-              key={instructor.id}
-              onClick={() => handleInstructorClick(instructor)}
-              className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">{instructor.name}</h3>
-                  {instructor.title && (
-                    <p className="text-sm text-gray-600 mb-1">
-                      {instructor.title}
-                    </p>
-                  )}
-                  {instructor.expertise && (
-                    <p className="text-sm text-gray-500">
-                      {instructor.expertise}
-                    </p>
-                  )}
+          <LoadingState
+            isLoading={instructorsStore.loading}
+            isEmpty={!instructorsStore.loading && instructorsStore.filteredInstructors.length === 0}
+            customMessage={
+              instructorsStore.loading ? t('common.loading') :
+              instructorsStore.filteredInstructors.length === 0 ? t('common.no_results') :
+              null
+            }
+          >
+            {instructorsStore.filteredInstructors.map(instructor => (
+              <div
+                key={instructor.id}
+                onClick={() => handleInstructorClick(instructor)}
+                className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">{instructor.name}</h3>
+                    {instructor.title && (
+                      <p className="text-sm text-gray-600 mb-1">
+                        {instructor.title}
+                      </p>
+                    )}
+                    {instructor.expertise && (
+                      <p className="text-sm text-gray-500">
+                        {instructor.expertise}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          {!instructorsStore.loading && instructorsStore.filteredInstructors.length === 0 && (
-            <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">{t('common.no_results')}</div>
-            </div>
-          )}
+            ))}
+          </LoadingState>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import videoPlayerStore from '../stores/videoPlayerStore';
 import uiStore from '../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../utils/videoTranscriptService';
 import languageStore from '../stores/languageStore';
+import LoadingState from './ui/LoadingState';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
@@ -331,31 +332,31 @@ const VideoPlayerPage = observer(() => {
     navigate(-1);
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col py-6 pb-20 md:pb-6 px-6 h-full">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">{t('menu.categories.loading')}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const errorContent = error && (
+    <>
+      <button onClick={handleBack} className="text-blue-500 mb-4 flex items-center">
+        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        {t('menu.categories.back')}
+      </button>
+    </>
+  );
 
-  if (error) {
+  if (loading || error) {
     return (
       <div className="flex flex-col py-6 pb-20 md:pb-6 px-6 h-full">
-        <button onClick={handleBack} className="text-blue-500 mb-4 flex items-center">
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          {t('menu.categories.back')}
-        </button>
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>{t('menu.categories.error')}: {error}</p>
-        </div>
+        <LoadingState
+          isLoading={loading}
+          isError={!!error}
+          customMessage={
+            loading ? t('menu.categories.loading') :
+            error ? `${t('menu.categories.error')}: ${error}` :
+            null
+          }
+        >
+          {errorContent}
+        </LoadingState>
       </div>
     );
   }
@@ -468,15 +469,12 @@ const VideoPlayerPage = observer(() => {
           
           {/* Tab Content - flex-grow to expand and scroll */}
           <div className="p-4 overflow-y-auto flex-grow" id="transcript-container">
-            {transcriptLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <p className="text-gray-600">{t('menu.categories.video.loadingSubtitles')}</p>
-                </div>
-              </div>
-            ) : activeTab === 'subtitles' ? (
-              <div className="space-y-2">
+            <LoadingState
+              isLoading={transcriptLoading}
+              customMessage={transcriptLoading ? t('menu.categories.video.loadingSubtitles') : null}
+            >
+              {activeTab === 'subtitles' ? (
+                <div className="space-y-2">
                 {videoPlayerStore.transcript.length > 0 ? (
                   videoPlayerStore.transcript.map((item, index) => {
                     // Check if this is the current subtitle

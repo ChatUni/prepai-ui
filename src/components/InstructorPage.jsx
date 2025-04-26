@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import instructorsStore from '../stores/instructorsStore';
 import languageStore from '../stores/languageStore';
 import routeStore from '../stores/routeStore';
+import LoadingState from './ui/LoadingState';
 
 const InstructorPage = observer(() => {
   const navigate = useNavigate();
@@ -26,41 +27,19 @@ const InstructorPage = observer(() => {
     e.target.src = '/images/avatar.png';
   }, []);
 
-  // Show loading state
-  if (instructorsStore.loading) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">{t('instructors.loading')}</div>
-      </div>
-    );
-  }
+  const errorContent = instructorsStore.error && (
+    <>
+      <div className="text-gray-600 mt-2">{instructorsStore.error}</div>
+      <button
+        onClick={() => instructorsStore.fetchInstructors()}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+      >
+        {t('instructors.retry')}
+      </button>
+    </>
+  );
 
-  // Show error state
-  if (instructorsStore.error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="text-xl text-red-600 mb-4">{t('instructors.loadingFailed')}</div>
-        <div className="text-gray-600">{instructorsStore.error}</div>
-        <button
-          onClick={() => instructorsStore.fetchInstructors()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
-        >
-          {t('instructors.retry')}
-        </button>
-      </div>
-    );
-  }
-
-  // Show empty state
-  if (!instructorsStore.instructors.length) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <div className="text-xl text-gray-600">{t('instructors.notFound')}</div>
-      </div>
-    );
-  }
-
-  return (
+  const mainContent = (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">{t('instructors.title')}</h1>
@@ -103,6 +82,22 @@ const InstructorPage = observer(() => {
         ))}
       </div>
     </div>
+  );
+
+  return (
+    <LoadingState
+      isLoading={instructorsStore.loading}
+      isError={!!instructorsStore.error}
+      isEmpty={!instructorsStore.loading && !instructorsStore.error && !instructorsStore.instructors.length}
+      customMessage={
+        instructorsStore.loading ? t('instructors.loading') :
+        instructorsStore.error ? t('instructors.loadingFailed') :
+        !instructorsStore.instructors.length ? t('instructors.notFound') :
+        null
+      }
+    >
+      {instructorsStore.error ? errorContent : mainContent}
+    </LoadingState>
   );
 });
 
