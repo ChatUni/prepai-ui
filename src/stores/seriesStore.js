@@ -14,7 +14,6 @@ class SeriesStore {
   descType = 'text'; // 'text' or 'image'
   isDropdownOpen = false;
   selectedCategory = '';
-  activeTab = 'about'; // 'about' or 'courses'
 
   constructor() {
     makeAutoObservable(this, {
@@ -106,10 +105,6 @@ class SeriesStore {
     if (this.currentSeries) {
       this.currentSeries.category = category;
     }
-  }
-
-  setActiveTab = (tab) => {
-    this.activeTab = tab;
   }
 
   fetchSeries = async () => {

@@ -5,6 +5,7 @@ import { IoChevronBack } from 'react-icons/io5';
 import CourseList from './ui/CourseList';
 import seriesStore from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
+import TabPanel from './ui/TabPanel';
 
 const SeriesDetailPage = observer(() => {
   const navigate = useNavigate();
@@ -49,43 +50,20 @@ const SeriesDetailPage = observer(() => {
         )}
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-        <button
-          className={`py-2 px-4 font-medium text-sm ${
-            seriesStore.activeTab === 'about'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-          onClick={() => seriesStore.setActiveTab('about')}
-        >
-          {t('series.aboutThisSeries')}
-        </button>
-        <button
-          className={`py-2 px-4 font-medium text-sm ${
-            seriesStore.activeTab === 'courses'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-          onClick={() => seriesStore.setActiveTab('courses')}
-        >
-          {t('series.courseList')}
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      {seriesStore.activeTab === 'about' ? (
-        <div>
-          {/* Series description */}
-          <div className="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+      {/* Tab Panel */}
+      <TabPanel className="mb-6 border border-gray-200">
+        <TabPanel.Tab label={t('series.aboutThisSeries')}>
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
               {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : 'No description available for this series.'}
             </p>
           </div>
-        </div>
-      ) : (
-        <CourseList courses={seriesCourses} />
-      )}
+        </TabPanel.Tab>
+        
+        <TabPanel.Tab label={t('series.courseList')}>
+          <CourseList courses={seriesCourses} />
+        </TabPanel.Tab>
+      </TabPanel>
     </div>
   );
 });

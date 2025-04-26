@@ -7,6 +7,7 @@ import uiStore from '../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../utils/videoTranscriptService';
 import languageStore from '../stores/languageStore';
 import LoadingState from './ui/LoadingState';
+import TabPanel from './ui/TabPanel';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
@@ -16,7 +17,6 @@ const VideoPlayerPage = observer(() => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('subtitles'); // 'subtitles', 'summary', or 'introduction'
   const [summary, setSummary] = useState(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
 
@@ -375,7 +375,6 @@ const VideoPlayerPage = observer(() => {
         {/* Video Player - takes the flexible space */}
         <div className="flex-grow order-1 md:order-1 md:max-w-[calc(100%-24rem)] flex flex-col">
           <div className="aspect-video bg-black rounded overflow-hidden relative">
-            
             {(() => {
               // Determine video type and handle accordingly
               if (getYoutubeId(course.video_url)) {
@@ -432,129 +431,95 @@ const VideoPlayerPage = observer(() => {
         </div>
         
         {/* Tab Panel - fixed width on the right, using calculated height to fit viewport */}
-        <div className="w-full md:w-96 order-2 md:order-2 bg-white border border-gray-200 rounded-lg flex flex-col h-[calc(100vh-380px)] md:h-[calc(100vh-200px)] flex-shrink-0">
-          {/* Tab Navigation - fixed at the top */}
-          <div className="flex border-b border-gray-200 flex-shrink-0">
-            <button
-              className={`flex-1 py-3 text-center font-medium ${
-                activeTab === 'subtitles'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('subtitles')}
-            >
-              {t('menu.categories.video.tabs.subtitles')}
-            </button>
-            <button
-              className={`flex-1 py-3 text-center font-medium ${
-                activeTab === 'summary'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('summary')}
-            >
-              {t('menu.categories.video.tabs.summary')}
-            </button>
-            <button
-              className={`flex-1 py-3 text-center font-medium ${
-                activeTab === 'introduction'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('introduction')}
-            >
-              {t('menu.categories.video.tabs.courseInfo')}
-            </button>
-          </div>
-          
-          {/* Tab Content - flex-grow to expand and scroll */}
-          <div className="p-4 overflow-y-auto flex-grow" id="transcript-container">
-            <LoadingState
-              isLoading={transcriptLoading}
-              customMessage={transcriptLoading ? t('menu.categories.video.loadingSubtitles') : null}
-            >
-              <div>
-                {activeTab === 'subtitles' ? (
+        <TabPanel className="w-full md:w-96 order-2 md:order-2 border border-gray-200 h-[calc(100vh-380px)] md:h-[calc(100vh-200px)] flex-shrink-0">
+          <TabPanel.Tab label={t('menu.categories.video.tabs.subtitles')}>
+              <LoadingState
+                isLoading={transcriptLoading}
+                customMessage={transcriptLoading ? t('menu.categories.video.loadingSubtitles') : null}
+              >
                 <div className="space-y-2">
                   {videoPlayerStore.transcript.length > 0 ? (
-                  videoPlayerStore.transcript.map((item, index) => {
-                    // Check if this is the current subtitle
-                    const isActive = videoPlayerStore.currentSubtitle &&
-                      (videoPlayerStore.originalTranscriptFormat === 'srt'
-                        ? (videoPlayerStore.currentSubtitle.id === item.id)
-                        : (videoPlayerStore.currentSubtitle.offset === item.offset));
-                    
-                    // Format the timestamp based on the transcript format
-                    let timestamp;
-                    if (videoPlayerStore.originalTranscriptFormat === 'srt') {
-                      // Format seconds to HH:MM:SS
-                      const formatTime = (timeInSeconds) => {
-                        const hours = Math.floor(timeInSeconds / 3600);
-                        const minutes = Math.floor((timeInSeconds % 3600) / 60);
-                        const seconds = Math.floor(timeInSeconds % 60);
-                        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                      };
-                      timestamp = `${formatTime(item.startTime)} → ${formatTime(item.endTime)}`;
-                    } else {
-                      // Original format for compatibility with existing code
-                      timestamp = new Date(Math.floor((item.offset || 0) / 1000) * 1000).toISOString().substr(11, 8);
-                    }
-                    
-                    // Handle click to seek to this time in the video
-                    const handleSeek = () => {
-                      // For YouTube videos
-                      if (youtubePlayer && typeof youtubePlayer.seekTo === 'function') {
-                        if (videoPlayerStore.originalTranscriptFormat === 'srt') {
-                          youtubePlayer.seekTo(item.startTime, true);
-                        } else if (item.offset !== undefined) {
-                          youtubePlayer.seekTo(item.offset / 1000, true);
-                        }
-                        // Ensure video is playing after seeking
-                        youtubePlayer.playVideo();
-                        videoPlayerStore.setIsPlaying(true);
+                    videoPlayerStore.transcript.map((item, index) => {
+                      // Check if this is the current subtitle
+                      const isActive = videoPlayerStore.currentSubtitle &&
+                        (videoPlayerStore.originalTranscriptFormat === 'srt'
+                          ? (videoPlayerStore.currentSubtitle.id === item.id)
+                          : (videoPlayerStore.currentSubtitle.offset === item.offset));
+                      
+                      // Format the timestamp based on the transcript format
+                      let timestamp;
+                      if (videoPlayerStore.originalTranscriptFormat === 'srt') {
+                        // Format seconds to HH:MM:SS
+                        const formatTime = (timeInSeconds) => {
+                          const hours = Math.floor(timeInSeconds / 3600);
+                          const minutes = Math.floor((timeInSeconds % 3600) / 60);
+                          const seconds = Math.floor(timeInSeconds % 60);
+                          return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        };
+                        timestamp = `${formatTime(item.startTime)} → ${formatTime(item.endTime)}`;
+                      } else {
+                        // Original format for compatibility with existing code
+                        timestamp = new Date(Math.floor((item.offset || 0) / 1000) * 1000).toISOString().substr(11, 8);
                       }
-                      // For HTML5 video elements
-                      else if (videoRef.current) {
-                        if (videoPlayerStore.originalTranscriptFormat === 'srt') {
-                          videoRef.current.currentTime = item.startTime;
-                        } else if (item.offset !== undefined) {
-                          videoRef.current.currentTime = item.offset / 1000;
-                        }
-                        videoRef.current.play();
-                      }
-                    };
-                    
-                    return (
-                      <div
-                        key={index}
-                        id={`transcript-item-${index}`}
-                        onClick={handleSeek}
-                        className={`p-3 rounded cursor-pointer transition-all duration-300 ${
-                          isActive
-                            ? `bg-blue-100 border-l-4 border-blue-500 shadow-md ${videoPlayerStore.isPlaying ? 'animate-pulse-subtle' : ''}`
-                            : 'hover:bg-gray-100 border-l-4 border-transparent'
-                        }`}
-                        ref={el => {
-                          // Auto-scroll to the active subtitle
-                          if (isActive && el) {
-                            setTimeout(() => {
-                              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 100);
+                      
+                      // Handle click to seek to this time in the video
+                      const handleSeek = () => {
+                        // For YouTube videos
+                        if (youtubePlayer && typeof youtubePlayer.seekTo === 'function') {
+                          if (videoPlayerStore.originalTranscriptFormat === 'srt') {
+                            youtubePlayer.seekTo(item.startTime, true);
+                          } else if (item.offset !== undefined) {
+                            youtubePlayer.seekTo(item.offset / 1000, true);
                           }
-                        }}
-                      >
-                        <p className="text-gray-600 text-sm mb-1">{timestamp}</p>
-                        <p className={`${isActive ? 'text-blue-800 font-medium' : 'text-gray-800'}`}>
-                          {item.text}
-                        </p>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-gray-500 italic">{t('menu.categories.video.noSubtitles')}</div>
-                )}
-              </div>
-            ) : activeTab === 'summary' ? (
+                          // Ensure video is playing after seeking
+                          youtubePlayer.playVideo();
+                          videoPlayerStore.setIsPlaying(true);
+                        }
+                        // For HTML5 video elements
+                        else if (videoRef.current) {
+                          if (videoPlayerStore.originalTranscriptFormat === 'srt') {
+                            videoRef.current.currentTime = item.startTime;
+                          } else if (item.offset !== undefined) {
+                            videoRef.current.currentTime = item.offset / 1000;
+                          }
+                          videoRef.current.play();
+                        }
+                      };
+                      
+                      return (
+                        <div
+                          key={index}
+                          id={`transcript-item-${index}`}
+                          onClick={handleSeek}
+                          className={`p-3 rounded cursor-pointer transition-all duration-300 ${
+                            isActive
+                              ? `bg-blue-100 border-l-4 border-blue-500 shadow-md ${videoPlayerStore.isPlaying ? 'animate-pulse-subtle' : ''}`
+                              : 'hover:bg-gray-100 border-l-4 border-transparent'
+                          }`}
+                          ref={el => {
+                            // Auto-scroll to the active subtitle
+                            if (isActive && el) {
+                              setTimeout(() => {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 100);
+                            }
+                          }}
+                        >
+                          <p className="text-gray-600 text-sm mb-1">{timestamp}</p>
+                          <p className={`${isActive ? 'text-blue-800 font-medium' : 'text-gray-800'}`}>
+                            {item.text}
+                          </p>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-gray-500 italic">{t('menu.categories.video.noSubtitles')}</div>
+                  )}
+                </div>
+              </LoadingState>
+          </TabPanel.Tab>
+          
+          <TabPanel.Tab label={t('menu.categories.video.tabs.summary')}>
               <div className="space-y-4">
                 {summary ? (
                   <>
@@ -591,7 +556,9 @@ const VideoPlayerPage = observer(() => {
                   <div className="text-gray-500 italic">{t('menu.categories.video.noSummary')}</div>
                 )}
               </div>
-            ) : (
+          </TabPanel.Tab>
+          
+          <TabPanel.Tab label={t('menu.categories.video.tabs.courseInfo')}>
               <div className="space-y-4">
                 <div className="text-gray-700">
                   {course.category && (
@@ -616,11 +583,8 @@ const VideoPlayerPage = observer(() => {
                   )}
                 </div>
               </div>
-                )}
-              </div>
-            </LoadingState>
-          </div>
-        </div>
+          </TabPanel.Tab>
+        </TabPanel>
       </div>
       
       {/* Course Description - only visible on desktop */}
