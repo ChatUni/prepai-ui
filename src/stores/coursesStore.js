@@ -50,7 +50,8 @@ class CoursesStore {
       examCourses: computed,
       coursesBySeries: computed,
       getSeriesInstructors: computed,
-      uniqueCategories: computed
+      uniqueCategories: computed,
+      seriesCovers: computed
     });
   }
 
@@ -385,6 +386,12 @@ class CoursesStore {
       .map(series => series.category)
       .filter(category => category); // Filter out null/undefined
     return [...new Set(categories)].sort();
+  }
+
+  get seriesCovers() {
+    return this.series
+      .filter(series => typeof series.cover === 'string')
+      .map(series => series.cover);
   }
 }
 

@@ -20,7 +20,7 @@
     },
     {
       "name": "derived-state-in-stores",
-      "description": "All derived state must be computed in MobX stores, never in components. This includes filtered/sorted lists, existence checks (e.g., whether an item exists in a collection), transformations, aggregations, calculations, and any other computed values derived from primary state. Components should only consume these pre-computed values from stores via MobX's computed properties, ensuring separation of concerns and optimized rendering.",
+      "description": "No computed, calculated, or derived values are allowed in components. All such values must be computed in MobX stores using computed properties. This includes but is not limited to: filtered/sorted lists, existence checks, transformations, aggregations, calculations, data mappings, array/object manipulations, string formatting, and any other values derived from primary state. Components must be pure render functions that only consume pre-computed values from stores via MobX's computed properties, ensuring clean separation of concerns and optimized rendering.",
       "severity": "error",
       "category": "state-management"
     },
@@ -35,6 +35,18 @@
       "description": "Never create or use mock data in the application. Always fetch and use real data from the database. This ensures consistency between development and production environments and prevents discrepancies in behavior.",
       "severity": "error",
       "category": "data-management"
+    },
+    {
+      "name": "no-prop-types",
+      "description": "Never use PropTypes for type checking in React components. Type checking should be handled by TypeScript or similar static type checking tools.",
+      "severity": "error",
+      "category": "code-style"
+    },
+    {
+      "name": "use-react-icons",
+      "description": "Never use inline SVG icons in components. Always use react-icons library for icons. This ensures consistency in icon usage across the application and reduces code complexity.",
+      "severity": "error",
+      "category": "code-style"
     }
   ]
 }
