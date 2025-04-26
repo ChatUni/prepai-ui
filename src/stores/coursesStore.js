@@ -323,6 +323,7 @@ class CoursesStore {
     
     const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
     const selectedInstructorId = uiStore.selectedInstructorId || null;
+    const activeCategory = uiStore.activeCategory || '';
     
     return this.series.filter(series => {
       // Skip any non-object series items
@@ -338,8 +339,10 @@ class CoursesStore {
       
       const matchesInstructor = selectedInstructorId === null ||
         (series.instructor && series.instructor.id === selectedInstructorId);
+
+      const matchesCategory = !activeCategory || series.category === activeCategory;
       
-      return matchesSearch && matchesInstructor;
+      return matchesSearch && matchesInstructor && matchesCategory;
     });
   }
 

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import uiStore from '../../stores/uiStore';
 import coursesStore from '../../stores/coursesStore';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +8,24 @@ import languageStore from '../../stores/languageStore';
 const SearchBar = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const [isInstructorDropdownOpen, setIsInstructorDropdownOpen] = useState(false);
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const instructorDropdownRef = useRef(null);
+  const categoryDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        instructorDropdownRef.current &&
+        !instructorDropdownRef.current.contains(event.target) &&
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target)
+      ) {
+        uiStore.closeAllDropdowns();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e) => {
     uiStore.setSearchKeyword(e.target.value);
@@ -18,7 +34,7 @@ const SearchBar = observer(() => {
   const handleInstructorFilter = (instructorId) => {
     const parsedId = instructorId === "" ? null : parseInt(instructorId);
     uiStore.setSelectedInstructorId(parsedId);
-    setIsInstructorDropdownOpen(false);
+    uiStore.setInstructorDropdownOpen(false);
     
     // Only navigate if not on exam or series page
     if (!window.location.pathname.includes('/exam') && !window.location.pathname.includes('/series')) {
@@ -27,25 +43,24 @@ const SearchBar = observer(() => {
   };
 
   const handleCategoryFilter = (category) => {
-    uiStore.setActiveCategory(category);
-    setIsCategoryDropdownOpen(false);
+    // Update both stores to maintain consistency
+    uiStore.setActiveCategory(category); // This will also close the dropdowns
+    seriesStore.setSelectedCategory(category, true);
   };
 
   const toggleInstructorDropdown = () => {
-    setIsInstructorDropdownOpen(!isInstructorDropdownOpen);
-    setIsCategoryDropdownOpen(false);
+    uiStore.setInstructorDropdownOpen(!uiStore.isInstructorDropdownOpen);
   };
 
   const toggleCategoryDropdown = () => {
-    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
-    setIsInstructorDropdownOpen(false);
+    uiStore.setCategoryDropdownOpen(!uiStore.isCategoryDropdownOpen);
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center w-full max-w-3xl gap-2 sm:gap-0">
-      <div className="relative w-full sm:w-auto sm:mr-2 mb-2 sm:mb-0">
+    <div className="flex flex-row items-center w-full max-w-3xl gap-1 sm:gap-2">
+      <div className="relative shrink-0" ref={instructorDropdownRef}>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-l flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between border-r border-blue-600"
           onClick={toggleInstructorDropdown}
         >
           <span className="truncate max-w-[200px]">
@@ -64,14 +79,16 @@ const SearchBar = observer(() => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              d={isInstructorDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+              d={uiStore.isInstructorDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
             />
           </svg>
         </button>
         
-        {isInstructorDropdownOpen && (
-          <div className="absolute z-10 mt-1 w-full sm:min-w-full bg-white rounded-md shadow-lg">
-            <ul className="py-1 max-h-60 overflow-y-auto">
+        {uiStore.isInstructorDropdownOpen && (
+          <div
+            className="absolute z-10 mt-1 bg-white rounded-md shadow-lg whitespace-nowrap"
+          >
+            <ul className="py-1 max-h-60 overflow-y-auto w-max min-w-full">
               <li
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${!uiStore.selectedInstructorId ? 'bg-blue-50' : ''}`}
                 onClick={() => handleInstructorFilter("")}
@@ -92,9 +109,9 @@ const SearchBar = observer(() => {
         )}
       </div>
       
-      <div className="relative w-full sm:w-auto sm:mr-2 mb-2 sm:mb-0">
+      <div className="relative shrink-0 -ml-[1px] mr-1 sm:mr-2" ref={categoryDropdownRef}>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-r flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"
           onClick={toggleCategoryDropdown}
         >
           <span className="truncate max-w-[200px]">
@@ -111,14 +128,16 @@ const SearchBar = observer(() => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              d={isCategoryDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+              d={uiStore.isCategoryDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
             />
           </svg>
         </button>
         
-        {isCategoryDropdownOpen && (
-          <div className="absolute z-10 mt-1 w-full sm:min-w-full bg-white rounded-md shadow-lg">
-            <ul className="py-1 max-h-60 overflow-y-auto">
+        {uiStore.isCategoryDropdownOpen && (
+          <div
+            className="absolute z-10 mt-1 bg-white rounded-md shadow-lg whitespace-nowrap"
+          >
+            <ul className="py-1 max-h-60 overflow-y-auto w-max min-w-full">
               <li
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base ${!uiStore.activeCategory ? 'bg-blue-50' : ''}`}
                 onClick={() => handleCategoryFilter("")}
@@ -139,7 +158,7 @@ const SearchBar = observer(() => {
         )}
       </div>
       
-      <div className="relative w-full flex">
+      <div className="relative flex-1 flex min-w-0">
         <div className="absolute top-0 bottom-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
           <svg
             className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"

@@ -9,6 +9,8 @@ class UIStore {
   activeNavItem = '';
   activeCategory = '';
   selectedInstructorId = null;
+  isInstructorDropdownOpen = false;
+  isCategoryDropdownOpen = false;
   favoriteCourseIds = new Set(); // Store favorite course IDs
   userId = 1; // Default user ID for development
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
@@ -29,6 +31,8 @@ class UIStore {
       activeNavItem: observable,
       activeCategory: observable,
       selectedInstructorId: observable,
+      isInstructorDropdownOpen: observable,
+      isCategoryDropdownOpen: observable,
       favoriteCourseIds: observable,
       userId: observable,
       courseTypeFilter: observable,
@@ -39,6 +43,9 @@ class UIStore {
       setActiveNavItem: action,
       setActiveCategory: action,
       setSelectedInstructorId: action,
+      setInstructorDropdownOpen: action,
+      setCategoryDropdownOpen: action,
+      closeAllDropdowns: action,
       toggleFavorite: action,
       setFavorites: action,
       setCourseTypeFilter: action,
@@ -157,9 +164,31 @@ class UIStore {
     this.selectedInstructorId = null;
     this.selectedSeriesId = null;
   }
-  // Set active category
+
+  // Dropdown controls
+  setInstructorDropdownOpen(isOpen) {
+    this.isInstructorDropdownOpen = isOpen;
+    if (isOpen) {
+      this.isCategoryDropdownOpen = false;
+    }
+  }
+
+  setCategoryDropdownOpen(isOpen) {
+    this.isCategoryDropdownOpen = isOpen;
+    if (isOpen) {
+      this.isInstructorDropdownOpen = false;
+    }
+  }
+
+  closeAllDropdowns() {
+    this.isInstructorDropdownOpen = false;
+    this.isCategoryDropdownOpen = false;
+  }
+
+  // Set active category and close dropdowns
   setActiveCategory(category) {
     this.activeCategory = category;
+    this.closeAllDropdowns();
   }
 }
 
