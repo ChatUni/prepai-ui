@@ -51,7 +51,6 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import { useEffect } from 'react';
 import uiStore from './stores/uiStore';
 import db from './utils/db';
-import SeriesSelectPage from './components/SeriesSelectPage';
 
 // Make coursesStore available globally for debugging and fallback
 window.coursesStore = coursesStore;
@@ -240,9 +239,9 @@ const MainLayout = observer(() => {
                     <SeriesPage />
                   </AuthRoute>
                 } />
-                <Route path="/series/select" element={
+                <Route path="/series/:mode" element={
                   <AuthRoute>
-                    <SeriesSelectPage />
+                    <SeriesPage />
                   </AuthRoute>
                 } />
                 <Route path="/series/:seriesId/add-course" element={

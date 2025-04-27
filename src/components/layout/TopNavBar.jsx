@@ -15,7 +15,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const showBackButton = !routeStore.isTopLevelPage;
   const isLoggedIn = userStore.userInfo.isLoggedIn;
   const { t } = languageStore;
-tap(showBackButton, 'show back')  
+
   const navItems = [
     { id: 'testing', label: t('menu.testing') },
     { id: 'private', label: t('menu.private') },

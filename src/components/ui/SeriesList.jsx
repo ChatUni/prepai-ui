@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import SeriesCard from './SeriesCard';
 import languageStore from '../../stores/languageStore';
 
-const SeriesList = observer(({ title, series, isAllInstructors = false }) => {
+const SeriesList = observer(({ title, series, isAllInstructors = false, mode }) => {
   const { t } = languageStore;
   return (
     <div className="w-full">
@@ -13,7 +13,11 @@ const SeriesList = observer(({ title, series, isAllInstructors = false }) => {
       
       <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 ${isAllInstructors ? 'xl:grid-cols-4' : 'xl:grid-cols-3'} gap-3 md:gap-4`}>
         {series.map((seriesItem, index) => (
-          <SeriesCard key={`${title}-${seriesItem.id}-${index}`} series={seriesItem} />
+          <SeriesCard
+            key={`${title}-${seriesItem.id}-${index}`}
+            series={seriesItem}
+            mode={mode}
+          />
         ))}
       </div>
       

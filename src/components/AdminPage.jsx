@@ -22,7 +22,7 @@ const AdminPage = observer(() => {
         navigate('/series/new');
         break;
       case 'edit-series':
-        navigate('/series/select?mode=edit');
+        navigate('/series/select');
         break;
       case 'add-course-to-series':
         navigate('/series/select');
