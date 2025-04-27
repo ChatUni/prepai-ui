@@ -15,6 +15,7 @@ class UIStore {
   userId = 1; // Default user ID for development
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
   selectedSeriesId = null; // Track selected series ID
+  mode = ''; // Current mode (e.g., 'exam', 'select', etc.)
   
   // User account information
   userInfo = {
@@ -38,6 +39,7 @@ class UIStore {
       courseTypeFilter: observable,
       selectedSeriesId: observable,
       userInfo: observable,
+      mode: observable,
       setSearchKeyword: action,
       setSelectedSeriesId: action,
       setActiveNavItem: action,
@@ -50,7 +52,8 @@ class UIStore {
       setFavorites: action,
       setCourseTypeFilter: action,
       updateUserInfo: action,
-      resetFilters: action
+      resetFilters: action,
+      setMode: action
     });
 
     // Set this store in coursesStore to avoid circular dependencies
@@ -189,6 +192,11 @@ class UIStore {
   setActiveCategory(category) {
     this.activeCategory = category;
     this.closeAllDropdowns();
+  }
+
+  // Set current mode
+  setMode(mode) {
+    this.mode = mode;
   }
 }
 

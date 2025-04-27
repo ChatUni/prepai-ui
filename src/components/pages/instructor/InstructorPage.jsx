@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import instructorsStore from '../stores/instructorsStore';
-import languageStore from '../stores/languageStore';
-import routeStore from '../stores/routeStore';
-import LoadingState from './ui/LoadingState';
+import instructorsStore from '../../../stores/instructorsStore';
+import languageStore from '../../../stores/languageStore';
+import routeStore from '../../../stores/routeStore';
+import LoadingState from '../../ui/LoadingState';
 
 const InstructorPage = observer(() => {
   const navigate = useNavigate();

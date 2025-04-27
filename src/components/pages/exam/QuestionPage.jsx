@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import examStore from '../stores/examStore';
-import { tap } from '../../netlify/functions/utils';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
+import examStore from '../../../stores/examStore';
+import { tap } from '../../../../netlify/functions/utils';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
 
 const QuestionPage = observer(() => {
   const { t } = languageStore;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import CourseList from './ui/CourseList';
-import seriesStore from '../stores/seriesStore';
-import languageStore from '../stores/languageStore';
-import TabPanel from './ui/TabPanel';
+import CourseList from '../../ui/CourseList';
+import seriesStore from '../../../stores/seriesStore';
+import languageStore from '../../../stores/languageStore';
+import TabPanel from '../../ui/TabPanel';
 
 const SeriesDetailPage = observer(() => {
   const { t } = languageStore;

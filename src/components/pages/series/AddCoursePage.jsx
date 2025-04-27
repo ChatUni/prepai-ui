@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useParams } from 'react-router-dom';
-import seriesStore from '../stores/seriesStore';
-import newCourseStore from '../stores/newCourseStore';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
+import seriesStore from '../../../stores/seriesStore';
+import newCourseStore from '../../../stores/newCourseStore';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
 
 const AddCoursePage = observer(() => {
   const { seriesId } = useParams();

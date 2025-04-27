@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import coursesStore from '../../stores/coursesStore';
-import routeStore from '../../stores/routeStore';
-import languageStore from '../../stores/languageStore';
-import { tap } from '../../../netlify/functions/utils';
+import coursesStore from '../../../stores/coursesStore';
+import routeStore from '../../../stores/routeStore';
+import languageStore from '../../../stores/languageStore';
+import { tap } from '../../../../netlify/functions/utils';
 
 const SeriesCard = observer(({ series, mode }) => {
   const { t } = languageStore;

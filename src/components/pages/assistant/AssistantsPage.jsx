@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import assistantsStore from '../stores/assistantsStore';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
+import assistantsStore from '../../../stores/assistantsStore';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
 
 const AssistantsPage = observer(() => {
   const navigate = useNavigate();

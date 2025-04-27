@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import coursesStore from '../stores/coursesStore';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
+import coursesStore from '../../../stores/coursesStore';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
 
 const PPTPlayerPage = observer(() => {
   const { t } = languageStore;

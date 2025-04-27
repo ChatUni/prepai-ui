@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ChatInput from './ui/ChatInput';
-import assistantsStore from '../stores/assistantsStore';
-import assistantChatStore from '../stores/assistantChatStore';
-import Button from './ui/Button';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
+import ChatInput from '../../ui/ChatInput';
+import assistantsStore from '../../../stores/assistantsStore';
+import assistantChatStore from '../../../stores/assistantChatStore';
+import Button from '../../ui/Button';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {

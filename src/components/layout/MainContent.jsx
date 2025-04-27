@@ -3,9 +3,9 @@ import SearchBar from '../ui/SearchBar';
 import CourseList from '../ui/CourseList';
 import coursesStore from '../../stores/coursesStore';
 import uiStore from '../../stores/uiStore';
-import InstructorPage from '../InstructorPage';
+import InstructorPage from '../pages/instructor/InstructorPage';
 import ExamPage from '../ExamPage';
-import SeriesPage from '../SeriesPage';
+import SeriesListPage from '../pages/series/SeriesListPage';
 import languageStore from '../../stores/languageStore';
 import LoadingState from '../ui/LoadingState';
 
@@ -20,7 +20,7 @@ const MainContent = observer(() => {
   } else if (location === '/instructor') {
     return <InstructorPage />;
   } else if (location === '/series' || location.startsWith('/series/')) {
-    return <SeriesPage />;
+    return <SeriesListPage />;
   } else if (location === '/') {
     return (
       <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">

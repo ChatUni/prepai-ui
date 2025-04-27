@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import instructorsStore from '../stores/instructorsStore';
-import languageStore from '../stores/languageStore';
-import InstructorSearchBar from './ui/InstructorSearchBar';
-import LoadingState from './ui/LoadingState';
+import instructorsStore from '../../../stores/instructorsStore';
+import languageStore from '../../../stores/languageStore';
+import InstructorSearchBar from '../../ui/InstructorSearchBar';
+import LoadingState from '../../ui/LoadingState';
 
 const InstructorSelectPage = observer(() => {
   const navigate = useNavigate();

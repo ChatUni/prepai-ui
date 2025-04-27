@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import coursesStore from '../stores/coursesStore';
-import videoPlayerStore from '../stores/videoPlayerStore';
-import uiStore from '../stores/uiStore';
-import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../utils/videoTranscriptService';
-import languageStore from '../stores/languageStore';
-import LoadingState from './ui/LoadingState';
-import TabPanel from './ui/TabPanel';
-import BackButton from './ui/BackButton';
+import coursesStore from '../../../stores/coursesStore';
+import videoPlayerStore from '../../../stores/videoPlayerStore';
+import uiStore from '../../../stores/uiStore';
+import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../../../utils/videoTranscriptService';
+import languageStore from '../../../stores/languageStore';
+import LoadingState from '../../ui/LoadingState';
+import TabPanel from '../../ui/TabPanel';
+import BackButton from '../../ui/BackButton';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;

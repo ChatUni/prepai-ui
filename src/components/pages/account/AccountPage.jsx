@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
-import userStore from '../stores/userStore';
-import languageStore from '../stores/languageStore';
-import DEFAULT_AVATAR from '../assets/avatar.png';
+import userStore from '../../../stores/userStore';
+import languageStore from '../../../stores/languageStore';
+import DEFAULT_AVATAR from '../../../assets/avatar.png';
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();

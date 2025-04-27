@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useLocation } from 'react-router-dom';
-import userStore from '../stores/userStore';
-import Logo from './ui/Logo';
+import userStore from '../../../stores/userStore';
+import Logo from '../../ui/Logo';
 
 const LoginPage = observer(() => {
   const [phoneNumber, setPhoneNumber] = useState('');

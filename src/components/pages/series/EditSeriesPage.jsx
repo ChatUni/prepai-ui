@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import seriesStore from '../stores/seriesStore';
-import languageStore from '../stores/languageStore';
-import { tap } from '../../netlify/functions/utils';
-import LoadingState from './ui/LoadingState';
+import seriesStore from '../../../stores/seriesStore';
+import languageStore from '../../../stores/languageStore';
+import { tap } from '../../../../netlify/functions/utils';
+import LoadingState from '../../ui/LoadingState';
 
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;

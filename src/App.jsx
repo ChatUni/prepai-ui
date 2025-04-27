@@ -7,25 +7,26 @@ import languageStore from './stores/languageStore';
 import TopNavBar from './components/layout/TopNavBar';
 import LeftMenu from './components/layout/LeftMenu';
 import MainContent from './components/layout/MainContent';
-import InstructorPage from './components/InstructorPage';
-import InstructorChatPage from './components/InstructorChatPage';
+import InstructorPage from './components/pages/instructor/InstructorPage';
+import InstructorChatPage from './components/pages/instructor/InstructorChatPage';
 import FavoritesPage from './components/FavoritesPage';
-import VideoPlayerPage from './components/VideoPlayerPage';
-import PPTPlayerPage from './components/PPTPlayerPage';
+import VideoPlayerPage from './components/pages/course/VideoPlayerPage';
+import PPTPlayerPage from './components/pages/course/PPTPlayerPage';
 import ExamPage from './components/ExamPage';
-import QuestionPage from './components/QuestionPage';
-import SeriesPage from './components/SeriesPage';
-import EditSeriesPage from './components/EditSeriesPage';
-import AddCoursePage from './components/AddCoursePage';
-import InstructorSelectPage from './components/InstructorSelectPage';
-import AssistantsPage from './components/AssistantsPage';
-import AssistantSelectPage from './components/AssistantSelectPage';
-import EditAssistantPage from './components/EditAssistantPage';
-import EditInstructorPage from './components/EditInstructorPage';
-import AssistantChatPage from './components/AssistantChatPage';
-import AccountPage from './components/AccountPage';
-import AdminPage from './components/AdminPage';
-import LoginPage from './components/LoginPage';
+import QuestionPage from './components/pages/exam/QuestionPage';
+import SeriesListPage from './components/pages/series/SeriesListPage';
+import SeriesDetailPage from './components/pages/series/SeriesDetailPage';
+import EditSeriesPage from './components/pages/series/EditSeriesPage';
+import AddCoursePage from './components/pages/series/AddCoursePage';
+import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
+import AssistantsPage from './components/pages/assistant/AssistantsPage';
+import AssistantSelectPage from './components/pages/assistant/AssistantSelectPage';
+import EditAssistantPage from './components/pages/assistant/EditAssistantPage';
+import EditInstructorPage from './components/pages/instructor/EditInstructorPage';
+import AssistantChatPage from './components/pages/assistant/AssistantChatPage';
+import AccountPage from './components/pages/account/AccountPage';
+import AdminPage from './components/pages/account/AdminPage';
+import LoginPage from './components/pages/account/LoginPage';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthWrapper from './components/auth/AuthWrapper';
 // Import commented out for removal
@@ -161,7 +162,37 @@ const MainLayout = observer(() => {
                 {/* Protected routes */}
                 <Route path="/" element={
                   <AuthRoute>
-                    <SeriesPage />
+                    <SeriesListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series" element={
+                  <AuthRoute>
+                    <SeriesListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/select" element={
+                  <AuthRoute>
+                    <SeriesListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/:id" element={
+                  <AuthRoute>
+                    <SeriesDetailPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/new" element={
+                  <AuthRoute>
+                    <EditSeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/:id/edit" element={
+                  <AuthRoute>
+                    <EditSeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/:id/course" element={
+                  <AuthRoute>
+                    <AddCoursePage />
                   </AuthRoute>
                 } />
                 <Route path="/instructors" element={
@@ -212,41 +243,6 @@ const MainLayout = observer(() => {
                 <Route path="/exam/questions/:courseId" element={
                   <AuthRoute>
                     <QuestionPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/new" element={
-                  <AuthRoute>
-                    <EditSeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:id/edit" element={
-                  <AuthRoute>
-                    <EditSeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series" element={
-                  <AuthRoute>
-                    <SeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/instructor/:id" element={
-                  <AuthRoute>
-                    <SeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:seriesId" element={
-                  <AuthRoute>
-                    <SeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:mode" element={
-                  <AuthRoute>
-                    <SeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:seriesId/add-course" element={
-                  <AuthRoute>
-                    <AddCoursePage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants/select" element={

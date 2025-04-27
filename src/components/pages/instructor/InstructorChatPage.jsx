@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
-import realtimeSessionStore from '../stores/realtimeSessionStore';
-import chatStore from '../stores/chatStore';
-import instructorChatStore from '../stores/instructorChatStore';
-import ChatInput from './ui/ChatInput';
-import SessionControls from './ui/SessionControls';
-import languageStore from '../stores/languageStore';
+import realtimeSessionStore from '../../../stores/realtimeSessionStore';
+import chatStore from '../../../stores/chatStore';
+import instructorChatStore from '../../../stores/instructorChatStore';
+import ChatInput from '../../ui/ChatInput';
+import SessionControls from '../../ui/SessionControls';
+import languageStore from '../../../stores/languageStore';
 
 const InstructorChatPage = observer(() => {
   const { t } = languageStore;

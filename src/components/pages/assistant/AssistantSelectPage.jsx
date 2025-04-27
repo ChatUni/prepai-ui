@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import assistantsStore from '../stores/assistantsStore';
-import languageStore from '../stores/languageStore';
-import AssistantSearchBar from './ui/AssistantSearchBar';
-import LoadingState from './ui/LoadingState';
+import assistantsStore from '../../../stores/assistantsStore';
+import languageStore from '../../../stores/languageStore';
+import AssistantSearchBar from '../../ui/AssistantSearchBar';
+import LoadingState from '../../ui/LoadingState';
 
 const AssistantSelectPage = observer(() => {
   const navigate = useNavigate();

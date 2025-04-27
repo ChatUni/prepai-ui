@@ -1,8 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
-import languageStore from '../stores/languageStore';
-import adminStore from '../stores/adminStore';
+import languageStore from '../../../stores/languageStore';
+import adminStore from '../../../stores/adminStore';
 
 const AdminPage = observer(() => {
   const navigate = useNavigate();
