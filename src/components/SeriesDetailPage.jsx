@@ -4,7 +4,6 @@ import CourseList from './ui/CourseList';
 import seriesStore from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
 import TabPanel from './ui/TabPanel';
-import BackButton from './ui/BackButton';
 
 const SeriesDetailPage = observer(() => {
   const { t } = languageStore;
@@ -17,13 +16,9 @@ const SeriesDetailPage = observer(() => {
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      <div className="flex items-center mb-6">
-        <BackButton
-          onClick={() => seriesStore.handleBackNavigation()}
-          className="mr-4 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-full"
-        />
+      <div className="flex items-center mb-3">
         <div className="flex items-center">
-          <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries.name || selectedSeries.id || 'Series'}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries.name || selectedSeries.id || t('series.defaultTitle')}</h1>
         </div>
       </div>
       
@@ -33,7 +28,7 @@ const SeriesDetailPage = observer(() => {
           <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
             <img
               src={selectedSeries.cover}
-              alt={selectedSeries.name || ''}
+              alt={selectedSeries.name || t('series.coverImageAlt')}
               className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
@@ -51,7 +46,7 @@ const SeriesDetailPage = observer(() => {
         <TabPanel.Tab label={t('series.aboutThisSeries')}>
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-              {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : 'No description available for this series.'}
+              {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : t('series.noDescription')}
             </p>
           </div>
         </TabPanel.Tab>

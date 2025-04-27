@@ -1,18 +1,21 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
+import { tap } from '../../netlify/functions/utils';
 
 class RouteStore {
   // Route parameters
   instructorId = null;
   seriesId = null;
   courseId = null;
+  currentPath = '';
   
   constructor() {
     makeObservable(this, {
       instructorId: observable,
       seriesId: observable,
       courseId: observable,
+      currentPath: observable,
       
       // Actions to update route parameters
       setInstructorId: action,
@@ -23,6 +26,7 @@ class RouteStore {
       currentInstructor: computed,
       currentSeries: computed,
       currentCourse: computed,
+      isTopLevelPage: computed,
       
       // Navigation actions that coordinate with the store
       navigateToInstructor: action,
@@ -83,6 +87,17 @@ class RouteStore {
     if (!this.courseId) return null;
     return coursesStore.courses.find(course => course.id === this.courseId);
   }
+
+  // Determine if current page is a top-level page
+  get isTopLevelPage() {
+    const pathSegments = this.currentPath.split('/').filter(Boolean);
+    if (pathSegments.length === 0) return true;
+    
+    const topLevelRoutes = ['exam', 'series', 'assistants', 'account'];
+    const firstSegment = pathSegments[0];
+    
+    return topLevelRoutes.includes(firstSegment) && pathSegments.length === 1;
+  }
   
   // Methods to handle navigation with store updates
   navigateToInstructor(instructorId, navigate) {
@@ -138,6 +153,7 @@ class RouteStore {
   syncWithLocation(location) {
     // Use runInAction to batch all state changes
     runInAction(() => {
+      this.currentPath = location.pathname;
       const pathSegments = location.pathname.split('/').filter(Boolean);
       
       // Clear all IDs by default

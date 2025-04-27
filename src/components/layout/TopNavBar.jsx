@@ -3,16 +3,19 @@ import Logo from '../ui/Logo';
 import uiStore from '../../stores/uiStore';
 import userStore from '../../stores/userStore';
 import languageStore from '../../stores/languageStore';
+import routeStore from '../../stores/routeStore';
 import LanguageSelector from '../ui/LanguageSelector';
+import BackButton from '../ui/BackButton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { tap } from '../../../netlify/functions/utils';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isVideoPlayerPage = location.pathname.startsWith('/video/');
+  const showBackButton = !routeStore.isTopLevelPage;
   const isLoggedIn = userStore.userInfo.isLoggedIn;
   const { t } = languageStore;
-  
+tap(showBackButton, 'show back')  
   const navItems = [
     { id: 'testing', label: t('menu.testing') },
     { id: 'private', label: t('menu.private') },
@@ -55,27 +58,10 @@ const TopNavBar = observer(({ onMenuToggle }) => {
       <div className="flex items-center justify-between w-full border-b border-gray-200 p-4">
         {/* Left section with back button and logo */}
         <div className="flex items-center">
-          {isVideoPlayerPage && (
-            <button
-              className="md:hidden mr-4 text-gray-600 focus:outline-none"
-              onClick={() => navigate(-1)}
-              aria-label="Go back"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-            </button>
+          {showBackButton && (
+            <div className="mr-4">
+              <BackButton />
+            </div>
           )}
 
           <div className="flex-none">

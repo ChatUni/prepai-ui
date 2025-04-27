@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const BackButton = ({ onClick, label = '返回', className = '' }) => {
+const BackButton = ({ onClick, label = '', className = '' }) => {
   const navigate = useNavigate();
   
   const handleClick = () => {

@@ -232,6 +232,12 @@
     "selectTitle": "シリーズを選択",
     "selectToEdit": "編集するシリーズを選択",
     "edit": "シリーズを編集",
+    "aboutThisSeries": "このシリーズについて",
+    "courseList": "コース一覧",
+    "noCover": "カバー画像なし",
+    "noDescription": "このシリーズの説明はありません",
+    "defaultTitle": "シリーズ",
+    "coverImageAlt": "シリーズのカバー画像",
     "edit": {
       "loading": "読み込み中...",
       "editTitle": "シリーズを編集",
