@@ -5,6 +5,7 @@ import seriesStore from '../../../stores/seriesStore';
 import languageStore from '../../../stores/languageStore';
 import { tap } from '../../../../netlify/functions/utils';
 import LoadingState from '../../ui/LoadingState';
+import ImageUpload from '../../ui/ImageUpload';
 
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
@@ -148,49 +149,14 @@ const EditSeriesPage = observer(() => {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.coverImage')}
-          </label>
-          <div className="relative">
-            <input
-              type="file"
-              id="cover_image"
-              name="cover_image"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                seriesStore.setSelectedImagePreview(file);
-              }}
-              className="hidden"
-            />
-            <label
-              htmlFor="cover_image"
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
-            >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="text-gray-600">
-                {seriesStore.selectedImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
-              </span>
-            </label>
-            {seriesStore.selectedImagePreview && (
-              <div className="mt-2 text-sm text-gray-500">
-                {t('series.edit.fileSelected')}
-              </div>
-            )}
-          </div>
-          {(seriesStore.selectedImagePreview || seriesStore.currentSeries?.cover) && (
-            <div className="mt-2">
-              <img
-                src={seriesStore.selectedImagePreview || seriesStore.currentSeries.cover}
-                alt={t('series.edit.coverPreview')}
-                className="max-w-full h-auto rounded-lg shadow-lg"
-              />
-            </div>
-          )}
-        </div>
+        <ImageUpload
+          id="cover_image"
+          label={t('series.edit.coverImage')}
+          previewUrl={seriesStore.selectedImagePreview || seriesStore.currentSeries?.cover}
+          onImageSelect={(file) => seriesStore.setSelectedImagePreview(file)}
+          buttonText={seriesStore.selectedImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
+          selectedText={seriesStore.selectedImagePreview ? t('series.edit.fileSelected') : null}
+        />
 
         <div className="flex-1 overflow-auto">
           <div className="flex justify-between items-center mb-1">
@@ -231,40 +197,14 @@ const EditSeriesPage = observer(() => {
               required={seriesStore.descType === 'text'}
             />
           ) : (
-            <div className="relative">
-              <input
-                type="file"
-                id="desc_image"
-                name="desc_image"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  seriesStore.setSelectedDescImagePreview(file);
-                }}
-                className="hidden"
-                required={seriesStore.descType === 'image'}
-              />
-              <label
-                htmlFor="desc_image"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-gray-600">
-                  {seriesStore.selectedDescImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
-                </span>
-              </label>
-              {seriesStore.selectedDescImagePreview && (
-                <div className="mt-2">
-                  <img
-                    src={seriesStore.selectedDescImagePreview}
-                    alt={t('series.edit.descriptionPreview')}
-                    className="max-w-full h-auto rounded-lg shadow-lg"
-                  />
-                </div>
-              )}
-            </div>
+            <ImageUpload
+              id="desc_image"
+              label=""
+              previewUrl={seriesStore.selectedDescImagePreview}
+              onImageSelect={(file) => seriesStore.setSelectedDescImagePreview(file)}
+              buttonText={seriesStore.selectedDescImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
+              required={seriesStore.descType === 'image'}
+            />
           )}
         </div>
 
