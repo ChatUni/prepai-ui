@@ -237,7 +237,7 @@ const MainLayout = observer(() => {
                 } />
                 <Route path="/exam" element={
                   <AuthRoute>
-                    <ExamPage />
+                    <SeriesListPage />
                   </AuthRoute>
                 } />
                 <Route path="/exam/questions/:courseId" element={

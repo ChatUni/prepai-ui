@@ -6,7 +6,7 @@ import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import { tap } from '../../../../netlify/functions/utils';
 
-const SeriesCard = observer(({ series, mode }) => {
+const SeriesCard = observer(({ series }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
   
@@ -42,9 +42,10 @@ const SeriesCard = observer(({ series, mode }) => {
     // Ensure the event doesn't propagate to parent elements
     if (e) e.stopPropagation();
     
-    if (mode === 'select') {
-      // In select mode, navigate back to new course page with selected series
+    if (routeStore.isSeriesSelectMode) {
       navigate(`/series/${seriesId}/edit`);
+    } else if (routeStore.isSeriesExamMode) {
+      navigate(`/exam/questions/1`);
     } else {
       // Normal mode - navigate to series detail
       routeStore.navigateToSeries(seriesId, navigate);

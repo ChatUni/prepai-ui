@@ -2,8 +2,10 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import SeriesCard from './SeriesCard';
 import languageStore from '../../../stores/languageStore';
+import routeStore from '../../../stores/routeStore';
+import { tap } from '../../../../netlify/functions/utils';
 
-const SeriesList = observer(({ title, series, isAllInstructors = false, mode, isExamMode = false }) => {
+const SeriesList = observer(({ title, series }) => {
   const { t } = languageStore;
   return (
     <div className="w-full">
@@ -11,12 +13,11 @@ const SeriesList = observer(({ title, series, isAllInstructors = false, mode, is
         <h2 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4">{title}</h2>
       )}
       
-      <div className={`grid grid-cols-1 ${isExamMode ? 'sm:grid-cols-2' : `sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 ${isAllInstructors ? 'xl:grid-cols-4' : 'xl:grid-cols-3'}`} gap-3 md:gap-4`}>
+      <div className={`grid grid-cols-${routeStore.isSeriesExamMode ? '2' : '1'} sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4`}>
         {series.map((seriesItem, index) => (
           <SeriesCard
             key={`${title}-${seriesItem.id}-${index}`}
             series={seriesItem}
-            mode={mode}
           />
         ))}
       </div>

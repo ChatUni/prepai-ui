@@ -27,6 +27,9 @@ class RouteStore {
       currentSeries: computed,
       currentCourse: computed,
       isTopLevelPage: computed,
+      isSeriesSelectMode: computed,
+      isSeriesExamMode: computed,
+      isSeriesListMode: computed,
       
       // Navigation actions that coordinate with the store
       navigateToInstructor: action,
@@ -90,7 +93,7 @@ class RouteStore {
 
   // Determine if current page is a top-level page
   get isTopLevelPage() {
-    const pathSegments = this.currentPath.split('/').filter(Boolean);
+    const pathSegments = this.getPathSegments();
     if (pathSegments.length === 0) return true;
     
     const topLevelRoutes = ['exam', 'series', 'assistants', 'account'];
@@ -98,7 +101,29 @@ class RouteStore {
     
     return topLevelRoutes.includes(firstSegment) && pathSegments.length === 1;
   }
+
+  // Determine if current page is series list mode (/ or /series)
+  get isSeriesListMode() {
+    const pathSegments = this.getPathSegments();
+    return this.currentPath === '/' || (pathSegments.length === 1 && pathSegments[0] === 'series');
+  }
+
+  // Determine if current page is series select mode
+  get isSeriesSelectMode() {
+    const pathSegments = this.getPathSegments();
+    return pathSegments.length === 2 && pathSegments[0] === 'series' && pathSegments[1] === 'select';
+  }
+
+  // Determine if current page is series exam mode
+  get isSeriesExamMode() {
+    const pathSegments = this.getPathSegments();
+    return pathSegments.length === 1 && pathSegments[0] === 'exam';
+  }
   
+  getPathSegments() {
+    return this.currentPath.split('/').filter(Boolean);
+  }
+
   // Methods to handle navigation with store updates
   navigateToInstructor(instructorId, navigate) {
     this.setInstructorId(instructorId);

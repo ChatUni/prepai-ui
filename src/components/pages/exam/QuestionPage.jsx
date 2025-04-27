@@ -38,7 +38,7 @@ const QuestionPage = observer(() => {
 
   const questionsList = (
     examStore.questionsWithParsedOptions.map((question, index) => (
-      <div key={question.id} className="bg-white rounded-lg shadow p-6">
+      <div key={question.id} className="bg-white">
         <h3 className="text-lg font-medium mb-4">
           {index + 1}. {question.question}
         </h3>
@@ -58,14 +58,8 @@ const QuestionPage = observer(() => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-20 md:pb-8 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={handleBack} className="text-blue-500 flex items-center">
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          {t('exam.back')}
-        </button>
+    <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 h-full flex flex-col">
+      <div className="flex justify-end items-center mb-4">
         {!examStore.isSubmitted && (
           <button
             onClick={() => examStore.submitExam()}
