@@ -206,8 +206,8 @@ class CoursesStore {
 
     const { t } = languageStore;
     
-    // If we're on the exam page (using category ID instead of translated string)
-    if (activeCategory === 'testing') {
+    // If we're on the exam page (checking nav item instead of category)
+    if (uiStore.activeNavItem === 'testing') {
       return this.examCourses.filter(course => {
         const matchesSearch = !searchKeyword ||
           course.title.toLowerCase().includes(searchKeyword) ||

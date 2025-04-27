@@ -15,8 +15,11 @@ const ExamPage = observer(() => {
   
   useEffect(() => {
     coursesStore.fetchCourses();
-    uiStore.setActiveCategory('testing');
     uiStore.setActiveNavItem('testing');
+    
+    return () => {
+      uiStore.setActiveNavItem('');
+    };
   }, [t]); // Add t as dependency to re-run when language changes
 
   const handleCourseClick = (course) => {
