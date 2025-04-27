@@ -8,6 +8,7 @@ import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../util
 import languageStore from '../stores/languageStore';
 import LoadingState from './ui/LoadingState';
 import TabPanel from './ui/TabPanel';
+import BackButton from './ui/BackButton';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
@@ -328,18 +329,9 @@ const VideoPlayerPage = observer(() => {
     loadCourse();
   }, [courseId]);
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const errorContent = error && (
     <>
-      <button onClick={handleBack} className="text-blue-500 mb-4 flex items-center">
-        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        {t('menu.categories.back')}
-      </button>
+      <BackButton label={t('menu.categories.back')} className="mb-4" />
     </>
   );
 
@@ -363,12 +355,7 @@ const VideoPlayerPage = observer(() => {
 
   return (
     <div className="flex flex-col flex-grow py-4 md:py-6 pb-16 md:pb-6 px-4 md:px-6 h-full">
-      <button onClick={handleBack} className="text-blue-500 mb-4 hidden md:flex items-center">
-        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        返回
-      </button>
+      <BackButton className="mb-4 hidden md:flex" />
       
       {/* Main content area with video and tab panels - mobile optimized */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-6 md:justify-between flex-grow">

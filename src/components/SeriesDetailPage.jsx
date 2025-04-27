@@ -1,14 +1,12 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
-import { IoChevronBack } from 'react-icons/io5';
 import CourseList from './ui/CourseList';
 import seriesStore from '../stores/seriesStore';
 import languageStore from '../stores/languageStore';
 import TabPanel from './ui/TabPanel';
+import BackButton from './ui/BackButton';
 
 const SeriesDetailPage = observer(() => {
-  const navigate = useNavigate();
   const { t } = languageStore;
   const selectedSeries = seriesStore.currentSeriesFromRoute;
   const seriesCourses = seriesStore.filteredSeriesCourses;
@@ -20,12 +18,10 @@ const SeriesDetailPage = observer(() => {
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       <div className="flex items-center mb-6">
-        <button
-          onClick={() => seriesStore.handleBackNavigation(navigate)}
+        <BackButton
+          onClick={() => seriesStore.handleBackNavigation()}
           className="mr-4 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-full"
-        >
-          <IoChevronBack className="h-5 w-5" />
-        </button>
+        />
         <div className="flex items-center">
           <h1 className="text-2xl md:text-3xl font-bold">{selectedSeries.name || selectedSeries.id || 'Series'}</h1>
         </div>

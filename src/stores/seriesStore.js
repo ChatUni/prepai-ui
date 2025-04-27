@@ -282,15 +282,15 @@ class SeriesStore {
     });
   }
 
-  handleBackNavigation = (navigate) => {
+  handleBackNavigation = () => {
     // If we came from an instructor page, we'll go back to that instructor
     const currentSeries = this.currentSeriesFromRoute;
     if (currentSeries?.instructor?.id) {
-      routeStore.navigateToInstructor(currentSeries.instructor?.id, navigate);
+      routeStore.navigateToInstructor(currentSeries.instructor?.id);
     } else {
       // Otherwise, go to the main series page
-      navigate('/series');
       routeStore.setSeriesId(null);
+      // Let the BackButton handle the actual navigation
     }
   }
 }
