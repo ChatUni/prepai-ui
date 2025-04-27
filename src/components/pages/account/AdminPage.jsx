@@ -7,6 +7,11 @@ import adminStore from '../../../stores/adminStore';
 const AdminPage = observer(() => {
   const navigate = useNavigate();
   const t = languageStore.t;
+  const [expandedSection, setExpandedSection] = React.useState(null);
+
+  const handleSectionClick = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   const handleMenuItemClick = (action) => {
     console.log(`Admin menu item clicked: ${action}`);
@@ -40,101 +45,128 @@ const AdminPage = observer(() => {
 
   return (
     <div className="flex flex-col bg-gray-100 w-full max-w-sm">
-      <div className="w-full">
-        {/* Header */}
-        <div className="bg-white p-4 mb-3 rounded-lg shadow-sm">
-          <h1 className="text-2xl font-semibold text-center">{t('menu.admin_page.title')}</h1>
-        </div>
+      {/* Header */}
+      <div className="bg-white p-4 mb-3 rounded-lg shadow-sm">
+        <h1 className="text-2xl font-semibold text-center">{t('menu.admin_page.title')}</h1>
+      </div>
 
-        {/* Menu Items */}
-        {/* New Instructor */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('new-instructor')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.new_instructor')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
+      {/* Accordion Menu */}
+      <div className="space-y-2">
+        {/* Instructors Section */}
+        <div className="overflow-hidden rounded-lg">
+          <button
+            className={`w-full p-4 flex items-center justify-between text-white transition-colors duration-200 ${
+              expandedSection === 'instructors' ? 'bg-blue-600' : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+            onClick={() => handleSectionClick('instructors')}
+          >
+            <span className="font-semibold">{t('menu.instructor')}</span>
+            <span className={`transform transition-transform duration-200 ${
+              expandedSection === 'instructors' ? 'rotate-180' : ''
+            }`}>▼</span>
+          </button>
+          <div className={`transition-all duration-200 ${
+            expandedSection === 'instructors'
+              ? 'max-h-40 opacity-100'
+              : 'max-h-0 opacity-0'
+          }`}>
+            <div className="bg-white p-2 space-y-1">
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('new-instructor')}
+              >
+                <span>{t('menu.admin_page.new_instructor')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('edit-instructor')}
+              >
+                <span>{t('menu.admin_page.edit_instructor')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Edit Instructor */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('edit-instructor')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.edit_instructor')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
+        {/* Series Section */}
+        <div className="overflow-hidden rounded-lg">
+          <button
+            className={`w-full p-4 flex items-center justify-between text-white transition-colors duration-200 ${
+              expandedSection === 'series' ? 'bg-blue-600' : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+            onClick={() => handleSectionClick('series')}
+          >
+            <span className="font-semibold">{t('menu.series')}</span>
+            <span className={`transform transition-transform duration-200 ${
+              expandedSection === 'series' ? 'rotate-180' : ''
+            }`}>▼</span>
+          </button>
+          <div className={`transition-all duration-200 ${
+            expandedSection === 'series'
+              ? 'max-h-60 opacity-100'
+              : 'max-h-0 opacity-0'
+          }`}>
+            <div className="bg-white p-2 space-y-1">
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('new-series')}
+              >
+                <span>{t('menu.admin_page.new_series')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('edit-series')}
+              >
+                <span>{t('menu.admin_page.edit_series')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('add-course-to-series')}
+              >
+                <span>{t('menu.admin_page.add_course_to_series')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* New Series */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('new-series')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.new_series')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Edit Series */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('edit-series')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.edit_series')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Add Course to Series */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('add-course-to-series')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.add_course_to_series')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Add Assistant */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('add-assistant')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.add_assistant')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Edit Assistant */}
-        <div
-          className="mb-3 text-center"
-          onClick={() => handleMenuItemClick('edit-assistant')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.admin_page.edit_assistant')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
+        {/* Assistants Section */}
+        <div className="overflow-hidden rounded-lg">
+          <button
+            className={`w-full p-4 flex items-center justify-between text-white transition-colors duration-200 ${
+              expandedSection === 'assistants' ? 'bg-blue-600' : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+            onClick={() => handleSectionClick('assistants')}
+          >
+            <span className="font-semibold">{t('menu.assistants')}</span>
+            <span className={`transform transition-transform duration-200 ${
+              expandedSection === 'assistants' ? 'rotate-180' : ''
+            }`}>▼</span>
+          </button>
+          <div className={`transition-all duration-200 ${
+            expandedSection === 'assistants'
+              ? 'max-h-40 opacity-100'
+              : 'max-h-0 opacity-0'
+          }`}>
+            <div className="bg-white p-2 space-y-1">
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('add-assistant')}
+              >
+                <span>{t('menu.admin_page.add_assistant')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+              <button
+                className="w-full p-3 text-left hover:bg-gray-50 rounded flex items-center justify-between"
+                onClick={() => handleMenuItemClick('edit-assistant')}
+              >
+                <span>{t('menu.admin_page.edit_assistant')}</span>
+                <span className="text-gray-400">→</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
