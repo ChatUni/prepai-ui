@@ -264,7 +264,12 @@
     "loading": "Loading series...",
     "loadingError": "Error loading series",
     "noSeries": "No series available",
-    "courseList": "Course List"
+    "courseList": "Course List",
+    "banners": {
+      "title": "Edit Banner Images",
+      "banner": "Banner",
+      "uploadError": "Failed to upload banner image"
+    }
   },
   "search": {
     "allInstructors": "All Instructors",

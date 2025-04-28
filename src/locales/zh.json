@@ -264,7 +264,12 @@
     "loading": "加载系列课程...",
     "loadingError": "加载系列课程时出错",
     "noSeries": "没有系列课程",
-    "courseList": "课程列表"
+    "courseList": "课程列表",
+    "banners": {
+      "title": "编辑横幅图片",
+      "banner": "横幅",
+      "uploadError": "上传横幅图片失败"
+    }
   },
   "search": {
     "allInstructors": "所有老师",

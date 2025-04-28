@@ -17,6 +17,7 @@ import QuestionPage from './components/pages/exam/QuestionPage';
 import SeriesListPage from './components/pages/series/SeriesListPage';
 import SeriesDetailPage from './components/pages/series/SeriesDetailPage';
 import EditSeriesPage from './components/pages/series/EditSeriesPage';
+import EditBannerPage from './components/pages/series/EditBannerPage';
 import AddCoursePage from './components/pages/series/AddCoursePage';
 import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
 import AssistantsPage from './components/pages/assistant/AssistantsPage';
@@ -47,6 +48,7 @@ import './stores/assistantsStore';
 import './stores/instructorsStore';
 import './stores/languageStore';
 import './stores/seriesStore';
+import './stores/clientStore';
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -188,6 +190,11 @@ const MainLayout = observer(() => {
                 <Route path="/series/:id/edit" element={
                   <AuthRoute>
                     <EditSeriesPage />
+                  </AuthRoute>
+                } />
+                <Route path="/series/banners" element={
+                  <AuthRoute>
+                    <EditBannerPage />
                   </AuthRoute>
                 } />
                 <Route path="/series/:id/course" element={

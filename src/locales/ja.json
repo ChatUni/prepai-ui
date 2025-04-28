@@ -264,7 +264,12 @@
     "seriesCount": "{count}件のシリーズを表示",
     "unknownInstructor": "不明な講師",
     "noDescription": "説明なし",
-    "courseCount": "{count}件のコース"
+    "courseCount": "{count}件のコース",
+    "banners": {
+      "title": "バナー画像を編集",
+      "banner": "バナー",
+      "uploadError": "バナー画像のアップロードに失敗しました"
+    }
   },
   "search": {
     "allInstructors": "全ての講師",

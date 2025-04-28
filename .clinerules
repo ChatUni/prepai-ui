@@ -19,6 +19,12 @@
       "category": "routing"
     },
     {
+      "name": "constants-outside-components",
+      "description": "Constants like routeMap, lookup tables, and mapping objects must be defined outside of components at the module level. These should never be defined inside components where they would be recreated on every render. This includes but is not limited to: route mappings, action mappings, status mappings, and any other constant key-value pairs used for lookups or transformations.",
+      "severity": "error",
+      "category": "routing"
+    },
+    {
       "name": "derived-state-in-stores",
       "description": "No computed, calculated, or derived values are allowed in components. All such values must be computed in MobX stores using computed properties. This includes but is not limited to: filtered/sorted lists, existence checks, transformations, aggregations, calculations, data mappings, array/object manipulations, string formatting, and any other values derived from primary state. Components must be pure render functions that only consume pre-computed values from stores via MobX's computed properties, ensuring clean separation of concerns and optimized rendering.",
       "severity": "error",
@@ -45,6 +51,24 @@
     {
       "name": "use-react-icons",
       "description": "Never use inline SVG icons in components. Always use react-icons library for icons. This ensures consistency in icon usage across the application and reduces code complexity.",
+      "severity": "error",
+      "category": "code-style"
+    },
+    {
+      "name": "maintain-all-translations",
+      "description": "When adding or modifying any resource or text in one language, it must be added or modified for all supported languages (en, ja, zh). This ensures consistent user experience across all language settings and prevents missing translations.",
+      "severity": "error",
+      "category": "internationalization"
+    },
+    {
+      "name": "no-duplicate-code",
+      "description": "Do not duplicate code patterns or UI structures. Create reusable components for repeated patterns, especially in UI elements like buttons, forms, cards, or layout structures. This includes extracting common styling, behavior, and markup into dedicated components. Components should be modular, accepting props for customization while maintaining consistent base functionality and appearance.",
+      "severity": "error",
+      "category": "component-architecture"
+    },
+    {
+      "name": "no-repetitive-control-flow",
+      "description": "Avoid repetitive switch statements or if-else chains that perform similar actions with different values. Instead, use mapping objects or lookup tables to directly map inputs to outputs. This reduces code duplication, improves maintainability, and makes the code more declarative. For example, instead of a switch statement that maps actions to routes, use a routeMap object.",
       "severity": "error",
       "category": "code-style"
     }

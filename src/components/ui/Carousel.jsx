@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Carousel = ({ images, intervalDuration = 5000 }) => {
+const Carousel = ({ images, intervalDuration = 3000 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {

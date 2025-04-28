@@ -7,18 +7,22 @@ import LoadingState from '../../ui/LoadingState';
 import ToolsNav from '../../ui/ToolsNav';
 import coursesStore from '../../../stores/coursesStore';
 import routeStore from '../../../stores/routeStore';
-import { tap } from '../../../../netlify/functions/utils';
+import clientStore from '../../../stores/clientStore';
+import userStore from '../../../stores/userStore';
 
 const SeriesListPage = observer(() => {
   React.useEffect(() => {
     if (coursesStore.series.length === 0) {
       coursesStore.fetchSeries();
     }
+    if (!clientStore.client.settings.banners.length) {
+      clientStore.loadClient();
+    }
   }, []);
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      {routeStore.isSeriesListMode && <Carousel images={coursesStore.seriesCovers} />}
+      {routeStore.isSeriesListMode && <Carousel images={clientStore.client.settings.banners} />}
 
       {routeStore.isSeriesListMode && <ToolsNav />}
 

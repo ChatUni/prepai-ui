@@ -163,6 +163,10 @@ export const handler = async (event, context) => {
         const series = await flat('series', `m_id=${id}`)
         return res(series);
 
+      case 'GET /clients/:id':
+        const clients = await flat('clients', `m_id=${id}`)
+        return res(clients.length > 0 ? clients[0] : null);
+
       case 'POST /save':
         if (!body.id) body.id = await maxId(doc)
         await save(doc, body);
