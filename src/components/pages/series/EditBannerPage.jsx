@@ -10,12 +10,6 @@ import { FiTrash2, FiPlus } from 'react-icons/fi';
 const EditBannerPage = observer(() => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!clientStore.client.settings.banners.length) {
-      clientStore.loadClient();
-    }
-  }, []);
-
   const handleImageSelect = async (file, index) => {
     try {
       clientStore.setPreviewUrl(index, file);
@@ -42,7 +36,7 @@ const EditBannerPage = observer(() => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 mb-8">
+    <div className="container mx-auto px-4 py-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold">{lang.t('series.banners.title')}</h1>
