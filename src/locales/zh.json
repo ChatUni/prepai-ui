@@ -272,7 +272,9 @@
       "delete": "删除横幅",
       "add": "添加新横幅",
       "deleteError": "删除横幅失败",
-      "addError": "添加横幅失败"
+      "addError": "添加横幅失败",
+      "confirmCancel": "您有未保存的更改。确定要取消吗？",
+      "emptyBannersError": "请为所有横幅选择图片后再保存"
     }
   },
   "search": {

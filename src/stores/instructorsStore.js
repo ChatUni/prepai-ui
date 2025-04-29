@@ -1,26 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import db from '../utils/db';
 import { getApiBaseUrl } from '../config';
-
-// Helper function for cloudinary upload
-const uploadToCloudinary = async (file, folder) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('folder', folder);
-
-  const response = await fetch(`/api/cloudinary_upload`, {
-    method: 'POST',
-    body: formData
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(`Cloudinary upload failed: ${error.message}`);
-  }
-
-  const data = await response.json();
-  return data.url;
-};
+import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 
 const defaultInstructor = {
   id: null,

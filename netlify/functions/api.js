@@ -4,7 +4,7 @@ import { get, save, remove, flat, maxId } from './utils/db.js';
 import Busboy from 'busboy';
 import fs from 'fs';
 import path from 'path';
-import { cdupload } from './utils/cloudinary.js';
+import { cdupload, cdDelete } from './utils/cloudinary.js';
 import { promisify } from 'util';
 
 const writeFile = promisify(fs.writeFile);
@@ -171,6 +171,10 @@ export const handler = async (event, context) => {
         if (!body.id) body.id = await maxId(doc)
         await save(doc, body);
         return res(body);
+
+      case 'DELETE /cloudinary_delete':
+        const cdDeleted = await cdDelete(body.public_id);
+        return res(cdDeleted)
 
       default:
         return res({ error: 'Not found' }, 404);

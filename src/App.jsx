@@ -156,7 +156,7 @@ const MainLayout = observer(() => {
             </div>
             
             {/* Main content area - takes full width on mobile */}
-            <div className="flex w-full mb-12 overflow-y-auto">
+            <div className="flex flex-col flex-grow w-full mb-12 overflow-y-auto">
               <Routes>
                 {/* Public route */}
                 <Route path="/login" element={<LoginPage />} />

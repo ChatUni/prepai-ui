@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clientStore from '../../../stores/clientStore';
 import ImageUpload from '../../ui/ImageUpload';
@@ -10,30 +10,42 @@ import { FiTrash2, FiPlus } from 'react-icons/fi';
 const EditBannerPage = observer(() => {
   const navigate = useNavigate();
 
-  const handleImageSelect = async (file, index) => {
-    try {
-      clientStore.setPreviewUrl(index, file);
-      await clientStore.uploadBanner(file, index);
-    } catch (error) {
-      console.error('Failed to upload banner:', error);
-    }
+  useEffect(() => {
+    clientStore.startEditing();
+  }, []);
+
+  const handleImageSelect = (file, index) => {
+    clientStore.handleImageSelect(file, index);
   };
 
-  const handleDelete = async (index) => {
-    try {
-      await clientStore.deleteBanner(index);
-    } catch (error) {
-      console.error('Failed to delete banner:', error);
-    }
+  const handleDelete = (index) => {
+    clientStore.deleteBanner(index);
   };
 
-  const handleAdd = async () => {
-    try {
-      await clientStore.addBanner();
-    } catch (error) {
-      console.error('Failed to add banner:', error);
-    }
+  const handleAdd = () => {
+    clientStore.addBanner();
   };
+
+  const handleSave = async () => {
+    if (clientStore.hasEmptyBanners) {
+      window.alert(lang.t('series.banners.emptyBannersError'));
+      return;
+    }
+    await clientStore.saveChanges();
+    navigate(-1);
+  };
+
+  const handleCancel = useCallback(() => {
+    if (clientStore.hasUnsavedChanges) {
+      if (window.confirm(lang.t('series.banners.confirmCancel'))) {
+        clientStore.cancelEditing();
+        navigate(-1);
+      }
+    } else {
+      clientStore.cancelEditing();
+      navigate(-1);
+    }
+  }, [navigate]);
 
   return (
     <div className="container mx-auto px-4 py-4">
@@ -45,8 +57,8 @@ const EditBannerPage = observer(() => {
 
       <div className="grid gap-8">
         {clientStore.client.settings.banners.map((banner, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex justify-between items-start">
+          <div key={index}>
+            <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">{`${lang.t('series.banners.banner')} ${index + 1}`}</h2>
               <button
                 onClick={() => handleDelete(index)}
@@ -73,6 +85,22 @@ const EditBannerPage = observer(() => {
         <FiPlus size={20} />
         {lang.t('series.banners.add')}
       </button>
+
+      <div className="flex justify-end gap-4 mt-8">
+        <button
+          onClick={handleCancel}
+          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          {lang.t('common.cancel')}
+        </button>
+        <button
+          onClick={handleSave}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={clientStore.loading || !clientStore.hasUnsavedChanges}
+        >
+          {lang.t('common.save')}
+        </button>
+      </div>
 
       {clientStore.error && (
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">

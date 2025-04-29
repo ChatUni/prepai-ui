@@ -2,6 +2,8 @@ import fs from 'fs'
 import cd from 'cloudinary'
 import { orderBy } from 'lodash'
 
+const app = 'prepai'
+
 cd.config({
   cloud_name: 'daqc8bim3',
   api_key: process.env.CLOUDINARY_KEY,
@@ -20,7 +22,8 @@ export const cdVersion = () =>
 
 export const cdupload = (url, folder) =>
   cd.v2.uploader.upload(url, {
-    asset_folder: folder,
+    asset_folder: `${app}/${folder}`,
+    folder: folder,
     use_filename: true,
     unique_filename: false,
     overwrite: true,
@@ -31,7 +34,8 @@ export const cdUploadFolder = async (local, remote) => {
     const fns = fs.readdirSync(local)
     for (let f of fns) {
       console.log(`${local}/${f}`)
-      await cdupload(`${local}/${f}`, remote)
+      await cdupload(`${local}/${f}`, `${app}/${remote}`)
+      console.log(remote)
       console.log(f)
     }
     return 'done'
@@ -39,3 +43,6 @@ export const cdUploadFolder = async (local, remote) => {
     return e.message
   }
 }
+
+export const cdDelete = id =>
+  cd.v2.api.delete_resources([`${app}/${id}`])

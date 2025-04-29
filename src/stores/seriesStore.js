@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction, computed, observable } from 'mobx';
 import routeStore from './routeStore';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
+import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 
 class SeriesStore {
   series = [];
@@ -173,23 +174,8 @@ class SeriesStore {
     }
   }
 
-  uploadToCloudinary = async (file, seriesId) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', `prepai/series/${seriesId}`);
-
-    const response = await fetch(`/api/cloudinary_upload`, {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Cloudinary upload failed: ${error.message}`);
-    }
-
-    const data = await response.json();
-    return data.url;
+  uploadSeriesImage = async (file, seriesId) => {
+    return await uploadToCloudinary(file, `prepai/series/${seriesId}`);
   }
 
   saveSeriesPost = data => fetch('/api/save?doc=series', {
@@ -225,7 +211,7 @@ class SeriesStore {
       // Handle cover image upload
       const coverImage = formData.get('cover_image');
       if (coverImage instanceof File) {
-        const imageUrl = await this.uploadToCloudinary(coverImage, seriesId);
+        const imageUrl = await this.uploadSeriesImage(coverImage, seriesId);
         seriesData.cover = imageUrl;
         await this.saveSeriesPost(seriesData);
       }
@@ -234,7 +220,7 @@ class SeriesStore {
       if (this.descType === 'image') {
         const descImage = formData.get('desc_image');
         if (descImage instanceof File) {
-          const imageUrl = await this.uploadToCloudinary(descImage, seriesId, `${seriesId}_detail`);
+          const imageUrl = await this.uploadSeriesImage(descImage, seriesId);
           seriesData.desc = imageUrl;
           await this.saveSeriesPost(seriesData);
         }

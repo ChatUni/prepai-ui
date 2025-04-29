@@ -272,7 +272,9 @@
       "delete": "Delete Banner",
       "add": "Add New Banner",
       "deleteError": "Failed to delete banner",
-      "addError": "Failed to add banner"
+      "addError": "Failed to add banner",
+      "confirmCancel": "You have unsaved changes. Are you sure you want to cancel?",
+      "emptyBannersError": "Please select images for all banners before saving"
     }
   },
   "search": {
