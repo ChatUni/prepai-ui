@@ -268,7 +268,11 @@
     "banners": {
       "title": "バナー画像を編集",
       "banner": "バナー",
-      "uploadError": "バナー画像のアップロードに失敗しました"
+      "uploadError": "バナー画像のアップロードに失敗しました",
+      "delete": "バナーを削除",
+      "add": "新規バナーを追加",
+      "deleteError": "バナーの削除に失敗しました",
+      "addError": "バナーの追加に失敗しました"
     }
   },
   "search": {

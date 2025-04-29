@@ -268,7 +268,11 @@
     "banners": {
       "title": "编辑横幅图片",
       "banner": "横幅",
-      "uploadError": "上传横幅图片失败"
+      "uploadError": "上传横幅图片失败",
+      "delete": "删除横幅",
+      "add": "添加新横幅",
+      "deleteError": "删除横幅失败",
+      "addError": "添加横幅失败"
     }
   },
   "search": {

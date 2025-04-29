@@ -268,7 +268,11 @@
     "banners": {
       "title": "Edit Banner Images",
       "banner": "Banner",
-      "uploadError": "Failed to upload banner image"
+      "uploadError": "Failed to upload banner image",
+      "delete": "Delete Banner",
+      "add": "Add New Banner",
+      "deleteError": "Failed to delete banner",
+      "addError": "Failed to add banner"
     }
   },
   "search": {
