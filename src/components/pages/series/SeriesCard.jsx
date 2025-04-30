@@ -94,9 +94,11 @@ const SeriesCard = observer(({ series }) => {
             )}
           </div>
           
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 h-10 mb-2">
-            {desc || t('series.noDescription')}
-          </p>
+          {desc && !desc.startsWith('http') && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 h-10 mb-2">
+              {desc}
+            </p>
+          )}
           
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-blue-600 dark:text-blue-400">

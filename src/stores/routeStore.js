@@ -82,6 +82,7 @@ class RouteStore {
       name: typeof series.name === 'string' ? series.name : '',
       desc: typeof series.desc === 'string' ? series.desc : '',
       cover: typeof series.cover === 'string' ? series.cover : '',
+      category: typeof series.category === 'string' ? series.category : '',
       instructor: series.instructor
     };
   }

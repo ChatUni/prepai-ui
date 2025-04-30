@@ -237,6 +237,7 @@
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
     "edit": "Edit Series",
+    "category": "Category",
     "edit": {
       "loading": "Loading...",
       "editTitle": "Edit Series",

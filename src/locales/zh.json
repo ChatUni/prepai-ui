@@ -237,6 +237,7 @@
     "selectTitle": "选择系列",
     "selectToEdit": "选择要编辑的系列",
     "edit": "编辑系列",
+    "category": "分类",
     "edit": {
       "loading": "加载中...",
       "editTitle": "编辑系列",

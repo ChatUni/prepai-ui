@@ -208,7 +208,7 @@ const EditSeriesPage = observer(() => {
           )}
         </div>
 
-        <div className="sticky bottom-0 bg-white mb-15">
+        <div className="bg-white">
           <button
             type="submit"
             className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

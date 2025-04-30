@@ -13,6 +13,7 @@ const SeriesDetailPage = observer(() => {
   if (!selectedSeries) {
     return null;
   }
+  console.log(selectedSeries)
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
@@ -45,9 +46,31 @@ const SeriesDetailPage = observer(() => {
       <TabPanel className="mb-6 border border-gray-200">
         <TabPanel.Tab label={t('series.aboutThisSeries')}>
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-              {typeof selectedSeries.desc === 'string' ? selectedSeries.desc : t('series.noDescription')}
-            </p>
+            {selectedSeries.category && (
+              <div className="mb-4">
+                <span className="font-medium text-gray-600 dark:text-gray-400">{t('series.category')}: </span>
+                <span className="text-gray-700 dark:text-gray-300">{selectedSeries.category}</span>
+              </div>
+            )}
+            {selectedSeries.desc ? (
+              selectedSeries.desc.startsWith('http') ? (
+                <div className="rounded-lg overflow-hidden">
+                  <img
+                    src={selectedSeries.desc}
+                    alt={t('series.descriptionImage')}
+                    className="w-full"
+                  />
+                </div>
+              ) : (
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                  {selectedSeries.desc}
+                </p>
+              )
+            ) : (
+              <p className="text-gray-700 dark:text-gray-300">
+                {t('series.noDescription')}
+              </p>
+            )}
           </div>
         </TabPanel.Tab>
         

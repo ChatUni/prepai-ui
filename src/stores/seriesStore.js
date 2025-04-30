@@ -142,7 +142,7 @@ class SeriesStore {
       console.log('API Response:', series); // Debug log
 
       runInAction(() => {
-        this.currentSeries = series;
+        this.setCurrentSeries(series);
         console.log('Set currentSeries:', this.currentSeries); // Debug log
         console.log(this.instructors)
         this.isLoading = false;
@@ -175,7 +175,7 @@ class SeriesStore {
   }
 
   uploadSeriesImage = async (file, seriesId) => {
-    return await uploadToCloudinary(file, `prepai/series/${seriesId}`);
+    return await uploadToCloudinary(file, `series/${seriesId}`);
   }
 
   saveSeriesPost = data => fetch('/api/save?doc=series', {
@@ -190,10 +190,11 @@ class SeriesStore {
     try {
       this.isLoading = true;
       
-      // Convert FormData to JSON for API
       const seriesData = {
-        name: formData.get('name'),
-        category: formData.get('category')
+        name: this.currentSeries?.name,
+        category: this.selectedCategory,
+        cover: this.currentSeries?.cover,
+        desc: this.currentSeries?.desc
       };
 
       if (formData.get('id')) {
@@ -209,19 +210,51 @@ class SeriesStore {
       const seriesId = data.id;
 
       // Handle cover image upload
-      const coverImage = formData.get('cover_image');
-      if (coverImage instanceof File) {
-        const imageUrl = await this.uploadSeriesImage(coverImage, seriesId);
-        seriesData.cover = imageUrl;
-        await this.saveSeriesPost(seriesData);
-      }
+      // const coverImage = formData.get('cover_image');
+      // if (coverImage instanceof File) {
+      //   const imageUrl = await this.uploadSeriesImage(coverImage, seriesId);
+      //   seriesData.cover = imageUrl;
+      //   await this.saveSeriesPost(seriesData);
+      // }
 
       // Handle description image upload
       if (this.descType === 'image') {
         const descImage = formData.get('desc_image');
+        let imageToUpload = null;
+
         if (descImage instanceof File) {
-          const imageUrl = await this.uploadSeriesImage(descImage, seriesId);
+          imageToUpload = descImage;
+        } else if (this.selectedDescImagePreview) {
+          // Convert data URL to File object if it's a data URL
+          if (this.selectedDescImagePreview.startsWith('data:')) {
+            const arr = this.selectedDescImagePreview.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
+            }
+            imageToUpload = new File([u8arr], 'desc_image', { type: mime });
+          } else if (!this.selectedDescImagePreview.startsWith('http')) {
+            // If it's not a data URL or http URL, set empty string
+            seriesData.desc = '';
+            await this.saveSeriesPost(seriesData);
+            return;
+          }
+        }
+
+        if (imageToUpload) {
+          const imageUrl = await this.uploadSeriesImage(imageToUpload, seriesId);
           seriesData.desc = imageUrl;
+          await this.saveSeriesPost(seriesData);
+        } else if (this.selectedDescImagePreview?.startsWith('http')) {
+          // Preserve existing Cloudinary URL
+          seriesData.desc = this.selectedDescImagePreview;
+          await this.saveSeriesPost(seriesData);
+        } else {
+          // If no image is provided and no existing preview, set desc to empty string
+          seriesData.desc = '';
           await this.saveSeriesPost(seriesData);
         }
       }
