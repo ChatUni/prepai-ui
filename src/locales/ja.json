@@ -9,7 +9,10 @@
     "loading": "読み込み中...",
     "error": "エラー",
     "success": "成功",
-    "no_results": "結果が見つかりません"
+    "no_results": "結果が見つかりません",
+    "unexpectedError": "予期せぬエラーが発生しました",
+    "ok": "OK",
+    "confirm": "確認"
   },
   "auth": {
     "login": "ログイン",
@@ -49,7 +52,9 @@
       "edit_series": "シリーズを編集",
       "add_course_to_series": "コースをシリーズに追加",
       "add_assistant": "アシスタントを追加",
-      "edit_assistant": "アシスタントを編集"
+      "edit_assistant": "アシスタントを編集",
+      "upload_questions": "問題をアップロード",
+      "question_distribution": "問題の配分"
     },
     "categories": {
       "testing": "テスト",
@@ -274,7 +279,9 @@
       "deleteError": "バナーの削除に失敗しました",
       "addError": "バナーの追加に失敗しました",
       "confirmCancel": "保存されていない変更があります。キャンセルしてもよろしいですか？",
-      "emptyBannersError": "すべてのバナーに画像を選択してから保存してください"
+      "emptyBannersError": "すべてのバナーに画像を選択してから保存してください",
+      "saveError": "バナーの変更の保存に失敗しました",
+      "loadError": "バナーデータの読み込みに失敗しました"
     }
   },
   "search": {

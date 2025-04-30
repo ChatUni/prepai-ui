@@ -9,7 +9,10 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
-    "no_results": "No results found"
+    "no_results": "No results found",
+    "unexpectedError": "An unexpected error occurred",
+    "ok": "OK",
+    "confirm": "Confirm"
   },
   "auth": {
     "login": "Login",
@@ -49,7 +52,9 @@
       "edit_series": "Edit Series",
       "add_course_to_series": "Add Course to Series",
       "add_assistant": "Add Assistant",
-      "edit_assistant": "Edit Assistant"
+      "edit_assistant": "Edit Assistant",
+      "upload_questions": "Upload Questions",
+      "question_distribution": "Question Distribution"
     },
     "categories": {
       "testing": "Testing",
@@ -274,7 +279,9 @@
       "deleteError": "Failed to delete banner",
       "addError": "Failed to add banner",
       "confirmCancel": "You have unsaved changes. Are you sure you want to cancel?",
-      "emptyBannersError": "Please select images for all banners before saving"
+      "emptyBannersError": "Please select images for all banners before saving",
+      "saveError": "Failed to save banner changes",
+      "loadError": "Failed to load banner data"
     }
   },
   "search": {

@@ -1,5 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
+import lang from './languageStore';
+import { tap } from '../../netlify/functions/utils';
 
 class ClientStore {
   client = {
@@ -11,6 +13,8 @@ class ClientStore {
   };
   loading = false;
   error = null;
+  isErrorDialogOpen = false;
+  isConfirmDialogOpen = false;
   previewUrls = [];
   originalBanners = [];
   // Track changes as {type: 'add'|'delete', data: File|string}
@@ -63,21 +67,26 @@ class ClientStore {
     this.error = null;
 
     try {
+      const folder = `${this.client.id}/banners`;
+
       // Process changes in order
       for (const change of this.changes) {
         if (change.type === 'add') {
-          const url = await uploadToCloudinary(change.data, 'banners');
-          this.client.settings.banners.push(url);
+          const url = await uploadToCloudinary(change.data, folder);
+          const index = this.client.settings.banners.indexOf('');
+          if (index > -1) {
+            this.client.settings.banners[index] = url;
+          }
         } else if (change.type === 'delete') {
           // Extract public_id from the Cloudinary URL
           const urlParts = change.data.split('/');
-          const publicId = `banners/${urlParts[urlParts.length - 1].split('.')[0]}`;
+          const publicId = `${folder}/${urlParts[urlParts.length - 1].split('.')[0]}`;
           await deleteFromCloudinary(publicId);
         }
       }
 
       // Save client object
-      const response = await fetch('/api/save', {
+      const response = await fetch('/api/save?doc=clients', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -98,6 +107,7 @@ class ClientStore {
       runInAction(() => {
         this.error = error.message;
         this.loading = false;
+        this.showErrorDialog();
       });
     }
   }
@@ -128,7 +138,7 @@ class ClientStore {
 
   handleImageSelect(file, index) {
     this.setPreviewUrl(index, file);
-    this.changes.push({ type: 'add', data: file });
+    this.changes.push({ type: 'add', data: file, index });
   }
 
   async loadClient() {
@@ -149,6 +159,7 @@ class ClientStore {
           this.client = data;
         } else {
           this.error = 'Client not found';
+          this.showErrorDialog();
         }
         this.loading = false;
       });
@@ -156,6 +167,7 @@ class ClientStore {
       runInAction(() => {
         this.error = error.message;
         this.loading = false;
+        this.showErrorDialog();
       });
     }
   }
@@ -166,6 +178,41 @@ class ClientStore {
 
   get hasError() {
     return !!this.error;
+  }
+
+  get formattedError() {
+    if (!this.error) return '';
+    
+    // Handle specific error cases
+    if (this.error === lang.t('series.banners.emptyBannersError')) {
+      return lang.t('series.banners.emptyBannersError');
+    }
+    if (this.error.includes('Failed to save changes')) {
+      return lang.t('series.banners.saveError');
+    }
+    if (this.error.includes('Failed to load client')) {
+      return lang.t('series.banners.loadError');
+    }
+    
+    // Default error message
+    return lang.t('common.unexpectedError');
+  }
+
+  showErrorDialog() {
+    this.isErrorDialogOpen = true;
+  }
+
+  hideErrorDialog() {
+    this.isErrorDialogOpen = false;
+    this.error = null;
+  }
+
+  showConfirmDialog() {
+    this.isConfirmDialogOpen = true;
+  }
+
+  hideConfirmDialog() {
+    this.isConfirmDialogOpen = false;
   }
 }
 

@@ -9,7 +9,10 @@
     "loading": "加载中...",
     "error": "错误",
     "success": "成功",
-    "no_results": "未找到结果"
+    "no_results": "未找到结果",
+    "unexpectedError": "发生意外错误",
+    "ok": "确定",
+    "confirm": "确认"
   },
   "auth": {
     "login": "登录",
@@ -49,7 +52,9 @@
       "edit_series": "编辑系列",
       "add_course_to_series": "添加课程到系列",
       "add_assistant": "新增助手",
-      "edit_assistant": "编辑助手"
+      "edit_assistant": "编辑助手",
+      "upload_questions": "上传试题",
+      "question_distribution": "试题比例分配"
     },
     "categories": {
       "testing": "考测",
@@ -274,7 +279,9 @@
       "deleteError": "删除横幅失败",
       "addError": "添加横幅失败",
       "confirmCancel": "您有未保存的更改。确定要取消吗？",
-      "emptyBannersError": "请为所有横幅选择图片后再保存"
+      "emptyBannersError": "请为所有横幅选择图片后再保存",
+      "saveError": "保存横幅更改失败",
+      "loadError": "加载横幅数据失败"
     }
   },
   "search": {

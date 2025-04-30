@@ -29,7 +29,7 @@ export const uploadToCloudinary = async (file, folder) => {
  * @returns {Promise<void>}
  */
 export const deleteFromCloudinary = async (publicId) => {
-  const response = await fetch(`/api/cloudinary_upload`, {
+  const response = await fetch(`/api/cloudinary_delete`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'

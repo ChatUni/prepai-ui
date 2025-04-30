@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import clientStore from '../../../stores/clientStore';
 import ImageUpload from '../../ui/ImageUpload';
 import BackButton from '../../ui/BackButton';
+import Dialog from '../../ui/Dialog';
 import lang from '../../../stores/languageStore';
 import { FiTrash2, FiPlus } from 'react-icons/fi';
 
@@ -28,24 +29,32 @@ const EditBannerPage = observer(() => {
 
   const handleSave = async () => {
     if (clientStore.hasEmptyBanners) {
-      window.alert(lang.t('series.banners.emptyBannersError'));
+      clientStore.error = lang.t('series.banners.emptyBannersError');
+      clientStore.showErrorDialog();
       return;
     }
     await clientStore.saveChanges();
-    navigate(-1);
+    if (!clientStore.error) {
+      navigate(-1);
+    } else {
+      clientStore.showErrorDialog();
+    }
   };
 
   const handleCancel = useCallback(() => {
     if (clientStore.hasUnsavedChanges) {
-      if (window.confirm(lang.t('series.banners.confirmCancel'))) {
-        clientStore.cancelEditing();
-        navigate(-1);
-      }
+      clientStore.showConfirmDialog();
     } else {
       clientStore.cancelEditing();
       navigate(-1);
     }
   }, [navigate]);
+
+  const handleConfirmCancel = () => {
+    clientStore.hideConfirmDialog();
+    clientStore.cancelEditing();
+    navigate(-1);
+  };
 
   return (
     <div className="container mx-auto px-4 py-4">
@@ -102,11 +111,23 @@ const EditBannerPage = observer(() => {
         </button>
       </div>
 
-      {clientStore.error && (
-        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-          {clientStore.error}
-        </div>
-      )}
+      <Dialog
+        isOpen={clientStore.isErrorDialogOpen}
+        onClose={() => clientStore.hideErrorDialog()}
+        title={lang.t('common.error')}
+      >
+        <div className="text-red-600">{clientStore.formattedError}</div>
+      </Dialog>
+
+      <Dialog
+        isOpen={clientStore.isConfirmDialogOpen}
+        onClose={() => clientStore.hideConfirmDialog()}
+        onConfirm={handleConfirmCancel}
+        title={lang.t('common.confirm')}
+        isConfirm={true}
+      >
+        <div>{lang.t('series.banners.confirmCancel')}</div>
+      </Dialog>
     </div>
   );
 });

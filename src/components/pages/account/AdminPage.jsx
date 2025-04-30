@@ -12,7 +12,9 @@ const routeMap = {
   'edit-banner': '/series/banners',
   'add-course-to-series': '/series/select',
   'add-assistant': '/assistants/add',
-  'edit-assistant': '/assistants/select?mode=edit'
+  'edit-assistant': '/assistants/select?mode=edit',
+  'upload-questions': '/exam/upload',
+  'question-distribution': '/exam/distribution'
 };
 
 const AdminPage = observer(() => {
@@ -87,6 +89,22 @@ const AdminPage = observer(() => {
           <MenuItem
             label={t('menu.admin_page.edit_assistant')}
             onClick={() => navigate(routeMap['edit-assistant'])}
+          />
+        </AccordionSection>
+
+        {/* Exam Section */}
+        <AccordionSection
+          title={t('menu.testing')}
+          isExpanded={expandedSection === 'exam'}
+          onToggle={() => handleSectionClick('exam')}
+        >
+          <MenuItem
+            label={t('menu.admin_page.upload_questions')}
+            onClick={() => navigate(routeMap['upload-questions'])}
+          />
+          <MenuItem
+            label={t('menu.admin_page.question_distribution')}
+            onClick={() => navigate(routeMap['question-distribution'])}
           />
         </AccordionSection>
       </div>
