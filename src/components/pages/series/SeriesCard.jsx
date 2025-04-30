@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import coursesStore from '../../../stores/coursesStore';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
-import { tap } from '../../../../netlify/functions/utils';
+import { tap } from '../../../../netlify/functions/utils/util';
 
 const SeriesCard = observer(({ series }) => {
   const { t } = languageStore;

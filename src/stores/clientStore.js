@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
 import lang from './languageStore';
-import { tap } from '../../netlify/functions/utils';
+import { tap } from '../../netlify/functions/utils/util';
 
 class ClientStore {
   client = {

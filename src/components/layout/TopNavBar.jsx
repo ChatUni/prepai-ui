@@ -7,7 +7,7 @@ import routeStore from '../../stores/routeStore';
 import LanguageSelector from '../ui/LanguageSelector';
 import BackButton from '../ui/BackButton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { tap } from '../../../netlify/functions/utils';
+import { tap } from '../../../netlify/functions/utils/util';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();
@@ -17,8 +17,8 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const { t } = languageStore;
 
   const navItems = [
-    { id: 'testing', label: t('menu.testing') },
     { id: 'private', label: t('menu.private') },
+    { id: 'testing', label: t('menu.testing') },
     { id: 'ai', label: t('menu.ai') },
     { id: 'my', label: t('menu.my') }
   ];
@@ -32,12 +32,12 @@ const TopNavBar = observer(({ onMenuToggle }) => {
     
     // Handle navigation based on item type
     switch (item.id) {
-      case 'testing':
-        navigate('/exam');
-        break;
       case 'private':
         uiStore.setCourseTypeFilter(true); // Set to video courses
         navigate('/series');
+        break;
+      case 'testing':
+        navigate('/exam');
         break;
       case 'ai':
         navigate('/assistants');

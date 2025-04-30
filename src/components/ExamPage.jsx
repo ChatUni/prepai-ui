@@ -5,7 +5,7 @@ import uiStore from '../stores/uiStore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import languageStore from '../stores/languageStore';
-import { tap } from '../../netlify/functions/utils';
+import { tap } from '../../netlify/functions/utils/util';
 import LoadingState from './ui/LoadingState';
 
 const ExamPage = observer(() => {

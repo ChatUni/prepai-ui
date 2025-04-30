@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import seriesStore from '../../../stores/seriesStore';
 import languageStore from '../../../stores/languageStore';
-import { tap } from '../../../../netlify/functions/utils';
+import { tap } from '../../../../netlify/functions/utils/util';
 import LoadingState from '../../ui/LoadingState';
 import ImageUpload from '../../ui/ImageUpload';
 

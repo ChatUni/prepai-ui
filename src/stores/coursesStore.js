@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
-import { tap } from '../../netlify/functions/utils';
+import { tap } from '../../netlify/functions/utils/util';
 import languageStore from './languageStore';
 
 class CoursesStore {

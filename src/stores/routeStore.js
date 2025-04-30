@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
-import { tap } from '../../netlify/functions/utils';
+import { tap } from '../../netlify/functions/utils/util';
 
 class RouteStore {
   // Route parameters
