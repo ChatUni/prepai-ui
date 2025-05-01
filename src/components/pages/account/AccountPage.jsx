@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import userStore from '../../../stores/userStore';
 import languageStore from '../../../stores/languageStore';
 import DEFAULT_AVATAR from '../../../assets/avatar.png';
+import MenuListItem from '../../ui/MenuListItem';
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
@@ -95,86 +96,32 @@ const AccountPage = observer(() => {
           </button>
         </div>
         {/* Menu Options */}
-        {/* VIP Status */}
-        <div
-          className="mb-3 text-center"
+        {/* Menu Items */}
+        <MenuListItem
+          label={t('menu.account_page.my_vip')}
           onClick={() => handleMenuItemClick('vip')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <div>
-              <span className="text-base mr-2">{t('menu.account_page.my_vip')}</span>
-              <span className="text-gray-500 text-sm">{t('menu.account_page.valid_until')} 2025-12-27 10:33:52</span>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        
-        {/* Exam Records */}
-        <div
-          className="mb-3 text-center"
+          extraInfo={`${t('menu.account_page.valid_until')} 2025-12-27 10:33:52`}
+        />
+        <MenuListItem
+          label={t('menu.account_page.exam_records')}
           onClick={() => handleMenuItemClick('exams')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.account_page.exam_records')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        
-        {/* Customer Service */}
-        <div
-          className="mb-3 text-center"
+        />
+        <MenuListItem
+          label={t('menu.account_page.customer_service')}
           onClick={() => handleMenuItemClick('service')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.account_page.customer_service')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        
-        {/* Coupons */}
-        <div
-          className="mb-3 text-center"
+        />
+        <MenuListItem
+          label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.account_page.coupons')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        
-        {/* Admin Portal */}
-        <div
-          className="mb-3 text-center"
+        />
+        <MenuListItem
+          label={t('menu.account_page.admin_portal')}
           onClick={() => handleMenuItemClick('admin')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.account_page.admin_portal')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Logout */}
-        <div
-          className="mb-3 text-center"
+        />
+        <MenuListItem
+          label={t('menu.account_page.logout')}
           onClick={() => handleMenuItemClick('logout')}
-        >
-          <div className="bg-white p-4 rounded-lg shadow-sm w-full flex items-center justify-between">
-            <span>{t('menu.account_page.logout')}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </div>
+        />
       </div>
     </div>
   );

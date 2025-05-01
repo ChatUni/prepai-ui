@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import languageStore from '../../../stores/languageStore';
-import { AccordionSection, MenuItem } from '../../ui/AdminAccordion';
+import MenuListItem from '../../ui/MenuListItem';
 
 const routeMap = {
   'new-instructor': '/instructors/new',
@@ -14,17 +14,13 @@ const routeMap = {
   'add-assistant': '/assistants/add',
   'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
-  'question-distribution': '/exam/distribution'
+  'question-distribution': '/exam/distribution',
+  'course-settings': '/courses/settings'
 };
 
 const AdminPage = observer(() => {
   const navigate = useNavigate();
   const t = languageStore.t;
-  const [expandedSection, setExpandedSection] = React.useState(null);
-
-  const handleSectionClick = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
 
   return (
     <div className="flex flex-col bg-gray-100 w-full max-w-sm">
@@ -33,80 +29,52 @@ const AdminPage = observer(() => {
         <h1 className="text-2xl font-semibold text-center">{t('menu.admin_page.title')}</h1>
       </div>
 
-      {/* Accordion Menu */}
+      {/* Menu Items */}
       <div className="space-y-2">
-        {/* Instructors Section */}
-        <AccordionSection
-          title={t('menu.instructor')}
-          isExpanded={expandedSection === 'instructors'}
-          onToggle={() => handleSectionClick('instructors')}
-        >
-          <MenuItem
-            label={t('menu.admin_page.new_instructor')}
-            onClick={() => navigate(routeMap['new-instructor'])}
-          />
-          <MenuItem
-            label={t('menu.admin_page.edit_instructor')}
-            onClick={() => navigate(routeMap['edit-instructor'])}
-          />
-        </AccordionSection>
-
-        {/* Series Section */}
-        <AccordionSection
-          title={t('menu.series')}
-          isExpanded={expandedSection === 'series'}
-          onToggle={() => handleSectionClick('series')}
-          maxHeight="60"
-        >
-          <MenuItem
-            label={t('menu.admin_page.new_series')}
-            onClick={() => navigate(routeMap['new-series'])}
-          />
-          <MenuItem
-            label={t('menu.admin_page.edit_series')}
-            onClick={() => navigate(routeMap['edit-series'])}
-          />
-          <MenuItem
-            label={t('menu.admin_page.add_course_to_series')}
-            onClick={() => navigate(routeMap['add-course-to-series'])}
-          />
-          <MenuItem
-            label={t('series.banners.title')}
-            onClick={() => navigate(routeMap['edit-banner'])}
-          />
-        </AccordionSection>
-
-        {/* Assistants Section */}
-        <AccordionSection
-          title={t('menu.assistants')}
-          isExpanded={expandedSection === 'assistants'}
-          onToggle={() => handleSectionClick('assistants')}
-        >
-          <MenuItem
-            label={t('menu.admin_page.add_assistant')}
-            onClick={() => navigate(routeMap['add-assistant'])}
-          />
-          <MenuItem
-            label={t('menu.admin_page.edit_assistant')}
-            onClick={() => navigate(routeMap['edit-assistant'])}
-          />
-        </AccordionSection>
-
-        {/* Exam Section */}
-        <AccordionSection
-          title={t('menu.testing')}
-          isExpanded={expandedSection === 'exam'}
-          onToggle={() => handleSectionClick('exam')}
-        >
-          <MenuItem
-            label={t('menu.admin_page.upload_questions')}
-            onClick={() => navigate(routeMap['upload-questions'])}
-          />
-          <MenuItem
-            label={t('menu.admin_page.question_distribution')}
-            onClick={() => navigate(routeMap['question-distribution'])}
-          />
-        </AccordionSection>
+        {/* <MenuListItem
+          label={t('menu.admin_page.new_instructor')}
+          onClick={() => navigate(routeMap['new-instructor'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.edit_instructor')}
+          onClick={() => navigate(routeMap['edit-instructor'])}
+        /> */}
+        <MenuListItem
+          label={t('menu.admin_page.new_series')}
+          onClick={() => navigate(routeMap['new-series'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.edit_series')}
+          onClick={() => navigate(routeMap['edit-series'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.add_course_to_series')}
+          onClick={() => navigate(routeMap['add-course-to-series'])}
+        />
+        <MenuListItem
+          label={t('series.banners.title')}
+          onClick={() => navigate(routeMap['edit-banner'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.add_assistant')}
+          onClick={() => navigate(routeMap['add-assistant'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.edit_assistant')}
+          onClick={() => navigate(routeMap['edit-assistant'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.upload_questions')}
+          onClick={() => navigate(routeMap['upload-questions'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.question_distribution')}
+          onClick={() => navigate(routeMap['question-distribution'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.course_settings')}
+          onClick={() => navigate(routeMap['course-settings'])}
+        />
       </div>
     </div>
   );

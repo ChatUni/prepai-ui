@@ -54,7 +54,8 @@
       "add_assistant": "Add Assistant",
       "edit_assistant": "Edit Assistant",
       "upload_questions": "Upload Questions",
-      "question_distribution": "Question Distribution"
+      "question_distribution": "Question Distribution",
+      "course_settings": "Course Settings"
     },
     "categories": {
       "testing": "Testing",
