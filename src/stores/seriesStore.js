@@ -3,6 +3,7 @@ import routeStore from './routeStore';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
+import clientStore from './clientStore';
 
 class SeriesStore {
   series = [];
@@ -175,7 +176,7 @@ class SeriesStore {
   }
 
   uploadSeriesImage = async (file, seriesId) => {
-    return await uploadToCloudinary(file, `series/${seriesId}`);
+    return await uploadToCloudinary(file, `${clientStore.client.id}/series/${seriesId}`);
   }
 
   saveSeriesPost = data => fetch('/api/save?doc=series', {

@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import db from '../utils/db';
 import { getApiBaseUrl } from '../config';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
+import clientStore from './clientStore';
 
 const defaultInstructor = {
   id: null,
@@ -89,7 +90,7 @@ class InstructorsStore {
 
   uploadInstructorIcon = async (file, instructorId) => {
     try {
-      return await uploadToCloudinary(file, `prepai/instructors/${instructorId}`);
+      return await uploadToCloudinary(file, `${clientStore.client.id}/instructors/${instructorId}`);
     } catch (error) {
       runInAction(() => {
         this.error = error.message;
