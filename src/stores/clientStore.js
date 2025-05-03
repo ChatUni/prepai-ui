@@ -62,12 +62,13 @@ class ClientStore {
     this.changes = [];
   }
 
-  async saveChanges() {
+  async saveChanges(type = 'banners') {
     this.loading = true;
     this.error = null;
 
     try {
-      const folder = `${this.client.id}/banners`;
+      if (type === 'banners') {
+        const folder = `${this.client.id}/banners`;
 
       // Process changes in order
       for (const change of this.changes) {
@@ -85,6 +86,23 @@ class ClientStore {
         }
       }
 
+        // Process changes in order
+        for (const change of this.changes) {
+          if (change.type === 'add') {
+            const url = await uploadToCloudinary(change.data, folder);
+            const index = this.client.settings.banners.indexOf('');
+            if (index > -1) {
+              this.client.settings.banners[index] = url;
+            }
+          } else if (change.type === 'delete') {
+            // Extract public_id from the Cloudinary URL
+            const urlParts = change.data.split('/');
+            const publicId = `${folder}/${urlParts[urlParts.length - 1].split('.')[0]}`;
+            await deleteFromCloudinary(publicId);
+          }
+        }
+      }
+
       // Save client object
       const response = await fetch('/api/save?doc=clients', {
         method: 'POST',
@@ -99,8 +117,10 @@ class ClientStore {
       }
 
       runInAction(() => {
-        this.originalBanners = [...this.client.settings.banners];
-        this.changes = [];
+        if (type === 'banners') {
+          this.originalBanners = [...this.client.settings.banners];
+          this.changes = [];
+        }
         this.loading = false;
       });
     } catch (error) {
@@ -213,6 +233,11 @@ class ClientStore {
 
   hideConfirmDialog() {
     this.isConfirmDialogOpen = false;
+  }
+
+  async saveGroupOrder(groups) {
+    this.client.settings.groups = groups;
+    await this.saveChanges('groups');
   }
 }
 

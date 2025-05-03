@@ -108,9 +108,13 @@ class RouteStore {
     return this.currentPath === '/' || (pathSegments.length === 1 && pathSegments[0] === 'series');
   }
 
+  get isSeriesSettingMode() {
+    const pathSegments = this.getPathSegments();
+    return pathSegments.length === 2 && pathSegments[0] === 'series' && pathSegments[1] === 'settings';
+  }
 
   get isSeriesGroupMode() {
-    return this.isSeriesHomeMode;
+    return this.isSeriesHomeMode || this.isSeriesSettingMode;
   }
 
   // Determine if current page is series select mode

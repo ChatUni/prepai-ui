@@ -183,11 +183,11 @@ const MainLayout = observer(() => {
                     <SeriesDetailPage />
                   </AuthRoute>
                 } />
-                {/* <Route path="/series/settings" element={
+                <Route path="/series/settings" element={
                   <AuthRoute>
-                    <SeriesSettingsPage />
+                    <SeriesListPage />
                   </AuthRoute>
-                } /> */}
+                } />
                 <Route path="/series/new" element={
                   <AuthRoute>
                     <EditSeriesPage />

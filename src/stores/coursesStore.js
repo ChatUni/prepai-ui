@@ -14,6 +14,7 @@ class CoursesStore {
   instructorSeriesError = null;
   selectedSeriesId = null;
   selectedInstructorId = null;
+  groupOrder = [];
 
   constructor() {
     this.fetchCourses();
@@ -29,6 +30,7 @@ class CoursesStore {
       instructorSeriesError: observable,
       selectedSeriesId: observable,
       selectedInstructorId: observable,
+      groupOrder: observable,
       fetchCourses: action,
       fetchInstructors: action,
       fetchSeries: action,
@@ -357,7 +359,12 @@ class CoursesStore {
   get groupedSeries() {
     if (!Array.isArray(this.filteredSeries)) return {};
 
-    const groups = clientStore.client.settings.groups;
+    // Initialize groupOrder if empty
+    if (this.groupOrder.length === 0) {
+      this.groupOrder = [...clientStore.client.settings.groups];
+    }
+
+    const groups = this.groupOrder;
     const grouped = {};
 
     groups.forEach(group => {
@@ -366,6 +373,23 @@ class CoursesStore {
 
     return grouped;
   }
+
+  setGroupOrder = action((groups) => {
+    this.groupOrder = groups;
+  });
+
+  moveGroup = action(async (fromIndex, toIndex) => {
+    const groups = this.groupOrder.length > 0
+      ? [...this.groupOrder]
+      : [...clientStore.client.settings.groups];
+
+    const [removed] = groups.splice(fromIndex, 1);
+    groups.splice(toIndex, 0, removed);
+    this.groupOrder = groups;
+
+    // Save the new order to client settings
+    await clientStore.saveGroupOrder(groups);
+  });
 
   get coursesBySeries() {
     // Group courses by series
