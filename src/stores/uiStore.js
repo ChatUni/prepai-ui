@@ -1,7 +1,6 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 import { setUIStore } from './coursesStore';
 import { getApiBaseUrl } from '../config.js';
-import { tap } from '../../netlify/functions/utils/util.js';
 import languageStore from './languageStore';
 
 class UIStore {

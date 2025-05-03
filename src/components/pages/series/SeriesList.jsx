@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import SeriesCard from './SeriesCard';
 import languageStore from '../../../stores/languageStore';
 import routeStore from '../../../stores/routeStore';
-import { tap } from '../../../../netlify/functions/utils/util';
 
 const SeriesList = observer(({ title, series }) => {
   const { t } = languageStore;

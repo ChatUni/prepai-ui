@@ -1,7 +1,6 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
-import { tap } from '../../netlify/functions/utils/util';
 
 class RouteStore {
   // Route parameters
@@ -29,7 +28,8 @@ class RouteStore {
       isTopLevelPage: computed,
       isSeriesSelectMode: computed,
       isSeriesExamMode: computed,
-      isSeriesListMode: computed,
+      isSeriesHomeMode: computed,
+      isSeriesGroupMode: computed,
       
       // Navigation actions that coordinate with the store
       navigateToInstructor: action,
@@ -103,10 +103,14 @@ class RouteStore {
     return topLevelRoutes.includes(firstSegment) && pathSegments.length === 1;
   }
 
-  // Determine if current page is series list mode (/ or /series)
-  get isSeriesListMode() {
+  get isSeriesHomeMode() {
     const pathSegments = this.getPathSegments();
     return this.currentPath === '/' || (pathSegments.length === 1 && pathSegments[0] === 'series');
+  }
+
+
+  get isSeriesGroupMode() {
+    return this.isSeriesHomeMode;
   }
 
   // Determine if current page is series select mode

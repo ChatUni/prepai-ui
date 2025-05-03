@@ -208,6 +208,13 @@
     }
   },
   "course": {
+    "settings": "课程设置",
+    "management": "课程管理",
+    "management.description": "在这里可以创建和管理课程分类与课程，设置课程详情、定价、上下架状态，以及调整在首页的展示位置排序。",
+    "management.hint": "提示：可以通过拖拽课程调整顺序，或者修改分类名称、开关分类展示、调整分类顺序。",
+    "search.placeholder": "搜索课程...",
+    "newCategory": "新建分类",
+    "newCourse": "新建课程",
     "addCourse": "添加课程",
     "add": {
       "title": "添加新课程",
@@ -320,6 +327,64 @@
   "tools": {
     "purchasedCourses": "已购课程",
     "courseCategories": "课程分类",
-    "myMessages": "我的消息"
+    "myMessages": "我的消息",
+    "groupedSeries": "分组系列"
+  },
+  "series": {
+    "selectTitle": "选择系列",
+    "selectToEdit": "选择要编辑的系列",
+    "edit": "编辑系列",
+    "category": "分类",
+    "edit": {
+      "loading": "加载中...",
+      "editTitle": "编辑系列",
+      "createTitle": "创建新系列",
+      "instructor": "讲师",
+      "selectInstructor": "请选择讲师",
+      "name": "系列名称",
+      "description": "描述",
+      "descriptionType": {
+        "text": "文字",
+        "image": "图片"
+      },
+      "category": "分类",
+      "categoryPlaceholder": "选择或输入分类",
+      "coverImage": "封面图片",
+      "selectImage": "选择图片",
+      "changeImage": "更改图片",
+      "fileSelected": "已选择文件",
+      "coverPreview": "封面预览",
+      "saving": "保存中...",
+      "saveSeries": "保存系列",
+      "saveError": "保存系列失败"
+    },
+    "seriesCount": "显示 {count} 个系列",
+    "unknownInstructor": "未知讲师",
+    "noDescription": "暂无描述",
+    "courseCount": "{count} 个课程",
+    "aboutThisSeries": "关于这个系列",
+    "noCover": "无封面",
+    "loading": "加载系列课程...",
+    "loadingError": "加载系列课程时出错",
+    "noSeries": "没有系列课程",
+    "courseList": "课程列表",
+    "banners": {
+      "title": "编辑横幅图片",
+      "banner": "横幅",
+      "uploadError": "上传横幅图片失败",
+      "delete": "删除横幅",
+      "add": "添加新横幅",
+      "deleteError": "删除横幅失败",
+      "addError": "添加横幅失败",
+      "confirmCancel": "您有未保存的更改。确定要取消吗？",
+      "emptyBannersError": "请为所有横幅选择图片后再保存",
+      "saveError": "保存横幅更改失败",
+      "loadError": "加载横幅数据失败"
+    },
+    "groups": {
+      "title": "系列分组",
+      "noGroup": "无分组",
+      "noSeries": "该分组暂无系列"
+    }
   }
 }

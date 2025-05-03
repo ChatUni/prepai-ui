@@ -208,6 +208,13 @@
     }
   },
   "course": {
+    "settings": "コース設定",
+    "management": "コース管理",
+    "management.description": "ここではコースのカテゴリーやコースの作成・管理、コースの詳細設定、価格設定、オンライン/オフライン状態の設定、およびホームページでの表示順序の調整ができます。",
+    "management.hint": "ヒント：コースをドラッグして順序を調整したり、カテゴリー名の変更、カテゴリーの表示/非表示の切り替え、カテゴリーの順序調整ができます。",
+    "search.placeholder": "コースを検索...",
+    "newCategory": "新規カテゴリー",
+    "newCourse": "新規コース",
     "addCourse": "コースを追加",
     "add": {
       "title": "新規コースを追加",
@@ -320,6 +327,64 @@
   "tools": {
     "purchasedCourses": "購入済みコース",
     "courseCategories": "コース分類",
-    "myMessages": "メッセージ"
+    "myMessages": "メッセージ",
+    "groupedSeries": "グループ別シリーズ"
+  },
+  "series": {
+    "selectTitle": "シリーズを選択",
+    "selectToEdit": "編集するシリーズを選択",
+    "edit": "シリーズを編集",
+    "category": "カテゴリー",
+    "aboutThisSeries": "このシリーズについて",
+    "courseList": "コース一覧",
+    "noCover": "カバー画像なし",
+    "noDescription": "このシリーズの説明はありません",
+    "defaultTitle": "シリーズ",
+    "coverImageAlt": "シリーズのカバー画像",
+    "edit": {
+      "loading": "読み込み中...",
+      "editTitle": "シリーズを編集",
+      "createTitle": "新規シリーズを作成",
+      "instructor": "講師",
+      "selectInstructor": "講師を選択してください",
+      "name": "シリーズ名",
+      "description": "説明",
+      "descriptionType": {
+        "text": "テキスト",
+        "image": "画像"
+      },
+      "category": "カテゴリー",
+      "categoryPlaceholder": "カテゴリーを選択または入力",
+      "coverImage": "カバー画像",
+      "selectImage": "画像を選択",
+      "changeImage": "画像を変更",
+      "fileSelected": "ファイルが選択されました",
+      "coverPreview": "カバープレビュー",
+      "saving": "保存中...",
+      "saveSeries": "シリーズを保存",
+      "saveError": "シリーズの保存に失敗しました"
+    },
+    "seriesCount": "{count}件のシリーズを表示",
+    "unknownInstructor": "不明な講師",
+    "noDescription": "説明なし",
+    "courseCount": "{count}件のコース",
+    "banners": {
+      "title": "バナー画像を編集",
+      "banner": "バナー",
+      "uploadError": "バナー画像のアップロードに失敗しました",
+      "delete": "バナーを削除",
+      "add": "新規バナーを追加",
+      "deleteError": "バナーの削除に失敗しました",
+      "addError": "バナーの追加に失敗しました",
+      "confirmCancel": "保存されていない変更があります。キャンセルしてもよろしいですか？",
+      "emptyBannersError": "すべてのバナーに画像を選択してから保存してください",
+      "saveError": "バナーの変更の保存に失敗しました",
+      "loadError": "バナーデータの読み込みに失敗しました"
+    },
+    "groups": {
+      "title": "シリーズグループ",
+      "noGroup": "グループなし",
+      "noSeries": "このグループにシリーズがありません"
+    }
   }
 }

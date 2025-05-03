@@ -15,7 +15,7 @@ const routeMap = {
   'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
-  'course-settings': '/courses/settings'
+  'course-settings': '/series/settings'
 };
 
 const AdminPage = observer(() => {

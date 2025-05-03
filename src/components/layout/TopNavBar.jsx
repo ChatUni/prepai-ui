@@ -7,7 +7,6 @@ import routeStore from '../../stores/routeStore';
 import LanguageSelector from '../ui/LanguageSelector';
 import BackButton from '../ui/BackButton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { tap } from '../../../netlify/functions/utils/util';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();

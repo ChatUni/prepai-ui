@@ -12,6 +12,7 @@ import InstructorChatPage from './components/pages/instructor/InstructorChatPage
 import FavoritesPage from './components/FavoritesPage';
 import VideoPlayerPage from './components/pages/course/VideoPlayerPage';
 import PPTPlayerPage from './components/pages/course/PPTPlayerPage';
+//import SeriesSettingsPage from './components/pages/series/SeriesSettingsPage';
 import ExamPage from './components/ExamPage';
 import QuestionPage from './components/pages/exam/QuestionPage';
 import SeriesListPage from './components/pages/series/SeriesListPage';
@@ -182,6 +183,11 @@ const MainLayout = observer(() => {
                     <SeriesDetailPage />
                   </AuthRoute>
                 } />
+                {/* <Route path="/series/settings" element={
+                  <AuthRoute>
+                    <SeriesSettingsPage />
+                  </AuthRoute>
+                } /> */}
                 <Route path="/series/new" element={
                   <AuthRoute>
                     <EditSeriesPage />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import SeriesList from './SeriesList';
+import GroupedSeriesList from './GroupedSeriesList';
 import SearchBar from '../../ui/SearchBar';
 import Carousel from '../../ui/Carousel';
 import LoadingState from '../../ui/LoadingState';
@@ -22,9 +23,9 @@ const SeriesListPage = observer(() => {
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      {routeStore.isSeriesListMode && <Carousel images={clientStore.client.settings.banners} />}
+      {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
 
-      {routeStore.isSeriesListMode && <ToolsNav />}
+      {routeStore.isSeriesHomeMode && <ToolsNav />}
 
       <div className="mb-6">
         <SearchBar />
@@ -35,11 +36,15 @@ const SeriesListPage = observer(() => {
         isError={!Array.isArray(coursesStore.filteredSeries)}
         isEmpty={Array.isArray(coursesStore.filteredSeries) && coursesStore.filteredSeries.length === 0}
       >
-        <SeriesList
-          title=""
-          series={coursesStore.filteredSeries}
-          isAllInstructors={true}
-        />
+        {routeStore.isSeriesGroupMode ? (
+          <GroupedSeriesList />
+        ) : (
+          <SeriesList
+            title=""
+            series={coursesStore.filteredSeries}
+            isAllInstructors={true}
+          />
+        )}
       </LoadingState>
     </div>
   );

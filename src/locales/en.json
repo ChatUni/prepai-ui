@@ -208,6 +208,13 @@
     }
   },
   "course": {
+    "settings": "Course Settings",
+    "management": "Course Management",
+    "management.description": "Here you can create and manage course categories and courses, set course details, pricing, and online/offline status, as well as adjust the display order on the homepage.",
+    "management.hint": "Tip: You can adjust the order by dragging courses, or modify category names, toggle category display, and adjust category order.",
+    "search.placeholder": "Search courses...",
+    "newCategory": "New Category",
+    "newCourse": "New Course",
     "addCourse": "Add Course",
     "add": {
       "title": "Add New Course",
@@ -320,6 +327,64 @@
   "tools": {
     "purchasedCourses": "Purchased",
     "courseCategories": "Categories",
-    "myMessages": "My Messages"
+    "myMessages": "My Messages",
+    "groupedSeries": "Grouped Series"
+  },
+  "series": {
+    "selectTitle": "Select a Series",
+    "selectToEdit": "Select Series to Edit",
+    "edit": "Edit Series",
+    "category": "Category",
+    "edit": {
+      "loading": "Loading...",
+      "editTitle": "Edit Series",
+      "createTitle": "Create New Series",
+      "instructor": "Instructor",
+      "selectInstructor": "Please select an instructor",
+      "name": "Series Name",
+      "description": "Description",
+      "descriptionType": {
+        "text": "Text",
+        "image": "Image"
+      },
+      "category": "Category",
+      "categoryPlaceholder": "Select or enter a category",
+      "coverImage": "Cover Image",
+      "selectImage": "Select Image",
+      "changeImage": "Change Image",
+      "fileSelected": "File selected",
+      "coverPreview": "Cover preview",
+      "saving": "Saving...",
+      "saveSeries": "Save Series",
+      "saveError": "Failed to save series"
+    },
+    "seriesCount": "Showing {count} series",
+    "unknownInstructor": "Unknown Instructor",
+    "noDescription": "No description available",
+    "courseCount": "{count} courses",
+    "aboutThisSeries": "About this Series",
+    "noCover": "No Cover",
+    "loading": "Loading series...",
+    "loadingError": "Error loading series",
+    "noSeries": "No series available",
+    "courseList": "Course List",
+    "banners": {
+      "title": "Edit Banner Images",
+      "banner": "Banner",
+      "uploadError": "Failed to upload banner image",
+      "delete": "Delete Banner",
+      "add": "Add New Banner",
+      "deleteError": "Failed to delete banner",
+      "addError": "Failed to add banner",
+      "confirmCancel": "You have unsaved changes. Are you sure you want to cancel?",
+      "emptyBannersError": "Please select images for all banners before saving",
+      "saveError": "Failed to save banner changes",
+      "loadError": "Failed to load banner data"
+    },
+    "groups": {
+      "title": "Series Groups",
+      "noGroup": "No Group",
+      "noSeries": "No series in this group"
+    }
   }
 }

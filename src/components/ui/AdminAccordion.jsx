@@ -12,7 +12,7 @@ const MenuItem = ({ label, onClick }) => (
 );
 
 const AccordionSection = ({ title, isExpanded, onToggle, maxHeight = '40', children }) => (
-  <div className="overflow-hidden rounded-lg">
+  <div className={`overflow-hidden rounded-lg ${isExpanded ? 'shadow-lg' : ''}`}>
     <button
       className={`w-full p-4 flex items-center justify-between text-white transition-colors duration-200 ${
         isExpanded ? 'bg-blue-600' : 'bg-blue-500 hover:bg-blue-600'

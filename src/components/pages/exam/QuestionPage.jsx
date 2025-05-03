@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import examStore from '../../../stores/examStore';
-import { tap } from '../../../../netlify/functions/utils/util';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 

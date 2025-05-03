@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
-import { tap } from '../../netlify/functions/utils/util';
 import languageStore from './languageStore';
+import clientStore from './clientStore';
 
 class CoursesStore {
   courses = [];
@@ -325,11 +325,18 @@ class CoursesStore {
     const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
     const selectedInstructorId = uiStore.selectedInstructorId || null;
     const activeCategory = uiStore.activeCategory || '';
+    const isGroupMode = uiStore.activeNavItem === 'group';
+    const validGroups = new Set(clientStore.client.settings.groups);
     
     return this.series.filter(series => {
       // Skip any non-object series items
       if (!series || typeof series !== 'object') {
         console.error('Invalid series item:', series);
+        return false;
+      }
+
+      // In group mode, only show series with valid groups
+      if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
         return false;
       }
       
@@ -345,6 +352,19 @@ class CoursesStore {
       
       return matchesSearch && matchesInstructor && matchesCategory;
     });
+  }
+
+  get groupedSeries() {
+    if (!Array.isArray(this.filteredSeries)) return {};
+
+    const groups = clientStore.client.settings.groups;
+    const grouped = {};
+
+    groups.forEach(group => {
+      grouped[group] = this.filteredSeries.filter(series => series.group === group);
+    });
+
+    return grouped;
   }
 
   get coursesBySeries() {
