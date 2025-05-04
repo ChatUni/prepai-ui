@@ -71,6 +71,12 @@
       "description": "Avoid repetitive switch statements or if-else chains that perform similar actions with different values. Instead, use mapping objects or lookup tables to directly map inputs to outputs. This reduces code duplication, improves maintainability, and makes the code more declarative. For example, instead of a switch statement that maps actions to routes, use a routeMap object.",
       "severity": "error",
       "category": "code-style"
+    },
+    {
+      "name": "use-save-endpoint",
+      "description": "All database changes must be saved by calling POST /api/save?doc={document name} with the complete object. Direct database modifications or partial updates are not allowed. This ensures data consistency and maintains a single source of truth for database operations.",
+      "severity": "error",
+      "category": "data-management"
     }
   ]
 }

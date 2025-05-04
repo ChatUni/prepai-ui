@@ -1,61 +1,42 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import coursesStore from '../../../stores/coursesStore';
+import { MdDragIndicator } from 'react-icons/md';
 import routeStore from '../../../stores/routeStore';
-import languageStore from '../../../stores/languageStore';
+import seriesCardStore from '../../../stores/seriesCardStore';
+import coursesStore from '../../../stores/coursesStore';
+import useDragAndDrop from '../../../hooks/useDragAndDrop';
 
-const SeriesCard = observer(({ series }) => {
-  const { t } = languageStore;
+const SeriesCard = observer(({ series, index, moveItem }) => {
   const navigate = useNavigate();
   
-  // Validate series object
-  if (!series || typeof series !== 'object') {
-    console.error('Invalid series object:', series);
-    return null;
-  }
+  const validatedSeries = seriesCardStore.validateSeries(series);
+  if (!validatedSeries) return null;
 
-  // Ensure we have a valid ID (either id or _id)
-  const seriesId = series.id || series._id;
-  if (!seriesId) {
-    console.error('Series missing ID:', series);
-    return null;
-  }
+  const { id: seriesId, name, desc, cover, group } = validatedSeries;
+  const coverImage = seriesCardStore.getCoverImage(cover);
+  const courseCount = seriesCardStore.getCourseCount(seriesId);
+  const instructors = seriesCardStore.getFormattedInstructors(series);
 
-  const courseCount = coursesStore.courses.filter(course =>
-    course?.series?.id === seriesId || course?.series?._id === seriesId
-  ).length;
-  
-  // Ensure we have valid string values
-  const name = typeof series.name === 'string' ? series.name : '';
-  const desc = typeof series.desc === 'string' ? series.desc : '';
-  const cover = typeof series.cover === 'string' ? series.cover : '';
-  
-  // Default image if none is provided
-  const coverImage = cover || 'https://via.placeholder.com/300x200?text=Series';
-  
-  // Get all instructors for this series
-  const instructors = coursesStore.getSeriesInstructors(series);
-
-  const handleSeriesClick = (e) => {
-    // Ensure the event doesn't propagate to parent elements
-    if (e) e.stopPropagation();
-    
-    if (routeStore.isSeriesSelectMode) {
-      navigate(`/series/${seriesId}/edit`);
-    } else if (routeStore.isSeriesExamMode) {
-      navigate(`/exam/questions/1`);
-    } else {
-      // Normal mode - navigate to series detail
-      routeStore.navigateToSeries(seriesId, navigate);
+  const { isDragging, isOver, handleRef } = useDragAndDrop({
+    type: `series-${group}`,
+    index,
+    moveItem,
+    onDrop: () => {
+      coursesStore.saveSeriesUpdates().catch(error => {
+        console.error('Failed to save series updates:', error);
+      });
     }
-  };
+  });
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+    <div
+      ref={routeStore.isSeriesSettingMode ? handleRef : null}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
+    >
       <div
-        onClick={(e) => handleSeriesClick(e)}
-        className="cursor-pointer"
+        onClick={(e) => seriesCardStore.handleSeriesClick(seriesId, navigate, e)}
+        className={`cursor-${routeStore.isSeriesSettingMode ? 'move' : 'pointer'}`}
       >
         <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
           <img
@@ -89,7 +70,7 @@ const SeriesCard = observer(({ series }) => {
                 </span>
               </div>
             )) : (
-              <span className="text-sm text-gray-600 dark:text-gray-300">{t('series.unknownInstructor')}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">{seriesCardStore.unknownInstructorText}</span>
             )}
           </div>
           
@@ -101,8 +82,14 @@ const SeriesCard = observer(({ series }) => {
           
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-blue-600 dark:text-blue-400">
-              {t('series.courseCount', { count: courseCount })}
+              {seriesCardStore.getCourseCountText(courseCount)}
             </span>
+            {routeStore.isSeriesSettingMode && (
+              <MdDragIndicator
+                className="text-gray-400 text-xl cursor-move"
+                aria-label="Drag to reorder"
+              />
+            )}
           </div>
         </div>
       </div>

@@ -239,6 +239,7 @@ class ClientStore {
     this.client.settings.groups = groups;
     await this.saveChanges('groups');
   }
+
 }
 
 // Create and export a singleton instance

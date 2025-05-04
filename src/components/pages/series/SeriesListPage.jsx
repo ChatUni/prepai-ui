@@ -1,5 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import SeriesList from './SeriesList';
 import GroupedSeriesList from './GroupedSeriesList';
 import SearchBar from '../../ui/SearchBar';
@@ -22,7 +24,8 @@ const SeriesListPage = observer(() => {
   }, []);
 
   return (
-    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
+    <DndProvider backend={HTML5Backend}>
+      <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
 
       {routeStore.isSeriesHomeMode && <ToolsNav />}
@@ -46,7 +49,8 @@ const SeriesListPage = observer(() => {
           />
         )}
       </LoadingState>
-    </div>
+      </div>
+    </DndProvider>
   );
 });
 

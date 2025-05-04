@@ -1,7 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useDrag, useDrop } from 'react-dnd';
 import { MdDragIndicator } from 'react-icons/md';
+import useDragAndDrop from '../../hooks/useDragAndDrop';
+import coursesStore from '../../stores/coursesStore';
 
 const MenuItem = ({ label, onClick }) => (
   <button
@@ -13,52 +14,33 @@ const MenuItem = ({ label, onClick }) => (
   </button>
 );
 
-const AccordionSection = observer(({ 
-  title, 
-  isExpanded, 
-  onToggle, 
-  maxHeight = '40', 
+const AccordionSection = observer(({
+  title,
+  isExpanded,
+  onToggle,
+  maxHeight = '40',
   children,
   index,
   moveGroup,
+  onDrop,
   isDraggable = false
 }) => {
-  const [{ isDragging }, dragRef] = useDrag(() => ({
+  const { isDragging, isOver, handleRef } = useDragAndDrop({
     type: 'group',
-    item: { index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging()
-    })
-  }), [index]);
-
-  const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: 'group',
-    collect: (monitor) => ({
-      isOver: monitor.isOver()
-    }),
-    hover: (item, monitor) => {
-      if (!dragDropRef.current) return;
-      
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) return;
-
-      // Move the item
-      moveGroup(dragIndex, hoverIndex);
-      
-      // Update the index for the dragged item
-      item.index = hoverIndex;
+    index,
+    moveItem: (fromIndex, toIndex) => {
+      if (moveGroup && isDraggable && fromIndex !== toIndex) {
+        moveGroup(fromIndex, toIndex);
+      }
+    },
+    onDrop: () => {
+      if (isDraggable) {
+        coursesStore.saveGroupOrder().catch(error => {
+          console.error('Failed to save group order:', error);
+        });
+      }
     }
-  }), [index, moveGroup]);
-
-  const dragDropRef = React.useRef(null);
-  const handleRef = (el) => {
-    dragRef(el);
-    dropRef(el);
-    dragDropRef.current = el;
-  };
+  });
 
   return (
     <div 

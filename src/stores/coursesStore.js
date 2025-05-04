@@ -15,6 +15,7 @@ class CoursesStore {
   selectedSeriesId = null;
   selectedInstructorId = null;
   groupOrder = [];
+  pendingSeriesUpdates = new Map();
 
   constructor() {
     this.fetchCourses();
@@ -31,6 +32,7 @@ class CoursesStore {
       selectedSeriesId: observable,
       selectedInstructorId: observable,
       groupOrder: observable,
+      pendingSeriesUpdates: observable,
       fetchCourses: action,
       fetchInstructors: action,
       fetchSeries: action,
@@ -45,6 +47,7 @@ class CoursesStore {
       setLoadingInstructorSeries: action,
       setSelectedSeriesId: action,
       setSelectedInstructorId: action,
+      moveSeries: action,
       filteredCourses: computed,
       filteredInstructors: computed,
       filteredSeries: computed,
@@ -53,7 +56,8 @@ class CoursesStore {
       coursesBySeries: computed,
       getSeriesInstructors: computed,
       uniqueCategories: computed,
-      seriesCovers: computed
+      seriesCovers: computed,
+      groupedSeries: computed
     });
   }
 
@@ -116,7 +120,11 @@ class CoursesStore {
 
   setSeries(series) {
     runInAction(() => {
-      this.series = series;
+      // Initialize order if not set
+      this.series = series.map((s, index) => ({
+        ...s,
+        order: typeof s.order === 'number' ? s.order : index
+      }));
     });
   }
 
@@ -368,7 +376,18 @@ class CoursesStore {
     const grouped = {};
 
     groups.forEach(group => {
-      grouped[group] = this.filteredSeries.filter(series => series.group === group);
+      // Get series for this group and sort by order
+      const groupSeries = this.filteredSeries.filter(series => series.group === group);
+      
+      // Initialize order if not set
+      groupSeries.forEach((series, index) => {
+        if (typeof series.order !== 'number') {
+          series.order = index;
+        }
+      });
+      
+      // Sort by order property
+      grouped[group] = groupSeries.sort((a, b) => a.order - b.order);
     });
 
     return grouped;
@@ -378,17 +397,102 @@ class CoursesStore {
     this.groupOrder = groups;
   });
 
-  moveGroup = action(async (fromIndex, toIndex) => {
+  pendingGroups = null;
+
+  moveGroup = action((fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+    
     const groups = this.groupOrder.length > 0
       ? [...this.groupOrder]
       : [...clientStore.client.settings.groups];
 
     const [removed] = groups.splice(fromIndex, 1);
     groups.splice(toIndex, 0, removed);
+    
+    // Update local state only
     this.groupOrder = groups;
+    this.pendingGroups = groups;
+  });
 
-    // Save the new order to client settings
-    await clientStore.saveGroupOrder(groups);
+  saveGroupOrder = action(async () => {
+    if (!this.pendingGroups) return;
+
+    try {
+      // Update client settings and save
+      clientStore.client.settings.groups = this.pendingGroups;
+      await fetch('/api/save?doc=clients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(clientStore.client)
+      });
+      
+      // Clear pending changes after successful save
+      this.pendingGroups = null;
+    } catch (error) {
+      console.error('Failed to save group order:', error);
+      throw error;
+    }
+  });
+
+
+  moveSeries = action((group, fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+
+    // Get the current ordered series for this group
+    const currentGroupSeries = [...this.groupedSeries[group]];
+    
+    // Move the series within the group
+    const [movedSeries] = currentGroupSeries.splice(fromIndex, 1);
+    currentGroupSeries.splice(toIndex, 0, movedSeries);
+
+    // Update orders in the moved range
+    currentGroupSeries.forEach((series, index) => {
+      series.order = index;
+    });
+
+    // Update the main series array
+    const seriesList = [...this.series];
+    currentGroupSeries.forEach(series => {
+      const seriesIndex = seriesList.findIndex(s => s.id === series.id);
+      if (seriesIndex !== -1) {
+        const updatedSeries = {
+          ...seriesList[seriesIndex],
+          order: series.order
+        };
+        seriesList[seriesIndex] = updatedSeries;
+        this.pendingSeriesUpdates.set(series.id, updatedSeries);
+      }
+    });
+
+    this.series = seriesList;
+  });
+
+  saveSeriesUpdates = action(async () => {
+    if (this.pendingSeriesUpdates.size === 0) return;
+
+    try {
+      const updates = Array.from(this.pendingSeriesUpdates.values());
+      console.log('Saving series updates:', updates);
+
+      await Promise.all(
+        updates.map(series =>
+          fetch('/api/save?doc=series', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(series)
+          })
+        )
+      );
+      
+      this.pendingSeriesUpdates.clear();
+    } catch (error) {
+      console.error('Failed to save series updates:', error);
+      throw error;
+    }
   });
 
   get coursesBySeries() {
