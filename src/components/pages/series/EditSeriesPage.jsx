@@ -9,8 +9,8 @@ import ImageUpload from '../../ui/ImageUpload';
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const { id: seriesId } = useParams(); // Get ID directly from URL params
   const dropdownRef = useRef(null);
+  const formRef = useRef(null);
 
   // Handle click outside to close dropdown
   // Fetch all series to populate categories
@@ -31,9 +31,8 @@ const EditSeriesPage = observer(() => {
 
   useEffect(() => {
     const loadSeries = async () => {
-      if (seriesId) {
-        await seriesStore.fetchSeriesById(seriesId);
-        console.log('Current series:', seriesStore.currentSeries); // Debug log
+      if (seriesStore.currentSeriesId) {
+        await seriesStore.fetchSeriesById(seriesStore.currentSeriesId);
       } else {
         seriesStore.setCurrentSeries({
           name: '',
@@ -45,40 +44,14 @@ const EditSeriesPage = observer(() => {
       }
     };
     loadSeries();
-  }, [seriesId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    
-    // Create a new FormData with the correct structure
-    const newFormData = new FormData();
-    newFormData.append('name', formData.get('name'));
-    newFormData.append('description', formData.get('description'));
-    
-    if (formData.get('cover_image')) {
-      newFormData.append('cover_image', formData.get('cover_image'));
-    }
-    
-    // Add series ID if editing
-    if (seriesId) {
-      newFormData.append('id', parseInt(seriesId));
-    }
-
-    try {
-      await seriesStore.saveSeries(newFormData, navigate);
-    } catch (error) {
-      console.error(t('series.edit.saveError'), error);
-      // TODO: Add proper error message display to user
-    }
-  };
+  }, []);
 
   const content = (
     <div className="p-4 w-full h-full flex flex-col">
-      <h1 className="text-2xl font-bold mb-4">
-        {seriesId ? t('series.edit.editTitle') : t('series.edit.createTitle')}
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-4xl mx-auto flex-1 flex flex-col">
+      <form
+        ref={formRef}
+        className="space-y-4 w-full max-w-4xl mx-auto flex-1 flex flex-col edit-series-form"
+      >
         <div>
           <label className="block text-sm font-medium mb-1">
             {t('series.edit.name')}
@@ -207,15 +180,6 @@ const EditSeriesPage = observer(() => {
           )}
         </div>
 
-        <div className="bg-white">
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={seriesStore.isLoading}
-          >
-            {seriesStore.isLoading ? t('series.edit.saving') : t('series.edit.saveSeries')}
-          </button>
-        </div>
       </form>
     </div>
   );

@@ -2,6 +2,8 @@ import { makeAutoObservable, computed } from 'mobx';
 import coursesStore from './coursesStore';
 import routeStore from './routeStore';
 import languageStore from './languageStore';
+import seriesStore from './seriesStore';
+import groupedSeriesStore from './groupedSeriesStore';
 
 class SeriesCardStore {
   constructor() {
@@ -67,6 +69,13 @@ class SeriesCardStore {
 
   getCourseCountText = (count) => {
     return languageStore.t('series.courseCount', { count });
+  };
+
+  openEditDialog = async (series) => {
+    const seriesId = series.id || series._id;
+    routeStore.setSeriesId(seriesId);
+    await seriesStore.fetchSeriesById(seriesId);
+    groupedSeriesStore.openEditSeriesDialog(series.group);
   };
 }
 

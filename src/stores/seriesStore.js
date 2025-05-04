@@ -187,26 +187,35 @@ class SeriesStore {
     body: JSON.stringify(data),
   }).then(r => r.json());
 
-  saveSeries = async (formData, navigate) => {
+  handleSubmit = async (form, navigate) => {
+    const formData = new FormData(form);
+    
+    // Create the series data object
+    const seriesData = {
+      name: formData.get('name'),
+      category: this.selectedCategory,
+      cover: this.currentSeries?.cover,
+      desc: this.descType === 'text' ? formData.get('description') : this.selectedDescImagePreview
+    };
+
+    // Add series ID if editing
+    const seriesId = routeStore.seriesId;
+    if (seriesId) {
+      seriesData.id = parseInt(seriesId);
+    }
+
+    try {
+      await this.saveSeries(seriesData, navigate);
+      return true;
+    } catch (error) {
+      console.error('Failed to save series:', error);
+      return false;
+    }
+  }
+
+  saveSeries = async (seriesData, navigate) => {
     try {
       this.isLoading = true;
-      
-      const seriesData = {
-        name: this.currentSeries?.name,
-        category: this.selectedCategory,
-        cover: this.currentSeries?.cover,
-        desc: this.currentSeries?.desc
-      };
-
-      if (formData.get('id')) {
-        seriesData.id = parseInt(formData.get('id'));
-      }
-
-      // Handle description based on type
-      if (this.descType === 'text') {
-        seriesData.desc = formData.get('description');
-      }
-
       const data = await this.saveSeriesPost(seriesData);
       const seriesId = data.id;
 
@@ -219,45 +228,20 @@ class SeriesStore {
       // }
 
       // Handle description image upload
-      if (this.descType === 'image') {
-        const descImage = formData.get('desc_image');
-        let imageToUpload = null;
-
-        if (descImage instanceof File) {
-          imageToUpload = descImage;
-        } else if (this.selectedDescImagePreview) {
-          // Convert data URL to File object if it's a data URL
-          if (this.selectedDescImagePreview.startsWith('data:')) {
-            const arr = this.selectedDescImagePreview.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-              u8arr[n] = bstr.charCodeAt(n);
-            }
-            imageToUpload = new File([u8arr], 'desc_image', { type: mime });
-          } else if (!this.selectedDescImagePreview.startsWith('http')) {
-            // If it's not a data URL or http URL, set empty string
-            seriesData.desc = '';
-            await this.saveSeriesPost(seriesData);
-            return;
-          }
+      // Handle image upload if needed
+      if (this.descType === 'image' && this.selectedDescImagePreview?.startsWith('data:')) {
+        const arr = this.selectedDescImagePreview.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
         }
-
-        if (imageToUpload) {
-          const imageUrl = await this.uploadSeriesImage(imageToUpload, seriesId);
-          seriesData.desc = imageUrl;
-          await this.saveSeriesPost(seriesData);
-        } else if (this.selectedDescImagePreview?.startsWith('http')) {
-          // Preserve existing Cloudinary URL
-          seriesData.desc = this.selectedDescImagePreview;
-          await this.saveSeriesPost(seriesData);
-        } else {
-          // If no image is provided and no existing preview, set desc to empty string
-          seriesData.desc = '';
-          await this.saveSeriesPost(seriesData);
-        }
+        const imageToUpload = new File([u8arr], 'desc_image', { type: mime });
+        const imageUrl = await this.uploadSeriesImage(imageToUpload, data.id);
+        seriesData.desc = imageUrl;
+        await this.saveSeriesPost(seriesData);
       }
 
       runInAction(() => {

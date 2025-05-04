@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
 import clientStore from './clientStore';
+import routeStore from './routeStore';
+import seriesStore from './seriesStore';
 
 class GroupedSeriesStore {
   expandedGroups = new Set();
@@ -64,6 +66,26 @@ class GroupedSeriesStore {
   };
 
   openAddSeriesDialog = (group) => {
+    // First clear any existing state
+    routeStore.setSeriesId(null);
+    seriesStore.setCurrentSeries(null);
+    
+    // Then set up for adding new series
+    this.selectedGroup = group;
+    this.isAddSeriesDialogOpen = true;
+    
+    // Initialize empty series with the selected group
+    seriesStore.setCurrentSeries({
+      name: '',
+      desc: '',
+      instructor: null,
+      cover: '',
+      category: '',
+      group: group
+    });
+  };
+
+  openEditSeriesDialog = (group) => {
     this.selectedGroup = group;
     this.isAddSeriesDialogOpen = true;
   };
@@ -71,6 +93,9 @@ class GroupedSeriesStore {
   closeAddSeriesDialog = () => {
     this.isAddSeriesDialogOpen = false;
     this.selectedGroup = null;
+    // Clear series state when closing dialog
+    routeStore.setSeriesId(null);
+    seriesStore.setCurrentSeries(null);
   };
 
   setNewGroupName = (name) => {

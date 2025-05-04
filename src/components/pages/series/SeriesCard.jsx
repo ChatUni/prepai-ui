@@ -2,12 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { MdDragIndicator } from 'react-icons/md';
+import { FiEdit2 } from 'react-icons/fi';
 import routeStore from '../../../stores/routeStore';
+import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
 import coursesStore from '../../../stores/coursesStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 
 const SeriesCard = observer(({ series, index, moveItem }) => {
+  const { t } = languageStore;
   const navigate = useNavigate();
   
   const validatedSeries = seriesCardStore.validateSeries(series);
@@ -85,10 +88,22 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               {seriesCardStore.getCourseCountText(courseCount)}
             </span>
             {routeStore.isSeriesSettingMode && (
-              <MdDragIndicator
-                className="text-gray-400 text-xl cursor-move"
-                aria-label="Drag to reorder"
-              />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    seriesCardStore.openEditDialog(series);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  title={t('series.edit')}
+                >
+                  <FiEdit2 size={16} />
+                </button>
+                <MdDragIndicator
+                  className="text-gray-400 text-xl cursor-move"
+                  aria-label="Drag to reorder"
+                />
+              </div>
             )}
           </div>
         </div>

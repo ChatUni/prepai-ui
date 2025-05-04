@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
@@ -8,6 +8,7 @@ import Dialog from '../../ui/Dialog';
 import languageStore from '../../../stores/languageStore';
 import routeStore from '../../../stores/routeStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
+import seriesStore from '../../../stores/seriesStore';
 
 const GroupedSeriesList = observer(() => {
   const { t } = languageStore;
@@ -146,8 +147,19 @@ const GroupedSeriesList = observer(() => {
       <Dialog
         isOpen={groupedSeriesStore.isAddSeriesDialogOpen}
         onClose={groupedSeriesStore.closeAddSeriesDialog}
-        title={t('series.groups.addSeries')}
+        onConfirm={async () => {
+          const form = document.querySelector('.edit-series-form');
+          if (form) {
+            const success = await seriesStore.handleSubmit(form);
+            if (success) {
+              groupedSeriesStore.closeAddSeriesDialog();
+              await groupedSeriesStore.fetchSeries();
+            }
+          }
+        }}
+        title={seriesStore.currentSeriesId ? t('series.edit.editTitle') : t('series.groups.addSeries')}
         size="xl"
+        isConfirm={true}
       >
         <div className="max-h-[80vh] overflow-y-auto">
           <EditSeriesPage />
