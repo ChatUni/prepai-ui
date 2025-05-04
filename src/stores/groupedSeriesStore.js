@@ -9,6 +9,7 @@ class GroupedSeriesStore {
   isEditGroupDialogOpen = false;
   isDeleteGroupDialogOpen = false;
   isErrorDialogOpen = false;
+  isAddSeriesDialogOpen = false;
   newGroupName = '';
   selectedGroup = null;
   errorMessage = '';
@@ -60,6 +61,16 @@ class GroupedSeriesStore {
   closeAddGroupDialog = () => {
     this.isAddGroupDialogOpen = false;
     this.newGroupName = '';
+  };
+
+  openAddSeriesDialog = (group) => {
+    this.selectedGroup = group;
+    this.isAddSeriesDialogOpen = true;
+  };
+
+  closeAddSeriesDialog = () => {
+    this.isAddSeriesDialogOpen = false;
+    this.selectedGroup = null;
   };
 
   setNewGroupName = (name) => {

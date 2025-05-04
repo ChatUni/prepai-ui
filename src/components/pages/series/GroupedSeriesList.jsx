@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
+import EditSeriesPage from './EditSeriesPage';
 import { AccordionSection } from '../../ui/AdminAccordion';
 import Dialog from '../../ui/Dialog';
 import languageStore from '../../../stores/languageStore';
@@ -16,6 +17,16 @@ const GroupedSeriesList = observer(() => {
 
     return (
       <div className="flex items-center gap-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            groupedSeriesStore.openAddSeriesDialog(group);
+          }}
+          className="p-1 text-white/70 hover:text-white transition-colors"
+          title={t('series.groups.addSeries')}
+        >
+          <FiPlus size={16} />
+        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -131,6 +142,16 @@ const GroupedSeriesList = observer(() => {
         title={t('common.error')}
       >
         <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
+      </Dialog>
+      <Dialog
+        isOpen={groupedSeriesStore.isAddSeriesDialogOpen}
+        onClose={groupedSeriesStore.closeAddSeriesDialog}
+        title={t('series.groups.addSeries')}
+        size="xl"
+      >
+        <div className="max-h-[80vh] overflow-y-auto">
+          <EditSeriesPage />
+        </div>
       </Dialog>
     </div>
   );

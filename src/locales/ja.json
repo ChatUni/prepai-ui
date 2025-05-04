@@ -391,7 +391,8 @@
       "editGroup": "グループを編集",
       "deleteGroup": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？",
-      "cannotDelete": "シリーズが含まれているグループは削除できません"
+      "cannotDelete": "シリーズが含まれているグループは削除できません",
+      "addSeries": "シリーズを追加"
     }
   }
 }
