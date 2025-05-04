@@ -384,7 +384,14 @@
     "groups": {
       "title": "シリーズグループ",
       "noGroup": "グループなし",
-      "noSeries": "このグループにシリーズがありません"
+      "noSeries": "このグループにシリーズがありません",
+      "addGroup": "グループを追加",
+      "newGroup": "新規グループ",
+      "enterName": "グループ名を入力",
+      "editGroup": "グループを編集",
+      "deleteGroup": "グループを削除",
+      "confirmDelete": "このグループを削除してもよろしいですか？",
+      "cannotDelete": "シリーズが含まれているグループは削除できません"
     }
   }
 }

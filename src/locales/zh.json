@@ -384,7 +384,14 @@
     "groups": {
       "title": "系列分组",
       "noGroup": "无分组",
-      "noSeries": "该分组暂无系列"
+      "noSeries": "该分组暂无系列",
+      "addGroup": "添加分组",
+      "newGroup": "新建分组",
+      "enterName": "输入分组名称",
+      "editGroup": "编辑分组",
+      "deleteGroup": "删除分组",
+      "confirmDelete": "确定要删除此分组吗？",
+      "cannotDelete": "无法删除包含系列的分组"
     }
   }
 }

@@ -23,7 +23,8 @@ const AccordionSection = observer(({
   index,
   moveGroup,
   onDrop,
-  isDraggable = false
+  isDraggable = false,
+  actions
 }) => {
   const { isDragging, isOver, handleRef } = useDragAndDrop({
     type: 'group',
@@ -61,9 +62,12 @@ const AccordionSection = observer(({
         )}
         <div className="flex-1 flex items-center justify-between" onClick={onToggle}>
           <span className="font-semibold">{title}</span>
-          <span className={`transform transition-transform duration-200 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}>▼</span>
+          <div className="flex items-center gap-2">
+            {actions}
+            <span className={`transform transition-transform duration-200 ml-2 ${
+              isExpanded ? 'rotate-180' : ''
+            }`}>▼</span>
+          </div>
         </div>
       </div>
       <div className={`transition-all duration-200 ${
