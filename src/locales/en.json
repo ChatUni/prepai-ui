@@ -279,6 +279,9 @@
     "loadingError": "Error loading series",
     "noSeries": "No series available",
     "courseList": "Course List",
+    "instructorList": "Instructors",
+    "noAvatar": "No Avatar",
+    "noInstructors": "No instructors available",
     "banners": {
       "title": "Edit Banner Images",
       "banner": "Banner",

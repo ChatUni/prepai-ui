@@ -23,7 +23,8 @@ class SeriesStore {
       uniqueCategories: computed,
       selectedCategory: observable,
       filteredSeriesCourses: computed,
-      currentSeriesFromRoute: computed
+      currentSeriesFromRoute: computed,
+      seriesInstructors: computed
     });
   }
 
@@ -284,6 +285,27 @@ class SeriesStore {
       
       return matchesSeries && matchesInstructor && matchesSearch;
     });
+  }
+
+  get seriesInstructors() {
+    const currentSeries = this.currentSeriesFromRoute;
+    if (!currentSeries) return [];
+
+    // Get all instructors from the filtered courses
+    const instructors = this.filteredSeriesCourses
+      .map(course => course.instructor)
+      .filter(instructor => instructor); // Filter out null/undefined
+
+    // Remove duplicates based on instructor id
+    const uniqueInstructors = instructors.reduce((acc, current) => {
+      const x = acc.find(item => item.id === current.id);
+      if (!x) {
+        return acc.concat([current]);
+      }
+      return acc;
+    }, []);
+
+    return uniqueInstructors;
   }
 
   handleBackNavigation = () => {
