@@ -269,6 +269,14 @@
       },
       "category": "カテゴリー",
       "categoryPlaceholder": "カテゴリーを選択または入力",
+      "price": "価格",
+      "duration": "期間",
+      "durationOptions": {
+        "30days": "30日",
+        "90days": "90日",
+        "180days": "180日",
+        "365days": "365日"
+      },
       "coverImage": "カバー画像",
       "selectImage": "画像を選択",
       "changeImage": "画像を変更",
@@ -358,6 +366,14 @@
       },
       "category": "カテゴリー",
       "categoryPlaceholder": "カテゴリーを選択または入力",
+      "price": "価格",
+      "duration": "期間",
+      "durationOptions": {
+        "30days": "30日",
+        "90days": "90日",
+        "180days": "180日",
+        "365days": "365日"
+      },
       "coverImage": "カバー画像",
       "selectImage": "画像を選択",
       "changeImage": "画像を変更",

@@ -260,6 +260,14 @@
       },
       "category": "分类",
       "categoryPlaceholder": "选择或输入分类",
+      "price": "价格",
+      "duration": "时长",
+      "durationOptions": {
+        "30days": "30天",
+        "90days": "90天",
+        "180days": "180天",
+        "365days": "365天"
+      },
       "coverImage": "封面图片",
       "selectImage": "选择图片",
       "changeImage": "更改图片",
@@ -294,6 +302,19 @@
       "emptyBannersError": "请为所有横幅选择图片后再保存",
       "saveError": "保存横幅更改失败",
       "loadError": "加载横幅数据失败"
+    },
+    "groups": {
+      "title": "课程分组",
+      "noGroup": "无分组",
+      "noSeries": "该分组暂无课程",
+      "addGroup": "添加分组",
+      "newGroup": "新建分组",
+      "enterName": "输入分组名称",
+      "editGroup": "编辑分组",
+      "deleteGroup": "删除分组",
+      "confirmDelete": "确定要删除此分组吗？",
+      "cannotDelete": "无法删除包含课程的分组",
+      "addSeries": "添加课程"
     }
   },
   "search": {

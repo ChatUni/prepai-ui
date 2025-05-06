@@ -121,6 +121,37 @@ const EditSeriesPage = observer(() => {
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t('series.edit.price')}
+          </label>
+          <input
+            type="number"
+            name="price"
+            defaultValue={seriesStore.currentSeries?.price || ''}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t('series.edit.duration')}
+          </label>
+          <select
+            name="duration"
+            defaultValue={seriesStore.currentSeries?.duration || '30days'}
+            className="w-full p-2 border rounded bg-white"
+            required
+          >
+            {seriesStore.durationOptionKeys.map((key) => (
+              <option key={key} value={key}>
+                {t(`series.edit.durationOptions.${key}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <ImageUpload
           id="cover_image"
           label={t('series.edit.coverImage')}

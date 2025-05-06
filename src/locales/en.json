@@ -260,6 +260,14 @@
       },
       "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
+      "price": "Price",
+      "duration": "Duration",
+      "durationOptions": {
+        "30days": "30 Days",
+        "90days": "90 Days",
+        "180days": "180 Days",
+        "365days": "365 Days"
+      },
       "coverImage": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",
@@ -352,6 +360,14 @@
       },
       "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
+      "price": "Price",
+      "duration": "Duration",
+      "durationOptions": {
+        "30days": "30 Days",
+        "90days": "90 Days",
+        "180days": "180 Days",
+        "365days": "365 Days"
+      },
       "coverImage": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",

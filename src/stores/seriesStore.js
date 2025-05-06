@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction, computed, observable } from 'mobx';
 import routeStore from './routeStore';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
+import languageStore from './languageStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
 
@@ -26,6 +27,16 @@ class SeriesStore {
       currentSeriesFromRoute: computed,
       seriesInstructors: computed
     });
+  }
+
+  durationOptionKeys = ['30days', '90days', '180days', '365days'];
+
+  get durationOptions() {
+    const { t } = languageStore;
+    return this.durationOptionKeys.map(key => ({
+      key,
+      value: t(`series.edit.durationOptions.${key}`)
+    }));
   }
 
   setDescType = (type) => {
@@ -75,11 +86,25 @@ class SeriesStore {
   }
 
   setCurrentSeries = (series) => {
+    if (!series) {
+      series = {
+        name: '',
+        desc: '',
+        instructor: null,
+        cover: '',
+        category: '',
+        price: '',
+        duration: '30days'
+      };
+    }
+    
     this.currentSeries = series;
-    this.selectedCategory = series?.category || '';
+    this.selectedCategory = series.category || '';
+    series.price = series.price || '';
+    series.duration = series.duration || this.durationOptions[0];
     
     // Determine if the current description is an image URL
-    if (series?.desc && (
+    if (series.desc && (
       series.desc.startsWith('http://') ||
       series.desc.startsWith('https://') ||
       series.desc.startsWith('data:image/')
@@ -196,7 +221,9 @@ class SeriesStore {
       name: formData.get('name'),
       category: this.selectedCategory,
       cover: this.currentSeries?.cover,
-      desc: this.descType === 'text' ? formData.get('description') : this.selectedDescImagePreview
+      desc: this.descType === 'text' ? formData.get('description') : this.selectedDescImagePreview,
+      price: formData.get('price'),
+      duration: formData.get('duration')
     };
 
     // Add series ID if editing
