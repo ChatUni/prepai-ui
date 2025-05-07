@@ -16,7 +16,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
   const validatedSeries = seriesCardStore.validateSeries(series);
   if (!validatedSeries) return null;
 
-  const { id: seriesId, name, desc, cover, group } = validatedSeries;
+  const { id: seriesId, name, desc, cover, group, price } = validatedSeries;
   const coverImage = seriesCardStore.getCoverImage(cover);
   const courseCount = seriesCardStore.getCourseCount(seriesId);
   const instructors = seriesCardStore.getFormattedInstructors(series);
@@ -53,7 +53,8 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
         </div>
         
         <div className="p-3">
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <div className="flex flex-wrap gap-2">
             {instructors.length > 0 ? instructors.map((instructor, index) => (
               <div key={instructor.id || instructor._id} className="flex items-center">
                 {instructor?.iconUrl ? (
@@ -74,6 +75,10 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               </div>
             )) : (
               <span className="text-sm text-gray-600 dark:text-gray-300">{seriesCardStore.unknownInstructorText}</span>
+            )}
+            </div>
+            {price > 0 && (
+              <span className="text-red-600 dark:text-red-300 font-bold">${price}</span>
             )}
           </div>
           

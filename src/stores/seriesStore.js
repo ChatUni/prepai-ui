@@ -94,7 +94,8 @@ class SeriesStore {
         cover: '',
         category: '',
         price: '',
-        duration: '30days'
+        duration: '30days',
+        group: ''
       };
     }
     
@@ -223,7 +224,9 @@ class SeriesStore {
       cover: this.currentSeries?.cover,
       desc: this.descType === 'text' ? formData.get('description') : this.selectedDescImagePreview,
       price: formData.get('price'),
-      duration: formData.get('duration')
+      duration: formData.get('duration'),
+      group: this.currentSeries?.group || '',
+      order: this.currentSeries?.order
     };
 
     // Add series ID if editing

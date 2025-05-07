@@ -27,7 +27,8 @@ class SeriesCardStore {
       name: typeof series.name === 'string' ? series.name : '',
       desc: typeof series.desc === 'string' ? series.desc : '',
       cover: typeof series.cover === 'string' ? series.cover : '',
-      group: series.group
+      group: series.group,
+      price: +series.price || 0
     };
   };
 

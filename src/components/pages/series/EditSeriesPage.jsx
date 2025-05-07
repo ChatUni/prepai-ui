@@ -39,7 +39,8 @@ const EditSeriesPage = observer(() => {
           desc: '',
           instructor: null,
           cover: '',
-          category: ''
+          category: '',
+          group: ''
         });
       }
     };
@@ -118,6 +119,21 @@ const EditSeriesPage = observer(() => {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t('series.groups.title')}
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              name="group"
+              defaultValue={seriesStore.currentSeries?.group || ''}
+              className="w-full p-2 border rounded bg-white"
+              placeholder={t('series.groups.noGroup')}
+            />
           </div>
         </div>
 
