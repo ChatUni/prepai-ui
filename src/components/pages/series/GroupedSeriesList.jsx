@@ -152,8 +152,12 @@ const GroupedSeriesList = observer(() => {
           if (form) {
             const success = await seriesStore.handleSubmit(form);
             if (success) {
+              // Refresh data after successful save
+              await Promise.all([
+                seriesStore.fetchSeries(),
+                coursesStore.fetchSeries()
+              ]);
               groupedSeriesStore.closeAddSeriesDialog();
-              await groupedSeriesStore.fetchSeries();
             }
           }
         }}

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import seriesStore from '../../../stores/seriesStore';
 import languageStore from '../../../stores/languageStore';
+import clientStore from '../../../stores/clientStore';
 import LoadingState from '../../ui/LoadingState';
 import ImageUpload from '../../ui/ImageUpload';
 
@@ -127,13 +128,19 @@ const EditSeriesPage = observer(() => {
             {t('series.groups.title')}
           </label>
           <div className="relative">
-            <input
-              type="text"
+            <select
               name="group"
-              defaultValue={seriesStore.currentSeries?.group || ''}
+              value={seriesStore.currentSeries?.group || ''}
+              onChange={(e) => seriesStore.setCurrentSeries({ ...seriesStore.currentSeries, group: e.target.value })}
               className="w-full p-2 border rounded bg-white"
-              placeholder={t('series.groups.noGroup')}
-            />
+            >
+              <option value="">{t('series.groups.noGroup')}</option>
+              {clientStore.client.settings.groups.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
