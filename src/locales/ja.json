@@ -218,6 +218,8 @@
     "addCourse": "コースを追加",
     "add": {
       "title": "新規コースを追加",
+      "instructor": "講師",
+      "selectInstructor": "講師を選択してください",
       "courseName": "コース名",
       "courseDescription": "コース説明",
       "coverImage": "カバー画像",
@@ -290,6 +292,8 @@
     "unknownInstructor": "不明な講師",
     "noDescription": "説明なし",
     "courseCount": "{count}件のコース",
+    "showCourses": "{count}件のコースを表示",
+    "hideCourses": "{count}件のコースを非表示",
     "banners": {
       "title": "バナー画像を編集",
       "banner": "バナー",

@@ -6,7 +6,7 @@ import newCourseStore from '../../../stores/newCourseStore';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 
-const AddCoursePage = observer(() => {
+const EditCoursePage = observer(() => {
   const { seriesId } = useParams();
   const navigate = useNavigate();
   const { t } = languageStore;
@@ -15,7 +15,9 @@ const AddCoursePage = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       await seriesStore.fetchInstructors();
-      await seriesStore.fetchSeriesById(seriesId);
+      if (seriesId) {
+        await seriesStore.fetchSeriesById(seriesId);
+      }
     };
     loadData();
     return () => {
@@ -32,23 +34,23 @@ const AddCoursePage = observer(() => {
     }
   };
 
-  const content = (
+  const content = currentSeries ? (
     <div className="container mx-auto p-4 max-w-4xl">
       {/* Series Details Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1">
             {currentSeries.cover && (
-              <img 
-                src={currentSeries.cover} 
+              <img
+                src={currentSeries.cover}
                 alt={currentSeries.name}
                 className="w-full h-48 object-cover rounded-lg"
               />
             )}
           </div>
           <div className="md:col-span-2">
-            <h3 className="text-xl font-semibold mb-2">{currentSeries.name}</h3>
-            <p className="text-gray-700">{currentSeries.description}</p>
+            <h3 className="text-xl font-semibold mb-2">{currentSeries.name || ''}</h3>
+            <p className="text-gray-700">{currentSeries.description || ''}</p>
           </div>
         </div>
       </div>
@@ -203,11 +205,11 @@ const AddCoursePage = observer(() => {
         </form>
       </div>
     </div>
-  );
+  ) : null;
 
   return (
     <LoadingState
-      isLoading={seriesStore.isLoading || !seriesStore.currentSeries}
+      isLoading={seriesStore.isLoading}
       customMessage={t('common.loading')}
     >
       {content}
@@ -215,4 +217,4 @@ const AddCoursePage = observer(() => {
   );
 });
 
-export default AddCoursePage;
+export default EditCoursePage;

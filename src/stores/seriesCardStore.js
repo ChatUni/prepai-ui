@@ -6,9 +6,38 @@ import seriesStore from './seriesStore';
 import groupedSeriesStore from './groupedSeriesStore';
 
 class SeriesCardStore {
+  expandedSeriesId = null;
+  editCourseDialogOpen = false;
+  currentEditCourse = null;
+  currentSeriesId = null;
+
   constructor() {
     makeAutoObservable(this);
   }
+
+  openEditCourseDialog = (course, seriesId) => {
+    this.currentEditCourse = course;
+    this.currentSeriesId = seriesId;
+    this.editCourseDialogOpen = true;
+  };
+
+  closeEditCourseDialog = () => {
+    this.editCourseDialogOpen = false;
+    this.currentEditCourse = null;
+    this.currentSeriesId = null;
+  };
+
+  toggleCourseList = (seriesId) => {
+    if (this.expandedSeriesId === seriesId) {
+      this.expandedSeriesId = null;
+    } else {
+      this.expandedSeriesId = seriesId;
+    }
+  };
+
+  isExpanded = (seriesId) => {
+    return this.expandedSeriesId === seriesId;
+  };
 
   validateSeries = (series) => {
     if (!series || typeof series !== 'object') {
@@ -68,8 +97,9 @@ class SeriesCardStore {
     return languageStore.t('series.unknownInstructor');
   }
 
-  getCourseCountText = (count) => {
-    return languageStore.t('series.courseCount', { count });
+  getCourseCountText = (count, seriesId) => {
+    const key = this.isExpanded(seriesId) ? 'series.hideCourses' : 'series.showCourses';
+    return languageStore.t(key, { count });
   };
 
   openEditDialog = async (series) => {

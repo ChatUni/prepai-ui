@@ -18,8 +18,8 @@ import QuestionPage from './components/pages/exam/QuestionPage';
 import SeriesListPage from './components/pages/series/SeriesListPage';
 import SeriesDetailPage from './components/pages/series/SeriesDetailPage';
 import EditSeriesPage from './components/pages/series/EditSeriesPage';
-import EditBannerPage from './components/pages/series/EditBannerPage';
-import AddCoursePage from './components/pages/series/AddCoursePage';
+import EditBannerPage from './components/pages/account/EditBannerPage';
+import EditCoursePage from './components/pages/series/EditCoursePage';
 import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
 import AssistantsPage from './components/pages/assistant/AssistantsPage';
 import AssistantSelectPage from './components/pages/assistant/AssistantSelectPage';
@@ -205,7 +205,7 @@ const MainLayout = observer(() => {
                 } />
                 <Route path="/series/:id/course" element={
                   <AuthRoute>
-                    <AddCoursePage />
+                    <EditCoursePage />
                   </AuthRoute>
                 } />
                 <Route path="/instructors" element={

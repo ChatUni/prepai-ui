@@ -39,7 +39,7 @@ const AdminPage = observer(() => {
           label={t('menu.admin_page.edit_instructor')}
           onClick={() => navigate(routeMap['edit-instructor'])}
         /> */}
-        <MenuListItem
+        {/* <MenuListItem
           label={t('menu.admin_page.new_series')}
           onClick={() => navigate(routeMap['new-series'])}
         />
@@ -70,7 +70,7 @@ const AdminPage = observer(() => {
         <MenuListItem
           label={t('menu.admin_page.question_distribution')}
           onClick={() => navigate(routeMap['question-distribution'])}
-        />
+        /> */}
         <MenuListItem
           label={t('menu.admin_page.course_settings')}
           onClick={() => navigate(routeMap['course-settings'])}

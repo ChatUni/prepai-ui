@@ -218,6 +218,8 @@
     "addCourse": "Add Course",
     "add": {
       "title": "Add New Course",
+      "instructor": "Instructor",
+      "selectInstructor": "Please select an instructor",
       "courseName": "Course Name",
       "courseDescription": "Course Description",
       "coverImage": "Cover Image",
@@ -281,6 +283,8 @@
     "unknownInstructor": "Unknown Instructor",
     "noDescription": "No description available",
     "courseCount": "{count} courses",
+    "showCourses": "Show {count} courses",
+    "hideCourses": "Hide {count} courses",
     "aboutThisSeries": "About this Series",
     "noCover": "No Cover",
     "loading": "Loading series...",

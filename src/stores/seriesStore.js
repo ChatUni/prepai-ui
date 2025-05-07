@@ -155,6 +155,11 @@ class SeriesStore {
   }
 
   fetchSeriesById = async (id) => {
+    if (!id) {
+      console.warn('Attempted to fetch series with undefined ID');
+      return;
+    }
+
     try {
       this.isLoading = true;
       

@@ -11,6 +11,7 @@ class NewCourseStore {
   instructorId = null;
   isLoading = false;
   error = null;
+  editingCourseId = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -51,7 +52,35 @@ class NewCourseStore {
     this.videoFile = null;
     this.instructorId = null;
     this.error = null;
+    this.editingCourseId = null;
   }
+
+  loadCourse = async (courseId) => {
+    try {
+      this.isLoading = true;
+      this.error = null;
+      this.editingCourseId = courseId;
+
+      const response = await fetch(`/api/courses/${courseId}`);
+      if (!response.ok) throw new Error('Failed to load course');
+      const course = await response.json();
+      
+      runInAction(() => {
+        this.name = course.name;
+        this.description = course.description;
+        this.instructorId = course.instructor_id;
+        this.coverImagePreview = course.cover_image;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  };
 
   setInstructorId = (id) => {
     this.instructorId = id;
@@ -109,12 +138,12 @@ class NewCourseStore {
         series_id: seriesId,
         instructor_id: this.instructorId,
         video_url: videoUrl,
-        cover_image: coverUrl,
+        cover_image: coverUrl || this.coverImagePreview,
         isVideo: !!videoUrl
       };
 
-      const response = await fetch('/api/courses', {
-        method: 'POST',
+      const response = await fetch(`/api/courses${this.editingCourseId ? `/${this.editingCourseId}` : ''}`, {
+        method: this.editingCourseId ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
