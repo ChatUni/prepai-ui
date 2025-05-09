@@ -1,5 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import coursesStore from './coursesStore';
+import { makeAutoObservable } from 'mobx';
 import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
@@ -53,7 +52,7 @@ class GroupedSeriesStore {
   };
 
   canDeleteGroup = (group) => {
-    return !coursesStore.groupedSeries[group]?.length;
+    return !seriesStore.groupedSeries[group]?.length;
   };
 
   openAddGroupDialog = () => {
@@ -108,7 +107,7 @@ class GroupedSeriesStore {
     try {
       const groups = [...clientStore.client.settings.groups, this.newGroupName];
       clientStore.client.settings.groups = groups;
-      coursesStore.setGroupOrder(groups);
+      seriesStore.setGroupOrder(groups);
 
       await fetch('/api/save?doc=clients', {
         method: 'POST',
@@ -134,16 +133,16 @@ class GroupedSeriesStore {
       if (index !== -1) {
         groups[index] = this.newGroupName;
         clientStore.client.settings.groups = groups;
-        coursesStore.setGroupOrder(groups);
+        seriesStore.setGroupOrder(groups);
 
         // Update group name in series
-        const seriesList = [...coursesStore.series];
+        const seriesList = [...seriesStore.series];
         seriesList.forEach(series => {
           if (series.group === this.selectedGroup) {
             series.group = this.newGroupName;
           }
         });
-        coursesStore.setSeries(seriesList);
+        seriesStore.setSeries(seriesList);
 
         await Promise.all([
           fetch('/api/save?doc=clients', {
@@ -180,7 +179,7 @@ class GroupedSeriesStore {
     try {
       const groups = clientStore.client.settings.groups.filter(g => g !== this.selectedGroup);
       clientStore.client.settings.groups = groups;
-      coursesStore.setGroupOrder(groups);
+      seriesStore.setGroupOrder(groups);
 
       await fetch('/api/save?doc=clients', {
         method: 'POST',
@@ -208,17 +207,19 @@ class GroupedSeriesStore {
   moveGroup = (fromIndex, toIndex) => {
     if (fromIndex === toIndex) return;
     console.log('Moving group from', fromIndex, 'to', toIndex);
-    coursesStore.moveGroup(fromIndex, toIndex);
+    seriesStore.moveGroup(fromIndex, toIndex);
   };
 
   // Called during drag
   moveSeriesInGroup = (group, fromIndex, toIndex) => {
-    if (!coursesStore.groupedSeries) return null;
-    return coursesStore.moveSeries(group, fromIndex, toIndex);
+    if (!seriesStore.groupedSeries) return null;
+    return seriesStore.moveSeries(group, fromIndex, toIndex);
   };
 
   get groupEntries() {
-    return Object.entries(coursesStore.groupedSeries || {});
+    console.log('groupEntries - seriesStore.groupedSeries:', seriesStore.groupedSeries);
+    console.log('groupEntries - clientStore.client.settings.groups:', clientStore.client.settings.groups);
+    return Object.entries(seriesStore.groupedSeries || {});
   }
 
   isGroupExpanded = (group) => {

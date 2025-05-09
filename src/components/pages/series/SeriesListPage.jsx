@@ -8,50 +8,39 @@ import SearchBar from '../../ui/SearchBar';
 import Carousel from '../../ui/Carousel';
 import LoadingState from '../../ui/LoadingState';
 import ToolsNav from '../../ui/ToolsNav';
-import coursesStore from '../../../stores/coursesStore';
+import seriesStore from '../../../stores/seriesStore';
 import routeStore from '../../../stores/routeStore';
 import clientStore from '../../../stores/clientStore';
 import userStore from '../../../stores/userStore';
 
-const SeriesListPage = observer(() => {
-  React.useEffect(() => {
-    if (coursesStore.series.length === 0) {
-      coursesStore.fetchSeries();
-    }
-    if (!clientStore.client.settings.banners.length) {
-      clientStore.loadClient();
-    }
-  }, []);
+const SeriesListPage = observer(() => (
+  <DndProvider backend={HTML5Backend}>
+    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
+    {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
 
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
+    {routeStore.isSeriesHomeMode && <ToolsNav />}
 
-      {routeStore.isSeriesHomeMode && <ToolsNav />}
+    <div className="mb-6">
+      <SearchBar />
+    </div>
 
-      <div className="mb-6">
-        <SearchBar />
-      </div>
-
-      <LoadingState
-        isLoading={coursesStore.isLoading}
-        isError={!Array.isArray(coursesStore.filteredSeries)}
-        isEmpty={Array.isArray(coursesStore.filteredSeries) && coursesStore.filteredSeries.length === 0}
-      >
-        {routeStore.isSeriesGroupMode ? (
-          <GroupedSeriesList />
-        ) : (
-          <SeriesList
-            title=""
-            series={coursesStore.filteredSeries}
-            isAllInstructors={true}
-          />
-        )}
-      </LoadingState>
-      </div>
-    </DndProvider>
-  );
-});
+    <LoadingState
+      isLoading={seriesStore.isLoading}
+      isError={!Array.isArray(seriesStore.filteredSeries)}
+      isEmpty={Array.isArray(seriesStore.filteredSeries) && seriesStore.filteredSeries.length === 0}
+    >
+      {routeStore.isSeriesGroupMode ? (
+        <GroupedSeriesList />
+      ) : (
+        <SeriesList
+          title=""
+          series={seriesStore.filteredSeries}
+          isAllInstructors={true}
+        />
+      )}
+    </LoadingState>
+    </div>
+  </DndProvider>
+));
 
 export default SeriesListPage;

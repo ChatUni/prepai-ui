@@ -6,7 +6,6 @@ import clientStore from './clientStore';
 class CoursesStore {
   courses = [];
   instructors = [];
-  series = [];
   instructorSeries = [];
   isLoading = true;
   isLoadingInstructorSeries = false;
@@ -14,51 +13,9 @@ class CoursesStore {
   instructorSeriesError = null;
   selectedSeriesId = null;
   selectedInstructorId = null;
-  groupOrder = [];
-  pendingSeriesUpdates = new Map();
 
   constructor() {
-    this.fetchCourses();
-    this.fetchInstructors();
-    makeObservable(this, {
-      courses: observable,
-      instructors: observable,
-      series: observable,
-      instructorSeries: observable,
-      isLoading: observable,
-      isLoadingInstructorSeries: observable,
-      error: observable,
-      instructorSeriesError: observable,
-      selectedSeriesId: observable,
-      selectedInstructorId: observable,
-      groupOrder: observable,
-      pendingSeriesUpdates: observable,
-      fetchCourses: action,
-      fetchInstructors: action,
-      fetchSeries: action,
-      fetchInstructorSeries: action,
-      setCourses: action,
-      setInstructors: action,
-      setSeries: action,
-      setInstructorSeries: action,
-      setError: action,
-      setInstructorSeriesError: action,
-      setLoading: action,
-      setLoadingInstructorSeries: action,
-      setSelectedSeriesId: action,
-      setSelectedInstructorId: action,
-      moveSeries: action,
-      filteredCourses: computed,
-      filteredInstructors: computed,
-      filteredSeries: computed,
-      popularCourses: computed,
-      examCourses: computed,
-      coursesBySeries: computed,
-      getSeriesInstructors: computed,
-      uniqueCategories: computed,
-      seriesCovers: computed,
-      groupedSeries: computed
-    });
+    makeObservable(this);
   }
 
   async fetchCourses() {
@@ -92,19 +49,6 @@ class CoursesStore {
     }
   }
 
-  async fetchSeries() {
-    try {
-      // Use the getAllSeries utility function for consistent API access
-      const series = await getAllSeries();
-      console.log('Fetched series:', series);      
-      this.setSeries(series);
-    } catch (error) {
-      console.error('Failed to fetch series:', error);
-      console.warn('Using fallback empty series array');
-      this.setSeries([]);
-    }
-  }
-
   setCourses(courses) {
     runInAction(() => {
       // Format courses to ensure instructor data is properly structured
@@ -115,16 +59,6 @@ class CoursesStore {
   setInstructors(instructors) {
     runInAction(() => {
       this.instructors = instructors;
-    });
-  }
-
-  setSeries(series) {
-    runInAction(() => {
-      // Initialize order if not set
-      this.series = series.map((s, index) => ({
-        ...s,
-        order: typeof s.order === 'number' ? s.order : index
-      }));
     });
   }
 
@@ -326,186 +260,6 @@ class CoursesStore {
     );
   }
   
-  get filteredSeries() {
-    if (!Array.isArray(this.series)) {
-      console.error('series is not an array:', this.series);
-      return [];
-    }
-    
-    const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
-    const selectedInstructorId = uiStore.selectedInstructorId || null;
-    const activeCategory = uiStore.activeCategory || '';
-    const isGroupMode = uiStore.activeNavItem === 'group';
-    const validGroups = new Set(clientStore.client.settings.groups);
-    
-    return this.series.filter(series => {
-      // Skip any non-object series items
-      if (!series || typeof series !== 'object') {
-        console.error('Invalid series item:', series);
-        return false;
-      }
-
-      // In group mode, only show series with valid groups
-      if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
-        return false;
-      }
-      
-      const matchesSearch = !searchKeyword ||
-        (typeof series.name === 'string' && series.name.toLowerCase().includes(searchKeyword)) ||
-        (typeof series.desc === 'string' && series.desc.toLowerCase().includes(searchKeyword)) ||
-        (series.instructor && typeof series.instructor.name === 'string' && series.instructor.name.toLowerCase().includes(searchKeyword));
-      
-      const matchesInstructor = selectedInstructorId === null ||
-        (series.instructor && series.instructor.id === selectedInstructorId);
-
-      const matchesCategory = !activeCategory || series.category === activeCategory;
-      
-      return matchesSearch && matchesInstructor && matchesCategory;
-    });
-  }
-
-  get groupedSeries() {
-    if (!Array.isArray(this.filteredSeries)) return {};
-
-    // Initialize groupOrder if empty
-    if (this.groupOrder.length === 0) {
-      this.groupOrder = [...clientStore.client.settings.groups];
-    }
-
-    const groups = this.groupOrder;
-    const grouped = {};
-
-    groups.forEach(group => {
-      // Get series for this group and sort by order
-      const groupSeries = this.filteredSeries.filter(series => series.group === group);
-      
-      // Initialize order if not set
-      groupSeries.forEach((series, index) => {
-        if (typeof series.order !== 'number') {
-          series.order = index;
-        }
-      });
-      
-      // Sort by order property
-      grouped[group] = groupSeries.sort((a, b) => a.order - b.order);
-    });
-
-    return grouped;
-  }
-
-  setGroupOrder = action((groups) => {
-    this.groupOrder = groups;
-  });
-
-  pendingGroups = null;
-
-  moveGroup = action((fromIndex, toIndex) => {
-    if (fromIndex === toIndex) return;
-    
-    const groups = this.groupOrder.length > 0
-      ? [...this.groupOrder]
-      : [...clientStore.client.settings.groups];
-
-    const [removed] = groups.splice(fromIndex, 1);
-    groups.splice(toIndex, 0, removed);
-    
-    // Update local state only
-    this.groupOrder = groups;
-    this.pendingGroups = groups;
-  });
-
-  saveGroupOrder = action(async () => {
-    if (!this.pendingGroups) return;
-
-    try {
-      // Update client settings and save
-      clientStore.client.settings.groups = this.pendingGroups;
-      await fetch('/api/save?doc=clients', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(clientStore.client)
-      });
-      
-      // Clear pending changes after successful save
-      this.pendingGroups = null;
-    } catch (error) {
-      console.error('Failed to save group order:', error);
-      throw error;
-    }
-  });
-
-
-  moveSeries = action((group, fromIndex, toIndex) => {
-    if (fromIndex === toIndex) return;
-
-    // Get the current ordered series for this group
-    const currentGroupSeries = [...this.groupedSeries[group]];
-    
-    // Move the series within the group
-    const [movedSeries] = currentGroupSeries.splice(fromIndex, 1);
-    currentGroupSeries.splice(toIndex, 0, movedSeries);
-
-    // Update orders in the moved range
-    currentGroupSeries.forEach((series, index) => {
-      series.order = index;
-    });
-
-    // Update the main series array
-    const seriesList = [...this.series];
-    currentGroupSeries.forEach(series => {
-      const seriesIndex = seriesList.findIndex(s => s.id === series.id);
-      if (seriesIndex !== -1) {
-        const updatedSeries = {
-          ...seriesList[seriesIndex],
-          order: series.order
-        };
-        seriesList[seriesIndex] = updatedSeries;
-        this.pendingSeriesUpdates.set(series.id, updatedSeries);
-      }
-    });
-
-    this.series = seriesList;
-  });
-
-  saveSeriesUpdates = action(async () => {
-    if (this.pendingSeriesUpdates.size === 0) return;
-
-    try {
-      const updates = Array.from(this.pendingSeriesUpdates.values());
-      console.log('Saving series updates:', updates);
-
-      await Promise.all(
-        updates.map(series =>
-          fetch('/api/save?doc=series', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(series)
-          })
-        )
-      );
-      
-      this.pendingSeriesUpdates.clear();
-    } catch (error) {
-      console.error('Failed to save series updates:', error);
-      throw error;
-    }
-  });
-
-  get coursesBySeries() {
-    // Group courses by series
-    const groupedCourses = {};
-    
-    this.series.forEach(series => {
-      groupedCourses[series.id] = this.courses.filter(course => course.series?.id === series.id);
-    });
-    
-    return groupedCourses;
-  }
-
   get getSeriesInstructors() {
     return (series) => {
       if (!series || !series.id) return [];
@@ -527,19 +281,6 @@ class CoursesStore {
         .map(id => this.instructors.find(instructor => instructor.id === id || instructor._id === id))
         .filter(instructor => instructor); // Filter out any undefined instructors
     };
-  }
-
-  get uniqueCategories() {
-    const categories = this.series
-      .map(series => series.category)
-      .filter(category => category); // Filter out null/undefined
-    return [...new Set(categories)].sort();
-  }
-
-  get seriesCovers() {
-    return this.series
-      .filter(series => typeof series.cover === 'string')
-      .map(series => series.cover);
   }
 }
 

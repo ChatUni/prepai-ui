@@ -150,7 +150,7 @@ export const handler = async (event, context) => {
           return { statusCode: 200, headers, body: JSON.stringify(processedQuestions) };
 
         case 'GET /instructors':
-          const instructors = await get('instructors');
+          const instructors = await flat('instructors', `m_client_id=${clientId}`);
           return res(instructors);
 
         case 'GET /assistants':
@@ -158,7 +158,7 @@ export const handler = async (event, context) => {
           return res(assistants);
 
         case 'GET /series':
-          const seriesOfInstructor = await flat('series', 'f_+course&p_id,name,category,desc,group,order,price,duration,cover,courses.id,courses.instructor_id');
+          const seriesOfInstructor = await flat('series', `m_client_id=${clientId}&f_+course&p_id,name,category,desc,group,order,price,duration,cover,courses.id,courses.instructor_id`);
           return res(seriesOfInstructor);
 
         case 'GET /series/:id':
@@ -168,6 +168,10 @@ export const handler = async (event, context) => {
         case 'GET /clients/:id':
           const clients = await flat('clients', `m_id=${id}`)
           return res(clients.length > 0 ? clients[0] : null);
+
+        case 'GET /users/:phone':
+          const users = await flat('users', `m_phone=${phone}`)
+          return res(users.length > 0 ? users[0] : null);
 
         case 'POST /save':
           if (!body.id) body.id = await maxId(doc)

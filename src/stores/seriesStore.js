@@ -5,6 +5,9 @@ import uiStore from './uiStore';
 import languageStore from './languageStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
+import { get, save } from '../utils/db';
+
+const durationOptionKeys = ['30days', '90days', '180days', '365days'];
 
 class SeriesStore {
   series = [];
@@ -17,23 +20,17 @@ class SeriesStore {
   descType = 'text'; // 'text' or 'image'
   isDropdownOpen = false;
   selectedCategory = '';
+  pendingGroups = null;
+  groupOrder = [];
+  pendingSeriesUpdates = new Map();
 
   constructor() {
-    makeAutoObservable(this, {
-      currentSeriesId: computed,
-      uniqueCategories: computed,
-      selectedCategory: observable,
-      filteredSeriesCourses: computed,
-      currentSeriesFromRoute: computed,
-      seriesInstructors: computed
-    });
+    makeAutoObservable(this);
   }
-
-  durationOptionKeys = ['30days', '90days', '180days', '365days'];
 
   get durationOptions() {
     const { t } = languageStore;
-    return this.durationOptionKeys.map(key => ({
+    return durationOptionKeys.map(key => ({
       key,
       value: t(`series.edit.durationOptions.${key}`)
     }));
@@ -136,14 +133,20 @@ class SeriesStore {
     }
   }
 
+  setSeries = (series) => {
+    this.series = series;
+  }
+
   fetchSeries = async () => {
     try {
       this.isLoading = true;
       await this.fetchInstructors();
-      const response = await fetch('/api/series');
-      const data = await response.json();
+      const data = await get('series', { clientId: clientStore.client.id });
       runInAction(() => {
-        this.series = data;
+        this.series = data.map((s, index) => ({
+          ...s,
+          order: typeof s.order === 'number' ? s.order : index
+        }));
         this.isLoading = false;
       });
     } catch (error) {
@@ -164,8 +167,7 @@ class SeriesStore {
       this.isLoading = true;
       
       await this.fetchInstructors();
-      const response = await fetch(`/api/series/${id}`);
-      const data = await response.json();
+      const data = await get(`series/${id}`);
       
       if (!data || !data[0]) {
         throw new Error('Series not found');
@@ -192,8 +194,7 @@ class SeriesStore {
     if (this.instructors.length === 0) {
       try {
         this.isLoading = true;
-        const response = await fetch('/api/instructors');
-        const data = await response.json();
+        const data = await get('instructors', { clientId: clientStore.client.id });
         runInAction(() => {
           this.instructors = data;
           this.isLoading = false;
@@ -210,14 +211,6 @@ class SeriesStore {
   uploadSeriesImage = async (file, seriesId) => {
     return await uploadToCloudinary(file, `${clientStore.client.id}/series/${seriesId}`);
   }
-
-  saveSeriesPost = data => fetch('/api/save?doc=series', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  }).then(r => r.json());
 
   handleSubmit = async (form, navigate) => {
     const formData = new FormData(form);
@@ -252,7 +245,7 @@ class SeriesStore {
   saveSeries = async (seriesData, navigate) => {
     try {
       this.isLoading = true;
-      const data = await this.saveSeriesPost(seriesData);
+      const data = await save('series', seriesData);
       const seriesId = data.id;
 
       // Handle cover image upload
@@ -277,7 +270,7 @@ class SeriesStore {
         const imageToUpload = new File([u8arr], 'desc_image', { type: mime });
         const imageUrl = await this.uploadSeriesImage(imageToUpload, data.id);
         seriesData.desc = imageUrl;
-        await this.saveSeriesPost(seriesData);
+        await save('series', seriesData);
       }
 
       runInAction(() => {
@@ -295,6 +288,44 @@ class SeriesStore {
   }
   get currentSeriesFromRoute() {
     return routeStore.currentSeries;
+  }
+
+  get filteredSeries() {
+    if (!Array.isArray(this.series)) {
+      console.error('series is not an array:', this.series);
+      return [];
+    }
+    
+    const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
+    const selectedInstructorId = uiStore.selectedInstructorId || null;
+    const activeCategory = uiStore.activeCategory || '';
+    const isGroupMode = uiStore.activeNavItem === 'group';
+    const validGroups = new Set(clientStore.client.settings.groups);
+    
+    return this.series.filter(series => {
+      // Skip any non-object series items
+      if (!series || typeof series !== 'object') {
+        console.error('Invalid series item:', series);
+        return false;
+      }
+
+      // In group mode, only show series with valid groups
+      if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
+        return false;
+      }
+      
+      const matchesSearch = !searchKeyword ||
+        (typeof series.name === 'string' && series.name.toLowerCase().includes(searchKeyword)) ||
+        (typeof series.desc === 'string' && series.desc.toLowerCase().includes(searchKeyword)) ||
+        (series.instructor && typeof series.instructor.name === 'string' && series.instructor.name.toLowerCase().includes(searchKeyword));
+      
+      const matchesInstructor = selectedInstructorId === null ||
+        (series.instructor && series.instructor.id === selectedInstructorId);
+
+      const matchesCategory = !activeCategory || series.category === activeCategory;
+      
+      return matchesSearch && matchesInstructor && matchesCategory;
+    });
   }
 
   get filteredSeriesCourses() {
@@ -354,6 +385,118 @@ class SeriesStore {
       // Let the BackButton handle the actual navigation
     }
   }
+
+  moveSeries = (group, fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+
+    // Get the current ordered series for this group
+    const currentGroupSeries = [...this.groupedSeries[group]];
+    
+    // Move the series within the group
+    const [movedSeries] = currentGroupSeries.splice(fromIndex, 1);
+    currentGroupSeries.splice(toIndex, 0, movedSeries);
+
+    // Update orders in the moved range
+    currentGroupSeries.forEach((series, index) => {
+      series.order = index;
+    });
+
+    // Update the main series array
+    const seriesList = [...this.series];
+    currentGroupSeries.forEach(series => {
+      const seriesIndex = seriesList.findIndex(s => s.id === series.id);
+      if (seriesIndex !== -1) {
+        const updatedSeries = {
+          ...seriesList[seriesIndex],
+          order: series.order
+        };
+        seriesList[seriesIndex] = updatedSeries;
+        this.pendingSeriesUpdates.set(series.id, updatedSeries);
+      }
+    });
+
+    this.series = seriesList;
+  }
+
+  get groupedSeries() {
+    if (!Array.isArray(this.filteredSeries)) return {};
+
+    // Initialize groupOrder if empty
+    if (this.groupOrder.length === 0) {
+      this.groupOrder = [...clientStore.client.settings.groups];
+    }
+
+    const groups = this.groupOrder;
+    const grouped = {};
+
+    groups.forEach(group => {
+      // Get series for this group and sort by order
+      const groupSeries = this.filteredSeries.filter(series => series.group === group);
+      
+      // Initialize order if not set
+      groupSeries.forEach((series, index) => {
+        if (typeof series.order !== 'number') {
+          series.order = index;
+        }
+      });
+      
+      // Sort by order property
+      grouped[group] = groupSeries.sort((a, b) => a.order - b.order);
+    });
+
+    return grouped;
+  }
+
+  setGroupOrder = (groups) => {
+    this.groupOrder = groups;
+  };
+
+  moveGroup = (fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+    
+    const groups = this.groupOrder.length > 0
+      ? [...this.groupOrder]
+      : [...clientStore.client.settings.groups];
+
+    const [removed] = groups.splice(fromIndex, 1);
+    groups.splice(toIndex, 0, removed);
+    
+    // Update local state only
+    this.groupOrder = groups;
+    this.pendingGroups = groups;
+  };
+
+  saveGroupOrder = async () => {
+    if (!this.pendingGroups) return;
+
+    try {
+      // Update client settings and save
+      clientStore.client.settings.groups = this.pendingGroups;
+      await save('clients', clientStore.client)
+      
+      // Clear pending changes after successful save
+      this.pendingGroups = null;
+    } catch (error) {
+      console.error('Failed to save group order:', error);
+      throw error;
+    }
+  };
+
+  saveSeriesUpdates = async () => {
+    if (this.pendingSeriesUpdates.size === 0) return;
+
+    try {
+      const updates = Array.from(this.pendingSeriesUpdates.values());
+      console.log('Saving series updates:', updates);
+
+      await Promise.all(updates.map(series => save('series', series)))
+      
+      this.pendingSeriesUpdates.clear();
+    } catch (error) {
+      console.error('Failed to save series updates:', error);
+      throw error;
+    }
+  };
 }
 
 const seriesStore = new SeriesStore();

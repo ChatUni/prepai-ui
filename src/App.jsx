@@ -39,7 +39,7 @@ console.log('AccountPage imported:', AccountPage);
 
 // Import stores to ensure they're initialized
 import './stores/uiStore';
-import coursesStore from './stores/coursesStore';
+import seriesStore from './stores/seriesStore';
 import examStore from './stores/examStore';
 import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
@@ -55,9 +55,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import { useEffect } from 'react';
 import uiStore from './stores/uiStore';
 import db from './utils/db';
-
-// Make coursesStore available globally for debugging and fallback
-window.coursesStore = coursesStore;
+import clientStore from './stores/clientStore';
 
 // RouteHandler component to sync route store with current location
 const RouteHandler = observer(() => {
@@ -86,29 +84,11 @@ const MainLayout = observer(() => {
   
   // Initialize course state effects
   useEffect(() => {
-    // Fetch instructors
-    db.getAllInstructors()
-      .then(instructors => {
-        console.log('Fetched instructors:', instructors);
-        coursesStore.setInstructors(instructors || []);
-      })
-      .catch(error => {
-        console.error('API request error:', error);
-        coursesStore.setInstructors([]);
-      });
-    
-    // Fetch courses
-    db.getAllCourses()
-      .then(courses => {
-        console.log('Fetched courses:', courses);
-        console.log('Number of courses:', courses?.length || 0);
-        coursesStore.setCourses(courses || []);
-      })
-      .catch(error => {
-        console.error('API request error:', error);
-        coursesStore.setCourses([]);
-      });
-    
+    const init = async () => {
+      await clientStore.loadClient();
+      seriesStore.fetchSeries();
+    }
+    init();
   }, []);
   
   return (

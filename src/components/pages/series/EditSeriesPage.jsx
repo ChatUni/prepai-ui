@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import useClickOutside from '../../../hooks/useClickOutside';
 import seriesStore from '../../../stores/seriesStore';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
@@ -10,43 +11,8 @@ import ImageUpload from '../../ui/ImageUpload';
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
   const formRef = useRef(null);
-
-  // Handle click outside to close dropdown
-  // Fetch all series to populate categories
-  useEffect(() => {
-    seriesStore.fetchSeries();
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        seriesStore.closeDropdown();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    const loadSeries = async () => {
-      if (seriesStore.currentSeriesId) {
-        await seriesStore.fetchSeriesById(seriesStore.currentSeriesId);
-      } else {
-        seriesStore.setCurrentSeries({
-          name: '',
-          desc: '',
-          instructor: null,
-          cover: '',
-          category: '',
-          group: ''
-        });
-      }
-    };
-    loadSeries();
-  }, []);
+  const [dropdownRef] = useClickOutside(() => seriesStore.closeDropdown());
 
   const content = (
     <div className="p-4 w-full h-full flex flex-col">

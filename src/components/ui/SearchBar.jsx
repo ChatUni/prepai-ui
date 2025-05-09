@@ -73,7 +73,7 @@ const SearchBar = observer(() => {
           displayValue={uiStore.activeCategory || t('search.allCategories')}
           items={[
             { value: "", label: t('search.allCategories') },
-            ...coursesStore.uniqueCategories.map(category => ({
+            ...seriesStore.uniqueCategories.map(category => ({
               value: category,
               label: category
             }))

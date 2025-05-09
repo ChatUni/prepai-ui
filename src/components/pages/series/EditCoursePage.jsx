@@ -12,19 +12,6 @@ const EditCoursePage = observer(() => {
   const { t } = languageStore;
   const { currentSeries } = seriesStore;
 
-  useEffect(() => {
-    const loadData = async () => {
-      await seriesStore.fetchInstructors();
-      if (seriesId) {
-        await seriesStore.fetchSeriesById(seriesId);
-      }
-    };
-    loadData();
-    return () => {
-      newCourseStore.reset();
-    };
-  }, [seriesId]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

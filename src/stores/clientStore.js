@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
 import lang from './languageStore';
+import { get } from '../utils/db';
 
 class ClientStore {
   client = {
@@ -48,7 +49,6 @@ class ClientStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.loadClient();
   }
 
   startEditing() {
@@ -166,7 +166,7 @@ class ClientStore {
     this.error = null;
 
     try {
-      const response = await fetch('/api/clients/1');
+      const response = await get('clients/1');
       
       if (!response.ok) {
         throw new Error(`Failed to load client: ${response.status}`);
