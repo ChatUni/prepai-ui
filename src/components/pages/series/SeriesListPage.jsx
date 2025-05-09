@@ -25,9 +25,9 @@ const SeriesListPage = observer(() => (
     </div>
 
     <LoadingState
-      isLoading={seriesStore.isLoading}
-      isError={!Array.isArray(seriesStore.filteredSeries)}
-      isEmpty={Array.isArray(seriesStore.filteredSeries) && seriesStore.filteredSeries.length === 0}
+     isLoading={seriesStore.isLoading}
+     isError={!seriesStore.isSeriesValid}
+     isEmpty={seriesStore.filteredSeries.length === 0}
     >
       {routeStore.isSeriesGroupMode ? (
         <GroupedSeriesList />

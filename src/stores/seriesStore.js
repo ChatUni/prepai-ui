@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction, computed, observable } from 'mobx';
+import { makeObservable, runInAction, computed } from 'mobx';
 import routeStore from './routeStore';
 import coursesStore from './coursesStore';
 import uiStore from './uiStore';
@@ -25,7 +25,31 @@ class SeriesStore {
   pendingSeriesUpdates = new Map();
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      series: true,
+      instructors: true,
+      currentSeries: true,
+      isLoading: true,
+      error: true,
+      selectedImagePreview: true,
+      selectedDescImagePreview: true,
+      descType: true,
+      isDropdownOpen: true,
+      selectedCategory: true,
+      pendingGroups: true,
+      groupOrder: true,
+      pendingSeriesUpdates: true,
+      durationOptions: computed,
+      currentSeriesId: computed,
+      uniqueCategories: computed,
+      currentSeriesFromRoute: computed,
+      filteredSeriesCourses: computed,
+      seriesInstructors: computed,
+      groupedSeries: computed,
+      isSeriesValid: computed,
+      validSeriesItems: computed,
+      filteredSeries: computed
+    });
   }
 
   get durationOptions() {
@@ -290,11 +314,17 @@ class SeriesStore {
     return routeStore.currentSeries;
   }
 
+  get isSeriesValid() {
+    return Array.isArray(this.series);
+  }
+
+  get validSeriesItems() {
+    if (!this.isSeriesValid) return [];
+    return this.series.filter(series => series && typeof series === 'object');
+  }
+
   get filteredSeries() {
-    if (!Array.isArray(this.series)) {
-      console.error('series is not an array:', this.series);
-      return [];
-    }
+    if (!this.isSeriesValid) return [];
     
     const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
     const selectedInstructorId = uiStore.selectedInstructorId || null;
@@ -302,25 +332,18 @@ class SeriesStore {
     const isGroupMode = uiStore.activeNavItem === 'group';
     const validGroups = new Set(clientStore.client.settings.groups);
     
-    return this.series.filter(series => {
-      // Skip any non-object series items
-      if (!series || typeof series !== 'object') {
-        console.error('Invalid series item:', series);
-        return false;
-      }
-
-      // In group mode, only show series with valid groups
+    return this.validSeriesItems.filter(series => {
       if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
         return false;
       }
       
       const matchesSearch = !searchKeyword ||
-        (typeof series.name === 'string' && series.name.toLowerCase().includes(searchKeyword)) ||
-        (typeof series.desc === 'string' && series.desc.toLowerCase().includes(searchKeyword)) ||
-        (series.instructor && typeof series.instructor.name === 'string' && series.instructor.name.toLowerCase().includes(searchKeyword));
+        (series.name?.toLowerCase().includes(searchKeyword)) ||
+        (series.desc?.toLowerCase().includes(searchKeyword)) ||
+        (series.instructor?.name?.toLowerCase().includes(searchKeyword));
       
       const matchesInstructor = selectedInstructorId === null ||
-        (series.instructor && series.instructor.id === selectedInstructorId);
+        (series.instructor?.id === selectedInstructorId);
 
       const matchesCategory = !activeCategory || series.category === activeCategory;
       
@@ -419,7 +442,7 @@ class SeriesStore {
   }
 
   get groupedSeries() {
-    if (!Array.isArray(this.filteredSeries)) return {};
+    if (!this.isSeriesValid) return {};
 
     // Initialize groupOrder if empty
     if (this.groupOrder.length === 0) {
