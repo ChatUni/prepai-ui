@@ -67,32 +67,33 @@ const EditCoursePage = observer(() => {
             </select>
           </div>
 
-          {/* Course Name */}
+          {/* Course Title */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               {t('course.add.courseName')}
             </label>
             <input
               type="text"
-              id="name"
-              value={editCourseStore.name}
-              onChange={(e) => editCourseStore.setName(e.target.value)}
+              id="title"
+              value={editCourseStore.title}
+              onChange={(e) => editCourseStore.setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Course Description */}
+          {/* Course Duration */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('course.add.courseDescription')}
+            <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('course.add.duration')}
             </label>
-            <textarea
-              id="description"
-              value={editCourseStore.description}
-              onChange={(e) => editCourseStore.setDescription(e.target.value)}
-              rows={4}
+            <input
+              type="number"
+              id="duration"
+              value={editCourseStore.duration}
+              onChange={(e) => editCourseStore.setDuration(parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
               required
             />
           </div>
@@ -106,7 +107,7 @@ const EditCoursePage = observer(() => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => editCourseStore.setCoverImage(e.target.files[0])}
+                onChange={(e) => editCourseStore.setImage(e.target.files[0])}
                 className="hidden"
                 id="cover-upload"
               />
@@ -118,19 +119,19 @@ const EditCoursePage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {editCourseStore.coverImagePreview ? t('course.add.changeImage') : t('course.add.selectImage')}
+                  {editCourseStore.imagePreview ? t('course.add.changeImage') : t('course.add.selectImage')}
                 </span>
               </label>
-              {editCourseStore.coverImagePreview && (
+              {editCourseStore.imagePreview && (
                 <div className="mt-2 text-sm text-gray-500">
                   {t('course.add.fileSelected')}
                 </div>
               )}
             </div>
-            {editCourseStore.coverImagePreview && (
+            {editCourseStore.imagePreview && (
               <div className="mt-2">
                 <img
-                  src={editCourseStore.coverImagePreview}
+                  src={editCourseStore.imagePreview}
                   alt={t('course.add.coverImage')}
                   className="max-w-full h-auto rounded-lg shadow-lg"
                   style={{ maxHeight: '200px' }}

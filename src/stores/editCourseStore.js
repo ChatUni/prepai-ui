@@ -3,12 +3,12 @@ import seriesStore from './seriesStore';
 import routeStore from './routeStore';
 
 class EditCourseStore {
-  name = '';
-  description = '';
-  coverImage = null;
-  coverImagePreview = null;
+  title = '';
+  image = null;
+  imagePreview = null;
   videoFile = null;
-  instructorId = null;
+  instructor_id = null;
+  duration = 0;
   isLoading = false;
   error = null;
   editingCourseId = null;
@@ -17,27 +17,27 @@ class EditCourseStore {
     makeAutoObservable(this);
   }
 
-  setName = (name) => {
-    this.name = name;
+  setTitle = (title) => {
+    this.title = title;
   }
 
-  setDescription = (description) => {
-    this.description = description;
-  }
-
-  setCoverImage = (file) => {
-    this.coverImage = file;
+  setImage = (file) => {
+    this.image = file;
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         runInAction(() => {
-          this.coverImagePreview = reader.result;
+          this.imagePreview = reader.result;
         });
       };
       reader.readAsDataURL(file);
     } else {
-      this.coverImagePreview = null;
+      this.imagePreview = null;
     }
+  }
+
+  setDuration = (duration) => {
+    this.duration = duration;
   }
 
   setVideoFile = (file) => {
@@ -45,12 +45,12 @@ class EditCourseStore {
   }
 
   reset = () => {
-    this.name = '';
-    this.description = '';
-    this.coverImage = null;
-    this.coverImagePreview = null;
+    this.title = '';
+    this.image = null;
+    this.imagePreview = null;
     this.videoFile = null;
-    this.instructorId = null;
+    this.instructor_id = null;
+    this.duration = 0;
     this.error = null;
     this.editingCourseId = null;
   }
@@ -66,10 +66,10 @@ class EditCourseStore {
       const course = await response.json();
       
       runInAction(() => {
-        this.name = course.name;
-        this.description = course.description;
-        this.instructorId = course.instructor_id;
-        this.coverImagePreview = course.cover_image;
+        this.title = course.title;
+        this.instructor_id = course.instructor_id;
+        this.imagePreview = course.image;
+        this.duration = course.duration || 0;
       });
     } catch (error) {
       runInAction(() => {
@@ -83,7 +83,7 @@ class EditCourseStore {
   };
 
   setInstructorId = (id) => {
-    this.instructorId = id;
+    this.instructor_id = id;
   }
 
   saveCourse = async (seriesId, navigate) => {
@@ -133,12 +133,12 @@ class EditCourseStore {
 
       // Save course data
       const courseData = {
-        name: this.name,
-        description: this.description,
+        title: this.title,
         series_id: seriesId,
-        instructor_id: this.instructorId,
+        instructor_id: this.instructor_id,
         video_url: videoUrl,
-        cover_image: coverUrl || this.coverImagePreview,
+        image: coverUrl || this.imagePreview,
+        duration: this.duration,
         isVideo: !!videoUrl
       };
 
