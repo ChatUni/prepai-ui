@@ -30,9 +30,13 @@ const useDragAndDrop = ({ type, index, moveItem, onDrop }) => {
       // Update the index for the dragged item
       item.index = hoverIndex;
     },
-    drop: (item) => {
+    drop: async (item) => {
       if (onDrop) {
-        onDrop(item.index);
+        try {
+          await onDrop(item.index);
+        } catch (error) {
+          console.error('Failed to process drop operation:', error);
+        }
       }
     }
   }), [index, moveItem, onDrop]);

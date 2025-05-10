@@ -2,6 +2,8 @@ import { makeObservable, computed } from 'mobx';
 import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
+import { save } from '../utils/db';
+import _ from 'lodash';
 
 class GroupedSeriesStore {
   expandedGroups = new Set();
@@ -156,24 +158,10 @@ class GroupedSeriesStore {
         seriesStore.setSeries(seriesList);
 
         await Promise.all([
-          fetch('/api/save?doc=clients', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(clientStore.client)
-          }),
+          save('clients', clientStore.client),
           ...seriesList
             .filter(series => series.group === this.newGroupName)
-            .map(series =>
-              fetch('/api/save?doc=series', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(series)
-              })
-            )
+            .map(series => save('series', _.omit(series, ['courses'])))
         ]);
 
         this.closeEditGroupDialog();

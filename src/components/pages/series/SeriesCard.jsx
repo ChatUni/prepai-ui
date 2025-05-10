@@ -30,20 +30,14 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
       .filter(course => course?.series?.id === seriesId || course?.series?._id === seriesId);
     const [removed] = courses.splice(dragIndex, 1);
     courses.splice(dropIndex, 0, removed);
-    coursesStore.saveSeriesUpdates().catch(error => {
-      console.error('Failed to save course updates:', error);
-    });
+    return coursesStore.saveSeriesUpdates();
   };
 
   const { isDragging, isOver, handleRef } = useDragAndDrop({
     type: `series-${group}`,
     index,
     moveItem,
-    onDrop: () => {
-      coursesStore.saveSeriesUpdates().catch(error => {
-        console.error('Failed to save series updates:', error);
-      });
-    }
+    onDrop: seriesStore.saveSeriesUpdates
   });
 
   return (

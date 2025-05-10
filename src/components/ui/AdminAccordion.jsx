@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { MdDragIndicator } from 'react-icons/md';
 import useDragAndDrop from '../../hooks/useDragAndDrop';
-import coursesStore from '../../stores/coursesStore';
+import seriesStore from '../../stores/seriesStore';
 
 const MenuItem = ({ label, onClick }) => (
   <button
@@ -34,13 +34,7 @@ const AccordionSection = observer(({
         moveGroup(fromIndex, toIndex);
       }
     },
-    onDrop: () => {
-      if (isDraggable) {
-        coursesStore.saveGroupOrder().catch(error => {
-          console.error('Failed to save group order:', error);
-        });
-      }
-    }
+    onDrop: () => isDraggable ? seriesStore.saveGroupOrder() : undefined
   });
 
   return (

@@ -5,6 +5,7 @@ import languageStore from './languageStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
 import { get, save } from '../utils/db';
+import _ from 'lodash';
 
 const durationOptionKeys = ['30days', '90days', '180days', '365days'];
 
@@ -502,7 +503,7 @@ class SeriesStore {
       const updates = Array.from(this.pendingSeriesUpdates.values());
       console.log('Saving series updates:', updates);
 
-      await Promise.all(updates.map(series => save('series', series)))
+      await Promise.all(updates.map(series => save('series', _.omit(series, ['courses']))));
       
       this.pendingSeriesUpdates.clear();
     } catch (error) {
