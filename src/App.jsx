@@ -1,6 +1,8 @@
 import { observer } from 'mobx-react-lite';
 import './App.css';
 import { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import languageStore from './stores/languageStore';
 
 // Import components
@@ -278,8 +280,10 @@ const App = observer(() => {
   return (
     <BrowserRouter>
       <AuthWrapper>
-        <MainLayout />
-        <RouteHandler />
+        <DndProvider backend={HTML5Backend}>
+          <MainLayout />
+          <RouteHandler />
+        </DndProvider>
       </AuthWrapper>
     </BrowserRouter>
   );
