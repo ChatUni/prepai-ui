@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, computed, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
+import seriesStore from './seriesStore';
 import uiStore from './uiStore';
 
 class RouteStore {
@@ -52,7 +53,7 @@ class RouteStore {
   setSeriesId(id) {
     this.seriesId = id ? parseInt(id, 10) : null;
     
-    // When series changes, update selected series in coursesStore
+    // When series changes, update selected series in seriesStore
     if (this.seriesId) {
       coursesStore.selectSeries(this.seriesId);
     }
@@ -64,27 +65,11 @@ class RouteStore {
   
   // Computed properties for current entities based on route parameters
   get currentInstructor() {
-    if (!this.instructorId) return null;
-    return coursesStore.instructors.find(instructor => instructor.id === this.instructorId);
+    return seriesStore.instructors.find(instructor => instructor.id === this.instructorId);
   }
   
   get currentSeries() {
-    if (!this.seriesId) return null;
-    const series = coursesStore.series.find(series =>
-      series && (series.id === this.seriesId || series._id === this.seriesId)
-    );
-    
-    if (!series) return null;
-    
-    // Ensure we return a properly formatted series object
-    return {
-      id: series.id || series._id,
-      name: typeof series.name === 'string' ? series.name : '',
-      desc: typeof series.desc === 'string' ? series.desc : '',
-      cover: typeof series.cover === 'string' ? series.cover : '',
-      category: typeof series.category === 'string' ? series.category : '',
-      instructor: series.instructor
-    };
+    return seriesStore.series.find(series => series.id === this.seriesId);
   }
   
   get currentCourse() {
@@ -163,7 +148,7 @@ class RouteStore {
     }
     
     // If we have series data and this series has an instructor, make sure that data is loaded
-    if (seriesId && coursesStore.series.length > 0) {
+    if (seriesId && seriesStore.series.length > 0) {
       const series = coursesStore.series.find(s => s.id === parseInt(seriesId, 10));
       if (series && series.instructor?.id) {
         // Load any related data for display purposes, but don't set as current instructor

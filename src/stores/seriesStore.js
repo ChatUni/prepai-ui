@@ -1,6 +1,5 @@
 import { makeObservable, runInAction, computed } from 'mobx';
 import routeStore from './routeStore';
-import coursesStore from './coursesStore';
 import uiStore from './uiStore';
 import languageStore from './languageStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
@@ -355,46 +354,37 @@ class SeriesStore {
     const currentSeries = this.currentSeriesFromRoute;
     if (!currentSeries) return [];
 
-    return coursesStore.courses.filter(course => {
-      // Always filter by series ID
-      const matchesSeries = course.series?.id === currentSeries.id;
-
+    return currentSeries.courses.filter(course => {
       // Apply instructor filter if one is selected
       const selectedInstructorId = uiStore?.selectedInstructorId;
       const matchesInstructor = !selectedInstructorId ||
-        course.instructor?.id === selectedInstructorId ||
-        course.instructor?.name === coursesStore.instructors.find(i => i.id === selectedInstructorId)?.name;
+        course.instructor_id === selectedInstructorId;
       
       // Apply search filter if there's a search keyword
       const searchKeyword = uiStore?.searchKeyword?.toLowerCase() || '';
       const matchesSearch = !searchKeyword ||
         course.title.toLowerCase().includes(searchKeyword) ||
-        (course.instructor?.name && course.instructor?.name.toLowerCase().includes(searchKeyword)) ||
+        (this.getInstructorById(course.instructor_id)?.name.toLowerCase().includes(searchKeyword)) ||
         (course.description && course.description.toLowerCase().includes(searchKeyword));
       
-      return matchesSeries && matchesInstructor && matchesSearch;
+      return matchesInstructor && matchesSearch;
     });
   }
 
+  getInstructorById = (id) => (this.instructors || []).find(instructor => instructor.id === id);
+
   get seriesInstructors() {
-    const currentSeries = this.currentSeriesFromRoute;
-    if (!currentSeries) return [];
+    return this.getSeriesInstructors(this.currentSeriesFromRoute, true);
+  }
 
-    // Get all instructors from the filtered courses
-    const instructors = this.filteredSeriesCourses
-      .map(course => course.instructor)
-      .filter(instructor => instructor); // Filter out null/undefined
+  getSeriesInstructors = (series, isFiltered) => {
+    if (!series) return [];
 
-    // Remove duplicates based on instructor id
-    const uniqueInstructors = instructors.reduce((acc, current) => {
-      const x = acc.find(item => item.id === current.id);
-      if (!x) {
-        return acc.concat([current]);
-      }
-      return acc;
-    }, []);
+    const ids = new Set((series.courses || [])
+    //const ids = new Set(((isFiltered ? this.filteredSeriesCourses : series.courses) || [])
+      .map(course => course.instructor_id))
 
-    return uniqueInstructors;
+    return [...ids].map(this.getInstructorById);
   }
 
   handleBackNavigation = () => {

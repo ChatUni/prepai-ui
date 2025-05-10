@@ -166,13 +166,7 @@ class ClientStore {
     this.error = null;
 
     try {
-      const response = await get('clients/1');
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load client: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await get('clients/1');
       
       runInAction(() => {
         if (data) {

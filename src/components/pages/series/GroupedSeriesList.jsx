@@ -58,7 +58,7 @@ const GroupedSeriesList = observer(() => {
 
   return (
     <div className="w-full space-y-4">
-        {groupedSeriesStore.groupEntries.map(([group, series], index) => (
+        {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
           <AccordionSection
             key={group}
             title={`${group} (${series.length})`}

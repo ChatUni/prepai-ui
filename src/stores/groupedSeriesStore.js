@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservable, computed } from 'mobx';
 import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
@@ -16,7 +16,18 @@ class GroupedSeriesStore {
   errorMessage = '';
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      expandedGroups: true,
+      pendingGroupOrder: true,
+      isAddGroupDialogOpen: true,
+      isEditGroupDialogOpen: true,
+      isDeleteGroupDialogOpen: true,
+      isErrorDialogOpen: true,
+      isAddSeriesDialogOpen: true,
+      newGroupName: true,
+      selectedGroup: true,
+      errorMessage: true,
+    });
   }
 
   openEditGroupDialog = (group) => {
@@ -215,12 +226,6 @@ class GroupedSeriesStore {
     if (!seriesStore.groupedSeries) return null;
     return seriesStore.moveSeries(group, fromIndex, toIndex);
   };
-
-  get groupEntries() {
-    console.log('groupEntries - seriesStore.groupedSeries:', seriesStore.groupedSeries);
-    console.log('groupEntries - clientStore.client.settings.groups:', clientStore.client.settings.groups);
-    return Object.entries(seriesStore.groupedSeries || {});
-  }
 
   isGroupExpanded = (group) => {
     return this.expandedGroups.has(group);

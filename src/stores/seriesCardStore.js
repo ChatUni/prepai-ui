@@ -61,24 +61,8 @@ class SeriesCardStore {
     };
   };
 
-  getCourseCount = (seriesId) => {
-    return coursesStore.courses.filter(course =>
-      course?.series?.id === seriesId || course?.series?._id === seriesId
-    ).length;
-  };
-
   getCoverImage = (cover) => {
     return cover || 'https://via.placeholder.com/300x200?text=Series';
-  };
-
-  getFormattedInstructors = (series) => {
-    const instructors = coursesStore.getSeriesInstructors(series);
-    return instructors.map(instructor => ({
-      id: instructor.id || instructor._id,
-      name: instructor.name || '',
-      iconUrl: instructor.iconUrl || '',
-      initial: instructor.name?.[0]?.toUpperCase() || '?'
-    }));
   };
 
   handleSeriesClick = (seriesId, navigate, e) => {

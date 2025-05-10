@@ -258,30 +258,7 @@ class CoursesStore {
       (instructor.name || '').toLowerCase().includes(searchKeyword) ||
       (instructor.bio || '').toLowerCase().includes(searchKeyword)
     );
-  }
-  
-  get getSeriesInstructors() {
-    return (series) => {
-      if (!series || !series.id) return [];
-      
-      // Get all courses for this series
-      const seriesCourses = this.courses.filter(course =>
-        course?.series?.id === series.id || course?.series?._id === series.id
-      );
-
-      // Extract unique instructor IDs from the courses
-      const instructorIds = new Set(
-        seriesCourses
-          .map(course => course.instructor_id)
-          .filter(id => id) // Filter out any undefined/null values
-      );
-
-      // Get the instructor objects for these IDs
-      return Array.from(instructorIds)
-        .map(id => this.instructors.find(instructor => instructor.id === id || instructor._id === id))
-        .filter(instructor => instructor); // Filter out any undefined instructors
-    };
-  }
+  }  
 }
 
 const coursesStore = new CoursesStore();

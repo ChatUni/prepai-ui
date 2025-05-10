@@ -6,6 +6,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
+import seriesStore from '../../../stores/seriesStore';
 import coursesStore from '../../../stores/coursesStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import CourseCard from '../../ui/CourseCard';
@@ -16,13 +17,13 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
   
-  const validatedSeries = seriesCardStore.validateSeries(series);
+  const validatedSeries = seriesCardStore.validateSeries(tap(series));
   if (!validatedSeries) return null;
 
   const { id: seriesId, name, desc, cover, group, price } = validatedSeries;
   const coverImage = seriesCardStore.getCoverImage(cover);
-  const courseCount = seriesCardStore.getCourseCount(seriesId);
-  const instructors = seriesCardStore.getFormattedInstructors(series);
+  const instructors = seriesStore.getSeriesInstructors(series);
+  const courses = series.courses || [];
 
   const handleMoveCourse = (dragIndex, dropIndex) => {
     const courses = coursesStore.courses
@@ -68,7 +69,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
         <div className="p-3">
           <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
             <div className="flex flex-wrap gap-2">
-              {instructors.length > 0 ? instructors.map((instructor, index) => (
+              {instructors.map((instructor, index) => (
                 <div key={instructor.id || instructor._id} className="flex items-center">
                   {instructor?.iconUrl ? (
                     <img
@@ -86,9 +87,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                     {index < instructors.length - 1 && ", "}
                   </span>
                 </div>
-              )) : (
-                <span className="text-sm text-gray-600 dark:text-gray-300">{seriesCardStore.unknownInstructorText}</span>
-              )}
+              ))}
             </div>
             {price > 0 && (
               <span className="text-red-600 dark:text-red-300 font-bold">${price}</span>
@@ -96,22 +95,26 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
           </div>
           
           {desc && !desc.startsWith('http') && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 h-10 mb-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
               {desc}
             </p>
           )}
           
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  seriesCardStore.toggleCourseList(seriesId);
-                }}
-                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                {seriesCardStore.getCourseCountText(courseCount, seriesId)}
-              </button>
+              {routeStore.isSeriesSettingMode ? (
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    seriesCardStore.toggleCourseList(seriesId);
+                  }}
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {seriesCardStore.getCourseCountText(courses.length, seriesId)}
+                </button>
+              ) : (
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('series.courseCount', { count: courses.length})}</p>
+              )}
               {routeStore.isSeriesSettingMode && (
                 <div className="flex items-center gap-2">
                   <button

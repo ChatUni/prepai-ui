@@ -158,7 +158,8 @@ export const handler = async (event, context) => {
           return res(assistants);
 
         case 'GET /series':
-          const seriesOfInstructor = await flat('series', `m_client_id=${clientId}&f_+course&p_id,name,category,desc,group,order,price,duration,cover,courses.id,courses.instructor_id`);
+          //const seriesOfInstructor = await flat('series', `m_client_id=${clientId}&f_+course&p_id,name,category,desc,group,order,price,duration,cover,courses.id,courses.instructor_id`);
+          const seriesOfInstructor = await flat('series', `m_client_id=${clientId}&f_+course`);
           return res(seriesOfInstructor);
 
         case 'GET /series/:id':
