@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import seriesStore from './seriesStore';
 import routeStore from './routeStore';
 
-class NewCourseStore {
+class EditCourseStore {
   name = '';
   description = '';
   coverImage = null;
@@ -173,5 +173,5 @@ class NewCourseStore {
   }
 }
 
-const newCourseStore = new NewCourseStore();
-export default newCourseStore;
+const editCourseStore = new EditCourseStore();
+export default editCourseStore;

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useParams } from 'react-router-dom';
 import seriesStore from '../../../stores/seriesStore';
-import newCourseStore from '../../../stores/newCourseStore';
+import editCourseStore from '../../../stores/editCourseStore';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 
@@ -15,7 +15,7 @@ const EditCoursePage = observer(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await newCourseStore.saveCourse(seriesId, navigate);
+      await editCourseStore.saveCourse(seriesId, navigate);
     } catch (error) {
       console.error('Failed to save course:', error);
     }
@@ -53,8 +53,8 @@ const EditCoursePage = observer(() => {
             </label>
             <select
               id="instructor"
-              value={newCourseStore.instructorId || ''}
-              onChange={(e) => newCourseStore.setInstructorId(parseInt(e.target.value))}
+              value={editCourseStore.instructorId || ''}
+              onChange={(e) => editCourseStore.setInstructorId(parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
@@ -75,8 +75,8 @@ const EditCoursePage = observer(() => {
             <input
               type="text"
               id="name"
-              value={newCourseStore.name}
-              onChange={(e) => newCourseStore.setName(e.target.value)}
+              value={editCourseStore.name}
+              onChange={(e) => editCourseStore.setName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -89,8 +89,8 @@ const EditCoursePage = observer(() => {
             </label>
             <textarea
               id="description"
-              value={newCourseStore.description}
-              onChange={(e) => newCourseStore.setDescription(e.target.value)}
+              value={editCourseStore.description}
+              onChange={(e) => editCourseStore.setDescription(e.target.value)}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -106,7 +106,7 @@ const EditCoursePage = observer(() => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => newCourseStore.setCoverImage(e.target.files[0])}
+                onChange={(e) => editCourseStore.setCoverImage(e.target.files[0])}
                 className="hidden"
                 id="cover-upload"
               />
@@ -118,19 +118,19 @@ const EditCoursePage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {newCourseStore.coverImagePreview ? t('course.add.changeImage') : t('course.add.selectImage')}
+                  {editCourseStore.coverImagePreview ? t('course.add.changeImage') : t('course.add.selectImage')}
                 </span>
               </label>
-              {newCourseStore.coverImagePreview && (
+              {editCourseStore.coverImagePreview && (
                 <div className="mt-2 text-sm text-gray-500">
                   {t('course.add.fileSelected')}
                 </div>
               )}
             </div>
-            {newCourseStore.coverImagePreview && (
+            {editCourseStore.coverImagePreview && (
               <div className="mt-2">
                 <img
-                  src={newCourseStore.coverImagePreview}
+                  src={editCourseStore.coverImagePreview}
                   alt={t('course.add.coverImage')}
                   className="max-w-full h-auto rounded-lg shadow-lg"
                   style={{ maxHeight: '200px' }}
@@ -148,7 +148,7 @@ const EditCoursePage = observer(() => {
               <input
                 type="file"
                 accept="video/*"
-                onChange={(e) => newCourseStore.setVideoFile(e.target.files[0])}
+                onChange={(e) => editCourseStore.setVideoFile(e.target.files[0])}
                 className="hidden"
                 id="video-upload"
                 required
@@ -161,32 +161,32 @@ const EditCoursePage = observer(() => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 <span className="text-gray-600">
-                  {newCourseStore.videoFile ? t('course.add.changeVideo') : t('course.add.selectVideo')}
+                  {editCourseStore.videoFile ? t('course.add.changeVideo') : t('course.add.selectVideo')}
                 </span>
               </label>
-              {newCourseStore.videoFile && (
+              {editCourseStore.videoFile && (
                 <div className="mt-2 text-sm text-gray-500">
-                  {t('course.add.fileSelected')}: {newCourseStore.videoFile.name}
+                  {t('course.add.fileSelected')}: {editCourseStore.videoFile.name}
                 </div>
               )}
             </div>
           </div>
 
           {/* Error Message */}
-          {newCourseStore.error && (
-            <div className="text-red-600 text-sm">{newCourseStore.error}</div>
+          {editCourseStore.error && (
+            <div className="text-red-600 text-sm">{editCourseStore.error}</div>
           )}
 
           {/* Submit Button */}
           <div className="flex justify-end mb-10">
             <button
               type="submit"
-              disabled={newCourseStore.isLoading}
+              disabled={editCourseStore.isLoading}
               className={`px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                newCourseStore.isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                editCourseStore.isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {newCourseStore.isLoading ? t('course.add.saving') : t('course.add.save')}
+              {editCourseStore.isLoading ? t('course.add.saving') : t('course.add.save')}
             </button>
           </div>
         </form>
