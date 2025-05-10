@@ -130,19 +130,16 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
             </div>
             {seriesCardStore.isExpanded(seriesId) && (
               <div className="border-t pt-2 space-y-2">
-                {coursesStore.courses
-                  .filter(course => course?.series?.id === seriesId || course?.series?._id === seriesId)
-                  .map((course, idx) => (
-                    <CourseCard
-                      key={course.id || course._id}
-                      course={course}
-                      isEditMode={routeStore.isSeriesSettingMode}
-                      onEdit={() => seriesCardStore.openEditCourseDialog(course, seriesId)}
-                      index={idx}
-                      moveItem={handleMoveCourse}
-                    />
-                  ))
-                }
+                {courses.map((course, idx) => (
+                  <CourseCard
+                    key={course.id || course._id}
+                    course={course}
+                    isEditMode={routeStore.isSeriesSettingMode}
+                    onEdit={() => seriesCardStore.openEditCourseDialog(course, seriesId)}
+                    index={idx}
+                    moveItem={handleMoveCourse}
+                  />
+                ))}
               </div>
             )}
           </div>

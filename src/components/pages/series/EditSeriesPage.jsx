@@ -133,9 +133,9 @@ const EditSeriesPage = observer(() => {
             className="w-full p-2 border rounded bg-white"
             required
           >
-            {seriesStore.durationOptionKeys.map((key) => (
+            {seriesStore.durationOptions.map(({ key, value }) => (
               <option key={key} value={key}>
-                {t(`series.edit.durationOptions.${key}`)}
+                {value}
               </option>
             ))}
           </select>

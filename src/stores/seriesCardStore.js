@@ -86,10 +86,9 @@ class SeriesCardStore {
     return languageStore.t(key, { count });
   };
 
-  openEditDialog = async (series) => {
-    const seriesId = series.id || series._id;
-    routeStore.setSeriesId(seriesId);
-    await seriesStore.fetchSeriesById(seriesId);
+  openEditDialog = (series) => {
+    routeStore.setSeriesId(series.id);
+    seriesStore.setCurrentSeries(series);
     groupedSeriesStore.openEditSeriesDialog(series.group);
   };
 }
