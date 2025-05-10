@@ -244,6 +244,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "descriptionImage": "Description Image",
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
     "edit": "Edit Series",

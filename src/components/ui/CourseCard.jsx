@@ -6,6 +6,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import uiStore from '../../stores/uiStore';
 import languageStore from '../../stores/languageStore';
 import useDragAndDrop from '../../hooks/useDragAndDrop';
+import seriesStore from '../../stores/seriesStore';
 
 const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;
@@ -36,7 +37,9 @@ const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) =>
     // Cleanup
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
+
+  const instructor = seriesStore.getInstructorById(course.instructor_id);
+
   // Check if the course is favorited
   const isFavorite = uiStore.favoriteCourseIds.has(course.id);
   
@@ -75,7 +78,7 @@ const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) =>
   return (
     <div
       ref={isEditMode ? handleRef : null}
-      className={`flex flex-col w-full relative group cursor-pointer mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
+      className={`flex flex-col w-full relative group cursor-pointer mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
@@ -172,20 +175,20 @@ const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) =>
         
         {/* Course Instructor */}
         <div className="flex items-center mt-1">
-          {course.instructor?.iconUrl ? (
+          {instructor?.iconUrl ? (
             <img
-              src={course.instructor.iconUrl}
-              alt={course.instructor?.name}
+              src={instructor.iconUrl}
+              alt={instructor.name}
               className="w-5 h-5 sm:w-6 sm:h-6 rounded-full mr-1.5"
             />
           ) : (
             <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-300 mr-1.5 flex items-center justify-center">
               <span className="text-xs text-gray-600">
-                {course.instructor?.name?.[0]?.toUpperCase() || '?'}
+                {instructor?.name?.[0]?.toUpperCase() || '?'}
               </span>
             </div>
           )}
-          <p className="text-gray-600 text-xs sm:text-sm">{course.instructor?.name}</p>
+          <p className="text-gray-600 text-xs sm:text-sm">{instructor?.name}</p>
         </div>
 
         {/* Edit Mode Buttons - Bottom Right */}

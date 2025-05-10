@@ -244,6 +244,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "descriptionImage": "描述图片",
     "selectTitle": "选择课程",
     "selectToEdit": "选择要编辑的课程",
     "edit": "编辑课程",

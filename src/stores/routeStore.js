@@ -125,36 +125,10 @@ class RouteStore {
   }
   
   navigateToSeries(seriesId, navigate) {
-    // First navigate to ensure the URL changes
-    if (navigate) navigate(`/series/${seriesId}`);
-    
-    // Then update the store state to match the new URL
-    // Use action wrappers for all state changes
+    if (navigate) navigate(`/series/${seriesId}`);    
     runInAction(() => {
-      // Don't clear instructor ID when navigating from an instructor page
-      // This preserves context when navigating from instructor to their series
-      
-      // Set the series ID
       this.setSeriesId(seriesId);
-    });
-    
-    // Ensure series is selected in the courses store
-    coursesStore.selectSeries(seriesId);
-    
-    // Important: Make sure we have courses loaded for this series
-    if (seriesId && coursesStore.courses.length === 0) {
-      // If courses haven't been loaded yet, fetch them
-      coursesStore.fetchCourses();
-    }
-    
-    // If we have series data and this series has an instructor, make sure that data is loaded
-    if (seriesId && seriesStore.series.length > 0) {
-      const series = coursesStore.series.find(s => s.id === parseInt(seriesId, 10));
-      if (series && series.instructor?.id) {
-        // Load any related data for display purposes, but don't set as current instructor
-        coursesStore.fetchInstructorSeries(series.instructor?.id);
-      }
-    }
+    });    
   }
   
   navigateToCourse(courseId, isVideo, navigate) {

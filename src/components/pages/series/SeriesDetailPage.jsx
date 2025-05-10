@@ -13,7 +13,6 @@ const SeriesDetailPage = observer(() => {
   if (!selectedSeries) {
     return null;
   }
-  console.log(selectedSeries)
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
