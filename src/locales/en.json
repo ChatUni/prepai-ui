@@ -208,6 +208,7 @@
     }
   },
   "course": {
+    "edit": "Edit Course",
     "settings": "Course Settings",
     "management": "Course Management",
     "management.description": "Here you can create and manage course categories and courses, set course details, pricing, and online/offline status, as well as adjust the display order on the homepage.",
@@ -222,6 +223,7 @@
       "selectInstructor": "Please select an instructor",
       "courseName": "Course Name",
       "courseDescription": "Course Description",
+      "duration": "Duration",
       "coverImage": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",

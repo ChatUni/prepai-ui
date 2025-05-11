@@ -208,6 +208,7 @@
     }
   },
   "course": {
+    "edit": "编辑课程",
     "settings": "课程设置",
     "management": "课程管理",
     "management.description": "在这里可以创建和管理课程分类与课程，设置课程详情、定价、上下架状态，以及调整在首页的展示位置排序。",
@@ -222,6 +223,7 @@
       "selectInstructor": "请选择讲师",
       "courseName": "章节名称",
       "courseDescription": "章节描述",
+      "duration": "时长",
       "coverImage": "封面图片",
       "selectImage": "选择图片",
       "changeImage": "更改图片",
