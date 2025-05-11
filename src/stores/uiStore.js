@@ -1,5 +1,4 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
-import { setUIStore } from './coursesStore';
 import { getApiBaseUrl } from '../config.js';
 import languageStore from './languageStore';
 
@@ -55,9 +54,6 @@ class UIStore {
       setMode: action
     });
 
-    // Set this store in coursesStore to avoid circular dependencies
-    setUIStore(this);
-    
     // Load favorites from API
     this.loadFavorites();
   }

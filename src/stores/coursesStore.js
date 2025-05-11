@@ -18,37 +18,6 @@ class CoursesStore {
     makeObservable(this);
   }
 
-  async fetchCourses() {
-    this.setLoading(true);
-    this.setError(null);
-    
-    try {
-      const courses = await getAllCourses();
-      console.log('Fetched courses:', courses);
-      console.log('Number of courses:', courses.length);
-      this.setCourses(courses);
-    } catch (error) {
-      console.error('Failed to fetch courses:', error);
-      this.setError('Failed to load courses from database');
-      
-      // Fallback to empty array if there's an error
-      this.setCourses([]);
-    } finally {
-      this.setLoading(false);
-    }
-  }
-
-  async fetchInstructors() {
-    try {
-      const instructors = await getAllInstructors();
-      console.log('Fetched instructors:', instructors);
-      this.setInstructors(instructors);
-    } catch (error) {
-      console.error('Failed to fetch instructors:', error);
-      this.setInstructors([]);
-    }
-  }
-
   setCourses(courses) {
     runInAction(() => {
       // Format courses to ensure instructor data is properly structured
@@ -84,27 +53,6 @@ class CoursesStore {
     runInAction(() => {
       this.selectedInstructorId = instructorId;
     });
-  }
-
-  // Fetch series for a specific instructor
-  async fetchInstructorSeries(instructorId) {
-    if (!instructorId) return;
-    
-    this.setLoadingInstructorSeries(true);
-    this.setInstructorSeriesError(null);
-    
-    try {
-      // Use the fetchFromApi utility to maintain consistent API access
-      const series = await fetchFromApi(`/series?instructorId=${instructorId}`);
-      console.log('Fetched instructor series:', series);
-      this.setInstructorSeries(series);
-    } catch (error) {
-      console.error('Failed to fetch instructor series:', error);
-      this.setInstructorSeriesError(error.message);
-      this.setInstructorSeries([]);
-    } finally {
-      this.setLoadingInstructorSeries(false);
-    }
   }
   
   // Set instructor ID and fetch their series in one action
@@ -263,15 +211,3 @@ class CoursesStore {
 
 const coursesStore = new CoursesStore();
 export default coursesStore;
-
-// This will be defined later
-let uiStore = { searchKeyword: '', activeCategory: '', activeNavItem: '' };
-
-// Import and set the uiStore after it's created to avoid circular dependencies
-export const setUIStore = (store) => {
-  if (!store) {
-    console.error('Attempted to set undefined uiStore');
-    return;
-  }
-  uiStore = store;
-};

@@ -15,7 +15,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
   
-  const validatedSeries = seriesCardStore.validateSeries(tap(series));
+  const validatedSeries = seriesCardStore.validateSeries(series);
   if (!validatedSeries) return null;
 
   const { id: seriesId, name, desc, cover, group, price } = validatedSeries;

@@ -1,6 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import lang from '../../stores/languageStore';
 
+const getYouTubeEmbedUrl = (url) => {
+  const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(youtubeRegex);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+};
+
 const getMediaStyle = (style, type) => {
   if (type === 'video') {
     return 'w-full rounded-lg shadow-lg';
@@ -75,13 +81,23 @@ const MediaUpload = observer(({
               className={getMediaStyle(mediaStyle, type)}
             />
           ) : (
-            <video
-              src={previewUrl instanceof File ? URL.createObjectURL(previewUrl) : previewUrl}
-              controls
-              className={getMediaStyle(mediaStyle, type)}
-            >
-              Your browser does not support the video tag.
-            </video>
+            previewUrl instanceof File ? (
+              <video
+                src={URL.createObjectURL(previewUrl)}
+                controls
+                className={getMediaStyle(mediaStyle, type)}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <iframe
+                src={getYouTubeEmbedUrl(previewUrl)}
+                className={getMediaStyle(mediaStyle, type)}
+                allowFullScreen
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
+            )
           )}
         </div>
       )}

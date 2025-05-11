@@ -73,15 +73,14 @@ const EditCoursePage = observer(() => {
             />
           </div>
 
-          {/* Cover Image Upload */}
-          <MediaUpload
+          {/* <MediaUpload
             id="cover-upload"
             type="image"
             label={t('course.add.coverImage')}
             previewUrl={editCourseStore.imagePreview}
             onMediaSelect={(file) => editCourseStore.setImage(file)}
             className="space-y-2"
-          />
+          /> */}
 
           <MediaUpload
             id="video-upload"

@@ -9,6 +9,7 @@ import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import TabPanel from '../../ui/TabPanel';
 import BackButton from '../../ui/BackButton';
+import seriesStore from '../../../stores/seriesStore';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
@@ -124,7 +125,7 @@ const VideoPlayerPage = observer(() => {
 
   // Setup YouTube player
   useEffect(() => {
-    if (!course || !getYoutubeId(course.video_url)) return;
+    if (!course || !getYoutubeId(course.url)) return;
 
     // Function to initialize the YouTube player
     const initializeYouTubePlayer = () => {
@@ -142,7 +143,7 @@ const VideoPlayerPage = observer(() => {
           const player = new window.YT.Player('youtube-player', {
             height: '100%',
             width: '100%',
-            videoId: getYoutubeId(course.video_url),
+            videoId: getYoutubeId(course.url),
             playerVars: {
               'autoplay': 1,
               'playsinline': 1,
@@ -216,7 +217,7 @@ const VideoPlayerPage = observer(() => {
   useEffect(() => {
     let youtubeInterval = null;
     
-    if (course && getYoutubeId(course.video_url)) {
+    if (course && getYoutubeId(course.url)) {
       youtubeInterval = setInterval(() => {
         // Only update if we have a valid YouTube player
         if (youtubePlayer && typeof youtubePlayer.getCurrentTime === 'function') {
@@ -301,7 +302,7 @@ const VideoPlayerPage = observer(() => {
       setLoading(true);
       try {
         // Find the course in the store
-        const foundCourse = coursesStore.courses.find(c => c.id === parseInt(courseId));
+        const foundCourse = seriesStore.currentSeriesFromRoute?.courses.find(c => c.id === parseInt(courseId));
         
         if (!foundCourse) {
           throw new Error('Course not found');
@@ -315,8 +316,8 @@ const VideoPlayerPage = observer(() => {
         setCourse(foundCourse);
         
         // Fetch transcript and summary when course is loaded
-        if (foundCourse.video_url) {
-          fetchTranscriptAndSummary(foundCourse.video_url, foundCourse.transcript);
+        if (foundCourse.url) {
+          fetchTranscriptAndSummary(foundCourse.url, foundCourse.transcript);
         }
       } catch (err) {
         console.error('Error loading course:', err);
@@ -364,7 +365,7 @@ const VideoPlayerPage = observer(() => {
           <div className="aspect-video bg-black rounded overflow-hidden relative">
             {(() => {
               // Determine video type and handle accordingly
-              if (getYoutubeId(course.video_url)) {
+              if (getYoutubeId(course.url)) {
                 return (
                   <div className="w-full h-full relative">
                     <div id="youtube-player" className="absolute inset-0"></div>
@@ -373,8 +374,8 @@ const VideoPlayerPage = observer(() => {
               }
 
               // Handle Google Drive videos with iframe
-              if (getGoogleDriveId(course.video_url)) {
-                const fileId = getGoogleDriveId(course.video_url);
+              if (getGoogleDriveId(course.url)) {
+                const fileId = getGoogleDriveId(course.url);
                 return (
                   <iframe
                     src={`https://drive.google.com/file/d/${fileId}/preview`}
@@ -396,7 +397,7 @@ const VideoPlayerPage = observer(() => {
                   className="w-full h-full"
                   controls
                   autoPlay
-                  src={course.video_url}
+                  src={course.url}
                   poster={course.image}
                 >
                   Your browser does not support the video tag.
