@@ -81,7 +81,7 @@ class EditCourseStore {
         title: this.title,
         duration: this.duration,
         [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
-      }, ['series', 'instructor']);
+      }, ['_id', 'series', 'instructor']);
 
       // Save new course to get id
       if (!isEdit) {
@@ -90,15 +90,15 @@ class EditCourseStore {
       }
 
       // Upload video if provided
-      let videoUrl = null;
+      let videoUrl = isEdit ? this.editingCourse.url : 'https://www.youtube.com/watch?v=jDnKyR0L1fc';
       if (this.videoFile) {
-        videoUrl = await uploadToCloudinary(this.videoFile, `prepai/${seriesId}/courses`);
+        // videoUrl = await uploadToCloudinary(this.videoFile, `series/${seriesId}/courses`);
       }
 
       // Upload cover image if provided
       let coverUrl = null;
       if (this.image) {
-        coverUrl = await uploadToCloudinary(this.image, `prepai/${seriesId}/courses`);
+        // coverUrl = await uploadToCloudinary(this.image, `series/${seriesId}/courses`);
       }
 
       courseData.url = videoUrl;
@@ -113,7 +113,7 @@ class EditCourseStore {
         this.reset();
       });
 
-      return data;
+      return courseData;
     } catch (error) {
       runInAction(() => {
         this.error = error.message;

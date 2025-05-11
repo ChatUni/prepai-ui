@@ -10,6 +10,7 @@ import routeStore from '../../../stores/routeStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
 import seriesStore from '../../../stores/seriesStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
+import editCourseStore from '../../../stores/editCourseStore';
 import EditCoursePage from './EditCoursePage';
 
 const GroupedSeriesList = observer(() => {
@@ -177,6 +178,12 @@ const GroupedSeriesList = observer(() => {
       <Dialog
         isOpen={seriesCardStore.editCourseDialogOpen}
         onClose={seriesCardStore.closeEditCourseDialog}
+        onConfirm={async () => {
+          const success = await editCourseStore.saveCourse(seriesCardStore.currentSeriesId);
+          if (success) {
+            seriesCardStore.closeEditCourseDialog();
+          }
+        }}
         title={t('course.editCourse')}
         isConfirm={true}
       >

@@ -9,7 +9,7 @@ const getYouTubeEmbedUrl = (url) => {
 
 const getMediaStyle = (style, type) => {
   if (type === 'video') {
-    return 'w-full rounded-lg shadow-lg';
+    return 'w-full aspect-video rounded-lg shadow-lg';
   }
 
   switch (style) {

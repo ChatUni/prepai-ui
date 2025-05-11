@@ -30,7 +30,7 @@ const EditCoursePage = observer(() => {
               id="instructor"
               value={editCourseStore.instructor_id || ''}
               onChange={(e) => editCourseStore.setInstructorId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               required
             >
               <option value="">{t('course.add.selectInstructor')}</option>
@@ -52,7 +52,7 @@ const EditCoursePage = observer(() => {
               id="title"
               value={editCourseStore.title}
               onChange={(e) => editCourseStore.setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               required
             />
           </div>
@@ -67,7 +67,7 @@ const EditCoursePage = observer(() => {
               id="duration"
               value={editCourseStore.duration}
               onChange={(e) => editCourseStore.setDuration(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               min="0"
               required
             />
