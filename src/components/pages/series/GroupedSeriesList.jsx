@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
 import EditSeriesPage from './EditSeriesPage';
+import EditInstructorPage from '../instructor/EditInstructorPage';
 import { AccordionSection } from '../../ui/AdminAccordion';
 import Dialog from '../../ui/Dialog';
 import languageStore from '../../../stores/languageStore';
@@ -12,6 +13,7 @@ import seriesStore from '../../../stores/seriesStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
 import editCourseStore from '../../../stores/editCourseStore';
 import EditCoursePage from './EditCoursePage';
+import instructorsStore from '../../../stores/instructorsStore';
 
 const GroupedSeriesList = observer(() => {
   const { t } = languageStore;
@@ -190,6 +192,30 @@ const GroupedSeriesList = observer(() => {
       >
         <div className="max-h-[80vh] overflow-y-auto">
           <EditCoursePage courseId={seriesCardStore.currentEditCourse?.id} seriesId={seriesCardStore.currentSeriesId} />
+        </div>
+      </Dialog>
+
+      <Dialog
+        isOpen={seriesCardStore.editInstructorDialogOpen}
+        onClose={seriesCardStore.closeEditInstructorDialog}
+        onConfirm={async () => {
+          const form = document.querySelector('form');
+          if (form) {
+            try {
+              await instructorsStore.saveInstructor(new FormData(form));
+              await seriesStore.fetchSeries();
+              seriesCardStore.closeEditInstructorDialog();
+            } catch (error) {
+              console.error('Failed to save instructor:', error);
+            }
+          }
+        }}
+        title={instructorsStore.isEditMode ? t('instructors.edit.title') : t('instructors.add.title')}
+        size="xl"
+        isConfirm={true}
+      >
+        <div className="max-h-[80vh] overflow-y-auto">
+          <EditInstructorPage />
         </div>
       </Dialog>
     </div>

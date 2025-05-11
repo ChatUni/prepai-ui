@@ -63,18 +63,32 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
           <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
             <div className="flex flex-wrap gap-2">
               {instructors.map((instructor, index) => (
-                <div key={instructor.id || instructor._id} className="flex items-center">
-                  {instructor?.iconUrl ? (
-                    <img
-                      src={instructor.iconUrl}
-                      alt={instructor.name}
-                      className="w-6 h-6 rounded-full mr-1"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-300 mr-1 flex items-center justify-center">
-                      <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
-                    </div>
-                  )}
+                <div
+                  key={instructor.id || instructor._id}
+                  className={`flex items-center ${routeStore.isSeriesSettingMode ? 'cursor-pointer hover:opacity-80' : ''}`}
+                  onClick={routeStore.isSeriesSettingMode ? (e) => {
+                    e.stopPropagation();
+                    seriesCardStore.openEditInstructorDialog(instructor.id || instructor._id);
+                  } : undefined}
+                >
+                  <div className="relative">
+                    {instructor?.iconUrl ? (
+                      <img
+                        src={instructor.iconUrl}
+                        alt={instructor.name}
+                        className="w-6 h-6 rounded-full mr-1"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-gray-300 mr-1 flex items-center justify-center">
+                        <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
+                      </div>
+                    )}
+                    {routeStore.isSeriesSettingMode && (
+                      <div className="absolute -bottom-1 -left-1 p-1 rounded-full bg-blue-800/80">
+                        <FiEdit2 size={8} className="text-white" />
+                      </div>
+                    )}
+                  </div>
                   <span className="text-sm text-gray-600 dark:text-gray-300">
                     {instructor?.name}
                     {index < instructors.length - 1 && ", "}

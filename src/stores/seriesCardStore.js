@@ -9,8 +9,10 @@ import editCourseStore from './editCourseStore';
 class SeriesCardStore {
   expandedSeriesId = null;
   editCourseDialogOpen = false;
+  editInstructorDialogOpen = false;
   currentEditCourse = null;
   currentSeriesId = null;
+  currentInstructorId = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -27,6 +29,16 @@ class SeriesCardStore {
     this.editCourseDialogOpen = false;
     this.currentEditCourse = null;
     this.currentSeriesId = null;
+  };
+
+  openEditInstructorDialog = (instructorId) => {
+    this.currentInstructorId = instructorId;
+    this.editInstructorDialogOpen = true;
+  };
+
+  closeEditInstructorDialog = () => {
+    this.editInstructorDialogOpen = false;
+    this.currentInstructorId = null;
   };
 
   toggleCourseList = (seriesId) => {
