@@ -181,6 +181,7 @@ const GroupedSeriesList = observer(() => {
         onConfirm={async () => {
           const success = await editCourseStore.saveCourse(seriesCardStore.currentSeriesId);
           if (success) {
+            await seriesStore.fetchSeries();
             seriesCardStore.closeEditCourseDialog();
           }
         }}

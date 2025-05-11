@@ -8,19 +8,10 @@ import MediaUpload from '../../ui/MediaUpload';
 const EditCoursePage = observer(() => {
   const { t } = languageStore;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await editCourseStore.saveCourse(seriesId);
-    } catch (error) {
-      console.error('Failed to save course:', error);
-    }
-  };
-
   return (
     <div className="container mx-auto">
       <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6">
           {/* Instructor Selection */}
           <div>
             <label htmlFor="instructor" className="block text-sm font-medium text-gray-700 mb-2">
