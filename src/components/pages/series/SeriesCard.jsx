@@ -10,8 +10,6 @@ import seriesStore from '../../../stores/seriesStore';
 import coursesStore from '../../../stores/coursesStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import CourseCard from './CourseCard';
-import Dialog from '../../ui/Dialog';
-import EditCoursePage from './EditCoursePage';
 
 const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
@@ -149,34 +147,4 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
   );
 });
 
-const EditCourseDialog = observer(() => {
-  const { t } = languageStore;
-  const { editCourseDialogOpen, currentEditCourse, currentSeriesId, closeEditCourseDialog } = seriesCardStore;
-
-  if (!editCourseDialogOpen || !currentEditCourse) return null;
-
-  return (
-    <Dialog
-      isOpen={editCourseDialogOpen}
-      onClose={closeEditCourseDialog}
-      title={t('course.editCourse')}
-      isConfirm={true}
-    >
-      <div className="max-h-[80vh] overflow-y-auto">
-        <EditCoursePage courseId={currentEditCourse.id} seriesId={currentSeriesId} />
-      </div>
-    </Dialog>
-  );
-});
-
-// Render EditCourseDialog at the root level where SeriesCard is used
-const SeriesCardWithDialog = observer(({ series, index, moveItem }) => {
-  return (
-    <>
-      <SeriesCard series={series} index={index} moveItem={moveItem} />
-      <EditCourseDialog />
-    </>
-  );
-});
-
-export default SeriesCardWithDialog;
+export default SeriesCard;

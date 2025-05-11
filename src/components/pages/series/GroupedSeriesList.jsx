@@ -9,6 +9,8 @@ import languageStore from '../../../stores/languageStore';
 import routeStore from '../../../stores/routeStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
 import seriesStore from '../../../stores/seriesStore';
+import seriesCardStore from '../../../stores/seriesCardStore';
+import EditCoursePage from './EditCoursePage';
 
 const GroupedSeriesList = observer(() => {
   const { t } = languageStore;
@@ -96,6 +98,7 @@ const GroupedSeriesList = observer(() => {
           </button>
         </div>
       )}
+
       <Dialog
         isOpen={groupedSeriesStore.isAddGroupDialogOpen}
         onClose={groupedSeriesStore.closeAddGroupDialog}
@@ -112,6 +115,7 @@ const GroupedSeriesList = observer(() => {
           autoFocus
         />
       </Dialog>
+
       <Dialog
         isOpen={groupedSeriesStore.isEditGroupDialogOpen}
         onClose={groupedSeriesStore.closeEditGroupDialog}
@@ -128,6 +132,7 @@ const GroupedSeriesList = observer(() => {
           autoFocus
         />
       </Dialog>
+
       <Dialog
         isOpen={groupedSeriesStore.isDeleteGroupDialogOpen}
         onClose={groupedSeriesStore.closeDeleteGroupDialog}
@@ -137,6 +142,7 @@ const GroupedSeriesList = observer(() => {
       >
         <p className="text-gray-700">{t('series.groups.confirmDelete')}</p>
       </Dialog>
+
       <Dialog
         isOpen={groupedSeriesStore.isErrorDialogOpen}
         onClose={groupedSeriesStore.closeErrorDialog}
@@ -144,6 +150,7 @@ const GroupedSeriesList = observer(() => {
       >
         <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
       </Dialog>
+
       <Dialog
         isOpen={groupedSeriesStore.isAddSeriesDialogOpen}
         onClose={groupedSeriesStore.closeAddSeriesDialog}
@@ -164,6 +171,17 @@ const GroupedSeriesList = observer(() => {
       >
         <div className="max-h-[80vh] overflow-y-auto">
           <EditSeriesPage />
+        </div>
+      </Dialog>
+
+      <Dialog
+        isOpen={seriesCardStore.editCourseDialogOpen}
+        onClose={seriesCardStore.closeEditCourseDialog}
+        title={t('course.editCourse')}
+        isConfirm={true}
+      >
+        <div className="max-h-[80vh] overflow-y-auto">
+          <EditCoursePage courseId={seriesCardStore.currentEditCourse?.id} seriesId={seriesCardStore.currentSeriesId} />
         </div>
       </Dialog>
     </div>
