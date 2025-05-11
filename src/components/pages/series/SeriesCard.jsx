@@ -45,8 +45,8 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
       className={`bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
     >
       <div
-        onClick={(e) => seriesCardStore.handleSeriesClick(seriesId, navigate, e)}
-        className={`cursor-${routeStore.isSeriesSettingMode ? 'move' : 'pointer'}`}
+        onClick={routeStore.isSeriesSettingMode ? undefined : (e) => seriesCardStore.handleSeriesClick(seriesId, navigate, e)}
+        className={`${!routeStore.isSeriesSettingMode && 'cursor-pointer'}`}
       >
         <div className="relative pb-[56.25%]">
           <img
