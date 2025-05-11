@@ -297,6 +297,7 @@
     "courseCount": "{count}件のコース",
     "showCourses": "{count}件のコースを表示",
     "hideCourses": "{count}件のコースを非表示",
+    "addCourse": "コースを追加",
     "banners": {
       "title": "バナー画像を編集",
       "banner": "バナー",

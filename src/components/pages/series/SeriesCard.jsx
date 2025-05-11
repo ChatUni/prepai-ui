@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { MdDragIndicator } from 'react-icons/md';
+import { MdDragIndicator, MdAdd } from 'react-icons/md';
 import { FiEdit2 } from 'react-icons/fi';
+import ExpandArrow from '../../ui/ExpandArrow';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
@@ -95,15 +96,28 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               {routeStore.isSeriesSettingMode ? (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    seriesCardStore.toggleCourseList(seriesId);
-                  }}
-                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  {seriesCardStore.getCourseCountText(courses.length, seriesId)}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      seriesCardStore.openEditCourseDialog(null, seriesId);
+                    }}
+                    className="text-xs px-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-green-500 dark:hover:bg-green-600 rounded transition-colors !min-h-0 h-5 leading-none flex items-center gap-1"
+                    title={t('series.addCourse')}
+                  >
+                    <MdAdd size={14} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      seriesCardStore.toggleCourseList(seriesId);
+                    }}
+                    className="text-xs px-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 rounded transition-colors !min-h-0 h-5 leading-none flex items-center gap-1"
+                  >
+                    {seriesCardStore.getCourseCountText(courses.length, seriesId)}
+                    <ExpandArrow isExpanded={seriesCardStore.isExpanded(seriesId)} className="text-white" />
+                  </button>
+                </div>
               ) : (
                 <p className="text-xs text-gray-600 dark:text-gray-400">{t('series.courseCount', { count: courses.length})}</p>
               )}

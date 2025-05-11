@@ -1,6 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { MdDragIndicator } from 'react-icons/md';
+import ExpandArrow from './ExpandArrow';
 import useDragAndDrop from '../../hooks/useDragAndDrop';
 import seriesStore from '../../stores/seriesStore';
 
@@ -58,9 +59,7 @@ const AccordionSection = observer(({
           <span className="font-semibold">{title}</span>
           <div className="flex items-center gap-2">
             {actions}
-            <span className={`transform transition-transform duration-200 ml-2 ${
-              isExpanded ? 'rotate-180' : ''
-            }`}>▼</span>
+            <ExpandArrow isExpanded={isExpanded} className="ml-2" />
           </div>
         </div>
       </div>
