@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import SearchBar from '../ui/SearchBar';
-import CourseList from '../ui/CourseList';
+import CourseList from '../pages/series/CourseList';
 import coursesStore from '../../stores/coursesStore';
 import uiStore from '../../stores/uiStore';
 import InstructorPage from '../pages/instructor/InstructorPage';

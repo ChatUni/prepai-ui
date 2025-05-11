@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdDragIndicator } from 'react-icons/md';
 import { FiEdit2 } from 'react-icons/fi';
-import uiStore from '../../stores/uiStore';
-import languageStore from '../../stores/languageStore';
-import useDragAndDrop from '../../hooks/useDragAndDrop';
-import seriesStore from '../../stores/seriesStore';
+import uiStore from '../../../stores/uiStore';
+import languageStore from '../../../stores/languageStore';
+import useDragAndDrop from '../../../hooks/useDragAndDrop';
+import seriesStore from '../../../stores/seriesStore';
 
 const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import CourseList from '../../ui/CourseList';
+import CourseList from './CourseList';
 import seriesStore from '../../../stores/seriesStore';
 import languageStore from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';

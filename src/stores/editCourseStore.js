@@ -1,17 +1,25 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import seriesStore from './seriesStore';
 import routeStore from './routeStore';
+import { uploadToCloudinary } from '../utils/cloudinaryHelper';
+import { save } from '../utils/db';
+import _ from 'lodash';
 
 class EditCourseStore {
+  // fields
   title = '';
   image = null;
-  imagePreview = null;
-  videoFile = null;
   instructor_id = null;
   duration = 0;
+
+  // data
+  imagePreview = null;
+  videoFile = null;
+
+  // state
   isLoading = false;
   error = null;
-  editingCourseId = null;
+  editingCourse = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -30,7 +38,7 @@ class EditCourseStore {
           this.imagePreview = reader.result;
         });
       };
-      reader.readAsDataURL(file);
+      reader.re.readAsDataURL(file);
     } else {
       this.imagePreview = null;
     }
@@ -44,122 +52,65 @@ class EditCourseStore {
     this.videoFile = file;
   }
 
-  reset = () => {
-    this.title = '';
-    this.image = null;
-    this.imagePreview = null;
-    this.videoFile = null;
-    this.instructor_id = null;
-    this.duration = 0;
+  reset = (course = null) => {
+    this.editingCourse = course;
+    this.title = course?.title || '';
+    this.image = this.imagePreview = course?.image;
+    this.videoFile = course?.url;
+    this.instructor_id = course?.instructor_id;
+    this.duration = course?.duration || 0;
+    this.isLoading = false;
     this.error = null;
-    this.editingCourseId = null;
   }
-
-  loadCourse = async (courseId) => {
-    try {
-      this.isLoading = true;
-      this.error = null;
-      this.editingCourseId = courseId;
-
-      const response = await fetch(`/api/courses/${courseId}`);
-      if (!response.ok) throw new Error('Failed to load course');
-      const course = await response.json();
-      
-      runInAction(() => {
-        this.title = course.title;
-        this.instructor_id = course.instructor_id;
-        this.imagePreview = course.image;
-        this.duration = course.duration || 0;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
-    } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
-    }
-  };
 
   setInstructorId = (id) => {
     this.instructor_id = id;
   }
 
-  saveCourse = async (seriesId, navigate) => {
+  saveCourse = async (seriesId) => {
     try {
       this.isLoading = true;
       this.error = null;
 
-      // First upload video to get URL
+      const isEdit = !!this.editingCourse;
+
+      const courseData = _.omit({
+        ...(isEdit ? this.editingCourse : {}),
+        series_id: seriesId,
+        instructor_id: this.instructor_id,
+        title: this.title,
+        duration: this.duration,
+        [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
+      }, ['series', 'instructor']);
+
+      // Save new course to get id
+      if (!isEdit) {
+        const data = await save('courses', courseData)
+        courseData.id = data.id;
+      }
+
+      // Upload video if provided
       let videoUrl = null;
       if (this.videoFile) {
-        const videoFormData = new FormData();
-        videoFormData.append('file', this.videoFile);
-        videoFormData.append('folder', `prepai/${seriesId}/courses`);
-
-        const videoResponse = await fetch('/api/cloudinary_upload', {
-          method: 'POST',
-          body: videoFormData
-        });
-
-        if (!videoResponse.ok) {
-          throw new Error('Failed to upload video');
-        }
-
-        const videoData = await videoResponse.json();
-        videoUrl = videoData.secure_url;
+        videoUrl = await uploadToCloudinary(this.videoFile, `prepai/${seriesId}/courses`);
       }
 
       // Upload cover image if provided
       let coverUrl = null;
-      if (this.coverImage) {
-        const imageFormData = new FormData();
-        imageFormData.append('file', this.coverImage);
-        imageFormData.append('folder', `prepai/${seriesId}/courses`);
-
-        const imageResponse = await fetch('/api/cloudinary_upload', {
-          method: 'POST',
-          body: imageFormData
-        });
-
-        if (!imageResponse.ok) {
-          throw new Error('Failed to upload cover image');
-        }
-
-        const imageData = await imageResponse.json();
-        coverUrl = imageData.secure_url;
+      if (this.image) {
+        coverUrl = await uploadToCloudinary(this.image, `prepai/${seriesId}/courses`);
       }
 
-      // Save course data
-      const courseData = {
-        title: this.title,
-        series_id: seriesId,
-        instructor_id: this.instructor_id,
-        video_url: videoUrl,
-        image: coverUrl || this.imagePreview,
-        duration: this.duration,
-        isVideo: !!videoUrl
-      };
+      courseData.url = videoUrl;
+      courseData.image = coverUrl;
+      courseData.isVideo = true;
 
-      const response = await fetch(`/api/courses${this.editingCourseId ? `/${this.editingCourseId}` : ''}`, {
-        method: this.editingCourseId ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(courseData),
-      });
+      // Save updated course
+      await save('courses', courseData)
 
-      if (!response.ok) {
-        throw new Error('Failed to save course');
-      }
-
-      const data = await response.json();
-      
       runInAction(() => {
         this.isLoading = false;
         this.reset();
-        routeStore.navigateToSeries(seriesId, navigate);
       });
 
       return data;

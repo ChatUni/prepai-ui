@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import CourseList from './ui/CourseList';
+import CourseList from './pages/series/CourseList.jsx';
 import SearchBar from './ui/SearchBar';
 import uiStore from '../stores/uiStore';
 import { getApiBaseUrl } from '../config.js';

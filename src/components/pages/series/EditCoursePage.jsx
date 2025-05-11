@@ -1,50 +1,24 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useNavigate, useParams } from 'react-router-dom';
 import seriesStore from '../../../stores/seriesStore';
 import editCourseStore from '../../../stores/editCourseStore';
 import languageStore from '../../../stores/languageStore';
-import LoadingState from '../../ui/LoadingState';
 
 const EditCoursePage = observer(() => {
-  const { seriesId } = useParams();
-  const navigate = useNavigate();
   const { t } = languageStore;
-  const { currentSeries } = seriesStore;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await editCourseStore.saveCourse(seriesId, navigate);
+      await editCourseStore.saveCourse(seriesId);
     } catch (error) {
       console.error('Failed to save course:', error);
     }
   };
 
-  const content = currentSeries ? (
+  return (
     <div className="container mx-auto p-4 max-w-4xl">
-      {/* Series Details Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1">
-            {currentSeries.cover && (
-              <img
-                src={currentSeries.cover}
-                alt={currentSeries.name}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-            )}
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-xl font-semibold mb-2">{currentSeries.name || ''}</h3>
-            <p className="text-gray-700">{currentSeries.description || ''}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* New Course Form */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6">{t('course.add.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Instructor Selection */}
           <div>
@@ -53,7 +27,7 @@ const EditCoursePage = observer(() => {
             </label>
             <select
               id="instructor"
-              value={editCourseStore.instructorId || ''}
+              value={editCourseStore.instructor_id || ''}
               onChange={(e) => editCourseStore.setInstructorId(parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -177,31 +151,9 @@ const EditCoursePage = observer(() => {
           {editCourseStore.error && (
             <div className="text-red-600 text-sm">{editCourseStore.error}</div>
           )}
-
-          {/* Submit Button */}
-          <div className="flex justify-end mb-10">
-            <button
-              type="submit"
-              disabled={editCourseStore.isLoading}
-              className={`px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                editCourseStore.isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {editCourseStore.isLoading ? t('course.add.saving') : t('course.add.save')}
-            </button>
-          </div>
         </form>
       </div>
     </div>
-  ) : null;
-
-  return (
-    <LoadingState
-      isLoading={seriesStore.isLoading}
-      customMessage={t('common.loading')}
-    >
-      {content}
-    </LoadingState>
   );
 });
 

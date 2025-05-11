@@ -4,6 +4,7 @@ import routeStore from './routeStore';
 import languageStore from './languageStore';
 import seriesStore from './seriesStore';
 import groupedSeriesStore from './groupedSeriesStore';
+import editCourseStore from './editCourseStore';
 
 class SeriesCardStore {
   expandedSeriesId = null;
@@ -18,6 +19,7 @@ class SeriesCardStore {
   openEditCourseDialog = (course, seriesId) => {
     this.currentEditCourse = course;
     this.currentSeriesId = seriesId;
+    editCourseStore.reset(course);
     this.editCourseDialogOpen = true;
   };
 

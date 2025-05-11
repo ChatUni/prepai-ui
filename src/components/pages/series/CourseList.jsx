@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import CourseCard from './CourseCard';
-import languageStore from '../../stores/languageStore';
+import languageStore from '../../../stores/languageStore';
 
 const CourseList = observer(({ title, courses }) => {
   const { t } = languageStore;

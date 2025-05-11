@@ -9,7 +9,7 @@ import seriesCardStore from '../../../stores/seriesCardStore';
 import seriesStore from '../../../stores/seriesStore';
 import coursesStore from '../../../stores/coursesStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
-import CourseCard from '../../ui/CourseCard';
+import CourseCard from './CourseCard';
 import Dialog from '../../ui/Dialog';
 import EditCoursePage from './EditCoursePage';
 
