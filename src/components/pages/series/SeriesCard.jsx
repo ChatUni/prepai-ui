@@ -160,6 +160,7 @@ const EditCourseDialog = observer(() => {
       isOpen={editCourseDialogOpen}
       onClose={closeEditCourseDialog}
       title={t('course.editCourse')}
+      isConfirm={true}
     >
       <div className="max-h-[80vh] overflow-y-auto">
         <EditCoursePage courseId={currentEditCourse.id} seriesId={currentSeriesId} />

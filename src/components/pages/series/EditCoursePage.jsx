@@ -18,8 +18,8 @@ const EditCoursePage = observer(() => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="container mx-auto">
+      <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Instructor Selection */}
           <div>
