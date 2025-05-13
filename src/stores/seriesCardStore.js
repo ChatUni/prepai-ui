@@ -1,10 +1,10 @@
 import { makeAutoObservable, computed } from 'mobx';
-import coursesStore from './coursesStore';
 import routeStore from './routeStore';
 import languageStore from './languageStore';
 import seriesStore from './seriesStore';
 import groupedSeriesStore from './groupedSeriesStore';
 import editCourseStore from './editCourseStore';
+import editInstructorStore from './editInstructorStore';
 
 class SeriesCardStore {
   expandedSeriesId = null;
@@ -12,7 +12,7 @@ class SeriesCardStore {
   editInstructorDialogOpen = false;
   currentEditCourse = null;
   currentSeriesId = null;
-  currentInstructorId = null;
+  currentEditInstructor = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -31,14 +31,15 @@ class SeriesCardStore {
     this.currentSeriesId = null;
   };
 
-  openEditInstructorDialog = (instructorId) => {
-    this.currentInstructorId = instructorId;
+  openEditInstructorDialog = (instructor) => {
+    this.currentEditInstructor = instructor;
+    editInstructorStore.reset(instructor);
     this.editInstructorDialogOpen = true;
   };
 
   closeEditInstructorDialog = () => {
     this.editInstructorDialogOpen = false;
-    this.currentInstructorId = null;
+    this.currentEditInstructor = null;
   };
 
   toggleCourseList = (seriesId) => {
@@ -59,7 +60,7 @@ class SeriesCardStore {
       return null;
     }
 
-    const seriesId = series.id || series._id;
+    const seriesId = series.id;
     if (!seriesId) {
       console.error('Series missing ID:', series);
       return null;

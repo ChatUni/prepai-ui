@@ -14,6 +14,7 @@ import seriesCardStore from '../../../stores/seriesCardStore';
 import editCourseStore from '../../../stores/editCourseStore';
 import EditCoursePage from './EditCoursePage';
 import instructorsStore from '../../../stores/instructorsStore';
+import editInstructorStore from '../../../stores/editInstructorStore';
 
 const GroupedSeriesList = observer(() => {
   const { t } = languageStore;
@@ -210,7 +211,7 @@ const GroupedSeriesList = observer(() => {
             }
           }
         }}
-        title={instructorsStore.isEditMode ? t('instructors.edit.title') : t('instructors.add.title')}
+        title={editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}
         size="xl"
         isConfirm={true}
       >

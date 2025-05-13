@@ -68,7 +68,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                   className={`flex items-center ${routeStore.isSeriesSettingMode ? 'cursor-pointer hover:opacity-80' : ''}`}
                   onClick={routeStore.isSeriesSettingMode ? (e) => {
                     e.stopPropagation();
-                    seriesCardStore.openEditInstructorDialog(instructor.id);
+                    seriesCardStore.openEditInstructorDialog(instructor);
                   } : undefined}
                 >
                   <div className="relative">
