@@ -79,9 +79,9 @@ const SeriesDetailPage = observer(() => {
               <div className="space-y-4">
                 {seriesStore.seriesInstructors.map((instructor) => (
                   <div key={instructor.id} className="flex items-start space-x-4">
-                    {instructor.iconUrl ? (
+                    {instructor.image ? (
                       <img
-                        src={instructor.iconUrl}
+                        src={instructor.image}
                         alt={instructor.name}
                         className="w-16 h-16 rounded-full object-cover"
                       />

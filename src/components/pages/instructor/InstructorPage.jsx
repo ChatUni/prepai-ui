@@ -55,7 +55,7 @@ const InstructorPage = observer(() => {
             <div className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">
                 <img
-                  src={instructor.iconUrl}
+                  src={instructor.image}
                   alt={instructor.name}
                   className="w-full h-full object-cover"
                   onError={handleImageError}

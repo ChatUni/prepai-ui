@@ -138,7 +138,7 @@ const AssistantChatPage = observer(() => {
         onClick={handleBack}
       >
         <img
-          src={assistantChatStore.selectedAssistant.iconUrl}
+          src={assistantChatStore.selectedAssistant.image}
           alt={assistantChatStore.selectedAssistant.name}
           className="w-8 h-8 rounded-full mr-4 object-cover"
         />

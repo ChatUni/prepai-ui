@@ -9,7 +9,7 @@ const defaultAssistant = {
   name: '',
   greeting: '',
   prompt: '',
-  iconUrl: '',
+  image: '',
   model: ''
 };
 
@@ -139,7 +139,7 @@ class AssistantsStore {
         name: this.currentAssistant.name,
         greeting: this.currentAssistant.greeting,
         prompt: this.currentAssistant.prompt,
-        iconUrl: this.currentAssistant.iconUrl,
+        image: this.currentAssistant.image,
         model: this.currentAssistant.model
       };
 
@@ -161,7 +161,7 @@ class AssistantsStore {
       const iconFile = formData.get('icon');
       if (iconFile instanceof File) {
         const imageUrl = await this.uploadAssistantIcon(iconFile, savedAssistant.id);
-        savedAssistant.iconUrl = imageUrl;
+        savedAssistant.image = imageUrl;
         
         // Update the assistant with the new icon URL
         await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {

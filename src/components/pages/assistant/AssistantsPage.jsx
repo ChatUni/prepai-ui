@@ -41,7 +41,7 @@ const AssistantsPage = observer(() => {
             <div className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">
                 <img
-                  src={assistant.iconUrl || '/images/avatar.png'}
+                  src={assistant.image || '/images/avatar.png'}
                   alt={assistant.name}
                   className="w-full h-full object-cover"
                   onError={handleImageError}

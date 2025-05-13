@@ -116,9 +116,9 @@ const EditAssistantPage = observer(() => {
           <ImageUpload
             id="icon"
             label={t('assistants.edit.icon')}
-            previewUrl={assistantsStore.selectedImagePreview || assistantsStore.currentAssistant.iconUrl}
+            previewUrl={assistantsStore.selectedImagePreview || assistantsStore.currentAssistant.image}
             onImageSelect={handleFileChange}
-            buttonText={assistantsStore.currentAssistant.iconUrl ? t('assistants.edit.changeImage') : t('assistants.edit.selectImage')}
+            buttonText={assistantsStore.currentAssistant.image ? t('assistants.edit.changeImage') : t('assistants.edit.selectImage')}
             imageStyle="round"
           />
 

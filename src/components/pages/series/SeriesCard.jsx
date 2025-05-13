@@ -26,7 +26,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
 
   const handleMoveCourse = (dragIndex, dropIndex) => {
     const courses = coursesStore.courses
-      .filter(course => course?.series?.id === seriesId || course?.series?._id === seriesId);
+      .filter(course => course?.series?.id === seriesId);
     const [removed] = courses.splice(dragIndex, 1);
     courses.splice(dropIndex, 0, removed);
     return coursesStore.saveSeriesUpdates();
@@ -64,17 +64,17 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
             <div className="flex flex-wrap gap-2">
               {instructors.map((instructor, index) => (
                 <div
-                  key={instructor.id || instructor._id}
+                  key={instructor.id}
                   className={`flex items-center ${routeStore.isSeriesSettingMode ? 'cursor-pointer hover:opacity-80' : ''}`}
                   onClick={routeStore.isSeriesSettingMode ? (e) => {
                     e.stopPropagation();
-                    seriesCardStore.openEditInstructorDialog(instructor.id || instructor._id);
+                    seriesCardStore.openEditInstructorDialog(instructor.id);
                   } : undefined}
                 >
                   <div className="relative">
-                    {instructor?.iconUrl ? (
+                    {instructor?.image ? (
                       <img
-                        src={instructor.iconUrl}
+                        src={instructor.image}
                         alt={instructor.name}
                         className="w-6 h-6 rounded-full mr-1"
                       />
@@ -84,8 +84,8 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                       </div>
                     )}
                     {routeStore.isSeriesSettingMode && (
-                      <div className="absolute -bottom-1 -left-1 p-1 rounded-full bg-blue-800/80">
-                        <FiEdit2 size={8} className="text-white" />
+                      <div className="absolute -top-1 -right-0 p-1 rounded-full bg-blue-800/80">
+                        <FiEdit2 size={6} className="text-white" />
                       </div>
                     )}
                   </div>
@@ -158,7 +158,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               <div className="border-t pt-2 space-y-2">
                 {courses.map((course, idx) => (
                   <CourseCard
-                    key={course.id || course._id}
+                    key={course.id}
                     course={course}
                     isEditMode={routeStore.isSeriesSettingMode}
                     onEdit={() => seriesCardStore.openEditCourseDialog(course, seriesId)}

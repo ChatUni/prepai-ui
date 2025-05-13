@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import instructorsStore from '../../../stores/instructorsStore';
+import editInstructorStore from '../../../stores/editInstructorStore';
 import languageStore from '../../../stores/languageStore';
 import ImageUpload from '../../ui/ImageUpload';
 
@@ -11,7 +12,8 @@ const EditInstructorPage = observer(() => {
   const { id } = useParams();
 
   useEffect(() => {
-    instructorsStore.setInstructor(id);
+    const instructor = instructorsStore.getInstructor(id);
+    editInstructorStore.reset(instructor);
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -19,23 +21,18 @@ const EditInstructorPage = observer(() => {
     const formData = new FormData(e.target);
     
     try {
-      await instructorsStore.saveInstructor(formData);
+      await editInstructorStore.saveInstructor(formData);
       navigate('/instructors');
     } catch (error) {
       console.error('Failed to save instructor:', error);
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    instructorsStore.setSelectedImagePreview(file);
-  };
-
   return (
     <div className="flex-1 p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          {instructorsStore.isEditMode ? t('instructors.edit.title') : t('instructors.add.title')}
+          {editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}
         </h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -47,8 +44,8 @@ const EditInstructorPage = observer(() => {
             <input
               id="name"
               type="text"
-              value={instructorsStore.currentInstructor.name}
-              onChange={(e) => instructorsStore.setInstructorField('name', e.target.value)}
+              value={editInstructorStore.name}
+              onChange={(e) => editInstructorStore.setName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -62,8 +59,8 @@ const EditInstructorPage = observer(() => {
             <input
               id="title"
               type="text"
-              value={instructorsStore.currentInstructor.title}
-              onChange={(e) => instructorsStore.setInstructorField('title', e.target.value)}
+              value={editInstructorStore.title}
+              onChange={(e) => editInstructorStore.setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -77,8 +74,8 @@ const EditInstructorPage = observer(() => {
             <textarea
               id="bio"
               rows={5}
-              value={instructorsStore.currentInstructor.bio}
-              onChange={(e) => instructorsStore.setInstructorField('bio', e.target.value)}
+              value={editInstructorStore.bio}
+              onChange={(e) => editInstructorStore.setBio(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -92,8 +89,8 @@ const EditInstructorPage = observer(() => {
             <textarea
               id="expertise"
               rows={3}
-              value={instructorsStore.currentInstructor.expertise}
-              onChange={(e) => instructorsStore.setInstructorField('expertise', e.target.value)}
+              value={editInstructorStore.expertise}
+              onChange={(e) => editInstructorStore.setExpertise(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -102,16 +99,16 @@ const EditInstructorPage = observer(() => {
           <ImageUpload
             id="icon"
             label={t('instructors.edit.icon')}
-            previewUrl={instructorsStore.selectedImagePreview || instructorsStore.currentInstructor.iconUrl}
-            onImageSelect={(file) => instructorsStore.setSelectedImagePreview(file)}
-            buttonText={instructorsStore.currentInstructor.iconUrl ? t('instructors.edit.changeImage') : t('instructors.edit.selectImage')}
-            selectedText={instructorsStore.currentInstructor.iconUrl ? t('instructors.edit.fileSelected') : null}
+            previewUrl={editInstructorStore.selectedImagePreview || editInstructorStore.image}
+            onImageSelect={(file) => editInstructorStore.setSelectedImagePreview(file)}
+            buttonText={editInstructorStore.image ? t('instructors.edit.changeImage') : t('instructors.edit.selectImage')}
+            selectedText={editInstructorStore.image ? t('instructors.edit.fileSelected') : null}
             imageStyle="round"
           />
 
           {/* Error message */}
-          {instructorsStore.error && (
-            <div className="text-red-600 text-sm">{instructorsStore.error}</div>
+          {editInstructorStore.error && (
+            <div className="text-red-600 text-sm">{editInstructorStore.error}</div>
           )}
 
           {/* Submit Button */}
@@ -125,14 +122,14 @@ const EditInstructorPage = observer(() => {
             </button>
             <button
               type="submit"
-              disabled={instructorsStore.loading}
+              disabled={editInstructorStore.isLoading}
               className={`px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                instructorsStore.loading ? 'opacity-50 cursor-not-allowed' : ''
+                editInstructorStore.isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {instructorsStore.loading 
-                ? (instructorsStore.isEditMode ? t('instructors.edit.saving') : t('instructors.add.creating'))
-                : (instructorsStore.isEditMode ? t('instructors.edit.save') : t('instructors.add.create'))
+              {editInstructorStore.isLoading
+                ? (editInstructorStore.editingInstructor ? t('instructors.edit.saving') : t('instructors.add.creating'))
+                : (editInstructorStore.editingInstructor ? t('instructors.edit.save') : t('instructors.add.create'))
               }
             </button>
           </div>
