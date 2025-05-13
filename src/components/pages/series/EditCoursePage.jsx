@@ -82,8 +82,8 @@ const EditCoursePage = observer(() => {
             id="video-upload"
             type="video"
             label={t('course.add.courseVideo')}
-            previewUrl={editCourseStore.videoFile}
-            onMediaSelect={(file) => editCourseStore.setVideoFile(file)}
+            previewUrl={editCourseStore.url}
+            onMediaSelect={editCourseStore.setUrl}
             className="space-y-2"
             required
           />

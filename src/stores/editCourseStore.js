@@ -9,12 +9,9 @@ class EditCourseStore {
   // fields
   title = '';
   image = null;
+  urll = null;
   instructor_id = null;
   duration = 0;
-
-  // data
-  imagePreview = null;
-  videoFile = null;
 
   // state
   isLoading = false;
@@ -31,40 +28,29 @@ class EditCourseStore {
 
   setImage = (file) => {
     this.image = file;
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        runInAction(() => {
-          this.imagePreview = reader.result;
-        });
-      };
-      reader.re.readAsDataURL(file);
-    } else {
-      this.imagePreview = null;
-    }
+  }
+
+  setUrl = (file) => {
+    this.url = file;
   }
 
   setDuration = (duration) => {
     this.duration = duration;
   }
 
-  setVideoFile = (file) => {
-    this.videoFile = file;
+  setInstructorId = (id) => {
+    this.instructor_id = id;
   }
 
   reset = (course = null) => {
     this.editingCourse = course;
     this.title = course?.title || '';
-    this.image = this.imagePreview = course?.image;
-    this.videoFile = course?.url;
+    this.image = course?.image || '';
+    this.url = course?.url || '';
     this.instructor_id = course?.instructor_id;
     this.duration = course?.duration || 0;
     this.isLoading = false;
     this.error = null;
-  }
-
-  setInstructorId = (id) => {
-    this.instructor_id = id;
   }
 
   saveCourse = async (seriesId) => {
@@ -80,6 +66,7 @@ class EditCourseStore {
         instructor_id: this.instructor_id,
         title: this.title,
         duration: this.duration,
+        isVideo: true,
         [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
       }, ['_id', 'series', 'instructor']);
 
@@ -89,21 +76,15 @@ class EditCourseStore {
         courseData.id = data.id;
       }
 
-      // Upload video if provided
-      let videoUrl = isEdit ? this.editingCourse.url : 'https://www.youtube.com/watch?v=jDnKyR0L1fc';
-      if (this.videoFile) {
-        // videoUrl = await uploadToCloudinary(this.videoFile, `series/${seriesId}/courses`);
+      if (this.url instanceof File) {
+        const url = await uploadToCloudinary(this.url, `series/${seriesId}/courses`);
+        courseData.url = url;
       }
 
-      // Upload cover image if provided
-      let coverUrl = null;
-      if (this.image) {
-        // coverUrl = await uploadToCloudinary(this.image, `series/${seriesId}/courses`);
-      }
-
-      courseData.url = videoUrl;
-      courseData.image = coverUrl;
-      courseData.isVideo = true;
+      // if (this.image instanceof File) {
+      //   const coverUrl = await uploadToCloudinary(this.image, `series/${seriesId}/courses`);
+      //   courseData.image = coverUrl;
+      // }
 
       // Save updated course
       await save('courses', courseData)

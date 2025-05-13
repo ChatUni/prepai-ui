@@ -53,7 +53,7 @@ const EditInstructorPage = observer(() => {
             id="icon"
             label={t('instructors.edit.icon')}
             previewUrl={editInstructorStore.image}
-            onMediaSelect={(file) => editInstructorStore.setImage(file)}
+            onMediaSelect={editInstructorStore.setImage}
             type="image"
             mediaStyle="round"
           />
