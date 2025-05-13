@@ -1,212 +1,172 @@
 import { observer } from 'mobx-react-lite';
-import { useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import useClickOutside from '../../../hooks/useClickOutside';
-import seriesStore from '../../../stores/seriesStore';
+import editSeriesStore from '../../../stores/editSeriesStore';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
+import MediaUpload from '../../ui/MediaUpload';
+import FormInput from '../../ui/FormInput';
+import FormSelect from '../../ui/FormSelect';
 import LoadingState from '../../ui/LoadingState';
-import ImageUpload from '../../ui/ImageUpload';
 
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
-  const navigate = useNavigate();
-  const formRef = useRef(null);
-  const [dropdownRef] = useClickOutside(() => seriesStore.closeDropdown());
 
   const content = (
-    <div className="p-4 w-full h-full flex flex-col">
-      <form
-        ref={formRef}
-        className="space-y-4 w-full max-w-4xl mx-auto flex-1 flex flex-col edit-series-form"
-      >
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.name')}
-          </label>
-          <input
-            type="text"
-            name="name"
-            defaultValue={seriesStore.currentSeries?.name || ''}
-            className="w-full p-2 border rounded"
+    <div className="container mx-auto">
+      <div className="bg-white rounded-lg">
+        <form className="space-y-6">
+          {/* Name Input */}
+          <FormInput
+            id="name"
+            label={t('series.edit.name')}
+            value={editSeriesStore.name}
+            onChange={(e) => editSeriesStore.setName(e.target.value)}
             required
           />
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.category')}
-          </label>
-          <div className="relative" ref={dropdownRef}>
-            <div className="flex">
+          {/* Category Input */}
+          <div className="space-y-1">
+            <label htmlFor="category" className="block text-sm font-medium">
+              {t('series.edit.category')}
+            </label>
+            <div className="relative">
               <input
+                id="category"
                 type="text"
-                name="category"
-                value={seriesStore.selectedCategory}
-                onChange={(e) => seriesStore.setSelectedCategory(e.target.value, false)}
-                onClick={() => seriesStore.toggleDropdown()}
-                className="w-full p-2 border rounded-l bg-white"
+                value={editSeriesStore.category}
+                onChange={(e) => editSeriesStore.setCategory(e.target.value)}
+                onClick={editSeriesStore.toggleDropdown}
+                className="w-full p-2 border rounded bg-white"
                 placeholder={t('series.edit.categoryPlaceholder')}
               />
-              <button
-                type="button"
-                onClick={() => seriesStore.toggleDropdown()}
-                className="px-2 border border-l-0 rounded-r bg-white"
-              >
-                <svg
-                  className={`w-5 h-5 transition-transform ${seriesStore.isDropdownOpen ? 'transform rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
-
-            {seriesStore.isDropdownOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
-                {seriesStore.uniqueCategories.length > 0 ? (
-                  seriesStore.uniqueCategories.map((category) => (
+              {editSeriesStore.isDropdownOpen && editSeriesStore.uniqueCategories.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
+                  {editSeriesStore.uniqueCategories.map((category) => (
                     <button
                       key={category}
                       type="button"
                       className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                        category === seriesStore.selectedCategory ? 'bg-gray-50' : ''
+                        category === editSeriesStore.category ? 'bg-gray-50' : ''
                       }`}
-                      onClick={() => seriesStore.setSelectedCategory(category, true)}
+                      onClick={() => editSeriesStore.setCategory(category)}
                     >
                       {category}
                     </button>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-gray-500 italic">
-                    {t('series.edit.noCategories')}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.groups.title')}
-          </label>
-          <div className="relative">
-            <select
-              name="group"
-              value={seriesStore.currentSeries?.group || ''}
-              onChange={(e) => seriesStore.setCurrentSeries({ ...seriesStore.currentSeries, group: e.target.value })}
-              className="w-full p-2 border rounded bg-white"
-            >
-              <option value="">{t('series.groups.noGroup')}</option>
-              {clientStore.client.settings.groups.map((group) => (
-                <option key={group} value={group}>
-                  {group}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.price')}
-          </label>
-          <input
-            type="number"
-            name="price"
-            defaultValue={seriesStore.currentSeries?.price || ''}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t('series.edit.duration')}
-          </label>
-          <select
-            name="duration"
-            defaultValue={seriesStore.currentSeries?.duration || '30days'}
-            className="w-full p-2 border rounded bg-white"
-            required
-          >
-            {seriesStore.durationOptions.map(({ key, value }) => (
-              <option key={key} value={key}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <ImageUpload
-          id="cover_image"
-          label={t('series.edit.coverImage')}
-          previewUrl={seriesStore.selectedImagePreview || seriesStore.currentSeries?.cover}
-          onImageSelect={(file) => seriesStore.setSelectedImagePreview(file)}
-          buttonText={seriesStore.selectedImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
-          selectedText={seriesStore.selectedImagePreview ? t('series.edit.fileSelected') : null}
-        />
-
-        <div className="flex-1 overflow-auto">
-          <div className="flex justify-between items-center mb-1">
-            <label className="block text-sm font-medium">
-              {t('series.edit.description')}
-            </label>
-            <div className="flex gap-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  name="desc_type"
-                  value="text"
-                  checked={seriesStore.descType === 'text'}
-                  onChange={(e) => seriesStore.setDescType(e.target.value)}
-                  className="form-radio h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2 text-sm">{t('series.edit.descriptionType.text')}</span>
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  name="desc_type"
-                  value="image"
-                  checked={seriesStore.descType === 'image'}
-                  onChange={(e) => seriesStore.setDescType(e.target.value)}
-                  className="form-radio h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2 text-sm">{t('series.edit.descriptionType.image')}</span>
-              </label>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {seriesStore.descType === 'text' ? (
-            <textarea
-              name="description"
-              defaultValue={seriesStore.currentSeries?.desc || ''}
-              className="w-full p-2 border rounded h-32"
-              required={seriesStore.descType === 'text'}
-            />
-          ) : (
-            <ImageUpload
-              id="desc_image"
-              label=""
-              previewUrl={seriesStore.selectedDescImagePreview}
-              onImageSelect={(file) => seriesStore.setSelectedDescImagePreview(file)}
-              buttonText={seriesStore.selectedDescImagePreview ? t('series.edit.changeImage') : t('series.edit.selectImage')}
-              required={seriesStore.descType === 'image'}
-            />
-          )}
-        </div>
+          {/* Group Select */}
+          <FormSelect
+            id="group"
+            label={t('series.groups.title')}
+            value={editSeriesStore.group}
+            onChange={(e) => editSeriesStore.setGroup(e.target.value)}
+            options={[
+              { value: '', label: t('series.groups.noGroup') },
+              ...clientStore.client.settings.groups.map(group => ({
+                value: group,
+                label: group
+              }))
+            ]}
+          />
 
-      </form>
+          {/* Price Input */}
+          <FormInput
+            id="price"
+            type="number"
+            label={t('series.edit.price')}
+            value={editSeriesStore.price}
+            onChange={(e) => editSeriesStore.setPrice(e.target.value)}
+            required
+          />
+
+          {/* Duration Select */}
+          <FormSelect
+            id="duration"
+            label={t('series.edit.duration')}
+            value={editSeriesStore.duration}
+            onChange={(e) => editSeriesStore.setDuration(e.target.value)}
+            options={editSeriesStore.durationOptions.map(({ key, value }) => ({
+              value: key,
+              label: value
+            }))}
+            required
+          />
+
+          {/* Cover Image Upload */}
+          <MediaUpload
+            id="cover_image"
+            label={t('series.edit.image')}
+            previewUrl={editSeriesStore.image}
+            onMediaSelect={editSeriesStore.setImage}
+            type="image"
+          />
+
+          {/* Description Type Selection */}
+          <div className="space-y-1">
+            <div className="flex justify-between items-center">
+              <label className="block text-sm font-medium">
+                {t('series.edit.description')}
+              </label>
+              <div className="flex gap-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="desc_type"
+                    value="text"
+                    checked={editSeriesStore.descType === 'text'}
+                    onChange={(e) => editSeriesStore.setDescType(e.target.value)}
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2 text-sm">{t('series.edit.descriptionType.text')}</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="desc_type"
+                    value="image"
+                    checked={editSeriesStore.descType === 'image'}
+                    onChange={(e) => editSeriesStore.setDescType(e.target.value)}
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2 text-sm">{t('series.edit.descriptionType.image')}</span>
+                </label>
+              </div>
+            </div>
+
+            {editSeriesStore.descType === 'text' ? (
+              <FormInput
+                id="description"
+                value={editSeriesStore.description}
+                onChange={(e) => editSeriesStore.setDescription(e.target.value)}
+                rows={5}
+                required={editSeriesStore.descType === 'text'}
+              />
+            ) : (
+              <MediaUpload
+                id="desc_image"
+                previewUrl={editSeriesStore.descImage}
+                onMediaSelect={editSeriesStore.setDescImage}
+                type="image"
+                required={editSeriesStore.descType === 'image'}
+              />
+            )}
+          </div>
+
+          {/* Error message */}
+          {editSeriesStore.error && (
+            <div className="text-red-600 text-sm">{editSeriesStore.error}</div>
+          )}
+        </form>
+      </div>
     </div>
   );
 
   return (
     <LoadingState
-      isLoading={seriesStore.isLoading}
+      isLoading={editSeriesStore.isLoading}
       customMessage={t('series.edit.loading')}
     >
       {content}

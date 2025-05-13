@@ -224,7 +224,7 @@
       "courseName": "章节名称",
       "courseDescription": "章节描述",
       "duration": "时长",
-      "coverImage": "封面图片",
+      "image": "封面图片",
       "selectImage": "选择图片",
       "changeImage": "更改图片",
       "fileSelected": "已选择文件",
@@ -273,7 +273,7 @@
         "180days": "180天",
         "365days": "365天"
       },
-      "coverImage": "封面图片",
+      "image": "封面图片",
       "selectImage": "选择图片",
       "changeImage": "更改图片",
       "fileSelected": "已选择文件",

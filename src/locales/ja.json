@@ -224,7 +224,7 @@
       "courseName": "コース名",
       "courseDescription": "コース説明",
       "duration": "時間",
-      "coverImage": "カバー画像",
+      "image": "カバー画像",
       "selectImage": "画像を選択",
       "changeImage": "画像を変更",
       "fileSelected": "ファイルが選択されました",
@@ -259,7 +259,7 @@
     "noCover": "カバー画像なし",
     "noDescription": "このシリーズの説明はありません",
     "defaultTitle": "シリーズ",
-    "coverImageAlt": "シリーズのカバー画像",
+    "imageAlt": "シリーズのカバー画像",
     "edit": {
       "loading": "読み込み中...",
       "editTitle": "シリーズを編集",
@@ -282,7 +282,7 @@
         "180days": "180日",
         "365days": "365日"
       },
-      "coverImage": "カバー画像",
+      "image": "カバー画像",
       "selectImage": "画像を選択",
       "changeImage": "画像を変更",
       "fileSelected": "ファイルが選択されました",
@@ -359,7 +359,7 @@
     "noCover": "カバー画像なし",
     "noDescription": "このシリーズの説明はありません",
     "defaultTitle": "シリーズ",
-    "coverImageAlt": "シリーズのカバー画像",
+    "imageAlt": "シリーズのカバー画像",
     "edit": {
       "loading": "読み込み中...",
       "editTitle": "シリーズを編集",
@@ -382,7 +382,7 @@
         "180days": "180日",
         "365days": "365日"
       },
-      "coverImage": "カバー画像",
+      "image": "カバー画像",
       "selectImage": "画像を選択",
       "changeImage": "画像を変更",
       "fileSelected": "ファイルが選択されました",

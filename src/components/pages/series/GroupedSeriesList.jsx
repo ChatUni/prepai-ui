@@ -12,6 +12,7 @@ import groupedSeriesStore from '../../../stores/groupedSeriesStore';
 import seriesStore from '../../../stores/seriesStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
 import editCourseStore from '../../../stores/editCourseStore';
+import editSeriesStore from '../../../stores/editSeriesStore';
 import EditCoursePage from './EditCoursePage';
 import instructorsStore from '../../../stores/instructorsStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
@@ -159,17 +160,13 @@ const GroupedSeriesList = observer(() => {
         isOpen={groupedSeriesStore.isAddSeriesDialogOpen}
         onClose={groupedSeriesStore.closeAddSeriesDialog}
         onConfirm={async () => {
-          const form = document.querySelector('.edit-series-form');
-          if (form) {
-            const success = await seriesStore.handleSubmit(form);
-            if (success) {
-              // Refresh data after successful save
-              await seriesStore.fetchSeries();
-              groupedSeriesStore.closeAddSeriesDialog();
-            }
+          const success = await editSeriesStore.saveSeries();
+          if (success) {
+            await seriesStore.fetchSeries();
+            groupedSeriesStore.closeAddSeriesDialog();
           }
         }}
-        title={seriesStore.currentSeriesId ? t('series.edit.editTitle') : t('series.groups.addSeries')}
+        title={routeStore.seriesId ? t('series.edit.editTitle') : t('series.groups.addSeries')}
         size="xl"
         isConfirm={true}
       >

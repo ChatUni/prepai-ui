@@ -224,7 +224,7 @@
       "courseName": "Course Name",
       "courseDescription": "Course Description",
       "duration": "Duration",
-      "coverImage": "Cover Image",
+      "image": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",
       "fileSelected": "File selected",
@@ -273,7 +273,7 @@
         "180days": "180 Days",
         "365days": "365 Days"
       },
-      "coverImage": "Cover Image",
+      "image": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",
       "fileSelected": "File selected",
@@ -376,7 +376,7 @@
         "180days": "180 Days",
         "365days": "365 Days"
       },
-      "coverImage": "Cover Image",
+      "image": "Cover Image",
       "selectImage": "Select Image",
       "changeImage": "Change Image",
       "fileSelected": "File selected",

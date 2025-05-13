@@ -10,6 +10,7 @@ const FormSelect = observer(({
   value, 
   onChange, 
   options,
+  onOptionsChange,
   placeholder,
   required = false,
   className = '',
@@ -55,7 +56,9 @@ const FormSelect = observer(({
           onConfirm={async () => {
             if (uiStore.formSelectDialogData?.onAdd) {
               const newItem = await uiStore.formSelectDialogData.onAdd();
-              if (newItem) {
+              if (newItem && onOptionsChange) {
+                const newOptions = [...options, { value: newItem.value, label: newItem.label }];
+                onOptionsChange(newOptions);
                 onChange({ target: { value: newItem.value } });
               }
             }

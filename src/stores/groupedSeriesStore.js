@@ -2,6 +2,7 @@ import { makeObservable, computed } from 'mobx';
 import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
+import editSeriesStore from './editSeriesStore';
 import { save } from '../utils/db';
 import _ from 'lodash';
 
@@ -80,14 +81,14 @@ class GroupedSeriesStore {
   openAddSeriesDialog = (group) => {
     // First clear any existing state
     routeStore.setSeriesId(null);
-    seriesStore.setCurrentSeries(null);
+    editSeriesStore.reset(null);
     
     // Then set up for adding new series
     this.selectedGroup = group;
     this.isAddSeriesDialogOpen = true;
     
     // Initialize empty series with the selected group
-    seriesStore.setCurrentSeries({
+    editSeriesStore.reset({
       name: '',
       desc: '',
       instructor: null,
@@ -107,7 +108,7 @@ class GroupedSeriesStore {
     this.selectedGroup = null;
     // Clear series state when closing dialog
     routeStore.setSeriesId(null);
-    seriesStore.setCurrentSeries(null);
+    editSeriesStore.reset(null);
   };
 
   setNewGroupName = (name) => {

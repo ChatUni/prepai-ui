@@ -14,7 +14,7 @@ const EditCoursePage = observer(() => {
 
   return (
     <div className="container mx-auto">
-      <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+      <div className="bg-white rounded-lg">
         <form className="space-y-6">
           {/* Instructor Selection */}
           <FormSelect
@@ -32,7 +32,7 @@ const EditCoursePage = observer(() => {
             onAdd={async () => {
               const formData = new FormData();
               const savedInstructor = await editInstructorStore.saveInstructor(formData);
-              await seriesStore.loadInstructors();
+              await seriesStore.fetchSeries();
               return {
                 value: savedInstructor.id,
                 label: savedInstructor.name
@@ -72,7 +72,7 @@ const EditCoursePage = observer(() => {
           {/* <MediaUpload
             id="cover-upload"
             type="image"
-            label={t('course.add.coverImage')}
+            label={t('course.add.image')}
             previewUrl={editCourseStore.imagePreview}
             onMediaSelect={(file) => editCourseStore.setImage(file)}
             className="space-y-2"

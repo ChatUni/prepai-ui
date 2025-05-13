@@ -78,6 +78,7 @@ class EditInstructorStore {
         bio: this.bio,
         expertise: this.expertise,
         image: this.image,
+        client_id: clientStore.client.id,
         [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
       };
 

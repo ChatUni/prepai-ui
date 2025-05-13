@@ -5,6 +5,7 @@ import seriesStore from './seriesStore';
 import groupedSeriesStore from './groupedSeriesStore';
 import editCourseStore from './editCourseStore';
 import editInstructorStore from './editInstructorStore';
+import editSeriesStore from './editSeriesStore';
 
 class SeriesCardStore {
   expandedSeriesId = null;
@@ -76,7 +77,7 @@ class SeriesCardStore {
     };
   };
 
-  getCoverImage = (cover) => {
+  getImage = (cover) => {
     return cover || 'https://via.placeholder.com/300x200?text=Series';
   };
 
@@ -103,7 +104,7 @@ class SeriesCardStore {
 
   openEditDialog = (series) => {
     routeStore.setSeriesId(series.id);
-    seriesStore.setCurrentSeries(series);
+    editSeriesStore.reset(series);
     groupedSeriesStore.openEditSeriesDialog(series.group);
   };
 }

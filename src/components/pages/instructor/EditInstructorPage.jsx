@@ -9,7 +9,7 @@ const EditInstructorPage = observer(() => {
 
   return (
     <div className="flex-1 bg-gray-50">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg">
         <form className="space-y-6">
           {/* Name Input */}
           <FormInput

@@ -28,7 +28,7 @@ const SeriesDetailPage = observer(() => {
           <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
             <img
               src={selectedSeries.cover}
-              alt={selectedSeries.name || t('series.coverImageAlt')}
+              alt={selectedSeries.name || t('series.imageAlt')}
               className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
