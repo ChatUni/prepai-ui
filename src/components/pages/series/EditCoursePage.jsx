@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import seriesStore from '../../../stores/seriesStore';
 import editCourseStore from '../../../stores/editCourseStore';
 import languageStore from '../../../stores/languageStore';
 import MediaUpload from '../../ui/MediaUpload';
+import FormInput from '../../ui/FormInput';
+import FormSelect from '../../ui/FormSelect';
 
 const EditCoursePage = observer(() => {
   const { t } = languageStore;
@@ -13,56 +15,38 @@ const EditCoursePage = observer(() => {
       <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
         <form className="space-y-6">
           {/* Instructor Selection */}
-          <div>
-            <label htmlFor="instructor" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('course.add.instructor')}
-            </label>
-            <select
-              id="instructor"
-              value={editCourseStore.instructor_id || ''}
-              onChange={(e) => editCourseStore.setInstructorId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              required
-            >
-              <option value="">{t('course.add.selectInstructor')}</option>
-              {seriesStore.instructors.map(instructor => (
-                <option key={instructor.id} value={instructor.id}>
-                  {instructor.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="instructor"
+            label={t('course.add.instructor')}
+            value={editCourseStore.instructor_id || ''}
+            onChange={(e) => editCourseStore.setInstructorId(parseInt(e.target.value))}
+            options={seriesStore.instructors.map(instructor => ({
+              value: instructor.id,
+              label: instructor.name
+            }))}
+            placeholder={t('course.add.selectInstructor')}
+            required
+          />
 
           {/* Course Title */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('course.add.courseName')}
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={editCourseStore.title}
-              onChange={(e) => editCourseStore.setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              required
-            />
-          </div>
+          <FormInput
+            id="title"
+            label={t('course.add.courseName')}
+            value={editCourseStore.title}
+            onChange={(e) => editCourseStore.setTitle(e.target.value)}
+            required
+          />
 
           {/* Course Duration */}
-          <div>
-            <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('course.add.duration')}
-            </label>
-            <input
-              type="number"
-              id="duration"
-              value={editCourseStore.duration}
-              onChange={(e) => editCourseStore.setDuration(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              min="0"
-              required
-            />
-          </div>
+          <FormInput
+            id="duration"
+            type="number"
+            label={t('course.add.duration')}
+            value={editCourseStore.duration}
+            onChange={(e) => editCourseStore.setDuration(parseInt(e.target.value))}
+            min="0"
+            required
+          />
 
           {/* <MediaUpload
             id="cover-upload"

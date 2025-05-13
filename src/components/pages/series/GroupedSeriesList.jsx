@@ -188,7 +188,8 @@ const GroupedSeriesList = observer(() => {
             seriesCardStore.closeEditCourseDialog();
           }
         }}
-        title={t('course.editCourse')}
+        title={editCourseStore.editingCourse ? t('course.editCourse') : t('course.addCourse')}
+        size="xl"
         isConfirm={true}
       >
         <div className="max-h-[80vh] overflow-y-auto">
@@ -203,7 +204,7 @@ const GroupedSeriesList = observer(() => {
           const form = document.querySelector('form');
           if (form) {
             try {
-              await instructorsStore.saveInstructor(new FormData(form));
+              await editInstructorStore.saveInstructor();
               await seriesStore.fetchSeries();
               seriesCardStore.closeEditInstructorDialog();
             } catch (error) {

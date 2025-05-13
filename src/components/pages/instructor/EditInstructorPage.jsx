@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import editInstructorStore from '../../../stores/editInstructorStore';
 import languageStore from '../../../stores/languageStore';
 import ImageUpload from '../../ui/ImageUpload';
+import FormInput from '../../ui/FormInput';
 
 const EditInstructorPage = observer(() => {
   const { t } = languageStore;
@@ -11,64 +12,42 @@ const EditInstructorPage = observer(() => {
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow">
         <form className="space-y-6">
           {/* Name Input */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('instructors.edit.name')}
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={editInstructorStore.name}
-              onChange={(e) => editInstructorStore.setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <FormInput
+            id="name"
+            label={t('instructors.edit.name')}
+            value={editInstructorStore.name}
+            onChange={(e) => editInstructorStore.setName(e.target.value)}
+            required
+          />
 
           {/* Title Input */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('instructors.edit.titleField')}
-            </label>
-            <input
-              id="title"
-              type="text"
-              value={editInstructorStore.title}
-              onChange={(e) => editInstructorStore.setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <FormInput
+            id="title"
+            label={t('instructors.edit.titleField')}
+            value={editInstructorStore.title}
+            onChange={(e) => editInstructorStore.setTitle(e.target.value)}
+            required
+          />
 
           {/* Bio Input */}
-          <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('instructors.edit.bio')}
-            </label>
-            <textarea
-              id="bio"
-              rows={5}
-              value={editInstructorStore.bio}
-              onChange={(e) => editInstructorStore.setBio(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <FormInput
+            id="bio"
+            label={t('instructors.edit.bio')}
+            value={editInstructorStore.bio}
+            onChange={(e) => editInstructorStore.setBio(e.target.value)}
+            rows={5}
+            required
+          />
 
           {/* Expertise Input */}
-          <div>
-            <label htmlFor="expertise" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('instructors.edit.expertise')}
-            </label>
-            <textarea
-              id="expertise"
-              rows={3}
-              value={editInstructorStore.expertise}
-              onChange={(e) => editInstructorStore.setExpertise(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <FormInput
+            id="expertise"
+            label={t('instructors.edit.expertise')}
+            value={editInstructorStore.expertise}
+            onChange={(e) => editInstructorStore.setExpertise(e.target.value)}
+            rows={3}
+            required
+          />
 
           <ImageUpload
             id="icon"
