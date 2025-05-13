@@ -98,20 +98,18 @@ class SeriesStore {
   }
 
   fetchInstructors = async () => {
-    if (this.instructors.length === 0) {
-      try {
-        this.isLoading = true;
-        const data = await get('instructors', { clientId: clientStore.client.id });
-        runInAction(() => {
-          this.instructors = data;
-          this.isLoading = false;
-        });
-      } catch (error) {
-        runInAction(() => {
-          this.error = error.message;
-          this.isLoading = false;
-        });
-      }
+    try {
+      this.isLoading = true;
+      const data = await get('instructors', { clientId: clientStore.client.id });
+      runInAction(() => {
+        this.instructors = data;
+        this.isLoading = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.isLoading = false;
+      });
     }
   }
 

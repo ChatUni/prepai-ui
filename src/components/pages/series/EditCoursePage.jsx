@@ -32,7 +32,7 @@ const EditCoursePage = observer(() => {
             onAdd={async () => {
               const formData = new FormData();
               const savedInstructor = await editInstructorStore.saveInstructor(formData);
-              await seriesStore.fetchSeries();
+              await seriesStore.fetchInstructors();
               return {
                 value: savedInstructor.id,
                 label: savedInstructor.name
