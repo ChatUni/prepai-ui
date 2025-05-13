@@ -6,6 +6,8 @@ class UIStore {
   searchKeyword = '';
   activeNavItem = '';
   activeCategory = '';
+  formSelectDialogOpen = false;
+  formSelectDialogData = null;
   selectedInstructorId = null;
   isInstructorDropdownOpen = false;
   isCategoryDropdownOpen = false;
@@ -29,6 +31,8 @@ class UIStore {
       searchKeyword: observable,
       activeNavItem: observable,
       activeCategory: observable,
+      formSelectDialogOpen: observable,
+      formSelectDialogData: observable,
       selectedInstructorId: observable,
       isInstructorDropdownOpen: observable,
       isCategoryDropdownOpen: observable,
@@ -51,7 +55,9 @@ class UIStore {
       setCourseTypeFilter: action,
       updateUserInfo: action,
       resetFilters: action,
-      setMode: action
+      setMode: action,
+      openFormSelectDialog: action,
+      closeFormSelectDialog: action
     });
 
     // Load favorites from API
@@ -192,6 +198,16 @@ class UIStore {
   // Set current mode
   setMode(mode) {
     this.mode = mode;
+  }
+
+  openFormSelectDialog(data) {
+    this.formSelectDialogOpen = true;
+    this.formSelectDialogData = data;
+  }
+
+  closeFormSelectDialog() {
+    this.formSelectDialogOpen = false;
+    this.formSelectDialogData = null;
   }
 }
 

@@ -2,10 +2,12 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import seriesStore from '../../../stores/seriesStore';
 import editCourseStore from '../../../stores/editCourseStore';
+import editInstructorStore from '../../../stores/editInstructorStore';
 import languageStore from '../../../stores/languageStore';
 import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
+import EditInstructorPage from '../instructor/EditInstructorPage';
 
 const EditCoursePage = observer(() => {
   const { t } = languageStore;
@@ -26,6 +28,25 @@ const EditCoursePage = observer(() => {
             }))}
             placeholder={t('course.add.selectInstructor')}
             required
+            canAdd={true}
+            onAdd={async () => {
+              const formData = new FormData();
+              const savedInstructor = await editInstructorStore.saveInstructor(formData);
+              await seriesStore.loadInstructors();
+              return {
+                value: savedInstructor.id,
+                label: savedInstructor.name
+              };
+            }}
+            addDialogPage={() => {
+              editInstructorStore.reset();
+              return (
+                <div className="max-h-[80vh] overflow-y-auto">
+                  <EditInstructorPage />
+                </div>
+              );
+            }}
+            addDialogTitle={t('instructors.add.title')}
           />
 
           {/* Course Title */}
