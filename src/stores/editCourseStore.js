@@ -9,7 +9,7 @@ class EditCourseStore {
   // fields
   title = '';
   image = null;
-  urll = null;
+  url = null;
   instructor_id = null;
   duration = 0;
 

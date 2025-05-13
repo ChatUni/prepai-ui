@@ -20,13 +20,14 @@ export const cdVersion = () =>
     .resources({ max_results: 500 })
     .then(r => orderBy(r.resources, 'version', 'desc')[0].version)
 
-export const cdupload = (url, folder) =>
+export const cdupload = (url, folder, type = 'image') =>
   cd.v2.uploader.upload(url, {
     asset_folder: `${app}/${folder}`,
     use_asset_folder_as_public_id_prefix: true,
     use_filename: true,
     unique_filename: false,
     overwrite: true,
+    resource_type: type
   })
 
 export const cdUploadFolder = async (local, remote) => {

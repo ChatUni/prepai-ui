@@ -48,6 +48,7 @@ export const handler = async (event, context) => {
         const busboy = Busboy({ headers: { 'content-type': contentType } });
         let uploadPromise = null;
         let folder = null;
+        let type = 'image';
 
         busboy.on('file', async (fieldname, file, { filename, encoding, mimeType }) => {
           if (fieldname === 'file') {
@@ -59,7 +60,7 @@ export const handler = async (event, context) => {
             uploadPromise = new Promise((resolveUpload, rejectUpload) => {
               writeStream.on('finish', async () => {
                 try {
-                  const result = await cdupload(tempPath, folder);
+                  const result = await cdupload(tempPath, folder, type);
                   await unlink(tempPath);
                   resolveUpload(result);
                 } catch (error) {
@@ -79,6 +80,9 @@ export const handler = async (event, context) => {
         busboy.on('field', (fieldname, value) => {
           if (fieldname === 'folder') {
             folder = value;
+          }
+          if (fieldname === 'type') {
+            type = value;
           }
         });
 
