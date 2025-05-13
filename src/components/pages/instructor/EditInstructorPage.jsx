@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import editInstructorStore from '../../../stores/editInstructorStore';
 import languageStore from '../../../stores/languageStore';
-import ImageUpload from '../../ui/ImageUpload';
+import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 
 const EditInstructorPage = observer(() => {
@@ -49,14 +49,13 @@ const EditInstructorPage = observer(() => {
             required
           />
 
-          <ImageUpload
+          <MediaUpload
             id="icon"
             label={t('instructors.edit.icon')}
-            previewUrl={editInstructorStore.selectedImagePreview || editInstructorStore.image}
-            onImageSelect={(file) => editInstructorStore.setSelectedImagePreview(file)}
-            buttonText={editInstructorStore.image ? t('instructors.edit.changeImage') : t('instructors.edit.selectImage')}
-            selectedText={editInstructorStore.image ? t('instructors.edit.fileSelected') : null}
-            imageStyle="round"
+            previewUrl={editInstructorStore.image}
+            onMediaSelect={(file) => editInstructorStore.setImage(file)}
+            type="image"
+            mediaStyle="round"
           />
 
           {/* Error message */}
@@ -64,7 +63,7 @@ const EditInstructorPage = observer(() => {
             <div className="text-red-600 text-sm">{editInstructorStore.error}</div>
           )}
 
-        </form>
+       </form>
       </div>
     </div>
   );

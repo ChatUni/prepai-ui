@@ -13,9 +13,6 @@ class EditInstructorStore {
   expertise = '';
   image = '';
 
-  // data
-  selectedImagePreview = null;
-
   // state
   isLoading = false;
   error = null;
@@ -41,18 +38,8 @@ class EditInstructorStore {
     this.expertise = expertise;
   }
 
-  setSelectedImagePreview = (file) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        runInAction(() => {
-          this.selectedImagePreview = reader.result;
-        });
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.selectedImagePreview = null;
-    }
+  setImage = (file) => {
+    this.image = file;
   }
 
   reset = (instructor = null) => {
@@ -62,7 +49,6 @@ class EditInstructorStore {
     this.bio = instructor?.bio || '';
     this.expertise = instructor?.expertise || '';
     this.image = instructor?.image || '';
-    this.selectedImagePreview = instructor?.image || null;
     this.isLoading = false;
     this.error = null;
   }
@@ -78,7 +64,7 @@ class EditInstructorStore {
     }
   }
 
-  saveInstructor = async (formData) => {
+  saveInstructor = async () => {
     try {
       this.isLoading = true;
       this.error = null;
@@ -102,10 +88,9 @@ class EditInstructorStore {
       }
 
       // If there's a new icon file, upload it
-      const iconFile = formData.get('icon');
-      if (iconFile instanceof File) {
-        const imageUrl = await this.uploadInstructorIcon(iconFile, instructorData.id);
-        instructorData.image = imageUrl;        
+      if (this.image instanceof File) {
+        const imageUrl = await this.uploadInstructorIcon(this.image, instructorData.id);
+        instructorData.image = imageUrl;
       }
 
       await save('instructors', instructorData);

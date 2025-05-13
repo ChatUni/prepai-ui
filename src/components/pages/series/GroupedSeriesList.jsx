@@ -201,15 +201,10 @@ const GroupedSeriesList = observer(() => {
         isOpen={seriesCardStore.editInstructorDialogOpen}
         onClose={seriesCardStore.closeEditInstructorDialog}
         onConfirm={async () => {
-          const form = document.querySelector('form');
-          if (form) {
-            try {
-              await editInstructorStore.saveInstructor();
-              await seriesStore.fetchSeries();
-              seriesCardStore.closeEditInstructorDialog();
-            } catch (error) {
-              console.error('Failed to save instructor:', error);
-            }
+          const success = await editInstructorStore.saveInstructor();
+          if (success) {
+            await seriesStore.fetchSeries();
+            seriesCardStore.closeEditInstructorDialog();
           }
         }}
         title={editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}

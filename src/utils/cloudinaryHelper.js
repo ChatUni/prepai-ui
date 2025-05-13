@@ -1,3 +1,5 @@
+import clientStore from "../stores/clientStore";
+
 /**
  * Helper function for uploading files to Cloudinary
  * @param {File} file - The file to upload
@@ -7,7 +9,7 @@
 export const uploadToCloudinary = async (file, folder) => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('folder', folder);
+  formData.append('folder', `${clientStore.client.id}/${folder}`);
 
   const response = await fetch(`/api/cloudinary_upload`, {
     method: 'POST',
