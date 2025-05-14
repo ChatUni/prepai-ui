@@ -142,7 +142,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                       e.stopPropagation();
                       seriesCardStore.openEditDialog(series);
                     }}
-                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                    className="text-gray-500 hover:text-gray-800 transition-colors"
                     title={t('series.edit')}
                   >
                     <FiEdit2 size={16} />

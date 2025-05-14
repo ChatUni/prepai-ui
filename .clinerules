@@ -77,6 +77,12 @@
       "description": "All database changes must be saved by calling POST /api/save?doc={document name} with the complete object. Direct database modifications or partial updates are not allowed. This ensures data consistency and maintains a single source of truth for database operations.",
       "severity": "error",
       "category": "data-management"
+    },
+    {
+      "name": "check-existing-components",
+      "description": "Before creating new components, especially UI components, always check the existing components under the components/ui folder first. When adding components of the same kind (e.g., buttons with similar styles), use existing reusable components and avoid duplicating code. This applies particularly to components that share similar structure, styling, or behavior but differ only in minor aspects like color schemes or content.",
+      "severity": "error",
+      "category": "component-architecture"
     }
   ]
 }

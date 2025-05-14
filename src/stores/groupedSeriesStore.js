@@ -45,9 +45,13 @@ class GroupedSeriesStore {
     this.selectedGroup = null;
   };
 
-  openDeleteGroupDialog = (group) => {
-    this.selectedGroup = group;
-    this.isDeleteGroupDialogOpen = true;
+  handleDeleteGroup = (group) => {
+    if (this.canDeleteGroup(group)) {
+      this.selectedGroup = group;
+      this.isDeleteGroupDialogOpen = true;
+    } else {
+      this.showErrorDialog('series.groups.cannotDelete');
+    }
   };
 
   closeDeleteGroupDialog = () => {

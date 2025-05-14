@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import { FaLayerGroup, FaUserPlus, FaBookOpen } from 'react-icons/fa';
+import Button from '../../ui/Button';
 import SeriesCard from './SeriesCard';
 import EditSeriesPage from './EditSeriesPage';
 import EditInstructorPage from '../instructor/EditInstructorPage';
@@ -39,11 +40,7 @@ const GroupedSeriesList = observer(() => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (groupedSeriesStore.canDeleteGroup(group)) {
-              groupedSeriesStore.openDeleteGroupDialog(group);
-            } else {
-              groupedSeriesStore.showErrorDialog(t('series.groups.cannotDelete'));
-            }
+            groupedSeriesStore.handleDeleteGroup(group);
           }}
           className="p-1 text-white/70 hover:text-white transition-colors"
           title={t('series.groups.deleteGroup')}
@@ -58,33 +55,33 @@ const GroupedSeriesList = observer(() => {
     <div className="w-full space-y-4">
       {routeStore.isSeriesSettingMode && (
         <div className="grid grid-cols-3 gap-4 mt-8">
-          <button
+          <Button
             onClick={groupedSeriesStore.openAddGroupDialog}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+            icon={<FaLayerGroup size={20} />}
+            className="bg-green-600 hover:bg-green-700"
           >
-            <FaLayerGroup size={20} />
             {t('series.groups.addGroup')}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => {
               editInstructorStore.reset();
               seriesCardStore.openEditInstructorDialog();
             }}
-            className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
+            icon={<FaUserPlus size={20} />}
+            className="bg-amber-500 hover:bg-amber-600"
           >
-            <FaUserPlus size={20} />
             {t('series.groups.addInstructor')}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => {
               editSeriesStore.reset();
               groupedSeriesStore.openAddSeriesDialog();
             }}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+            icon={<FaBookOpen size={20} />}
+            className="bg-purple-600 hover:bg-purple-700"
           >
-            <FaBookOpen size={20} />
             {t('series.groups.addSeries')}
-          </button>
+          </Button>
         </div>
       )}
 
