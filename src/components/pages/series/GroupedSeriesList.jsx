@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
-import { FaLayerGroup, FaUserPlus, FaBookOpen } from 'react-icons/fa';
+import ActionButton from '../../ui/ActionButton';
 import Button from '../../ui/Button';
 import SeriesCard from './SeriesCard';
 import EditSeriesPage from './EditSeriesPage';
@@ -27,26 +26,18 @@ const GroupedSeriesList = observer(() => {
 
     return (
       <div className="flex items-center gap-2">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            groupedSeriesStore.openEditGroupDialog(group);
-          }}
-          className="p-1 text-white/70 hover:text-white transition-colors"
+        <ActionButton
+          onClick={() => groupedSeriesStore.openEditGroupDialog(group)}
+          icon="FiEdit2"
+          color="white"
           title={t('series.groups.editGroup')}
-        >
-          <FiEdit2 size={16} />
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            groupedSeriesStore.handleDeleteGroup(group);
-          }}
-          className="p-1 text-white/70 hover:text-white transition-colors"
+        />
+        <ActionButton
+          onClick={() => groupedSeriesStore.handleDeleteGroup(group)}
+          icon="FiTrash2"
+          color="white"
           title={t('series.groups.deleteGroup')}
-        >
-          <FiTrash2 size={16} />
-        </button>
+        />
       </div>
     );
   };
@@ -57,7 +48,7 @@ const GroupedSeriesList = observer(() => {
         <div className="grid grid-cols-3 gap-4 mt-8">
           <Button
             onClick={groupedSeriesStore.openAddGroupDialog}
-            icon={<FaLayerGroup size={20} />}
+            icon="FaLayerGroup"
             className="bg-green-600 hover:bg-green-700"
           >
             {t('series.groups.addGroup')}
@@ -67,7 +58,7 @@ const GroupedSeriesList = observer(() => {
               editInstructorStore.reset();
               seriesCardStore.openEditInstructorDialog();
             }}
-            icon={<FaUserPlus size={20} />}
+            icon="FaUserPlus"
             className="bg-amber-500 hover:bg-amber-600"
           >
             {t('series.groups.addInstructor')}
@@ -77,7 +68,7 @@ const GroupedSeriesList = observer(() => {
               editSeriesStore.reset();
               groupedSeriesStore.openAddSeriesDialog();
             }}
-            icon={<FaBookOpen size={20} />}
+            icon="FaBookOpen"
             className="bg-purple-600 hover:bg-purple-700"
           >
             {t('series.groups.addSeries')}
