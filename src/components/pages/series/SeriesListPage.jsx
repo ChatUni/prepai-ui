@@ -11,34 +11,33 @@ import ToolsNav from '../../ui/ToolsNav';
 import seriesStore from '../../../stores/seriesStore';
 import routeStore from '../../../stores/routeStore';
 import clientStore from '../../../stores/clientStore';
-import userStore from '../../../stores/userStore';
 
 const SeriesListPage = observer(() => (
   <DndProvider backend={HTML5Backend}>
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-    {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
+      {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
 
-    {routeStore.isSeriesHomeMode && <ToolsNav />}
+      {routeStore.isSeriesHomeMode && <ToolsNav />}
 
-    <div className="mb-6">
-      <SearchBar />
-    </div>
+      <div className="mb-6">
+        <SearchBar />
+      </div>
 
-    <LoadingState
-     isLoading={seriesStore.isLoading}
-     isError={!seriesStore.isSeriesValid}
-     isEmpty={seriesStore.filteredSeries.length === 0}
-    >
-      {routeStore.isSeriesGroupMode ? (
-        <GroupedSeriesList />
-      ) : (
-        <SeriesList
-          title=""
-          series={seriesStore.filteredSeries}
-          isAllInstructors={true}
-        />
-      )}
-    </LoadingState>
+      <LoadingState
+        isLoading={seriesStore.isLoading}
+        isError={!seriesStore.isSeriesValid}
+        isEmpty={seriesStore.filteredSeries.length === 0}
+      >
+        {routeStore.isSeriesGroupMode ? (
+          <GroupedSeriesList />
+        ) : (
+          <SeriesList
+            title=""
+            series={seriesStore.filteredSeries}
+            isAllInstructors={true}
+          />
+        )}
+      </LoadingState>
     </div>
   </DndProvider>
 ));

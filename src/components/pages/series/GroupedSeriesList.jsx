@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FaLayerGroup, FaUserPlus, FaBookOpen } from 'react-icons/fa';
 import SeriesCard from './SeriesCard';
 import EditSeriesPage from './EditSeriesPage';
 import EditInstructorPage from '../instructor/EditInstructorPage';
@@ -25,16 +26,6 @@ const GroupedSeriesList = observer(() => {
 
     return (
       <div className="flex items-center gap-2">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            groupedSeriesStore.openAddSeriesDialog(group);
-          }}
-          className="p-1 text-white/70 hover:text-white transition-colors"
-          title={t('series.groups.addSeries')}
-        >
-          <FiPlus size={16} />
-        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -65,44 +56,65 @@ const GroupedSeriesList = observer(() => {
 
   return (
     <div className="w-full space-y-4">
-        {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
-          <AccordionSection
-            key={group}
-            title={`${group} (${series.length})`}
-            actions={renderGroupActions(group)}
-            isExpanded={groupedSeriesStore.isGroupExpanded(group)}
-            onToggle={() => groupedSeriesStore.toggleGroup(group)}
-            maxHeight="96"
-            index={index}
-            moveGroup={groupedSeriesStore.moveGroup}
-            isDraggable={routeStore.isSeriesSettingMode}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
-              {series.map((seriesItem, index) => (
-                <SeriesCard
-                  key={`${group}-${seriesItem.id}-${index}`}
-                  series={seriesItem}
-                  index={index}
-                  moveItem={(fromIndex, toIndex) =>
-                    routeStore.isSeriesSettingMode &&
-                    groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
-                  }
-                />
-              ))}
-            </div>
-          </AccordionSection>
-        ))}
       {routeStore.isSeriesSettingMode && (
-        <div className="flex justify-center mt-8">
+        <div className="grid grid-cols-3 gap-4 mt-8">
           <button
             onClick={groupedSeriesStore.openAddGroupDialog}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
           >
-            <FiPlus size={20} />
+            <FaLayerGroup size={20} />
             {t('series.groups.addGroup')}
+          </button>
+          <button
+            onClick={() => {
+              editInstructorStore.reset();
+              seriesCardStore.openEditInstructorDialog();
+            }}
+            className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
+          >
+            <FaUserPlus size={20} />
+            {t('series.groups.addInstructor')}
+          </button>
+          <button
+            onClick={() => {
+              editSeriesStore.reset();
+              groupedSeriesStore.openAddSeriesDialog();
+            }}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <FaBookOpen size={20} />
+            {t('series.groups.addSeries')}
           </button>
         </div>
       )}
+
+      {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
+        <AccordionSection
+          key={group}
+          title={`${group} (${series.length})`}
+          actions={renderGroupActions(group)}
+          isExpanded={groupedSeriesStore.isGroupExpanded(group)}
+          onToggle={() => groupedSeriesStore.toggleGroup(group)}
+          maxHeight="96"
+          index={index}
+          moveGroup={groupedSeriesStore.moveGroup}
+          isDraggable={routeStore.isSeriesSettingMode}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
+            {series.map((seriesItem, index) => (
+              <SeriesCard
+                key={`${group}-${seriesItem.id}-${index}`}
+                series={seriesItem}
+                index={index}
+                moveItem={(fromIndex, toIndex) =>
+                  routeStore.isSeriesSettingMode &&
+                  groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
+                }
+              />
+            ))}
+          </div>
+        </AccordionSection>
+      ))}
 
       <Dialog
         isOpen={groupedSeriesStore.isAddGroupDialogOpen}

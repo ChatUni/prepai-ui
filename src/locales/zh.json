@@ -317,6 +317,8 @@
       "noGroup": "无分组",
       "noSeries": "该分组暂无课程",
       "addGroup": "添加分组",
+      "addInstructor": "创建老师",
+      "addSeries": "创建课程",
       "newGroup": "新建分组",
       "enterName": "输入分组名称",
       "editGroup": "编辑分组",

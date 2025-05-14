@@ -414,6 +414,8 @@
       "noGroup": "No Group",
       "noSeries": "No series in this group",
       "addGroup": "Add Group",
+      "addInstructor": "Create Instructor",
+      "addSeries": "Create Series",
       "newGroup": "New Group",
       "enterName": "Enter group name",
       "editGroup": "Edit Group",
