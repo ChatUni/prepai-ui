@@ -55,7 +55,8 @@
       "edit_assistant": "アシスタントを編集",
       "upload_questions": "問題をアップロード",
       "question_distribution": "問題の配分",
-      "course_settings": "コース設定"
+      "course_settings": "コース設定",
+      "manage_assistant": "アシスタント管理"
     },
     "categories": {
       "testing": "テスト",

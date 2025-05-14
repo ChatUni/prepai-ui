@@ -55,7 +55,8 @@
       "edit_assistant": "编辑助手",
       "upload_questions": "上传试题",
       "question_distribution": "试题比例分配",
-      "course_settings": "课程设置"
+      "course_settings": "课程设置",
+      "manage_assistant": "AI助手设置"
     },
     "categories": {
       "testing": "考测",

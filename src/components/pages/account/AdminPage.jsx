@@ -31,33 +31,13 @@ const AdminPage = observer(() => {
 
       {/* Menu Items */}
       <div className="space-y-2">
+        <MenuListItem
+          label={t('menu.admin_page.manage_assistant')}
+          onClick={() => navigate(routeMap['add-assistant'])}
+        />
         {/* <MenuListItem
-          label={t('menu.admin_page.new_instructor')}
-          onClick={() => navigate(routeMap['new-instructor'])}
-        />
-        <MenuListItem
-          label={t('menu.admin_page.edit_instructor')}
-          onClick={() => navigate(routeMap['edit-instructor'])}
-        /> */}
-        {/* <MenuListItem
-          label={t('menu.admin_page.new_series')}
-          onClick={() => navigate(routeMap['new-series'])}
-        />
-        <MenuListItem
-          label={t('menu.admin_page.edit_series')}
-          onClick={() => navigate(routeMap['edit-series'])}
-        />
-        <MenuListItem
-          label={t('menu.admin_page.add_course_to_series')}
-          onClick={() => navigate(routeMap['add-course-to-series'])}
-        />
-        <MenuListItem
           label={t('series.banners.title')}
           onClick={() => navigate(routeMap['edit-banner'])}
-        />
-        <MenuListItem
-          label={t('menu.admin_page.add_assistant')}
-          onClick={() => navigate(routeMap['add-assistant'])}
         />
         <MenuListItem
           label={t('menu.admin_page.edit_assistant')}
