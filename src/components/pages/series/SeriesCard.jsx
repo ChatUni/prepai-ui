@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { MdDragIndicator, MdAdd } from 'react-icons/md';
+import { useState } from 'react';
+import { MdDragIndicator, MdAdd, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { FiEdit2 } from 'react-icons/fi';
+import ActionButton from '../../ui/ActionButton';
+import Dialog from '../../ui/Dialog';
 import ExpandArrow from '../../ui/ExpandArrow';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
@@ -15,6 +18,7 @@ import CourseCard from './CourseCard';
 const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
   const validatedSeries = seriesCardStore.validateSeries(series);
   if (!validatedSeries) return null;
@@ -137,16 +141,18 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               )}
               {routeStore.isSeriesSettingMode && (
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      seriesCardStore.openEditDialog(series);
-                    }}
-                    className="text-gray-500 hover:text-gray-800 transition-colors"
+                  <ActionButton
+                    onClick={() => setShowConfirmDialog(true)}
+                    icon={`MdVisibility${series.isHidden ? 'Off' : ''}`}
+                    title={t(`series.${series.isHidden ? 'show' : 'hide'}`)}
+                    color={series.isHidden ? 'lightgray' : 'green'}
+                  />
+                  <ActionButton
+                    onClick={() => seriesCardStore.openEditDialog(series)}
+                    icon="FiEdit2"
                     title={t('series.edit')}
-                  >
-                    <FiEdit2 size={16} />
-                  </button>
+                    color="orange"
+                  />
                   <MdDragIndicator
                     className="text-gray-400 text-xl cursor-move"
                     aria-label="Drag to reorder"
@@ -171,6 +177,22 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
           </div>
         </div>
       </div>
+      <Dialog
+        isOpen={showConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
+        onConfirm={() => {
+          seriesStore.toggleSeriesVisibility(seriesId);
+          setShowConfirmDialog(false);
+        }}
+        title={series.isHidden ? t('series.show') : t('series.hide')}
+        isConfirm={true}
+      >
+        <p>
+          {series.isHidden
+            ? t('series.confirmShow', { name: series.name })
+            : t('series.confirmHide', { name: series.name })}
+        </p>
+      </Dialog>
     </div>
   );
 });

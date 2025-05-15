@@ -69,17 +69,16 @@
       "myFavorites": "My Favorites",
       "playHistory": "Play History",
       "privateInstruction": "Private Real-time Voice Instruction",
-      "video": "Video",
       "document": "Document",
       "courses": "Courses",
       "mostViewed": "Most Viewed",
       "titleFormat": "{type} {category} ({count})",
-      "instructor": "Instructor",
       "dateLocale": "en-US",
       "loading": "Loading...",
       "back": "Back",
       "error": "Error",
       "video": {
+        "title": "Video",
         "loadingSubtitles": "Loading subtitles...",
         "noSubtitles": "No subtitles found",
         "noSummary": "No summary data available",
@@ -107,6 +106,7 @@
         }
       },
       "instructor": {
+        "title": "Instructor",
         "voiceGuidance": "Real-time Chat",
         "instructorsTitle": "Instructor Real-time Chat",
         "seriesTitle": "{name}'s Course Series",
@@ -171,9 +171,6 @@
   },
   "assistants": {
     "chat": "Chat",
-    "edit": {
-      "button": "Edit"
-    },
     "selectToEdit": "Select Assistant to Edit",
     "add": {
       "title": "Add New Assistant",
@@ -191,6 +188,7 @@
       "createError": "Failed to create assistant"
     },
     "edit": {
+      "button": "Edit",
       "title": "Edit Assistant",
       "name": "Name",
       "greeting": "Greeting",
@@ -250,9 +248,13 @@
     "descriptionImage": "Description Image",
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
-    "edit": "Edit Series",
     "category": "Category",
+    "show": "Show series",
+    "hide": "Hide series",
+    "confirmShow": "Are you sure you want to show \"{name}\" series?",
+    "confirmHide": "Are you sure you want to hide \"{name}\" series?",
     "edit": {
+      "title": "Edit Series",
       "loading": "Loading...",
       "editTitle": "Edit Series",
       "createTitle": "Create New Series",
@@ -353,9 +355,9 @@
   "series": {
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
-    "edit": "Edit Series",
     "category": "Category",
     "edit": {
+      "title": "Edit Series",
       "loading": "Loading...",
       "editTitle": "Edit Series",
       "createTitle": "Create New Series",
@@ -421,8 +423,7 @@
       "editGroup": "Edit Group",
       "deleteGroup": "Delete Group",
       "confirmDelete": "Are you sure you want to delete this group?",
-      "cannotDelete": "Cannot delete group that contains series",
-      "addSeries": "Add Series"
+      "cannotDelete": "Cannot delete group that contains series"
     }
   }
 }

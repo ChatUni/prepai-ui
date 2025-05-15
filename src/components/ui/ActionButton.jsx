@@ -16,14 +16,10 @@ const ActionButton = ({
   return (
     <button
       onClick={handleClick}
-      className={`p-1 ${
-        color === 'white'
-          ? 'text-white/70 hover:text-white'
-          : `text-${color}-500 hover:text-${color}-800`
-      } transition-colors`}
+      className="p-1 hover:opacity-80 transition-opacity"
       title={title}
     >
-      <Icon name={icon} size={size} />
+      <Icon name={icon} size={size} color={color} />
     </button>
   );
 };

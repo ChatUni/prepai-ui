@@ -69,17 +69,16 @@
       "myFavorites": "我的收藏",
       "playHistory": "播放历史",
       "privateInstruction": "私教实时语音辅导",
-      "video": "视频",
       "document": "文档",
       "courses": "课程",
       "mostViewed": "最多人看",
       "titleFormat": "{type}{category} ({count})",
-      "instructor": "讲师",
       "dateLocale": "zh-CN",
       "loading": "加载中...",
       "back": "返回",
       "error": "错误",
       "video": {
+        "title": "视频",
         "loadingSubtitles": "获取字幕中...",
         "noSubtitles": "没有找到字幕",
         "noSummary": "没有摘要数据可用",
@@ -107,6 +106,7 @@
         }
       },
       "instructor": {
+        "title": "讲师",
         "voiceGuidance": "实时聊天",
         "instructorsTitle": "老师实时聊天",
         "seriesTitle": "{name}的课程课程",
@@ -171,9 +171,6 @@
   },
   "assistants": {
     "chat": "对话",
-    "edit": {
-      "button": "编辑"
-    },
     "selectToEdit": "选择要编辑的助手",
     "add": {
       "title": "添加新助手",
@@ -191,6 +188,7 @@
       "createError": "创建助手失败"
     },
     "edit": {
+      "button": "编辑",
       "title": "编辑助手",
       "name": "名称",
       "greeting": "问候语",
@@ -250,8 +248,11 @@
     "descriptionImage": "描述图片",
     "selectTitle": "选择课程",
     "selectToEdit": "选择要编辑的课程",
-    "edit": "编辑课程",
     "category": "分类",
+    "show": "上架课程",
+    "hide": "下架课程",
+    "confirmShow": "确定要上架「{name}」课程吗？",
+    "confirmHide": "确定要下架「{name}」课程吗？",
     "edit": {
       "loading": "加载中...",
       "editTitle": "编辑课程",
@@ -318,7 +319,6 @@
       "noSeries": "该分组暂无课程",
       "addGroup": "添加分组",
       "addInstructor": "创建老师",
-      "addSeries": "创建课程",
       "newGroup": "新建分组",
       "enterName": "输入分组名称",
       "editGroup": "编辑分组",

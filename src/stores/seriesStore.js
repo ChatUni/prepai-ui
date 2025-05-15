@@ -147,9 +147,15 @@ class SeriesStore {
     const activeCategory = uiStore.activeCategory || '';
     const isGroupMode = uiStore.activeNavItem === 'group';
     const validGroups = new Set(clientStore.client.settings.groups);
+    const isSettingsMode = routeStore.isSeriesSettingMode;
     
     return this.validSeriesItems.filter(series => {
       if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
+        return false;
+      }
+
+      // Hide series if isHidden is true and not in settings mode
+      if (!isSettingsMode && series.isHidden) {
         return false;
       }
       
@@ -305,6 +311,29 @@ class SeriesStore {
       this.pendingSeriesUpdates.clear();
     } catch (error) {
       console.error('Failed to save series updates:', error);
+      throw error;
+    }
+  };
+
+  toggleSeriesVisibility = async (seriesId) => {
+    const series = this.series.find(s => s.id === seriesId);
+    if (!series) return;
+
+    const updatedSeries = {
+      ...series,
+      isHidden: !series.isHidden
+    };
+
+    // Update local state
+    this.series = this.series.map(s =>
+      s.id === seriesId ? updatedSeries : s
+    );
+
+    // Save to database
+    try {
+      await save('series', updatedSeries);
+    } catch (error) {
+      console.error('Failed to toggle series visibility:', error);
       throw error;
     }
   };

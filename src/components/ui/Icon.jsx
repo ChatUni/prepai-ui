@@ -1,21 +1,37 @@
 import React from 'react';
 import * as FiIcons from 'react-icons/fi';
 import * as FaIcons from 'react-icons/fa';
+import * as MdIcons from 'react-icons/md';
 
-const Icon = ({ name, size = 16 }) => {
-  // Determine icon set from name prefix
-  const isFeatherIcon = name.startsWith('Fi');
-  const IconSet = isFeatherIcon ? FiIcons : FaIcons;
-
-  // Get icon name without prefix for Font Awesome icons
-  const IconComponent = IconSet[name];
-
-  if (!IconComponent) {
-    console.warn(`Icon "${name}" not found in ${isFeatherIcon ? 'Feather' : 'Font Awesome'} icon set`);
+const Icon = ({ name = '', size = 16, color }) => {
+  if (!name) {
+    console.warn('Icon name is required');
     return null;
   }
 
-  return <IconComponent size={size} />;
+  // Determine icon set from name prefix
+  let IconSet;
+  if (name.startsWith('Fi')) {
+    IconSet = FiIcons;
+  } else if (name.startsWith('Md')) {
+    IconSet = MdIcons;
+  } else {
+    IconSet = FaIcons;
+  }
+
+  const IconComponent = IconSet[name];
+
+  if (!IconComponent) {
+    console.warn(`Icon "${name}" not found in icon set`);
+    return null;
+  }
+
+  const getColor = () => {
+    if (!color) return 'currentColor';
+    return color;
+  };
+
+  return <IconComponent size={size} color={getColor()} />;
 };
 
 export default Icon;
