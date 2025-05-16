@@ -302,7 +302,9 @@
       "steps": {
         "selectGroup": "グループ選択",
         "nameAndCategory": "名前とカテゴリー",
-        "details": "シリーズ詳細"
+        "cover": "コース表紙",
+        "description": "コース説明",
+        "priceAndDuration": "価格と期間"
       },
       "errors": {
         "groupRequired": "次に進むにはグループを選択してください",

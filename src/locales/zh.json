@@ -290,7 +290,9 @@
       "steps": {
         "selectGroup": "选择分组",
         "nameAndCategory": "名称和分类",
-        "details": "课程详情"
+        "cover": "课程封面",
+        "description": "课程详情",
+        "priceAndDuration": "价格信息"
       },
       "errors": {
         "groupRequired": "请选择组别后继续",

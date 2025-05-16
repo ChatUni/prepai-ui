@@ -40,7 +40,9 @@ class EditSeriesStore {
     return [
       t('series.edit.steps.selectGroup'),
       t('series.edit.steps.nameAndCategory'),
-      t('series.edit.steps.details')
+      t('series.edit.steps.cover'),
+      t('series.edit.steps.description'),
+      t('series.edit.steps.priceAndDuration')
     ];
   }
 
@@ -99,8 +101,12 @@ class EditSeriesStore {
     this.descImage = file;
   }
 
+  get totalSteps() {
+    return this.stepTitles.length;
+  }
+
   nextStep = () => {
-    if (this.currentStep < 3) {
+    if (this.currentStep < this.totalSteps) {
       this.currentStep++;
     }
   }
@@ -109,6 +115,15 @@ class EditSeriesStore {
     if (this.currentStep > 1) {
       this.currentStep--;
     }
+  }
+
+  get canProceedToStep4() {
+    return this.image !== '';
+  }
+
+  get canProceedToStep5() {
+    return (this.descType === 'text' && this.description !== '') ||
+           (this.descType === 'image' && this.descImage !== '');
   }
 
   setStep = (step) => {

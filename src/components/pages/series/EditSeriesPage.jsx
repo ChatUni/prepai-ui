@@ -82,29 +82,6 @@ const Step3Content = observer(() => {
   
   return (
     <div className="space-y-6">
-      {/* Price Input */}
-      <FormInput
-        id="price"
-        type="number"
-        label={t('series.edit.price')}
-        value={editSeriesStore.price}
-        onChange={(e) => editSeriesStore.setPrice(e.target.value)}
-        required
-      />
-
-      {/* Duration Select */}
-      <FormSelect
-        id="duration"
-        label={t('series.edit.duration')}
-        value={editSeriesStore.duration}
-        onChange={(e) => editSeriesStore.setDuration(e.target.value)}
-        options={editSeriesStore.durationOptions.map(({ key, value }) => ({
-          value: key,
-          label: value
-        }))}
-        required
-      />
-
       {/* Cover Image Upload */}
       <MediaUpload
         id="cover_image"
@@ -113,7 +90,15 @@ const Step3Content = observer(() => {
         onMediaSelect={editSeriesStore.setImage}
         type="image"
       />
+    </div>
+  );
+});
 
+const Step4Content = observer(() => {
+  const { t } = languageStore;
+  
+  return (
+    <div className="space-y-6">
       {/* Description Type Selection */}
       <div className="space-y-1">
         <div className="flex justify-between items-center">
@@ -168,6 +153,37 @@ const Step3Content = observer(() => {
   );
 });
 
+const Step5Content = observer(() => {
+  const { t } = languageStore;
+  
+  return (
+    <div className="space-y-6">
+      {/* Price Input */}
+      <FormInput
+        id="price"
+        type="number"
+        label={t('series.edit.price')}
+        value={editSeriesStore.price}
+        onChange={(e) => editSeriesStore.setPrice(e.target.value)}
+        required
+      />
+
+      {/* Duration Select */}
+      <FormSelect
+        id="duration"
+        label={t('series.edit.duration')}
+        value={editSeriesStore.duration}
+        onChange={(e) => editSeriesStore.setDuration(e.target.value)}
+        options={editSeriesStore.durationOptions.map(({ key, value }) => ({
+          value: key,
+          label: value
+        }))}
+        required
+      />
+    </div>
+  );
+});
+
 const EditSeriesPage = observer(() => {
   const { t } = languageStore;
 
@@ -182,6 +198,28 @@ const EditSeriesPage = observer(() => {
         return;
       }
     }
+    if (editSeriesStore.currentStep === 3) {
+      if (!editSeriesStore.image) {
+        editSeriesStore.setError(t('series.edit.errors.coverImageRequired'));
+        return;
+      }
+    }
+    if (editSeriesStore.currentStep === 4) {
+      if (editSeriesStore.descType === 'text' && !editSeriesStore.description.trim()) {
+        editSeriesStore.setError(t('series.edit.errors.descriptionRequired'));
+        return;
+      }
+      if (editSeriesStore.descType === 'image' && !editSeriesStore.descImage) {
+        editSeriesStore.setError(t('series.edit.errors.descriptionImageRequired'));
+        return;
+      }
+    }
+    if (editSeriesStore.currentStep === 5) {
+      if (!editSeriesStore.price || !editSeriesStore.duration) {
+        editSeriesStore.setError(t('series.edit.errors.priceAndDurationRequired'));
+        return;
+      }
+    }
     editSeriesStore.clearError();
     editSeriesStore.nextStep();
   };
@@ -191,7 +229,7 @@ const EditSeriesPage = observer(() => {
       <div className="bg-white rounded-lg p-6">
         <StepsContainer
           currentStep={editSeriesStore.currentStep}
-          totalSteps={3}
+          totalSteps={editSeriesStore.totalSteps}
           stepTitles={editSeriesStore.stepTitles}
           onNext={handleNext}
           onPrev={editSeriesStore.prevStep}
@@ -199,6 +237,8 @@ const EditSeriesPage = observer(() => {
           {editSeriesStore.currentStep === 1 && <Step1Content />}
           {editSeriesStore.currentStep === 2 && <Step2Content />}
           {editSeriesStore.currentStep === 3 && <Step3Content />}
+          {editSeriesStore.currentStep === 4 && <Step4Content />}
+          {editSeriesStore.currentStep === 5 && <Step5Content />}
         </StepsContainer>
 
         {/* Error message */}

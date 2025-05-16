@@ -291,7 +291,9 @@
       "steps": {
         "selectGroup": "Select Group",
         "nameAndCategory": "Name and Category",
-        "details": "Series Details"
+        "cover": "Course Cover",
+        "description": "Course Description",
+        "priceAndDuration": "Price and Duration"
       },
       "errors": {
         "groupRequired": "Please select a group before proceeding",
