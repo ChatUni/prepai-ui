@@ -49,7 +49,7 @@ const GroupedSeriesList = observer(() => {
           <Button
             onClick={groupedSeriesStore.openAddGroupDialog}
             icon="FaLayerGroup"
-            className="bg-green-600 hover:bg-green-700"
+            color="green"
           >
             {t('series.groups.addGroup')}
           </Button>
@@ -59,7 +59,8 @@ const GroupedSeriesList = observer(() => {
               seriesCardStore.openEditInstructorDialog();
             }}
             icon="FaUserPlus"
-            className="bg-amber-500 hover:bg-amber-600"
+            color="amber"
+            shade={500}
           >
             {t('series.groups.addInstructor')}
           </Button>
@@ -69,7 +70,7 @@ const GroupedSeriesList = observer(() => {
               groupedSeriesStore.openAddSeriesDialog();
             }}
             icon="FaBookOpen"
-            className="bg-purple-600 hover:bg-purple-700"
+            color="purple"
           >
             {t('series.groups.addSeries')}
           </Button>

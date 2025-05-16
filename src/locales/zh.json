@@ -1,5 +1,9 @@
 {
   "common": {
+    "step": "步骤",
+    "of": "/",
+    "next": "下一步",
+    "previous": "上一步",
     "search": "搜索",
     "submit": "提交",
     "cancel": "取消",
@@ -282,7 +286,16 @@
       "coverPreview": "封面预览",
       "saving": "保存中...",
       "saveSeries": "保存课程",
-      "saveError": "保存课程失败"
+      "saveError": "保存课程失败",
+      "steps": {
+        "selectGroup": "选择分组",
+        "nameAndCategory": "名称和分类",
+        "details": "课程详情"
+      },
+      "errors": {
+        "groupRequired": "请选择组别后继续",
+        "nameAndCategoryRequired": "请输入名称和分类后继续"
+      }
     },
     "seriesCount": "显示 {count} 个课程",
     "unknownInstructor": "未知讲师",

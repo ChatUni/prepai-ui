@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { save } from '../utils/db';
+import languageStore from './languageStore';
 import _ from 'lodash';
 
 class EditSeriesStore {
@@ -20,7 +21,7 @@ class EditSeriesStore {
   error = null;
   editingSeries = null;
   isDropdownOpen = false;
-  uniqueCategories = [];
+  currentStep = 1;
 
   durationOptions = [
     { key: '30days', value: '30 Days' },
@@ -32,6 +33,33 @@ class EditSeriesStore {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  get stepTitles() {
+    const { t } = languageStore;
+    return [
+      t('series.edit.steps.selectGroup'),
+      t('series.edit.steps.nameAndCategory'),
+      t('series.edit.steps.details')
+    ];
+  }
+
+  get canProceedToStep2() {
+    return this.group !== '';
+  }
+
+  get canProceedToStep3() {
+    return this.name !== '' && this.category !== '';
+  }
+
+  get canSave() {
+    return (
+      this.name &&
+      this.price &&
+      this.duration &&
+      ((this.descType === 'text' && this.description) ||
+        (this.descType === 'image' && this.descImage))
+    );
   }
 
   setName = (name) => {
@@ -71,6 +99,30 @@ class EditSeriesStore {
     this.descImage = file;
   }
 
+  nextStep = () => {
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  }
+
+  prevStep = () => {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  setStep = (step) => {
+    this.currentStep = step;
+  }
+
+  setError = (error) => {
+    this.error = error;
+  }
+
+  clearError = () => {
+    this.error = null;
+  }
+
   toggleDropdown = () => {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
@@ -92,6 +144,7 @@ class EditSeriesStore {
     this.descImage = this.descType === 'image' ? series?.desc : '';
     this.isLoading = false;
     this.error = null;
+    this.currentStep = 1;
     this.isDropdownOpen = false;
   }
 

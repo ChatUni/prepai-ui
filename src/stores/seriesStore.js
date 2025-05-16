@@ -37,10 +37,7 @@ class SeriesStore {
   }
 
   get uniqueCategories() {
-    const categories = this.series
-      .map(series => series.category)
-      .filter(category => category); // Filter out null/undefined
-    return [...new Set(categories)].sort();
+    return [...new Set(seriesStore.series.map(s => s.category))].filter(Boolean);
   }
 
   setSeries = (series) => {

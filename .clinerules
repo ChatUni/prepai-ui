@@ -89,6 +89,12 @@
       "description": "Ternary operators should only be used on the differences between two branches, not on repeated parts. For example, instead of `isHidden ? t('series.show') : t('series.hide')`, use `t(`series.${isHidden ? 'show' : 'hide'}`)`. This reduces code duplication and improves maintainability by isolating the varying parts.",
       "severity": "error",
       "category": "code-style"
+    },
+    {
+      "name": "preserve-existing-translations",
+      "description": "When adding new translations, always preserve existing translation entries. First read the existing translation file, then merge new translations with the existing ones. Never replace the entire translation file with just the new entries.",
+      "severity": "error",
+      "category": "internationalization"
     }
   ]
 }
