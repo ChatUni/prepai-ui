@@ -44,36 +44,32 @@ const Step2Content = observer(() => {
       />
 
       {/* Category Input */}
-      <div className="space-y-1">
+      <div className="space-y-3">
         <label htmlFor="category" className="block text-sm font-medium">
           {t('series.edit.category')}
         </label>
-        <div className="relative">
-          <input
-            id="category"
-            type="text"
-            value={editSeriesStore.category}
-            onChange={(e) => editSeriesStore.setCategory(e.target.value)}
-            onClick={editSeriesStore.toggleDropdown}
-            className="w-full p-2 border rounded bg-white"
-            placeholder={t('series.edit.categoryPlaceholder')}
-          />
-          {editSeriesStore.isDropdownOpen && seriesStore.uniqueCategories.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
-              {seriesStore.uniqueCategories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                    category === editSeriesStore.category ? 'bg-gray-50' : ''
-                  }`}
-                  onClick={() => editSeriesStore.setCategory(category)}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
+        <input
+          id="category"
+          type="text"
+          value={editSeriesStore.category}
+          onChange={(e) => editSeriesStore.setCategory(e.target.value)}
+          className="w-full p-2 border rounded bg-white"
+          placeholder={t('series.edit.categoryPlaceholder')}
+        />
+        <div className="flex flex-wrap gap-2">
+          {seriesStore.uniqueCategories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors
+                ${category === editSeriesStore.category
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              onClick={() => editSeriesStore.setCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -181,16 +177,8 @@ const EditSeriesPage = observer(() => {
       return;
     }
     if (editSeriesStore.currentStep === 2) {
-      if (!editSeriesStore.name.trim()) {
-        editSeriesStore.setError(t('series.edit.errors.nameRequired'));
-        return;
-      }
-      if (!editSeriesStore.category.trim()) {
-        editSeriesStore.setError(t('series.edit.errors.categoryRequired'));
-        return;
-      }
-      if (!editSeriesStore.instructor) {
-        editSeriesStore.setError(t('series.edit.errors.instructorRequired'));
+      if (!editSeriesStore.name.trim() || !editSeriesStore.category.trim()) {
+        editSeriesStore.setError(t('series.edit.errors.nameAndCategoryRequired'));
         return;
       }
     }
