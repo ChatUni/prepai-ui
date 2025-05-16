@@ -295,7 +295,7 @@
         "priceAndDuration": "价格信息"
       },
       "errors": {
-        "groupRequired": "请选择组别后继续",
+        "groupRequired": "请选择分组后继续",
         "nameAndCategoryRequired": "请输入名称和分类后继续"
       }
     },

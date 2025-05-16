@@ -171,9 +171,7 @@ const GroupedSeriesList = observer(() => {
         size="xl"
         isConfirm={true}
       >
-        <div className="max-h-[80vh] overflow-y-auto">
-          <EditSeriesPage />
-        </div>
+        <EditSeriesPage />
       </Dialog>
 
       <Dialog
@@ -190,9 +188,7 @@ const GroupedSeriesList = observer(() => {
         size="xl"
         isConfirm={true}
       >
-        <div className="max-h-[80vh] overflow-y-auto">
-          <EditCoursePage courseId={seriesCardStore.currentEditCourse?.id} seriesId={seriesCardStore.currentSeriesId} />
-        </div>
+        <EditCoursePage courseId={seriesCardStore.currentEditCourse?.id} seriesId={seriesCardStore.currentSeriesId} />
       </Dialog>
 
       <Dialog
@@ -209,9 +205,7 @@ const GroupedSeriesList = observer(() => {
         size="xl"
         isConfirm={true}
       >
-        <div className="max-h-[80vh] overflow-y-auto">
-          <EditInstructorPage />
-        </div>
+        <EditInstructorPage />
       </Dialog>
     </div>
   );

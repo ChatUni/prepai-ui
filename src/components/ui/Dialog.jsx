@@ -27,7 +27,11 @@ const Dialog = observer(({ isOpen, onClose, onConfirm, title, children, isConfir
               <h3 className="text-lg font-medium">{title}</h3>
             </div>
           )}
-          <div className="px-6 py-4">{children}</div>
+          <div className="px-6 py-4">
+            <div className="max-h-[80vh] overflow-y-auto">
+              {children}
+            </div>
+          </div>
           <div className="px-6 py-4 flex justify-end gap-4">
             {isConfirm ? (
               <>

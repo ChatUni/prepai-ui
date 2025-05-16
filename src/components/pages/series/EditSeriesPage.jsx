@@ -18,13 +18,10 @@ const Step1Content = observer(() => {
       label={t('series.groups.title')}
       value={editSeriesStore.group}
       onChange={(e) => editSeriesStore.setGroup(e.target.value)}
-      options={[
-        { value: '', label: t('series.groups.noGroup') },
-        ...clientStore.client.settings.groups.map(group => ({
-          value: group,
-          label: group
-        }))
-      ]}
+      options={clientStore.client.settings.groups.map(group => ({
+        value: group,
+        label: group
+      }))}
     />
   );
 });
@@ -226,7 +223,7 @@ const EditSeriesPage = observer(() => {
 
   const content = (
     <div className="container mx-auto">
-      <div className="bg-white rounded-lg p-6">
+      <div className="bg-white rounded-lg">
         <StepsContainer
           currentStep={editSeriesStore.currentStep}
           totalSteps={editSeriesStore.totalSteps}
