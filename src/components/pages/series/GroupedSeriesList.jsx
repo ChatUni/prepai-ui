@@ -157,22 +157,18 @@ const GroupedSeriesList = observer(() => {
         <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
       </Dialog>
 
-      <Dialog
-        isOpen={groupedSeriesStore.isAddSeriesDialogOpen}
-        onClose={groupedSeriesStore.closeAddSeriesDialog}
-        onConfirm={async () => {
-          const success = await editSeriesStore.saveSeries();
-          if (success) {
-            await seriesStore.fetchSeries();
-            groupedSeriesStore.closeAddSeriesDialog();
-          }
-        }}
-        title={routeStore.seriesId ? t('series.edit.editTitle') : t('series.groups.addSeries')}
-        size="xl"
-        isConfirm={true}
-      >
-        <EditSeriesPage />
-      </Dialog>
+      {groupedSeriesStore.isAddSeriesDialogOpen && (
+        <EditSeriesPage
+          onClose={groupedSeriesStore.closeAddSeriesDialog}
+          onSave={async () => {
+            const success = await editSeriesStore.saveSeries();
+            if (success) {
+              await seriesStore.fetchSeries();
+              groupedSeriesStore.closeAddSeriesDialog();
+            }
+          }}
+        />
+      )}
 
       <Dialog
         isOpen={seriesCardStore.editCourseDialogOpen}

@@ -181,7 +181,7 @@ const Step5Content = observer(() => {
   );
 });
 
-const EditSeriesPage = observer(() => {
+const EditSeriesPage = observer(({ onClose, onSave }) => {
   const { t } = languageStore;
 
   const handleNext = () => {
@@ -228,12 +228,12 @@ const EditSeriesPage = observer(() => {
     >
       <Dialog
         isOpen={true}
-        onClose={() => {}}
+        onClose={onClose}
         isSteps={true}
         currentStep={editSeriesStore.currentStep}
         totalSteps={editSeriesStore.totalSteps}
         stepTitles={editSeriesStore.stepTitles}
-        onNext={handleNext}
+        onNext={editSeriesStore.currentStep === editSeriesStore.totalSteps ? onSave : handleNext}
         onPrev={editSeriesStore.prevStep}
       >
         {editSeriesStore.currentStep === 1 && <Step1Content />}

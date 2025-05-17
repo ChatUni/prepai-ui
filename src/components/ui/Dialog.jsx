@@ -31,40 +31,25 @@ const Dialog = observer(({
 
   if (!isOpen) return null;
 
-  return createPortal(
+  const StepsDialog = (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
         <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
-          {title && (
-            <div className="px-6 py-4">
-              <h3 className="text-lg font-medium">{title}</h3>
-            </div>
-          )}
           <div className="px-6 py-4">
-            {isSteps ? (
-              <div className="flex flex-col h-full">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold">
-                    {stepTitles[currentStep - 1]}
-                  </h2>
-                  <div className="text-sm text-gray-500">
-                    {lang.t('common.step')} {currentStep} {lang.t('common.of')} {totalSteps}
-                  </div>
-                </div>
-                <div className="flex-grow">
-                  {children}
+            <div className="flex flex-col h-full">
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold">
+                  {stepTitles[currentStep - 1]}
+                </h2>
+                <div className="text-sm text-gray-500">
+                  {lang.t('common.step')} {currentStep} {lang.t('common.of')} {totalSteps}
                 </div>
               </div>
-            ) : (
-              <div>
+              <div className="flex-grow mb-6">
                 {children}
               </div>
-            )}
-          </div>
-          <div className="px-6 py-4 flex justify-end gap-4">
-            {isSteps ? (
-              <>
+              <div className="flex justify-end gap-4">
                 <Button
                   onClick={onPrev}
                   disabled={currentStep === 1}
@@ -77,8 +62,29 @@ const Dialog = observer(({
                 >
                   {lang.t('common.next')}
                 </Button>
-              </>
-            ) : isConfirm ? (
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const RegularDialog = (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
+        <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+          {title && (
+            <div className="px-6 py-4">
+              <h3 className="text-lg font-medium">{title}</h3>
+            </div>
+          )}
+          <div className="px-6 py-4">
+            {children}
+          </div>
+          <div className="px-6 py-4 flex justify-end gap-4">
+            {isConfirm ? (
               <>
                 <button
                   onClick={onClose}
@@ -104,7 +110,11 @@ const Dialog = observer(({
           </div>
         </div>
       </div>
-    </div>,
+    </div>
+  );
+
+  return createPortal(
+    isSteps ? StepsDialog : RegularDialog,
     document.body
   );
 });
