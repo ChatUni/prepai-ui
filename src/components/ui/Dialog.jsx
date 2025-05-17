@@ -2,8 +2,22 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import lang from '../../stores/languageStore';
+import Button from './Button';
 
-const Dialog = observer(({ isOpen, onClose, onConfirm, title, children, isConfirm = false }) => {
+const Dialog = observer(({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title, 
+  children, 
+  isConfirm = false,
+  isSteps = false,
+  currentStep = 1,
+  totalSteps = 1,
+  stepTitles = [],
+  onNext,
+  onPrev
+}) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -28,12 +42,43 @@ const Dialog = observer(({ isOpen, onClose, onConfirm, title, children, isConfir
             </div>
           )}
           <div className="px-6 py-4">
-            <div className="max-h-[80vh] overflow-y-auto">
-              {children}
-            </div>
+            {isSteps ? (
+              <div className="flex flex-col h-full">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold">
+                    {stepTitles[currentStep - 1]}
+                  </h2>
+                  <div className="text-sm text-gray-500">
+                    {lang.t('common.step')} {currentStep} {lang.t('common.of')} {totalSteps}
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  {children}
+                </div>
+              </div>
+            ) : (
+              <div>
+                {children}
+              </div>
+            )}
           </div>
           <div className="px-6 py-4 flex justify-end gap-4">
-            {isConfirm ? (
+            {isSteps ? (
+              <>
+                <Button
+                  onClick={onPrev}
+                  disabled={currentStep === 1}
+                >
+                  {lang.t('common.previous')}
+                </Button>
+                <Button
+                  onClick={onNext}
+                  disabled={currentStep === totalSteps}
+                >
+                  {lang.t('common.next')}
+                </Button>
+              </>
+            ) : isConfirm ? (
               <>
                 <button
                   onClick={onClose}

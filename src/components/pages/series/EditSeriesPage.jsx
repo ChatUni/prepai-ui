@@ -6,7 +6,7 @@ import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import LoadingState from '../../ui/LoadingState';
-import StepsContainer from '../../ui/StepsContainer';
+import Dialog from '../../ui/Dialog';
 import seriesStore from '../../../stores/seriesStore';
 
 const Step1Content = observer(() => {
@@ -221,37 +221,32 @@ const EditSeriesPage = observer(() => {
     editSeriesStore.nextStep();
   };
 
-  const content = (
-    <div className="container mx-auto">
-      <div className="bg-white rounded-lg">
-        <StepsContainer
-          currentStep={editSeriesStore.currentStep}
-          totalSteps={editSeriesStore.totalSteps}
-          stepTitles={editSeriesStore.stepTitles}
-          onNext={handleNext}
-          onPrev={editSeriesStore.prevStep}
-        >
-          {editSeriesStore.currentStep === 1 && <Step1Content />}
-          {editSeriesStore.currentStep === 2 && <Step2Content />}
-          {editSeriesStore.currentStep === 3 && <Step3Content />}
-          {editSeriesStore.currentStep === 4 && <Step4Content />}
-          {editSeriesStore.currentStep === 5 && <Step5Content />}
-        </StepsContainer>
-
-        {/* Error message */}
-        {editSeriesStore.error && (
-          <div className="mt-4 text-red-600 text-sm">{editSeriesStore.error}</div>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <LoadingState
       isLoading={editSeriesStore.isLoading}
       customMessage={t('series.edit.loading')}
     >
-      {content}
+      <Dialog
+        isOpen={true}
+        onClose={() => {}}
+        isSteps={true}
+        currentStep={editSeriesStore.currentStep}
+        totalSteps={editSeriesStore.totalSteps}
+        stepTitles={editSeriesStore.stepTitles}
+        onNext={handleNext}
+        onPrev={editSeriesStore.prevStep}
+      >
+        {editSeriesStore.currentStep === 1 && <Step1Content />}
+        {editSeriesStore.currentStep === 2 && <Step2Content />}
+        {editSeriesStore.currentStep === 3 && <Step3Content />}
+        {editSeriesStore.currentStep === 4 && <Step4Content />}
+        {editSeriesStore.currentStep === 5 && <Step5Content />}
+
+        {/* Error message */}
+        {editSeriesStore.error && (
+          <div className="mt-4 text-red-600 text-sm">{editSeriesStore.error}</div>
+        )}
+      </Dialog>
     </LoadingState>
   );
 });
