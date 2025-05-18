@@ -34,7 +34,7 @@ const Dialog = observer(({
   const StepsDialog = (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
+        <div className="fixed inset-0 bg-black opacity-50" onClick={isSteps ? undefined : onClose} />
         <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
           <div className="px-6 py-4">
             <div className="flex flex-col h-full">
@@ -49,19 +49,27 @@ const Dialog = observer(({
               <div className="flex-grow mb-6">
                 {children}
               </div>
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-between items-center">
                 <Button
-                  onClick={onPrev}
-                  disabled={currentStep === 1}
+                  onClick={onClose}
+                  color="gray"
                 >
-                  {lang.t('common.previous')}
+                  {lang.t('common.cancel')}
                 </Button>
-                <Button
-                  onClick={onNext}
-                  disabled={currentStep === totalSteps}
-                >
-                  {lang.t('common.next')}
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={onPrev}
+                    disabled={currentStep === 1}
+                  >
+                    {lang.t('common.previous')}
+                  </Button>
+                  <Button
+                    onClick={onNext}
+                    disabled={currentStep === totalSteps}
+                  >
+                    {lang.t('common.next')}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -16,7 +16,8 @@
     "no_results": "未找到结果",
     "unexpectedError": "发生意外错误",
     "ok": "确定",
-    "confirm": "确认"
+    "confirm": "确认",
+    "closeWithoutSaving": "确定要不保存就关闭吗？"
   },
   "auth": {
     "login": "登录",
@@ -296,7 +297,8 @@
       },
       "errors": {
         "groupRequired": "请选择分组后继续",
-        "nameAndCategoryRequired": "请输入名称和分类后继续"
+        "nameAndCategoryRequired": "请输入名称和分类后继续",
+        "descriptionRequired": "请输入描述后继续"
       }
     },
     "seriesCount": "显示 {count} 个课程",

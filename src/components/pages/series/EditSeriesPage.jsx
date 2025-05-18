@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import editSeriesStore from '../../../stores/editSeriesStore';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
@@ -183,6 +184,11 @@ const Step5Content = observer(() => {
 
 const EditSeriesPage = observer(({ onClose, onSave }) => {
   const { t } = languageStore;
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const handleCancel = () => {
+    setShowCancelConfirm(true);
+  };
 
   const handleNext = () => {
     if (editSeriesStore.currentStep === 1 && !editSeriesStore.canProceedToStep2) {
@@ -216,6 +222,7 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
         editSeriesStore.setError(t('series.edit.errors.priceAndDurationRequired'));
         return;
       }
+      editSeriesStore.saveSeries();
     }
     editSeriesStore.clearError();
     editSeriesStore.nextStep();
@@ -226,27 +233,42 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
       isLoading={editSeriesStore.isLoading}
       customMessage={t('series.edit.loading')}
     >
-      <Dialog
-        isOpen={true}
-        onClose={onClose}
-        isSteps={true}
-        currentStep={editSeriesStore.currentStep}
-        totalSteps={editSeriesStore.totalSteps}
-        stepTitles={editSeriesStore.stepTitles}
-        onNext={editSeriesStore.currentStep === editSeriesStore.totalSteps ? onSave : handleNext}
-        onPrev={editSeriesStore.prevStep}
-      >
-        {editSeriesStore.currentStep === 1 && <Step1Content />}
-        {editSeriesStore.currentStep === 2 && <Step2Content />}
-        {editSeriesStore.currentStep === 3 && <Step3Content />}
-        {editSeriesStore.currentStep === 4 && <Step4Content />}
-        {editSeriesStore.currentStep === 5 && <Step5Content />}
+      <>
+        <Dialog
+          isOpen={true}
+          onClose={handleCancel}
+          isSteps={true}
+          currentStep={editSeriesStore.currentStep}
+          totalSteps={editSeriesStore.totalSteps}
+          stepTitles={editSeriesStore.stepTitles}
+          onNext={editSeriesStore.currentStep === editSeriesStore.totalSteps ? onSave : handleNext}
+          onPrev={editSeriesStore.prevStep}
+        >
+          {editSeriesStore.currentStep === 1 && <Step1Content />}
+          {editSeriesStore.currentStep === 2 && <Step2Content />}
+          {editSeriesStore.currentStep === 3 && <Step3Content />}
+          {editSeriesStore.currentStep === 4 && <Step4Content />}
+          {editSeriesStore.currentStep === 5 && <Step5Content />}
 
-        {/* Error message */}
-        {editSeriesStore.error && (
-          <div className="mt-4 text-red-600 text-sm">{editSeriesStore.error}</div>
-        )}
-      </Dialog>
+          {/* Error message */}
+          {editSeriesStore.error && (
+            <div className="mt-4 text-red-600 text-sm">{editSeriesStore.error}</div>
+          )}
+        </Dialog>
+
+        <Dialog
+          isOpen={showCancelConfirm}
+          onClose={() => setShowCancelConfirm(false)}
+          onConfirm={() => {
+            setShowCancelConfirm(false);
+            onClose();
+          }}
+          title={t('common.confirm')}
+          isConfirm={true}
+        >
+          <p>{t('common.closeWithoutSaving')}</p>
+        </Dialog>
+      </>
     </LoadingState>
   );
 });

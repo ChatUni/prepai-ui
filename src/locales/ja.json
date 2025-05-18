@@ -16,7 +16,8 @@
     "no_results": "結果が見つかりません",
     "unexpectedError": "予期せぬエラーが発生しました",
     "ok": "OK",
-    "confirm": "確認"
+    "confirm": "確認",
+    "closeWithoutSaving": "保存せずに閉じますか？"
   },
   "auth": {
     "login": "ログイン",
@@ -308,7 +309,8 @@
       },
       "errors": {
         "groupRequired": "次に進むにはグループを選択してください",
-        "nameAndCategoryRequired": "次に進むには名前とカテゴリーを入力してください"
+        "nameAndCategoryRequired": "次に進むには名前とカテゴリーを入力してください",
+        "descriptionRequired": "次に進むには説明を入力してください"
       }
     },
     "seriesCount": "{count}件のシリーズを表示",

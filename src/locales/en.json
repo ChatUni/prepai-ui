@@ -16,7 +16,8 @@
     "no_results": "No results found",
     "unexpectedError": "An unexpected error occurred",
     "ok": "OK",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "closeWithoutSaving": "Do you want to close without saving?"
   },
   "auth": {
     "login": "Login",
@@ -297,7 +298,8 @@
       },
       "errors": {
         "groupRequired": "Please select a group before proceeding",
-        "nameAndCategoryRequired": "Please enter both name and category before proceeding"
+        "nameAndCategoryRequired": "Please enter both name and category before proceeding",
+        "descriptionRequired": "Please enter a description before proceeding"
       }
     },
     "seriesCount": "Showing {count} series",
