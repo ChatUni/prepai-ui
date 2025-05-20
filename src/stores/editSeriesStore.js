@@ -138,6 +138,41 @@ class EditSeriesStore {
     this.error = null;
   }
 
+  validateStep = (step) => {
+    const { t } = languageStore;
+    switch (step) {
+      case 1:
+        if (!this.canProceedToStep2) {
+          return t('series.edit.errors.groupRequired');
+        }
+        break;
+      case 2:
+        if (!this.canProceedToStep3) {
+          return t('series.edit.errors.nameAndCategoryRequired');
+        }
+        break;
+      case 3:
+        if (!this.canProceedToStep4) {
+          return t('series.edit.errors.coverImageRequired');
+        }
+        break;
+      case 4:
+        if (!this.canProceedToStep5) {
+          if (this.descType === 'text') {
+            return t('series.edit.errors.descriptionRequired');
+          }
+          return t('series.edit.errors.descriptionImageRequired');
+        }
+        break;
+      case 5:
+        if (!this.canSave) {
+          return t('series.edit.errors.priceAndDurationRequired');
+        }
+        break;
+    }
+    return null;
+  }
+
   toggleDropdown = () => {
     this.isDropdownOpen = !this.isDropdownOpen;
   }

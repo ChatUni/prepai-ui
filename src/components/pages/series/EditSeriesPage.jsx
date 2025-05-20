@@ -3,12 +3,13 @@ import { useState } from 'react';
 import editSeriesStore from '../../../stores/editSeriesStore';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
+import seriesStore from '../../../stores/seriesStore';
 import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import LoadingState from '../../ui/LoadingState';
 import Dialog from '../../ui/Dialog';
-import seriesStore from '../../../stores/seriesStore';
+import StepDialog from '../../ui/StepDialog';
 
 const Step1Content = observer(() => {
   const { t } = languageStore;
@@ -182,6 +183,44 @@ const Step5Content = observer(() => {
   );
 });
 
+const validateStep = (step) => {
+  const { t } = languageStore;
+  
+  switch (step) {
+    case 1:
+      if (!editSeriesStore.canProceedToStep2) {
+        return t('series.edit.errors.groupRequired');
+      }
+      break;
+    case 2:
+      if (!editSeriesStore.name.trim() || !editSeriesStore.category.trim()) {
+        return t('series.edit.errors.nameAndCategoryRequired');
+      }
+      break;
+    case 3:
+      if (!editSeriesStore.image) {
+        return t('series.edit.errors.coverImageRequired');
+      }
+      break;
+    case 4:
+      if (editSeriesStore.descType === 'text' && !editSeriesStore.description.trim()) {
+        return t('series.edit.errors.descriptionRequired');
+      }
+      if (editSeriesStore.descType === 'image' && !editSeriesStore.descImage) {
+        return t('series.edit.errors.descriptionImageRequired');
+      }
+      break;
+    case 5:
+      if (!editSeriesStore.price || !editSeriesStore.duration) {
+        return t('series.edit.errors.priceAndDurationRequired');
+      }
+      break;
+    default:
+      return null;
+  }
+  return null;
+};
+
 const EditSeriesPage = observer(({ onClose, onSave }) => {
   const { t } = languageStore;
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -190,42 +229,9 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
     setShowCancelConfirm(true);
   };
 
-  const handleNext = () => {
-    if (editSeriesStore.currentStep === 1 && !editSeriesStore.canProceedToStep2) {
-      editSeriesStore.setError(t('series.edit.errors.groupRequired'));
-      return;
-    }
-    if (editSeriesStore.currentStep === 2) {
-      if (!editSeriesStore.name.trim() || !editSeriesStore.category.trim()) {
-        editSeriesStore.setError(t('series.edit.errors.nameAndCategoryRequired'));
-        return;
-      }
-    }
-    if (editSeriesStore.currentStep === 3) {
-      if (!editSeriesStore.image) {
-        editSeriesStore.setError(t('series.edit.errors.coverImageRequired'));
-        return;
-      }
-    }
-    if (editSeriesStore.currentStep === 4) {
-      if (editSeriesStore.descType === 'text' && !editSeriesStore.description.trim()) {
-        editSeriesStore.setError(t('series.edit.errors.descriptionRequired'));
-        return;
-      }
-      if (editSeriesStore.descType === 'image' && !editSeriesStore.descImage) {
-        editSeriesStore.setError(t('series.edit.errors.descriptionImageRequired'));
-        return;
-      }
-    }
-    if (editSeriesStore.currentStep === 5) {
-      if (!editSeriesStore.price || !editSeriesStore.duration) {
-        editSeriesStore.setError(t('series.edit.errors.priceAndDurationRequired'));
-        return;
-      }
-      editSeriesStore.saveSeries();
-    }
-    editSeriesStore.clearError();
-    editSeriesStore.nextStep();
+  const handleComplete = () => {
+    editSeriesStore.saveSeries();
+    onSave();
   };
 
   return (
@@ -234,27 +240,26 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
       customMessage={t('series.edit.loading')}
     >
       <>
-        <Dialog
+        <StepDialog
           isOpen={true}
           onClose={handleCancel}
           isSteps={true}
-          currentStep={editSeriesStore.currentStep}
-          totalSteps={editSeriesStore.totalSteps}
-          stepTitles={editSeriesStore.stepTitles}
-          onNext={editSeriesStore.currentStep === editSeriesStore.totalSteps ? onSave : handleNext}
-          onPrev={editSeriesStore.prevStep}
+          stepTitles={[
+            t('series.edit.steps.selectGroup'),
+            t('series.edit.steps.nameAndCategory'),
+            t('series.edit.steps.cover'),
+            t('series.edit.steps.description'),
+            t('series.edit.steps.priceAndDuration')
+          ]}
+          validateStep={validateStep}
+          onComplete={handleComplete}
         >
-          {editSeriesStore.currentStep === 1 && <Step1Content />}
-          {editSeriesStore.currentStep === 2 && <Step2Content />}
-          {editSeriesStore.currentStep === 3 && <Step3Content />}
-          {editSeriesStore.currentStep === 4 && <Step4Content />}
-          {editSeriesStore.currentStep === 5 && <Step5Content />}
-
-          {/* Error message */}
-          {editSeriesStore.error && (
-            <div className="mt-4 text-red-600 text-sm">{editSeriesStore.error}</div>
-          )}
-        </Dialog>
+          <Step1Content />
+          <Step2Content />
+          <Step3Content />
+          <Step4Content />
+          <Step5Content />
+        </StepDialog>
 
         <Dialog
           isOpen={showCancelConfirm}
