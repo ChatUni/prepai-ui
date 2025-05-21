@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import ActionButton from '../../ui/ActionButton';
 import Button from '../../ui/Button';
@@ -12,10 +12,7 @@ import routeStore from '../../../stores/routeStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
 import seriesStore from '../../../stores/seriesStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
-import editCourseStore from '../../../stores/editCourseStore';
 import editSeriesStore from '../../../stores/editSeriesStore';
-import EditCoursePage from './EditCoursePage';
-import instructorsStore from '../../../stores/instructorsStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
 
 const GroupedSeriesList = observer(() => {
@@ -71,6 +68,7 @@ const GroupedSeriesList = observer(() => {
             }}
             icon="FaBookOpen"
             color="purple"
+            shade={500}
           >
             {t('series.groups.addSeries')}
           </Button>
@@ -173,23 +171,6 @@ const GroupedSeriesList = observer(() => {
           }}
         />
       )}
-
-      <Dialog
-        isOpen={seriesCardStore.editCourseDialogOpen}
-        onClose={seriesCardStore.closeEditCourseDialog}
-        onConfirm={async () => {
-          const success = await editCourseStore.saveCourse(seriesCardStore.currentSeriesId);
-          if (success) {
-            await seriesStore.fetchSeries();
-            seriesCardStore.closeEditCourseDialog();
-          }
-        }}
-        title={editCourseStore.editingCourse ? t('course.editCourse') : t('course.addCourse')}
-        size="xl"
-        isConfirm={true}
-      >
-        <EditCoursePage courseId={seriesCardStore.currentEditCourse?.id} seriesId={seriesCardStore.currentSeriesId} />
-      </Dialog>
 
       <Dialog
         isOpen={seriesCardStore.editInstructorDialogOpen}

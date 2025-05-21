@@ -1,10 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import editSeriesStore from '../../../stores/editSeriesStore';
+import Button from '../../ui/Button';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
 import seriesStore from '../../../stores/seriesStore';
 import coursesStore from '../../../stores/coursesStore';
+import editCourseStore from '../../../stores/editCourseStore';
+import EditCoursePage from './EditCoursePage';
 import CourseCard from './CourseCard';
 import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
@@ -196,7 +199,13 @@ const Step6Content = observer(() => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <Button
+        onClick={() => editSeriesStore.openEditCourseDialog()}
+        className="w-full"
+      >
+        {t('series.addChapter')}
+      </Button>
       {courses.map((course, idx) => (
         <CourseCard
           key={course.id}
@@ -273,6 +282,7 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
       customMessage={t('series.edit.loading')}
     >
       <>
+        <EditCourseDialog />
         <StepDialog
           isOpen={true}
           onClose={handleCancel}
@@ -310,6 +320,31 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
         </Dialog>
       </>
     </LoadingState>
+  );
+});
+
+const EditCourseDialog = observer(() => {
+  const { t } = languageStore;
+
+  return (
+    <Dialog
+      isOpen={editSeriesStore.editCourseDialogOpen}
+      onClose={editSeriesStore.closeEditCourseDialog}
+      onConfirm={async () => {
+        const success = await editCourseStore.saveCourse(editSeriesStore.editingSeries?.id);
+        if (success) {
+          editSeriesStore.closeEditCourseDialog();
+        }
+      }}
+      title={editCourseStore.editingCourse ? t('course.editCourse') : t('course.addCourse')}
+      size="xl"
+      isConfirm={true}
+    >
+      <EditCoursePage
+        courseId={editSeriesStore.currentEditCourse?.id}
+        seriesId={editSeriesStore.editingSeries?.id}
+      />
+    </Dialog>
   );
 });
 

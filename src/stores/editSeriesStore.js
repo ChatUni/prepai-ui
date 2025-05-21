@@ -3,6 +3,7 @@ import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { save } from '../utils/db';
 import languageStore from './languageStore';
 import _ from 'lodash';
+import editCourseStore from './editCourseStore';
 
 class EditSeriesStore {
   // fields
@@ -23,6 +24,8 @@ class EditSeriesStore {
   editingSeries = null;
   isDropdownOpen = false;
   currentStep = 1;
+  editCourseDialogOpen = false;
+  currentEditCourse = null;
 
   durationOptions = [
     { key: '30days', value: '30 Days' },
@@ -100,6 +103,10 @@ class EditSeriesStore {
 
   setDescImage = (file) => {
     this.descImage = file;
+  }
+
+  setCourses = (courses) => {
+    this.courses = courses;
   }
 
   get totalSteps() {
@@ -198,6 +205,18 @@ class EditSeriesStore {
     this.error = null;
     this.currentStep = 1;
     this.isDropdownOpen = false;
+  }
+
+  openEditCourseDialog = (course) => {
+    this.currentEditCourse = course;
+    editCourseStore.reset(course);
+    this.editCourseDialogOpen = true;
+  }
+
+  closeEditCourseDialog = () => {
+    this.editCourseDialogOpen = false;
+    this.currentEditCourse = null;
+    editCourseStore.reset(null);
   }
 
   uploadImage = async (file, path) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
+import editSeriesStore from '../../../stores/editSeriesStore';
 import { useState } from 'react';
 import { MdDragIndicator, MdAdd, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { FiEdit2 } from 'react-icons/fi';
@@ -118,7 +119,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      seriesCardStore.openEditCourseDialog(null, seriesId);
+                      editSeriesStore.openEditCourseDialog(null);
                     }}
                     className="text-xs px-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-green-500 dark:hover:bg-green-600 rounded transition-colors !min-h-0 h-5 leading-none flex items-center gap-1"
                     title={t('series.addCourse')}

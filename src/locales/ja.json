@@ -4,6 +4,7 @@
     "of": "の",
     "next": "次へ",
     "previous": "前へ",
+    "finish": "完了",
     "search": "検索",
     "submit": "送信",
     "cancel": "キャンセル",
@@ -252,6 +253,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "addChapter": "章を追加",
     "descriptionImage": "説明画像",
     "selectTitle": "シリーズを選択",
     "selectToEdit": "編集するシリーズを選択",
@@ -305,6 +307,7 @@
         "nameAndCategory": "名前とカテゴリー",
         "cover": "コース表紙",
         "description": "コース説明",
+        "courses": "コース一覧",
         "priceAndDuration": "価格と期間"
       },
       "errors": {

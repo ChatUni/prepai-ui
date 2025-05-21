@@ -9,28 +9,12 @@ import editSeriesStore from './editSeriesStore';
 
 class SeriesCardStore {
   expandedSeriesId = null;
-  editCourseDialogOpen = false;
   editInstructorDialogOpen = false;
-  currentEditCourse = null;
-  currentSeriesId = null;
   currentEditInstructor = null;
 
   constructor() {
     makeAutoObservable(this);
   }
-
-  openEditCourseDialog = (course, seriesId) => {
-    this.currentEditCourse = course;
-    this.currentSeriesId = seriesId;
-    editCourseStore.reset(course);
-    this.editCourseDialogOpen = true;
-  };
-
-  closeEditCourseDialog = () => {
-    this.editCourseDialogOpen = false;
-    this.currentEditCourse = null;
-    this.currentSeriesId = null;
-  };
 
   openEditInstructorDialog = (instructor) => {
     this.currentEditInstructor = instructor;

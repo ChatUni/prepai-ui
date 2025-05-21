@@ -4,6 +4,7 @@
     "of": "of",
     "next": "Next",
     "previous": "Previous",
+    "finish": "Finish",
     "search": "Search",
     "submit": "Submit",
     "cancel": "Cancel",
@@ -250,6 +251,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "addChapter": "Add Chapter",
     "descriptionImage": "Description Image",
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
@@ -294,6 +296,7 @@
         "nameAndCategory": "Name and Category",
         "cover": "Course Cover",
         "description": "Course Description",
+        "courses": "Course List",
         "priceAndDuration": "Price and Duration"
       },
       "errors": {

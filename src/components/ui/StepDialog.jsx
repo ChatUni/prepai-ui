@@ -69,7 +69,7 @@ const StepDialog = observer(({
                     onClick={handleNext}
                     disabled={currentStep === totalSteps && !onComplete}
                   >
-                    {currentStep === totalSteps ? lang.t('common.save') : lang.t('common.next')}
+                    {currentStep === totalSteps ? lang.t('common.finish') : lang.t('common.next')}
                   </Button>
                 </div>
               </div>

@@ -4,6 +4,7 @@
     "of": "/",
     "next": "下一步",
     "previous": "上一步",
+    "finish": "完成",
     "search": "搜索",
     "submit": "提交",
     "cancel": "取消",
@@ -250,6 +251,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "addChapter": "添加章节",
     "descriptionImage": "描述图片",
     "selectTitle": "选择课程",
     "selectToEdit": "选择要编辑的课程",
@@ -293,6 +295,7 @@
         "nameAndCategory": "名称和分类",
         "cover": "课程封面",
         "description": "课程详情",
+        "courses": "课程目录",
         "priceAndDuration": "价格信息"
       },
       "errors": {
