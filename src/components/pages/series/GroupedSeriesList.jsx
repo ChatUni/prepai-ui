@@ -157,14 +157,18 @@ const GroupedSeriesList = observer(() => {
         <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
       </Dialog>
 
-      {groupedSeriesStore.isAddSeriesDialogOpen && (
+      {(groupedSeriesStore.isAddSeriesDialogOpen || editSeriesStore.series) && (
         <EditSeriesPage
-          onClose={groupedSeriesStore.closeAddSeriesDialog}
+          onClose={() => {
+            groupedSeriesStore.closeAddSeriesDialog();
+            editSeriesStore.reset(null);
+          }}
           onSave={async () => {
             const success = await editSeriesStore.saveSeries();
             if (success) {
               await seriesStore.fetchSeries();
               groupedSeriesStore.closeAddSeriesDialog();
+              editSeriesStore.reset(null);
             }
           }}
         />

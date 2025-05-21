@@ -105,7 +105,7 @@ class SeriesCardStore {
   openEditDialog = (series) => {
     routeStore.setSeriesId(series.id);
     editSeriesStore.reset(series);
-    groupedSeriesStore.openEditSeriesDialog(series.group);
+    groupedSeriesStore.openEditSeriesDialog(series);
   };
 }
 

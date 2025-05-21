@@ -15,6 +15,7 @@ class EditSeriesStore {
   description = '';
   image = '';
   descImage = '';
+  courses = [];
   
   // state
   isLoading = false;
@@ -192,6 +193,7 @@ class EditSeriesStore {
     this.description = series?.desc || '';
     this.image = series?.cover || '';
     this.descImage = this.descType === 'image' ? series?.desc : '';
+    this.courses = series?.courses || [];
     this.isLoading = false;
     this.error = null;
     this.currentStep = 1;

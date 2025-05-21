@@ -102,8 +102,8 @@ class GroupedSeriesStore {
     });
   };
 
-  openEditSeriesDialog = (group) => {
-    this.selectedGroup = group;
+  openEditSeriesDialog = (series) => {
+    editSeriesStore.reset(series);
     this.isAddSeriesDialogOpen = true;
   };
 

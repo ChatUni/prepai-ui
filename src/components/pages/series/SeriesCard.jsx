@@ -160,20 +160,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                 </div>
               )}
             </div>
-            {seriesCardStore.isExpanded(seriesId) && (
-              <div className="border-t pt-2 space-y-2">
-                {courses.map((course, idx) => (
-                  <CourseCard
-                    key={course.id}
-                    course={course}
-                    isEditMode={routeStore.isSeriesSettingMode}
-                    onEdit={() => seriesCardStore.openEditCourseDialog(course, seriesId)}
-                    index={idx}
-                    moveItem={handleMoveCourse}
-                  />
-                ))}
-              </div>
-            )}
+            {/* Course list moved to EditSeriesPage.jsx */}
           </div>
         </div>
       </div>

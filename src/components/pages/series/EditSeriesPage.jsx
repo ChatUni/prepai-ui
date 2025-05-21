@@ -4,6 +4,8 @@ import editSeriesStore from '../../../stores/editSeriesStore';
 import languageStore from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
 import seriesStore from '../../../stores/seriesStore';
+import coursesStore from '../../../stores/coursesStore';
+import CourseCard from './CourseCard';
 import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
@@ -183,6 +185,32 @@ const Step5Content = observer(() => {
   );
 });
 
+const Step6Content = observer(() => {
+  const { t } = languageStore;
+  const courses = editSeriesStore.courses || [];
+
+  const handleMoveCourse = (dragIndex, dropIndex) => {
+    const [removed] = courses.splice(dragIndex, 1);
+    courses.splice(dropIndex, 0, removed);
+    editSeriesStore.setCourses(courses);
+  };
+
+  return (
+    <div className="space-y-2">
+      {courses.map((course, idx) => (
+        <CourseCard
+          key={course.id}
+          course={course}
+          isEditMode={true}
+          onEdit={() => editSeriesStore.openEditCourseDialog(course)}
+          index={idx}
+          moveItem={handleMoveCourse}
+        />
+      ))}
+    </div>
+  );
+});
+
 const validateStep = (step) => {
   const { t } = languageStore;
   
@@ -213,6 +241,11 @@ const validateStep = (step) => {
     case 5:
       if (!editSeriesStore.price || !editSeriesStore.duration) {
         return t('series.edit.errors.priceAndDurationRequired');
+      }
+      break;
+    case 6:
+      if (!editSeriesStore.courses || editSeriesStore.courses.length === 0) {
+        return t('series.edit.errors.coursesRequired');
       }
       break;
     default:
@@ -249,7 +282,8 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
             t('series.edit.steps.nameAndCategory'),
             t('series.edit.steps.cover'),
             t('series.edit.steps.description'),
-            t('series.edit.steps.priceAndDuration')
+            t('series.edit.steps.priceAndDuration'),
+            t('series.edit.steps.courses')
           ]}
           validateStep={validateStep}
           onComplete={handleComplete}
@@ -259,6 +293,7 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
           <Step3Content />
           <Step4Content />
           <Step5Content />
+          <Step6Content />
         </StepDialog>
 
         <Dialog
