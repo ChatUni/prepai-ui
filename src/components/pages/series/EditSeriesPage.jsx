@@ -330,12 +330,7 @@ const EditCourseDialog = observer(() => {
     <Dialog
       isOpen={editSeriesStore.editCourseDialogOpen}
       onClose={editSeriesStore.closeEditCourseDialog}
-      onConfirm={async () => {
-        const success = await editCourseStore.saveCourse(editSeriesStore.editingSeries?.id);
-        if (success) {
-          editSeriesStore.closeEditCourseDialog();
-        }
-      }}
+      onConfirm={editSeriesStore.updateCourse}
       title={editCourseStore.editingCourse ? t('course.editCourse') : t('course.addCourse')}
       size="xl"
       isConfirm={true}

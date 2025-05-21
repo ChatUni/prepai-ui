@@ -280,6 +280,35 @@ class EditSeriesStore {
       throw error;
     }
   }
+
+  updateCourse = async () => {
+    try {
+      const course = await editCourseStore.saveCourse(this.editingSeries?.id);
+      
+      runInAction(() => {
+        const courses = [...this.courses];
+        const existingIndex = courses.findIndex(c => c.id === course.id);
+        
+        if (existingIndex >= 0) {
+          // Replace existing course
+          courses[existingIndex] = course;
+        } else {
+          // Add new course to the end
+          courses.push(course);
+        }
+        
+        this.courses = courses;
+        this.closeEditCourseDialog();
+      });
+
+      return course;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
+  }
 }
 
 const editSeriesStore = new EditSeriesStore();
