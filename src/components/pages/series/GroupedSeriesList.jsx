@@ -16,8 +16,10 @@ import editSeriesStore from '../../../stores/editSeriesStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
 
 const { t } = languageStore;
+const isRecycle = (group) => group === t('series.groups.recycle');
+const isEditable = (group) => routeStore.isSeriesSettingMode && !isRecycle(group);
 
-const renderGroupActions = (group) => !routeStore.isSeriesSettingMode ? null : (
+const renderGroupActions = (group) => !isEditable(group) ? null : (
   <div className="flex items-center gap-2">
     <ActionButton
       onClick={() => groupedSeriesStore.openEditGroupDialog(group)}
@@ -34,7 +36,7 @@ const renderGroupActions = (group) => !routeStore.isSeriesSettingMode ? null : (
   </div>
 )
 
-const GroupSection = ({ group, index, series }) => (
+const GroupSection = observer(({ group, index, series }) => (
   <AccordionSection
     key={group}
     title={`${group} (${series.length})`}
@@ -44,7 +46,7 @@ const GroupSection = ({ group, index, series }) => (
     maxHeight="96"
     index={index}
     moveGroup={groupedSeriesStore.moveGroup}
-    isDraggable={routeStore.isSeriesSettingMode}
+    isDraggable={isEditable(group)}
   >
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
       {series.map((seriesItem, index) => (
@@ -60,12 +62,9 @@ const GroupSection = ({ group, index, series }) => (
       ))}
     </div>
   </AccordionSection>
-)
+))
 
-const GroupedSeriesList = observer(() => {
-
-
-  return (
+const GroupedSeriesList = observer(() => (
     <div className="w-full space-y-4">
       {routeStore.isSeriesSettingMode && (
         <div className="grid grid-cols-3 gap-4 mt-8">
@@ -96,38 +95,20 @@ const GroupedSeriesList = observer(() => {
       )}
 
       {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
-  <AccordionSection
-    key={group}
-    title={`${group} (${series.length})`}
-    actions={renderGroupActions(group)}
-    isExpanded={groupedSeriesStore.isGroupExpanded(group)}
-    onToggle={() => groupedSeriesStore.toggleGroup(group)}
-    maxHeight="96"
-    index={index}
-    moveGroup={groupedSeriesStore.moveGroup}
-    isDraggable={routeStore.isSeriesSettingMode}
-  >
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
-      {series.map((seriesItem, index) => (
-        <SeriesCard
-          key={`${group}-${seriesItem.id}-${index}`}
-          series={seriesItem}
+        <GroupSection
+          key={group}
+          group={group}
           index={index}
-          moveItem={(fromIndex, toIndex) =>
-            routeStore.isSeriesSettingMode &&
-            groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
-          }
+          series={series}
         />
       ))}
-    </div>
-  </AccordionSection>
-        // <GroupSection
-        //   key={group}
-        //   group={group}
-        //   index={index}
-        //   series={series}
-        // />
-      ))}
+
+      <GroupSection
+        key={t('series.groups.recycle')}
+        group={t('series.groups.recycle')}
+        index={-1}
+        series={seriesStore.deletedSeries}
+      />
 
       <Dialog
         isOpen={groupedSeriesStore.isAddGroupDialogOpen}
@@ -212,7 +193,6 @@ const GroupedSeriesList = observer(() => {
         <EditInstructorPage />
       </Dialog>
     </div>
-  );
-});
+));
 
 export default GroupedSeriesList;
