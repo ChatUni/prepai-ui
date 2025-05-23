@@ -47,6 +47,7 @@ const GroupSection = observer(({ group, index, series }) => (
     index={index}
     moveGroup={groupedSeriesStore.moveGroup}
     isDraggable={isEditable(group)}
+    isDanger={isRecycle(group)}
   >
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
       {series.map((seriesItem, index) => (
@@ -103,12 +104,14 @@ const GroupedSeriesList = observer(() => (
         />
       ))}
 
-      <GroupSection
-        key={t('series.groups.recycle')}
-        group={t('series.groups.recycle')}
-        index={-1}
-        series={seriesStore.deletedSeries}
-      />
+      {routeStore.isSeriesSettingMode && (
+        <GroupSection
+          key={t('series.groups.recycle')}
+          group={t('series.groups.recycle')}
+          index={-1}
+          series={seriesStore.deletedSeries}
+        />
+      )}
 
       <Dialog
         isOpen={groupedSeriesStore.isAddGroupDialogOpen}

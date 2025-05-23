@@ -345,7 +345,8 @@
       "deleteGroup": "删除分组",
       "confirmDelete": "确定要删除此分组吗？",
       "cannotDelete": "无法删除包含课程的分组",
-      "addSeries": "添加课程"
+      "addSeries": "添加课程",
+      "recycle": "回收站"
     }
   },
   "search": {

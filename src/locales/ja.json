@@ -347,7 +347,8 @@
       "deleteGroup": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "シリーズが含まれているグループは削除できません",
-      "addSeries": "シリーズを追加"
+      "addSeries": "シリーズを追加",
+      "recycle": "リサイクル"
     }
   },
   "search": {

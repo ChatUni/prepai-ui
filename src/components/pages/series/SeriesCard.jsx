@@ -116,25 +116,39 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
             <div className="flex justify-between items-center">
               <p className="text-xs text-gray-600 dark:text-gray-400">{t('series.courseCount', { count: courses.length})}</p>
               {routeStore.isSeriesSettingMode && (
-                <div className="flex items-center gap-2">
+                series.deleted ? (
                   <ActionButton
-                    onClick={() => setShowConfirmDialog(true)}
-                    icon={`MdVisibility${series.isHidden ? 'Off' : ''}`}
-                    title={t(`series.${series.isHidden ? 'show' : 'hide'}`)}
-                    color={series.isHidden ? 'lightgray' : 'green'}
+                    onClick={() => seriesStore.deleteSeries(seriesId, true)}
+                    icon="MdRestoreFromTrash"
+                    title={t('series.edit.restore')}
+                    color="green"
                   />
-                  <ActionButton
-                    onClick={() => seriesCardStore.openEditDialog(series)}
-                    icon="FiEdit2"
-                    title={t('series.edit.editTitle')}
-                    color="orange"
-                  />
-                  <MdDragIndicator
-                    className="text-gray-400 text-xl cursor-move"
-                    aria-label="Drag to reorder"
-                  />
-                </div>
-              )}
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <ActionButton
+                      onClick={() => seriesCardStore.openEditDialog(series)}
+                      icon="FiEdit2"
+                      title={t('series.edit.editTitle')}
+                      color="orange"
+                    />
+                    <ActionButton
+                      onClick={() => setShowConfirmDialog(true)}
+                      icon={`MdVisibility${series.isHidden ? 'Off' : ''}`}
+                      title={t(`series.${series.isHidden ? 'show' : 'hide'}`)}
+                      color={series.isHidden ? 'lightgray' : 'green'}
+                    />
+                    <ActionButton
+                      onClick={() => seriesStore.deleteSeries(seriesId)}
+                      icon="FiTrash2"
+                      title={t('series.edit.delete')}
+                      color="red"
+                    />
+                    <MdDragIndicator
+                      className="text-gray-400 text-xl cursor-move"
+                      aria-label="Drag to reorder"
+                    />
+                  </div>
+              ))}
             </div>
             {/* Course list moved to EditSeriesPage.jsx */}
           </div>

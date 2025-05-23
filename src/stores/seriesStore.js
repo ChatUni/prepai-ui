@@ -338,6 +338,19 @@ class SeriesStore {
       throw error;
     }
   };
+
+  deleteSeries = async (seriesId, isRestore) => {
+    const series = this.series.find(s => s.id === seriesId);
+    if (!series) return;
+    series.deleted = !isRestore;
+
+    try {
+      await save('series', series);
+    } catch (error) {
+      console.error('Failed to delete series:', error);
+      throw error;
+    }
+  };
 }
 
 const seriesStore = new SeriesStore();
