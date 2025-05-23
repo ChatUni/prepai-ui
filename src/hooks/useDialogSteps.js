@@ -16,9 +16,9 @@ const useDialogSteps = ({ totalSteps, validateStep, onComplete }) => {
     setError('');
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (validateStep) {
-      const validationError = validateStep(currentStep);
+      const validationError = await validateStep(currentStep);
       if (validationError) {
         setError(validationError);
         return;

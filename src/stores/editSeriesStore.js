@@ -4,6 +4,7 @@ import { save } from '../utils/db';
 import languageStore from './languageStore';
 import _ from 'lodash';
 import editCourseStore from './editCourseStore';
+import clientStore from './clientStore';
 
 class EditSeriesStore {
   // fields
@@ -48,24 +49,6 @@ class EditSeriesStore {
       t('series.edit.steps.description'),
       t('series.edit.steps.priceAndDuration')
     ];
-  }
-
-  get canProceedToStep2() {
-    return this.group !== '';
-  }
-
-  get canProceedToStep3() {
-    return this.name !== '' && this.category !== '';
-  }
-
-  get canSave() {
-    return (
-      this.name &&
-      this.price &&
-      this.duration &&
-      ((this.descType === 'text' && this.description) ||
-        (this.descType === 'image' && this.descImage))
-    );
   }
 
   setName = (name) => {
@@ -125,6 +108,18 @@ class EditSeriesStore {
     }
   }
 
+  setStep = (step) => {
+    this.currentStep = step;
+  }
+
+  get canProceedToStep2() {
+    return this.group !== '';
+  }
+
+  get canProceedToStep3() {
+    return this.name !== '' && this.category !== '';
+  }
+
   get canProceedToStep4() {
     return this.image !== '';
   }
@@ -134,8 +129,14 @@ class EditSeriesStore {
            (this.descType === 'image' && this.descImage !== '');
   }
 
-  setStep = (step) => {
-    this.currentStep = step;
+  get canSave() {
+    return (
+      this.name &&
+      this.price &&
+      this.duration &&
+      ((this.descType === 'text' && this.description) ||
+        (this.descType === 'image' && this.descImage))
+    );
   }
 
   setError = (error) => {
@@ -146,7 +147,7 @@ class EditSeriesStore {
     this.error = null;
   }
 
-  validateStep = (step) => {
+  validateStep = async (step) => {
     const { t } = languageStore;
     switch (step) {
       case 1:
@@ -158,6 +159,7 @@ class EditSeriesStore {
         if (!this.canProceedToStep3) {
           return t('series.edit.errors.nameAndCategoryRequired');
         }
+        await this.saveSeries(true);
         break;
       case 3:
         if (!this.canProceedToStep4) {
@@ -175,6 +177,12 @@ class EditSeriesStore {
       case 5:
         if (!this.canSave) {
           return t('series.edit.errors.priceAndDurationRequired');
+        }
+        await this.saveSeries(true);
+        break;
+      case 6:
+        if (!this.courses || this.courses.length === 0) {
+          return t('series.edit.errors.coursesRequired');
         }
         break;
     }
@@ -230,15 +238,16 @@ class EditSeriesStore {
     }
   }
 
-  saveSeries = async () => {
+  saveSeries = async (isBackground) => {
     try {
-      this.isLoading = true;
       this.error = null;
+      if (!isBackground) this.isLoading = true;
 
       const isEdit = !!this.editingSeries;
 
       const seriesData = _.omit({
         ...(isEdit ? this.editingSeries : {}),
+        client_id: clientStore.client.id,
         name: this.name,
         category: this.category,
         group: this.group,
@@ -252,6 +261,7 @@ class EditSeriesStore {
       if (!isEdit) {
         const data = await save('series', seriesData);
         seriesData.id = data.id;
+        this.editingSeries = seriesData;
       }
 
       // Handle cover image upload
@@ -268,8 +278,10 @@ class EditSeriesStore {
 
       await save('series', seriesData);
 
-      this.isLoading = false;
-      this.reset();
+      if (!isBackground) {
+        this.isLoading = false;
+        this.reset();
+      }
 
       return seriesData;
     } catch (error) {

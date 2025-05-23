@@ -15,29 +15,55 @@ import seriesCardStore from '../../../stores/seriesCardStore';
 import editSeriesStore from '../../../stores/editSeriesStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
 
+const { t } = languageStore;
+
+const renderGroupActions = (group) => !routeStore.isSeriesSettingMode ? null : (
+  <div className="flex items-center gap-2">
+    <ActionButton
+      onClick={() => groupedSeriesStore.openEditGroupDialog(group)}
+      icon="FiEdit2"
+      color="white"
+      title={t('series.groups.editGroup')}
+    />
+    <ActionButton
+      onClick={() => groupedSeriesStore.handleDeleteGroup(group)}
+      icon="FiTrash2"
+      color="white"
+      title={t('series.groups.deleteGroup')}
+    />
+  </div>
+)
+
+const GroupSection = ({ group, index, series }) => (
+  <AccordionSection
+    key={group}
+    title={`${group} (${series.length})`}
+    actions={renderGroupActions(group)}
+    isExpanded={groupedSeriesStore.isGroupExpanded(group)}
+    onToggle={() => groupedSeriesStore.toggleGroup(group)}
+    maxHeight="96"
+    index={index}
+    moveGroup={groupedSeriesStore.moveGroup}
+    isDraggable={routeStore.isSeriesSettingMode}
+  >
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
+      {series.map((seriesItem, index) => (
+        <SeriesCard
+          key={`${group}-${seriesItem.id}-${index}`}
+          series={seriesItem}
+          index={index}
+          moveItem={(fromIndex, toIndex) =>
+            routeStore.isSeriesSettingMode &&
+            groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
+          }
+        />
+      ))}
+    </div>
+  </AccordionSection>
+)
+
 const GroupedSeriesList = observer(() => {
-  const { t } = languageStore;
 
-  const renderGroupActions = (group) => {
-    if (!routeStore.isSeriesSettingMode) return null;
-
-    return (
-      <div className="flex items-center gap-2">
-        <ActionButton
-          onClick={() => groupedSeriesStore.openEditGroupDialog(group)}
-          icon="FiEdit2"
-          color="white"
-          title={t('series.groups.editGroup')}
-        />
-        <ActionButton
-          onClick={() => groupedSeriesStore.handleDeleteGroup(group)}
-          icon="FiTrash2"
-          color="white"
-          title={t('series.groups.deleteGroup')}
-        />
-      </div>
-    );
-  };
 
   return (
     <div className="w-full space-y-4">
@@ -51,10 +77,7 @@ const GroupedSeriesList = observer(() => {
             {t('series.groups.addGroup')}
           </Button>
           <Button
-            onClick={() => {
-              editInstructorStore.reset();
-              seriesCardStore.openEditInstructorDialog();
-            }}
+            onClick={() => seriesCardStore.openEditInstructorDialog()}
             icon="FaUserPlus"
             color="amber"
             shade={500}
@@ -62,10 +85,7 @@ const GroupedSeriesList = observer(() => {
             {t('series.groups.addInstructor')}
           </Button>
           <Button
-            onClick={() => {
-              editSeriesStore.reset();
-              groupedSeriesStore.openAddSeriesDialog();
-            }}
+            onClick={() => groupedSeriesStore.openEditSeriesDialog()}
             icon="FaBookOpen"
             color="purple"
             shade={500}
@@ -76,31 +96,37 @@ const GroupedSeriesList = observer(() => {
       )}
 
       {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
-        <AccordionSection
-          key={group}
-          title={`${group} (${series.length})`}
-          actions={renderGroupActions(group)}
-          isExpanded={groupedSeriesStore.isGroupExpanded(group)}
-          onToggle={() => groupedSeriesStore.toggleGroup(group)}
-          maxHeight="96"
+  <AccordionSection
+    key={group}
+    title={`${group} (${series.length})`}
+    actions={renderGroupActions(group)}
+    isExpanded={groupedSeriesStore.isGroupExpanded(group)}
+    onToggle={() => groupedSeriesStore.toggleGroup(group)}
+    maxHeight="96"
+    index={index}
+    moveGroup={groupedSeriesStore.moveGroup}
+    isDraggable={routeStore.isSeriesSettingMode}
+  >
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
+      {series.map((seriesItem, index) => (
+        <SeriesCard
+          key={`${group}-${seriesItem.id}-${index}`}
+          series={seriesItem}
           index={index}
-          moveGroup={groupedSeriesStore.moveGroup}
-          isDraggable={routeStore.isSeriesSettingMode}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
-            {series.map((seriesItem, index) => (
-              <SeriesCard
-                key={`${group}-${seriesItem.id}-${index}`}
-                series={seriesItem}
-                index={index}
-                moveItem={(fromIndex, toIndex) =>
-                  routeStore.isSeriesSettingMode &&
-                  groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
-                }
-              />
-            ))}
-          </div>
-        </AccordionSection>
+          moveItem={(fromIndex, toIndex) =>
+            routeStore.isSeriesSettingMode &&
+            groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
+          }
+        />
+      ))}
+    </div>
+  </AccordionSection>
+        // <GroupSection
+        //   key={group}
+        //   group={group}
+        //   index={index}
+        //   series={series}
+        // />
       ))}
 
       <Dialog
@@ -155,20 +181,17 @@ const GroupedSeriesList = observer(() => {
         <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
       </Dialog>
 
-      {(groupedSeriesStore.isAddSeriesDialogOpen || editSeriesStore.series) && (
+      {(groupedSeriesStore.isEditSeriesDialogOpen || editSeriesStore.series) && (
         <EditSeriesPage
-          onClose={() => {
-            groupedSeriesStore.closeAddSeriesDialog();
-            editSeriesStore.reset(null);
-          }}
-          onSave={async () => {
-            const success = await editSeriesStore.saveSeries();
-            if (success) {
-              await seriesStore.fetchSeries();
-              groupedSeriesStore.closeAddSeriesDialog();
-              editSeriesStore.reset(null);
-            }
-          }}
+          onClose={groupedSeriesStore.closeEditSeriesDialog}
+          // onSave={async () => {
+          //   const success = await editSeriesStore.saveSeries();
+          //   if (success) {
+          //     await seriesStore.fetchSeries();
+          //     groupedSeriesStore.closeEditSeriesDialog();
+          //     editSeriesStore.reset(null);
+          //   }
+          // }}
         />
       )}
 

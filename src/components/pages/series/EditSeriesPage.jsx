@@ -220,49 +220,6 @@ const Step6Content = observer(() => {
   );
 });
 
-const validateStep = (step) => {
-  const { t } = languageStore;
-  
-  switch (step) {
-    case 1:
-      if (!editSeriesStore.canProceedToStep2) {
-        return t('series.edit.errors.groupRequired');
-      }
-      break;
-    case 2:
-      if (!editSeriesStore.name.trim() || !editSeriesStore.category.trim()) {
-        return t('series.edit.errors.nameAndCategoryRequired');
-      }
-      break;
-    case 3:
-      if (!editSeriesStore.image) {
-        return t('series.edit.errors.coverImageRequired');
-      }
-      break;
-    case 4:
-      if (editSeriesStore.descType === 'text' && !editSeriesStore.description.trim()) {
-        return t('series.edit.errors.descriptionRequired');
-      }
-      if (editSeriesStore.descType === 'image' && !editSeriesStore.descImage) {
-        return t('series.edit.errors.descriptionImageRequired');
-      }
-      break;
-    case 5:
-      if (!editSeriesStore.price || !editSeriesStore.duration) {
-        return t('series.edit.errors.priceAndDurationRequired');
-      }
-      break;
-    case 6:
-      if (!editSeriesStore.courses || editSeriesStore.courses.length === 0) {
-        return t('series.edit.errors.coursesRequired');
-      }
-      break;
-    default:
-      return null;
-  }
-  return null;
-};
-
 const EditSeriesPage = observer(({ onClose, onSave }) => {
   const { t } = languageStore;
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -271,10 +228,10 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
     setShowCancelConfirm(true);
   };
 
-  const handleComplete = () => {
-    editSeriesStore.saveSeries();
-    onSave();
-  };
+  // const handleComplete = () => {
+  //   editSeriesStore.saveSeries();
+  //   onSave();
+  // };
 
   return (
     <LoadingState
@@ -295,8 +252,8 @@ const EditSeriesPage = observer(({ onClose, onSave }) => {
             t('series.edit.steps.priceAndDuration'),
             t('series.edit.steps.courses')
           ]}
-          validateStep={validateStep}
-          onComplete={handleComplete}
+          validateStep={editSeriesStore.validateStep}
+          onComplete={onClose}
         >
           <Step1Content />
           <Step2Content />

@@ -13,7 +13,7 @@ class GroupedSeriesStore {
   isEditGroupDialogOpen = false;
   isDeleteGroupDialogOpen = false;
   isErrorDialogOpen = false;
-  isAddSeriesDialogOpen = false;
+  isEditSeriesDialogOpen = false;
   newGroupName = '';
   selectedGroup = null;
   errorMessage = '';
@@ -26,7 +26,7 @@ class GroupedSeriesStore {
       isEditGroupDialogOpen: true,
       isDeleteGroupDialogOpen: true,
       isErrorDialogOpen: true,
-      isAddSeriesDialogOpen: true,
+      isEditSeriesDialogOpen: true,
       newGroupName: true,
       selectedGroup: true,
       errorMessage: true,
@@ -82,33 +82,13 @@ class GroupedSeriesStore {
     this.newGroupName = '';
   };
 
-  openAddSeriesDialog = (group) => {
-    // First clear any existing state
-    routeStore.setSeriesId(null);
-    editSeriesStore.reset(null);
-    
-    // Then set up for adding new series
-    this.selectedGroup = group;
-    this.isAddSeriesDialogOpen = true;
-    
-    // Initialize empty series with the selected group
-    editSeriesStore.reset({
-      name: '',
-      desc: '',
-      instructor: null,
-      cover: '',
-      category: '',
-      group: group
-    });
-  };
-
   openEditSeriesDialog = (series) => {
     editSeriesStore.reset(series);
-    this.isAddSeriesDialogOpen = true;
+    this.isEditSeriesDialogOpen = true;
   };
 
-  closeAddSeriesDialog = () => {
-    this.isAddSeriesDialogOpen = false;
+  closeEditSeriesDialog = () => {
+    this.isEditSeriesDialogOpen = false;
     this.selectedGroup = null;
     // Clear series state when closing dialog
     routeStore.setSeriesId(null);

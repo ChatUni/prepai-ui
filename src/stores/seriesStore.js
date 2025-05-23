@@ -133,7 +133,11 @@ class SeriesStore {
 
   get validSeriesItems() {
     if (!this.isSeriesValid) return [];
-    return this.series.filter(series => series && typeof series === 'object');
+    return this.series.filter(series => series && typeof series === 'object' && !series.deleted);
+  }
+
+  get deletedSeries() {
+    return this.series.filter(series => series && typeof series === 'object' && series.deleted);
   }
 
   get filteredSeries() {

@@ -14,7 +14,7 @@ const ToolsNav = observer(() => {
   const { t } = languageStore;
 
   return (
-    <div className={`grid ${userStore.isAdmin ? 'grid-cols-5' : 'grid-cols-4'} gap-4 mb-8`}>
+    <div className={`grid ${userStore.isAdmin ? 'grid-cols-4' : 'grid-cols-3'} gap-4 mb-8`}>
       <ToolNavItem
         onClick={() => navigate('/favorites')}
         title={t('tools.purchasedCourses')}
@@ -32,12 +32,6 @@ const ToolsNav = observer(() => {
         title={t('tools.myMessages')}
         bgColor="bg-amber-500"
         icon={<MdEmail className="h-6 w-6 text-white" />}
-      />
-      <ToolNavItem
-        onClick={() => navigate('/series?mode=group')}
-        title={t('tools.groupedSeries')}
-        bgColor="bg-indigo-500"
-        icon={<HiOutlineViewGrid className="h-6 w-6 text-white" />}
       />
       {userStore.isAdmin && (
         <ToolNavItem
