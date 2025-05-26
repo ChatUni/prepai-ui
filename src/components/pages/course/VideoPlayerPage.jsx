@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import coursesStore from '../../../stores/coursesStore';
 import videoPlayerStore from '../../../stores/videoPlayerStore';
 import uiStore from '../../../stores/uiStore';
-import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl } from '../../../utils/videoTranscriptService';
+import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl, getBilibiliId } from '../../../utils/videoTranscriptService';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import TabPanel from '../../ui/TabPanel';
@@ -100,11 +100,15 @@ const VideoPlayerPage = observer(() => {
         throw new Error('No video URL provided');
       }
       
-      const videoId = getYoutubeId(videoUrl);
-      if (!videoId) {
-        throw new Error('Invalid YouTube URL');
+      // Check for different video types
+      const youtubeId = getYoutubeId(videoUrl);
+      const bilibiliId = getBilibiliId(videoUrl);
+      
+      if (!youtubeId && !bilibiliId) {
+        throw new Error('Unsupported video URL');
       }
       
+      const videoId = youtubeId || bilibiliId;
       console.log(`Processing video: ${videoId}`);
       // No transcript available, set empty state
       videoPlayerStore.setTranscript([], 'json');
@@ -381,6 +385,21 @@ const VideoPlayerPage = observer(() => {
                     src={`https://drive.google.com/file/d/${fileId}/preview`}
                     className="w-full h-full border-0"
                     allow="autoplay"
+                  ></iframe>
+                );
+              }
+
+              // Handle Bilibili videos with iframe
+              if (getBilibiliId(course.url)) {
+                const videoId = getBilibiliId(course.url);
+                return (
+                  <iframe
+                    src={`https://player.bilibili.com/player.html?bvid=${videoId}&high_quality=1&autoplay=1`}
+                    className="w-full h-full border-0"
+                    allow="autoplay; fullscreen"
+                    scrolling="no"
+                    frameBorder="0"
+                    sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
                   ></iframe>
                 );
               }

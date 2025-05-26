@@ -35,6 +35,30 @@ export const getGoogleDriveId = (url) => {
   return null;
 };
 
+// Helper function to extract Bilibili video ID from URL
+export const getBilibiliId = (url) => {
+  if (!url) return null;
+  
+  // Match Bilibili URL patterns
+  // Examples:
+  // https://www.bilibili.com/video/BV1xx411c7mD
+  // https://www.bilibili.com/video/av170001
+  const patterns = [
+    /bilibili\.com\/video\/(BV[a-zA-Z0-9]+)/,  // Pattern for BV IDs
+    /bilibili\.com\/video\/(av\d+)/i,          // Pattern for av IDs
+    /bilibili\.com\/video\/(\d+)/              // Pattern for numeric IDs
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+};
+
 // Helper function to generate direct playable URL for Google Drive videos
 export const getGoogleDriveDirectUrl = (url) => {
   const fileId = getGoogleDriveId(url);
