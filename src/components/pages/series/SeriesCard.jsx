@@ -19,8 +19,6 @@ import CourseCard from './CourseCard';
 const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  
   const validatedSeries = seriesCardStore.validateSeries(series);
   if (!validatedSeries) return null;
 
@@ -118,7 +116,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               {routeStore.isSeriesSettingMode && (
                 series.deleted ? (
                   <ActionButton
-                    onClick={() => seriesStore.deleteSeries(seriesId, true)}
+                    onClick={() => seriesCardStore.openRestoreDialog(series)}
                     icon="MdRestoreFromTrash"
                     title={t('series.edit.restore')}
                     color="green"
@@ -132,13 +130,13 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                       color="orange"
                     />
                     <ActionButton
-                      onClick={() => setShowConfirmDialog(true)}
-                      icon={`MdVisibility${series.isHidden ? 'Off' : ''}`}
-                      title={t(`series.${series.isHidden ? 'show' : 'hide'}`)}
-                      color={series.isHidden ? 'lightgray' : 'green'}
+                      onClick={() => seriesCardStore.openVisibilityDialog(series)}
+                      icon={`MdVisibility${series.hidden ? 'Off' : ''}`}
+                      title={t(`series.${series.hidden ? 'show' : 'hide'}`)}
+                      color={series.hidden ? 'lightgray' : 'green'}
                     />
                     <ActionButton
-                      onClick={() => seriesStore.deleteSeries(seriesId)}
+                      onClick={() => seriesCardStore.openDeleteDialog(series)}
                       icon="FiTrash2"
                       title={t('series.edit.delete')}
                       color="red"
@@ -155,20 +153,37 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
         </div>
       </div>
       <Dialog
-        isOpen={showConfirmDialog}
-        onClose={() => setShowConfirmDialog(false)}
-        onConfirm={() => {
-          seriesStore.toggleSeriesVisibility(seriesId);
-          setShowConfirmDialog(false);
-        }}
-        title={series.isHidden ? t('series.show') : t('series.hide')}
+        isOpen={seriesCardStore.showVisibilityDialog && seriesCardStore.currentSeries?.id === seriesId}
+        onClose={seriesCardStore.closeVisibilityDialog}
+        onConfirm={seriesCardStore.confirmVisibilityChange}
+        title={series.hidden ? t('series.show') : t('series.hide')}
         isConfirm={true}
       >
         <p>
-          {series.isHidden
+          {series.hidden
             ? t('series.confirmShow', { name: series.name })
             : t('series.confirmHide', { name: series.name })}
         </p>
+      </Dialog>
+
+      <Dialog
+        isOpen={seriesCardStore.showDeleteDialog && seriesCardStore.currentSeries?.id === seriesId}
+        onClose={seriesCardStore.closeDeleteDialog}
+        onConfirm={seriesCardStore.confirmDelete}
+        title={t('series.edit.delete')}
+        isConfirm={true}
+      >
+        <p>{t('series.confirmDelete', { name: series.name })}</p>
+      </Dialog>
+
+      <Dialog
+        isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
+        onClose={seriesCardStore.closeRestoreDialog}
+        onConfirm={seriesCardStore.confirmRestore}
+        title={t('series.edit.restore')}
+        isConfirm={true}
+      >
+        <p>{t('series.confirmRestore', { name: series.name })}</p>
       </Dialog>
     </div>
   );

@@ -260,7 +260,11 @@
     "hide": "下架课程",
     "confirmShow": "确定要上架「{name}」课程吗？",
     "confirmHide": "确定要下架「{name}」课程吗？",
+    "confirmDelete": "确定要将「{name}」放入回收站吗？",
+    "confirmRestore": "确定要恢复「{name}」课程吗？",
     "edit": {
+      "delete": "删除课程",
+      "restore": "恢复课程",
       "loading": "加载中...",
       "editTitle": "编辑课程",
       "createTitle": "创建新课程",

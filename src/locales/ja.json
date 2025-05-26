@@ -263,6 +263,12 @@
     "hide": "シリーズを非表示",
     "confirmShow": "「{name}」シリーズを表示しますか？",
     "confirmHide": "「{name}」シリーズを非表示にしますか？",
+    "confirmDelete": "「{name}」シリーズを削除してもよろしいですか？",
+    "confirmRestore": "「{name}」シリーズを復元してもよろしいですか？",
+    "edit": {
+      "delete": "シリーズを削除",
+      "restore": "シリーズを復元"
+    },
     "aboutThisSeries": "このシリーズについて",
     "courseList": "コース一覧",
     "instructorList": "講師紹介",

@@ -47,8 +47,8 @@ const AccordionSection = observer(({
         ref={isDraggable ? handleRef : undefined}
         className={`w-full p-4 flex items-center text-white transition-all duration-200 ${
           isExpanded
-            ? isDanger ? 'bg-red-400' : 'bg-blue-600'
-            : isDanger ? 'bg-red-300 hover:bg-red-400' : 'bg-blue-500 hover:bg-blue-600'
+            ? isDanger ? 'bg-red-500' : 'bg-blue-600'
+            : isDanger ? 'bg-red-400 hover:bg-red-500' : 'bg-blue-500 hover:bg-blue-600'
         } ${isDraggable ? 'cursor-move' : ''} ${
           isOver ? 'border-2 border-yellow-400 transform scale-[1.02]' : ''
         }`}

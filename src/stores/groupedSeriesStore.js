@@ -3,6 +3,7 @@ import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
 import editSeriesStore from './editSeriesStore';
+import languageStore from './languageStore';
 import { save } from '../utils/db';
 import _ from 'lodash';
 
@@ -50,7 +51,7 @@ class GroupedSeriesStore {
       this.selectedGroup = group;
       this.isDeleteGroupDialogOpen = true;
     } else {
-      this.showErrorDialog('series.groups.cannotDelete');
+      this.showErrorDialog(languageStore.t('series.groups.cannotDelete'));
     }
   };
 

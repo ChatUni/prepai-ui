@@ -155,8 +155,8 @@ class SeriesStore {
         return false;
       }
 
-      // Hide series if isHidden is true and not in settings mode
-      if (!isSettingsMode && series.isHidden) {
+      // Hide series if hidden is true and not in settings mode
+      if (!isSettingsMode && series.hidden) {
         return false;
       }
       
@@ -322,7 +322,7 @@ class SeriesStore {
 
     const updatedSeries = {
       ...series,
-      isHidden: !series.isHidden
+      hidden: !series.hidden
     };
 
     // Update local state

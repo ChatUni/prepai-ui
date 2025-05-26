@@ -260,6 +260,8 @@
     "hide": "Hide series",
     "confirmShow": "Are you sure you want to show \"{name}\" series?",
     "confirmHide": "Are you sure you want to hide \"{name}\" series?",
+    "confirmDelete": "Are you sure you want to move \"{name}\" series to the recycle bin?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" series?",
     "edit": {
       "title": "Edit Series",
       "loading": "Loading...",
@@ -291,6 +293,8 @@
       "saving": "Saving...",
       "saveSeries": "Save Series",
       "saveError": "Failed to save series",
+      "delete": "Delete series",
+      "restore": "Restore series",
       "steps": {
         "selectGroup": "Select Group",
         "nameAndCategory": "Name and Category",

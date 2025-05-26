@@ -11,6 +11,10 @@ class SeriesCardStore {
   expandedSeriesId = null;
   editInstructorDialogOpen = false;
   currentEditInstructor = null;
+  showVisibilityDialog = false;
+  showDeleteDialog = false;
+  showRestoreDialog = false;
+  currentSeries = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -90,6 +94,57 @@ class SeriesCardStore {
     routeStore.setSeriesId(series.id);
     editSeriesStore.reset(series);
     groupedSeriesStore.openEditSeriesDialog(series);
+  };
+
+  openVisibilityDialog = (series) => {
+    this.currentSeries = series;
+    this.showVisibilityDialog = true;
+  };
+
+  closeVisibilityDialog = () => {
+    this.showVisibilityDialog = false;
+    this.currentSeries = null;
+  };
+
+  openDeleteDialog = (series) => {
+    this.currentSeries = series;
+    this.showDeleteDialog = true;
+  };
+
+  closeDeleteDialog = () => {
+    this.showDeleteDialog = false;
+    this.currentSeries = null;
+  };
+
+  openRestoreDialog = (series) => {
+    this.currentSeries = series;
+    this.showRestoreDialog = true;
+  };
+
+  closeRestoreDialog = () => {
+    this.showRestoreDialog = false;
+    this.currentSeries = null;
+  };
+
+  confirmVisibilityChange = () => {
+    if (this.currentSeries) {
+      seriesStore.toggleSeriesVisibility(this.currentSeries.id);
+      this.closeVisibilityDialog();
+    }
+  };
+
+  confirmDelete = () => {
+    if (this.currentSeries) {
+      seriesStore.deleteSeries(this.currentSeries.id);
+      this.closeDeleteDialog();
+    }
+  };
+
+  confirmRestore = () => {
+    if (this.currentSeries) {
+      seriesStore.deleteSeries(this.currentSeries.id, true);
+      this.closeRestoreDialog();
+    }
   };
 }
 
