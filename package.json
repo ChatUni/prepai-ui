@@ -13,6 +13,7 @@
     "update-youtube": "node --no-warnings update_courses_with_youtube.cjs"
   },
   "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.12.6",
     "@web-std/file": "^3.0.3",
     "@web-std/form-data": "^3.1.0",
     "busboy": "^1.6.0",

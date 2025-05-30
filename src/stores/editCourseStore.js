@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import seriesStore from './seriesStore';
 import routeStore from './routeStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
+import { uploadToCOS } from '../utils/cosHelper';
 import { save } from '../utils/db';
 import _ from 'lodash';
 
@@ -30,8 +31,12 @@ class EditCourseStore {
     this.image = file;
   }
 
-  setUrl = (file) => {
-    this.url = file;
+  setUrl = (data) => {
+    if (data?.isFile) {
+      this.url = data;
+    } else {
+      this.url = data;
+    }
   }
 
   setDuration = (duration) => {
@@ -76,15 +81,21 @@ class EditCourseStore {
         courseData.id = data.id;
       }
 
-      if (this.url instanceof File) {
-        const url = await uploadToCloudinary(this.url, `series/${seriesId}/courses`);
+      if (this.url?.isFile) {
+        const key = `series/${seriesId}/courses/${Date.now()}-${this.url.file.name}`;
+        const url = await uploadToCOS(this.url.file, key);
         courseData.url = url;
+      } else if (typeof this.url === 'string') {
+        courseData.url = this.url;
       }
 
-      // if (this.image instanceof File) {
-      //   const coverUrl = await uploadToCloudinary(this.image, `series/${seriesId}/courses`);
-      //   courseData.image = coverUrl;
-      // }
+      if (this.image?.isFile) {
+        const key = `series/${seriesId}/courses/${Date.now()}-${this.image.file.name}`;
+        const coverUrl = await uploadToCOS(this.image.file, key);
+        courseData.image = coverUrl;
+      } else if (typeof this.image === 'string') {
+        courseData.image = this.image;
+      }
 
       // Save updated course
       await save('courses', courseData)

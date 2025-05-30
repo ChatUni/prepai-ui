@@ -74,7 +74,7 @@ const EditCoursePage = observer(() => {
             type="image"
             label={t('course.add.image')}
             previewUrl={editCourseStore.imagePreview}
-            onMediaSelect={(file) => editCourseStore.setImage(file)}
+            onMediaSelect={(url) => editCourseStore.setImage(url)}
             className="space-y-2"
           /> */}
 

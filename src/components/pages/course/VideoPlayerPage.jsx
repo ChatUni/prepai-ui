@@ -5,6 +5,7 @@ import coursesStore from '../../../stores/coursesStore';
 import videoPlayerStore from '../../../stores/videoPlayerStore';
 import uiStore from '../../../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl, getBilibiliId } from '../../../utils/videoTranscriptService';
+import { getSignedUrl } from '../../../utils/cosHelper';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import TabPanel from '../../ui/TabPanel';
@@ -21,6 +22,8 @@ const VideoPlayerPage = observer(() => {
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [isRefreshingUrl, setIsRefreshingUrl] = useState(false);
 
   // Function to parse stored transcript
   const parseStoredTranscript = (storedTranscript) => {
@@ -300,6 +303,43 @@ const VideoPlayerPage = observer(() => {
       videoPlayerStore.setVideoElement(null);
     };
   }, []);
+
+  // Refresh signed URL periodically for COS videos
+  useEffect(() => {
+    if (!course?.url?.includes('.cos.') || !course.url?.includes('.myqcloud.com')) {
+      return;
+    }
+
+    const refreshSignedUrl = async () => {
+      try {
+        setIsRefreshingUrl(true);
+        const currentTime = videoRef.current?.currentTime || 0;
+        const signedUrl = await getSignedUrl(course.url);
+        setVideoUrl(signedUrl);
+        
+        // Restore playback position after URL update
+        if (videoRef.current) {
+          const playPromise = videoRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              videoRef.current.currentTime = currentTime;
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error refreshing signed URL:', error);
+      } finally {
+        setIsRefreshingUrl(false);
+      }
+    };
+
+    // Refresh URL every 10 minutes
+    const refreshInterval = setInterval(refreshSignedUrl, 10 * 60 * 1000);
+
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [course?.url]);
   
   useEffect(() => {
     const loadCourse = async () => {
@@ -318,11 +358,23 @@ const VideoPlayerPage = observer(() => {
         }
         
         setCourse(foundCourse);
+        setVideoUrl(foundCourse.url);
+        
+        // Handle COS URLs
+        if (foundCourse.url?.includes('.cos.') && foundCourse.url?.includes('.myqcloud.com')) {
+          try {
+            const signedUrl = await getSignedUrl(foundCourse.url);
+            setVideoUrl(signedUrl);
+          } catch (error) {
+            console.error('Error getting signed URL:', error);
+            setError('Failed to load video URL');
+          }
+        }
         
         // Fetch transcript and summary when course is loaded
-        if (foundCourse.url) {
-          fetchTranscriptAndSummary(foundCourse.url, foundCourse.transcript);
-        }
+        // if (foundCourse.url) {
+        //   fetchTranscriptAndSummary(foundCourse.url, foundCourse.transcript);
+        // }
       } catch (err) {
         console.error('Error loading course:', err);
         setError(err.message);
@@ -404,7 +456,7 @@ const VideoPlayerPage = observer(() => {
                 );
               }
 
-              // For other video sources, use the video tag
+              // For COS videos or other video sources, use the video tag
               return (
                 <video
                   ref={(el) => {
@@ -416,7 +468,7 @@ const VideoPlayerPage = observer(() => {
                   className="w-full h-full"
                   controls
                   autoPlay
-                  src={course.url}
+                  src={isRefreshingUrl ? null : videoUrl}
                   poster={course.image}
                 >
                   Your browser does not support the video tag.

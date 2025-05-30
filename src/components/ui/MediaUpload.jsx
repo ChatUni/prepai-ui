@@ -49,7 +49,13 @@ const MediaUpload = observer(({
           accept={type === 'image' ? 'image/*' : 'video/*'}
           onChange={(e) => {
             const file = e.target.files[0];
-            onMediaSelect(file);
+            if (file) {
+              onMediaSelect({
+                file,
+                isFile: true,
+                preview: URL.createObjectURL(file)
+              });
+            }
           }}
           className="hidden"
           required={required}
@@ -76,14 +82,14 @@ const MediaUpload = observer(({
         <div className="mt-2">
           {type === 'image' ? (
             <img
-              src={previewUrl instanceof File ? URL.createObjectURL(previewUrl) : previewUrl}
+              src={previewUrl?.isFile ? previewUrl.preview : previewUrl}
               alt={buttonText || defaultButtonText}
               className={getMediaStyle(mediaStyle, type)}
             />
           ) : (
-            previewUrl instanceof File ? (
+            previewUrl?.isFile ? (
               <video
-                src={URL.createObjectURL(previewUrl)}
+                src={previewUrl.preview}
                 controls
                 className={getMediaStyle(mediaStyle, type)}
               >
