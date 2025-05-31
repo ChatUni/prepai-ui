@@ -7,3 +7,11 @@ export const getResponseHeaders = () => ({
 });
 
 export const res = (body, code = 200) => ({ statusCode: code, headers: getResponseHeaders(), body: JSON.stringify(body) })
+
+// Verify HTTP method
+export const verifyHttpMethod = (event, method) => {
+  if (event.httpMethod !== method) {
+    return createResponse(405, 'Method Not Allowed');
+  }
+  return null;
+};
