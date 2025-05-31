@@ -37,7 +37,7 @@ export const uploadToCOS = async (file, key) => {
 
 export const getSignedUrl = async (url) => {
   try {
-    const response = await fetch('/.netlify/functions/cos-sign', {
+    const response = await fetch('http://localhost:3001/api/cos-sign', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,11 +1,25 @@
 import COS from 'cos-nodejs-sdk-v5';
 
-// Initialize COS client as a singleton
-export const cos = new COS({
-  SecretId: process.env.TENCENT_SECRETID,
-  SecretKey: process.env.TENCENT_SECRETKEY,
-  Protocol: 'https:'
-});
+let cosInstance = null;
+
+// Initialize COS client as singleton with lazy loading
+const getCosClient = () => {
+  if (cosInstance) {
+    return cosInstance;
+  }
+
+  if (!process.env.TENCENT_SECRETID || !process.env.TENCENT_SECRETKEY) {
+    throw new Error('Missing required Tencent Cloud credentials');
+  }
+
+  cosInstance = new COS({
+    SecretId: process.env.TENCENT_SECRETID,
+    SecretKey: process.env.TENCENT_SECRETKEY,
+    Protocol: 'https:'
+  });
+
+  return cosInstance;
+};
 
 // Common CORS headers
 export const corsHeaders = {
@@ -21,13 +35,19 @@ export const createResponse = (statusCode, body) => ({
 });
 
 // Get default COS params
-const getDefaultParams = () => ({
-  Bucket: process.env.TENCENT_BUCKET,
-  Region: process.env.TENCENT_REGION
-});
+const getDefaultParams = () => {
+  if (!process.env.TENCENT_BUCKET || !process.env.TENCENT_REGION) {
+    throw new Error('Missing required Tencent Cloud configuration');
+  }
+  return {
+    Bucket: process.env.TENCENT_BUCKET,
+    Region: process.env.TENCENT_REGION
+  };
+};
 
 // Get signed URL for object access
 export const getSignedUrl = async (params) => {
+  const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.getObjectUrl({
       ...getDefaultParams(),
@@ -36,7 +56,7 @@ export const getSignedUrl = async (params) => {
       Method: 'GET',
       Expires: 43200, // 12 hours
       Protocol: 'https:',
-      Domain: `${params.Bucket}.cos.${params.Region}.myqcloud.com`
+      Domain: `${process.env.TENCENT_BUCKET}.cos.${process.env.TENCENT_REGION}.myqcloud.com`
     }, (err, data) => {
       if (err) {
         reject(err);
@@ -49,6 +69,7 @@ export const getSignedUrl = async (params) => {
 
 // Check if object exists in COS
 export const checkObjectExists = async (params) => {
+  const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.headObject({
       ...getDefaultParams(),
@@ -65,6 +86,7 @@ export const checkObjectExists = async (params) => {
 
 // Upload object to COS
 export const uploadObject = async (params) => {
+  const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.putObject({
       ...getDefaultParams(),
@@ -82,6 +104,9 @@ export const uploadObject = async (params) => {
 // Extract key from COS URL
 export const extractKeyFromUrl = (url) => {
   const { TENCENT_BUCKET, TENCENT_REGION } = process.env;
+  if (!TENCENT_BUCKET || !TENCENT_REGION) {
+    throw new Error('Missing required Tencent Cloud configuration');
+  }
   const urlPattern = new RegExp(`https://${TENCENT_BUCKET}\\.cos\\.${TENCENT_REGION}\\.myqcloud\\.com/(.+?)(?:\\?|$)`);
   const match = url.match(urlPattern);
   
@@ -102,6 +127,9 @@ export const parseBase64File = (fileData) => {
 // Generate COS URL
 export const generateCosUrl = (key) => {
   const { TENCENT_BUCKET, TENCENT_REGION } = process.env;
+  if (!TENCENT_BUCKET || !TENCENT_REGION) {
+    throw new Error('Missing required Tencent Cloud configuration');
+  }
   return `https://${TENCENT_BUCKET}.cos.${TENCENT_REGION}.myqcloud.com/${key}`;
 };
 

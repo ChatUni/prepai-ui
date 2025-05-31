@@ -13,12 +13,14 @@
     "update-youtube": "node --no-warnings update_courses_with_youtube.cjs"
   },
   "dependencies": {
-    "cos-nodejs-sdk-v5": "^2.12.6",
     "@web-std/file": "^3.0.3",
     "@web-std/form-data": "^3.1.0",
     "busboy": "^1.6.0",
     "cloudinary": "^2.6.0",
+    "cors": "^2.8.5",
+    "cos-nodejs-sdk-v5": "^2.12.6",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "lodash": "^4.17.21",
     "mobx": "^6.13.6",
     "mobx-react-lite": "^4.1.0",
