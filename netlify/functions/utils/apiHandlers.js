@@ -1,5 +1,5 @@
 import { get, save, remove, flat } from './db.js';
-import { handleUrlSigning, handleFileUpload } from './cosServerHelper';
+import { handleUrlSigning, handleFileUpload } from './cosServerHelper.js';
 
 export default {
   db_handlers: {

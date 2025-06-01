@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import { tap } from './util'
+import { tap } from './util.js'
 
 let db = null
 

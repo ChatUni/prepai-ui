@@ -1,5 +1,4 @@
 import busboy from 'busboy'
-import { tap } from './util'
 import { connect } from './db'
 
 const FUNC = '/.netlify/functions/'

@@ -6,7 +6,8 @@ export default defineConfig({
   assetsInclude: ['**/*.png'],
   define: {
     'process.env': {
-        BASE_URL: '/.netlify/functions' // Updated to match the new server port
+        // BASE_URL: '/.netlify/functions'
+        BASE_URL: 'http://localhost:3001'
     }
   }
 })

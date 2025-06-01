@@ -2,7 +2,7 @@ import { getApiBaseUrl } from '../config.js';
 
 const api = (type, ps = {}) => {
   const p = Object.keys(ps).map(x => `${x}=${encodeURIComponent(ps[x])}`).join('&')
-  return `/api?type=${type}${p ? `&${p}` : ''}`
+  return `${getApiBaseUrl()}?type=${type}${p ? `&${p}` : ''}`
 }
 
 export const get = (type, ps) => fetch(api(type, ps)).then(r => r.json())
