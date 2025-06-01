@@ -1,4 +1,5 @@
 import { get, save, remove, flat } from './db.js';
+import { handleUrlSigning, handleFileUpload } from './cosServerHelper';
 
 export default {
   db_handlers: {
@@ -14,6 +15,12 @@ export default {
     },
     post: {
       save: (q, b) => save(q.doc, b),
+    },
+  },
+  handlers: {
+    post: {
+      cos_sign: (q, b) => handleUrlSigning(b.url),
+      cos_upload: (q, b) => handleFileUpload(b.file, b.key),
     },
   },
   nocache: true,

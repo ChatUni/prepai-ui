@@ -12,7 +12,7 @@ export const uploadToCOS = async (file, key) => {
     const fileBase64 = await fileBase64Promise;
 
     // Upload via serverless function
-    const response = await fetch('/.netlify/functions/cos?type=upload', {
+    const response = await fetch('/.netlify/functions/api?type=cos_upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const uploadToCOS = async (file, key) => {
 
 export const getSignedUrl = async (url) => {
   try {
-    const response = await fetch('/.netlify/functions/cos?type=sign', {
+    const response = await fetch('/.netlify/functions/api?type=cos_sign', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
