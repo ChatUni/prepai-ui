@@ -21,19 +21,6 @@ const getCosClient = () => {
   return cosInstance;
 };
 
-// Common CORS headers
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-// Helper to create standardized response object
-export const createResponse = (statusCode, body) => ({
-  statusCode,
-  headers: corsHeaders,
-  body: JSON.stringify(body)
-});
-
 // Get default COS params
 const getDefaultParams = () => {
   if (!process.env.TENCENT_BUCKET || !process.env.TENCENT_REGION) {
@@ -84,6 +71,13 @@ export const checkObjectExists = async (params) => {
   });
 };
 
+const verifyCOSParams = () => {
+  const { TENCENT_BUCKET, TENCENT_REGION } = process.env;
+  if (!TENCENT_BUCKET || !TENCENT_REGION) {
+    throw new Error('Missing required Tencent Cloud configuration');
+  }
+}
+
 // Upload object to COS
 export const uploadObject = async (params) => {
   const cos = getCosClient();
@@ -103,11 +97,8 @@ export const uploadObject = async (params) => {
 
 // Extract key from COS URL
 export const extractKeyFromUrl = (url) => {
-  const { TENCENT_BUCKET, TENCENT_REGION } = process.env;
-  if (!TENCENT_BUCKET || !TENCENT_REGION) {
-    throw new Error('Missing required Tencent Cloud configuration');
-  }
-  const urlPattern = new RegExp(`https://${TENCENT_BUCKET}\\.cos\\.${TENCENT_REGION}\\.myqcloud\\.com/(.+?)(?:\\?|$)`);
+  verifyCOSParams();
+  const urlPattern = new RegExp(`https://${process.env.TENCENT_BUCKET}\\.cos\\.${process.env.TENCENT_REGION}\\.myqcloud\\.com/(.+?)(?:\\?|$)`);
   const match = url.match(urlPattern);
   
   if (!match) {
@@ -126,57 +117,44 @@ export const parseBase64File = (fileData) => {
 
 // Generate COS URL
 export const generateCosUrl = (key) => {
-  const { TENCENT_BUCKET, TENCENT_REGION } = process.env;
-  if (!TENCENT_BUCKET || !TENCENT_REGION) {
-    throw new Error('Missing required Tencent Cloud configuration');
-  }
-  return `https://${TENCENT_BUCKET}.cos.${TENCENT_REGION}.myqcloud.com/${key}`;
+  verifyCOSParams();
+  return `https://${process.env.TENCENT_BUCKET}.cos.${process.env.TENCENT_REGION}.myqcloud.com/${key}`;
 };
 
 // High-level function to handle URL signing
 export const handleUrlSigning = async (url) => {
+  const key = extractKeyFromUrl(url);
+
+  // Check if object exists
   try {
-    const key = extractKeyFromUrl(url);
-
-    // Check if object exists
-    try {
-      await checkObjectExists({ Key: key });
-    } catch (error) {
-      console.error('Object does not exist:', error);
-      return createResponse(404, { error: 'File not found' });
-    }
-
-    const signedUrl = await getSignedUrl({ Key: key });
-    return createResponse(200, { url: signedUrl });
+    await checkObjectExists({ Key: key });
   } catch (error) {
-    console.error('Error generating signed URL:', error);
-    return createResponse(500, { error: 'Failed to generate signed URL' });
+    console.error('Object does not exist:', error);
+    return createResponse(404, { error: 'File not found' });
   }
+
+  const signedUrl = await getSignedUrl({ Key: key });
+  return { url: signedUrl };
 };
 
 // High-level function to handle file upload
 export const handleFileUpload = async (file, key) => {
+  const { contentType, fileBuffer } = parseBase64File(file);
+
+  // Upload the file
+  await uploadObject({
+    Key: key,
+    Body: fileBuffer,
+    ContentType: contentType
+  });
+
+  // Verify the upload was successful
   try {
-    const { contentType, fileBuffer } = parseBase64File(file);
-
-    // Upload the file
-    await uploadObject({
-      Key: key,
-      Body: fileBuffer,
-      ContentType: contentType
-    });
-
-    // Verify the upload was successful
-    try {
-      await checkObjectExists({ Key: key });
-    } catch (error) {
-      throw new Error('Upload verification failed');
-    }
-
-    const url = generateCosUrl(key);
-    return createResponse(200, { url });
+    await checkObjectExists({ Key: key });
   } catch (error) {
-    console.error('Error uploading to COS:', error);
-    return createResponse(500, { error: 'Failed to upload file' });
+    throw new Error('Upload verification failed');
   }
+
+  const url = generateCosUrl(key);
+  return { url };
 };

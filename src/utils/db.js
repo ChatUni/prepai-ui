@@ -1,12 +1,12 @@
 import { getApiBaseUrl } from '../config.js';
 
-const api = (path, ps = {}) => {
+const api = (type, ps = {}) => {
   const p = Object.keys(ps).map(x => `${x}=${encodeURIComponent(ps[x])}`).join('&')
-  return `/api/${path}${p ? `?${p}` : ''}`
+  return `/api?type=${type}${p ? `&${p}` : ''}`
 }
 
-export const get = (path, ps) => fetch(api(path, ps)).then(r => r.json())
-export const post = (path, ps, data) => fetch(api(path, ps), {
+export const get = (type, ps) => fetch(api(type, ps)).then(r => r.json())
+export const post = (type, ps, data) => fetch(api(type, ps), {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'

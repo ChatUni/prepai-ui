@@ -1,6 +1,7 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 import { getApiBaseUrl } from '../config.js';
 import languageStore from './languageStore';
+import { get } from '../utils/db.js';
 
 class UIStore {
   searchKeyword = '';
@@ -67,8 +68,8 @@ class UIStore {
   // Load favorites from API
   async loadFavorites() {
     try {
-      const apiBaseUrl = getApiBaseUrl();
-      const response = await fetch(`${apiBaseUrl}/favorites?userId=${this.userId}`);
+      const response = await get('favorites', { userId: this.userId });
+      
       if (!response.ok) {
         throw new Error('Failed to fetch favorites');
       }

@@ -74,7 +74,7 @@ class SeriesStore {
       this.isLoading = true;
       
       await this.fetchInstructors();
-      const data = await get(`series/${id}`);
+      const data = await get('series', { id });
       
       if (!data || !data[0]) {
         throw new Error('Series not found');

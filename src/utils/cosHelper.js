@@ -12,7 +12,7 @@ export const uploadToCOS = async (file, key) => {
     const fileBase64 = await fileBase64Promise;
 
     // Upload via serverless function
-    const response = await fetch('/.netlify/functions/cos-upload', {
+    const response = await fetch('/.netlify/functions/cos?type=upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const uploadToCOS = async (file, key) => {
 
 export const getSignedUrl = async (url) => {
   try {
-    const response = await fetch('http://localhost:3001/api/cos-sign', {
+    const response = await fetch('/.netlify/functions/cos?type=sign', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +50,6 @@ export const getSignedUrl = async (url) => {
     }
 
     const data = await response.json();
-    tap(data);
     return data.url;
   } catch (error) {
     console.error('Error getting signed URL:', error);

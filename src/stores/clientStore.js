@@ -166,11 +166,11 @@ class ClientStore {
     this.error = null;
 
     try {
-      const data = await get('clients/1');
+      const data = await get('clients', { id: 1 });
       
       runInAction(() => {
-        if (data) {
-          this.client = data;
+        if (data && data.length > 0) {
+          this.client = data[0];
         } else {
           this.error = 'Client not found';
           this.showErrorDialog();
