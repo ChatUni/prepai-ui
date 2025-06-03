@@ -1,5 +1,7 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import DEFAULT_AVATAR from '../assets/avatar.png';
+import clientStore from './clientStore';
+import { get } from '../utils/db';
 
 class UserStore {
   // User info
@@ -57,20 +59,35 @@ class UserStore {
   }
 
   // Login with phone and verification code
-  loginWithPhone(phoneNumber, verificationCode) {
-    // In a real app, this would verify the code with an API
-    console.log('Logging in with phone:', phoneNumber, 'code:', verificationCode);
-    
-    // Mock successful login
-    this.userInfo = {
-      ...this.userInfo,
-      isLoggedIn: true,
-      phoneNumber: phoneNumber,
-      username: phoneNumber.substring(0, 3) + '****' + phoneNumber.substring(7)
-    };
-    
-    this.saveLoginState();
-    return Promise.resolve(this.userInfo);
+  async loginWithPhone(phoneNumber, verificationCode) {
+    try {
+      // Get user info from API using phone and client ID
+      const users = await get('users', {
+        phone: phoneNumber,
+        clientId: clientStore.client.id
+      });
+
+      if (!users || users.length === 0) {
+        throw new Error('User not found');
+      }
+
+      const user = users[0];
+      
+      runInAction(() => {
+        this.userInfo = {
+          ...this.userInfo,
+          ...user,
+          isLoggedIn: true,
+          phoneNumber: phoneNumber
+        };
+        this.saveLoginState();
+      });
+
+      return this.userInfo;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
   }
 
   // Traditional login method

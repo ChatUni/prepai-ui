@@ -9,7 +9,7 @@ export default {
       instructors: q => flat('instructors', `m_client_id=${q.clientId}`),
       assistants: q => get('assistants'),
       series: q => flat('series', `m_client_id=${q.clientId}&f_+course`),
-      users: q => flat('users', `m_phone=${q.phone}`),
+      users: q => flat('users', `m_phone=${q.phone}&m_client_id=${q.clientId}`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),
       favorites: q => flat('favorites', `m_user_id=${q.userId}`),
     },
