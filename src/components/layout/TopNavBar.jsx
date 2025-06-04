@@ -12,7 +12,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const showBackButton = !routeStore.isTopLevelPage;
-  const isLoggedIn = userStore.userInfo.isLoggedIn;
+  const isLoggedIn = userStore.isLoggedIn;
   const { t } = languageStore;
 
   const navItems = [
@@ -71,7 +71,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
           <div className="ml-4 hidden md:block">
             {isLoggedIn ? (
               <div className="text-sm text-gray-600">
-                {userStore.userInfo.username}
+                {userStore.user.name}
               </div>
             ) : (
               <button

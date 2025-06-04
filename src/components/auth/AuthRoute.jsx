@@ -8,7 +8,7 @@ import userStore from '../../stores/userStore';
 const AuthRoute = observer(({ children }) => {
   const location = useLocation();
   
-  if (!userStore.userInfo.isLoggedIn) {
+  if (!userStore.isLoggedIn) {
     // Redirect to login page, but save the current location so we can
     // redirect back after successful login
     return (

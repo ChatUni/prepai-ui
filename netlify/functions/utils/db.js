@@ -105,21 +105,23 @@ export const flat = async (doc, agg) => {
         }
         if (type === 5) return [{ [$stage]: props || stage }]
         if (type === 6) return props.split(',').reduce((p, c) => {
-          const ps = c.split('|')
-          const isCollection = ps[0].startsWith('+')
-          const single = isCollection ? ps[0].slice(1) : ps[0]
-          const plural = ps.length > 1 ? ps[1] : `${single}s`
+          const isCollection = c.startsWith('+')
+          const ps = (isCollection ? c.slice(1) : c).split('|') // foreign plural|foreign single|local single, local plural = doc
+          const f_plural = ps[0]
+          const f_single = ps.length > 1 ? ps[1] : f_plural.slice(0, -1)
+          const l_plural = doc
+          const l_single = ps.length > 2 ? ps[2] : l_plural.slice(0, -1)
           const prefix = p.length > 0 ? `${p[p.length - 3]['$lookup'].as}.` : ''
           return [
             ...p,
             { '$lookup': {
-              from: plural,
-              localField: isCollection ? 'id' : `${prefix}${single}_id`,
-              foreignField: isCollection ? `${doc}_id` : 'id',
-              as: isCollection ? plural : single
+              from: f_plural,
+              localField: isCollection ? 'id' : `${prefix}${f_single}_id`,
+              foreignField: isCollection ? `${l_single}_id` : 'id',
+              as: isCollection ? f_plural : f_single
             }},
-            isCollection ? null : { '$unwind': `$${single}` },
-            { '$project': { [`${single}._id`]: 0 } }
+            isCollection ? null : { '$unwind': `$${f_single}` },
+            { '$project': { [`${f_single}._id`]: 0 } }
           ].filter(x => x)
         }, [])
       }).flat().filter(x => x)

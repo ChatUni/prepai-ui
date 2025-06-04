@@ -255,7 +255,7 @@ class EditSeriesStore {
         duration: this.duration,
         desc: this.descType === 'text' ? this.description : this.descImage,
         [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
-      }, ['_id', 'courses']);
+      }, ['_id', 'courses', 'isPaid']);
 
       // Save new series to get id
       if (!isEdit) {

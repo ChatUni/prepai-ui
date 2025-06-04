@@ -10,12 +10,12 @@ const AuthWrapper = observer(({ children }) => {
   
   useEffect(() => {
     // If on login page but already logged in, redirect to original page or home
-    if (location.pathname === '/login' && userStore.userInfo.isLoggedIn) {
+    if (location.pathname === '/login' && userStore.isLoggedIn) {
       const destination = location.state?.from?.pathname || '/';
       console.log('Already logged in, redirecting from login to:', destination);
       navigate(destination, { replace: true });
     }
-  }, [location, navigate, userStore.userInfo.isLoggedIn]);
+  }, [location, navigate, userStore.isLoggedIn]);
 
   // Just render children, actual auth protection is in AuthRoute
   return children;

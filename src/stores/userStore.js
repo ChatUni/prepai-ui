@@ -1,64 +1,73 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import DEFAULT_AVATAR from '../assets/avatar.png';
 import clientStore from './clientStore';
+import lang from './languageStore';
 import { get } from '../utils/db';
 
 class UserStore {
-  // User info
-  userInfo = {
-    id: 53,
-    username: '游客', // Guest
-    avatar: DEFAULT_AVATAR, // Using default avatar from assets
-    gender: 'male', // male/female
-    vipExpiry: '2025-12-27 10:33:52',
-    isLoggedIn: true, // Set to true for development testing
-    role: 'user',
-    phoneNumber: '13800138000'
-  };
-
-  // Exam records
+  user = {};
   examRecords = [];
-  
-  // Coupons
   coupons = [];
+
+  get name() {
+    return this.user.name || lang.t('menu.account_page.guest');
+  }
+
+  get isLoggedIn() {
+    return this.user.isLoggedIn;
+  }
+
+  get avatar() {
+    return this.user.avatar || DEFAULT_AVATAR;
+  }
+
+  get isClientAdmin() {
+    return this.user.role === 'admin';
+  }
+
+  get isSubAdmin() {
+    return this.user.role === 'sub';
+  }
+
+  get isSuperAdmin() {
+    return this.user.role === 'super';
+  }
+
+  get isAdmin() {
+    return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
+  }
 
   constructor() {
     makeAutoObservable(this);
-    
-    // Check for saved login state on initialization
     this.checkSavedLoginState();
   }
 
-  // Check if user was previously logged in
   checkSavedLoginState() {
     try {
-      const savedUserInfo = localStorage.getItem('userInfo');
-      if (savedUserInfo) {
-        const parsedUserInfo = JSON.parse(savedUserInfo);
-        this.userInfo = { ...this.userInfo, ...parsedUserInfo };
-        console.log('Restored login state:', this.userInfo.isLoggedIn);
+      const saveduser = localStorage.getItem('user');
+      if (saveduser) {
+        const parseduser = JSON.parse(saveduser);
+        this.user = { ...this.user, ...parseduser };
+        console.log('Restored login state:', this.user.isLoggedIn);
       }
     } catch (error) {
       console.error('Error restoring login state:', error);
     }
   }
 
-  // Save login state
   saveLoginState() {
     try {
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      localStorage.setItem('user', JSON.stringify(this.user));
     } catch (error) {
       console.error('Error saving login state:', error);
     }
   }
 
-  // Update user info
-  setUserInfo(info) {
-    this.userInfo = { ...this.userInfo, ...info };
+  setUser(info) {
+    this.user = { ...this.user, ...info };
     this.saveLoginState();
   }
 
-  // Login with phone and verification code
   async loginWithPhone(phoneNumber, verificationCode) {
     try {
       // Get user info from API using phone and client ID
@@ -74,8 +83,8 @@ class UserStore {
       const user = users[0];
       
       runInAction(() => {
-        this.userInfo = {
-          ...this.userInfo,
+        this.user = {
+          ...this.user,
           ...user,
           isLoggedIn: true,
           phoneNumber: phoneNumber
@@ -83,69 +92,41 @@ class UserStore {
         this.saveLoginState();
       });
 
-      return this.userInfo;
+      return this.user;
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
     }
   }
 
-  // Traditional login method
   login(credentials) {
-    // In a real app, this would make an API call
     console.log('Login with credentials:', credentials);
-    
-    // Mock successful login
-    this.userInfo = {
-      ...this.userInfo,
-      isLoggedIn: true
-    };
-    
+    this.user.isLoggedIn = true
     this.saveLoginState();
-    return Promise.resolve(this.userInfo);
+    return Promise.resolve(this.user);
   }
 
-  // Logout method
   logout() {
-    // In a real app, this would make an API call
     console.log('Logging out user');
-    
-    // Reset user info
-    this.userInfo = {
-      ...this.userInfo,
-      isLoggedIn: false
-    };
-    
+    this.user.isLoggedIn = false
     this.saveLoginState();
     return Promise.resolve();
   }
 
-  // Get user exams
   fetchExamRecords() {
-    // In a real app, this would make an API call
     console.log('Fetching exam records');
-    
-    // Mock data
-    this.examRecords = [
-      { id: 1, courseName: '量子力学基础', score: 85, date: '2025-03-01' },
-      { id: 2, courseName: '高等数学', score: 92, date: '2025-02-15' }
-    ];
-    
+    this.examRecords = []    
     return Promise.resolve(this.examRecords);
   }
   
-  // Get user coupons
   fetchCoupons() {
-    // In a real app, this would make an API call
     console.log('Fetching coupons');
-    
-    // Mock data
-    this.coupons = [
-      { id: 1, name: '新用户优惠', discount: 20, validUntil: '2025-04-01' },
-      { id: 2, name: '季度促销', discount: 15, validUntil: '2025-06-30' }
-    ];
-    
+    this.coupons = []    
     return Promise.resolve(this.coupons);
+  }
+
+  isPaid(type, id) {
+    return this.isAdmin || this.user.transactions.some(t => t.type === type && t.id === id);
   }
 }
 

@@ -6,6 +6,7 @@ import clientStore from './clientStore';
 import editSeriesStore from './editSeriesStore';
 import { get, save } from '../utils/db';
 import _ from 'lodash';
+import userStore from './userStore';
 
 class SeriesStore {
   series = [];
@@ -52,7 +53,8 @@ class SeriesStore {
       runInAction(() => {
         this.series = data.map((s, index) => ({
           ...s,
-          order: typeof s.order === 'number' ? s.order : index
+          order: typeof s.order === 'number' ? s.order : index,
+          isPaid: userStore.isPaid(1, s.id)
         }));
         this.isLoading = false;
       });

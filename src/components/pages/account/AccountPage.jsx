@@ -10,11 +10,6 @@ const AccountPage = observer(() => {
   const navigate = useNavigate();
   const t = languageStore.t;
   
-  useEffect(() => {
-    // Log for debugging
-    console.log('AccountPage rendering with userInfo:', userStore.userInfo);
-  }, []);
-
   const handleEditProfile = () => {
     // For future implementation
     console.log('Edit profile clicked');
@@ -66,25 +61,16 @@ const AccountPage = observer(() => {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={userStore.userInfo?.avatar || DEFAULT_AVATAR}
+                src={userStore.avatar}
                 alt="User Avatar"
                 className="w-20 h-20 rounded-full object-cover"
               />
-              {/* Gender icon - male */}
-              <div className="absolute -right-1 top-0 bg-blue-400 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="10.5" cy="10.5" r="7.5"/>
-                  <line x1="16.5" y1="16.5" x2="21" y2="21"/>
-                  <line x1="16.5" y1="10.5" x2="21" y2="10.5"/>
-                  <line x1="18.75" y1="8.25" x2="18.75" y2="12.75"/>
-                </svg>
-              </div>
             </div>
             
             {/* User Info */}
             <div className="ml-4">
-              <h2 className="text-xl font-semibold">{t('menu.account_page.guest')}</h2>
-              <p className="text-gray-600">ID: 53</p>
+              <h2 className="text-xl font-semibold">{userStore.name}</h2>
+              <p className="text-gray-600">ID: {userStore.user.id}</p>
             </div>
           </div>
           
@@ -100,9 +86,9 @@ const AccountPage = observer(() => {
         <MenuListItem
           label={t('menu.account_page.my_vip')}
           onClick={() => handleMenuItemClick('vip')}
-          extraInfo={`${t('menu.account_page.valid_until')} 2025-12-27 10:33:52`}
+          // extraInfo={`${t('menu.account_page.valid_until')} 2025-12-27 10:33:52`}
         />
-        <MenuListItem
+        {/* <MenuListItem
           label={t('menu.account_page.exam_records')}
           onClick={() => handleMenuItemClick('exams')}
         />
@@ -113,11 +99,13 @@ const AccountPage = observer(() => {
         <MenuListItem
           label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
-        />
-        <MenuListItem
-          label={t('menu.account_page.admin_portal')}
-          onClick={() => handleMenuItemClick('admin')}
-        />
+        /> */}
+        {userStore.isAdmin &&
+          <MenuListItem
+            label={t('menu.account_page.admin_portal')}
+            onClick={() => handleMenuItemClick('admin')}
+          />
+        }
         <MenuListItem
           label={t('menu.account_page.logout')}
           onClick={() => handleMenuItemClick('logout')}

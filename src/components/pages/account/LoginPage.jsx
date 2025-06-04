@@ -24,10 +24,10 @@ const LoginPage = observer(() => {
 
   useEffect(() => {
     // If already logged in, redirect to the original page
-    if (userStore.userInfo.isLoggedIn) {
+    if (userStore.isLoggedIn) {
       navigate(from, { replace: true });
     }
-  }, [userStore.userInfo.isLoggedIn, navigate, from]);
+  }, [userStore.isLoggedIn, navigate, from]);
 
   useEffect(() => {
     // Handle countdown for resend code
