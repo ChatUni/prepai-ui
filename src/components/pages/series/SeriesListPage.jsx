@@ -33,7 +33,7 @@ const SeriesListPage = observer(() => (
         ) : (
           <SeriesList
             title=""
-            series={seriesStore.filteredSeries}
+            series={routeStore.isMySeriesMode ? seriesStore.mySeries : seriesStore.filteredSeries}
             isAllInstructors={true}
           />
         )}

@@ -23,6 +23,9 @@ const AccountPage = observer(() => {
       case 'admin':
         navigate('/admin');
         break;
+      case 'my_series':
+        navigate('/my_series');
+        break;
       case 'vip':
         // Navigate to VIP details page
         // navigate('/vip-details');
@@ -100,6 +103,10 @@ const AccountPage = observer(() => {
           label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
         /> */}
+        <MenuListItem
+          label={t('menu.account_page.my_series')}
+          onClick={() => handleMenuItemClick('my_series')}
+        />
         {userStore.isAdmin &&
           <MenuListItem
             label={t('menu.account_page.admin_portal')}

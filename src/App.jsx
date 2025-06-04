@@ -185,6 +185,11 @@ const MainLayout = observer(() => {
                     <EditCoursePage />
                   </AuthRoute>
                 } />
+                <Route path="/my_series" element={
+                  <AuthRoute>
+                    <SeriesListPage />
+                  </AuthRoute>
+                } />
                 <Route path="/instructors" element={
                   <AuthRoute>
                     <InstructorPage />

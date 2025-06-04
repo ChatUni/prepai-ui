@@ -88,6 +88,11 @@ class RouteStore {
     return topLevelRoutes.includes(firstSegment) && pathSegments.length === 1;
   }
 
+  get isMySeriesMode() {
+    const pathSegments = this.getPathSegments();
+    return pathSegments.length === 1 && pathSegments[0] === 'my_series';
+  }
+
   get isSeriesHomeMode() {
     const pathSegments = this.getPathSegments();
     return this.currentPath === '/' || (pathSegments.length === 1 && pathSegments[0] === 'series');

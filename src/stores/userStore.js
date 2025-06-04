@@ -126,7 +126,7 @@ class UserStore {
   }
 
   isPaid(type, id) {
-    return this.isAdmin || this.user.transactions.some(t => t.type === type && t.id === id);
+    return this.isAdmin || this.user.transactions.some(t => t.type === type && t.product_id === id);
   }
 }
 

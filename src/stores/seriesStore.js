@@ -195,6 +195,10 @@ class SeriesStore {
     });
   }
 
+  get mySeries() {
+    return this.filteredSeries.filter(series => series.isPaid);
+  }
+
   getInstructorById = (id) => (this.instructors || []).find(instructor => instructor.id === id);
 
   get seriesInstructors() {

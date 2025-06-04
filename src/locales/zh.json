@@ -41,6 +41,7 @@
     "ai": "AI助理",
     "my": "我的",
     "account_page": {
+      "my_series": "已购课程",
       "guest": "游客",
       "my_vip": "我的VIP",
       "exam_records": "我的考试记录",

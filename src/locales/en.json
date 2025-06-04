@@ -41,6 +41,7 @@
     "ai": "AI Assistant",
     "my": "My Account",
     "account_page": {
+      "my_series": "My Series",
       "guest": "Guest",
       "my_vip": "My VIP",
       "exam_records": "My Exam Records",

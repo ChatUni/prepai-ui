@@ -41,6 +41,7 @@
     "ai": "AIアシスタント",
     "my": "マイページ",
     "account_page": {
+      "my_series": "マイシリーズ",
       "guest": "ゲスト",
       "my_vip": "マイVIP",
       "exam_records": "テスト履歴",
