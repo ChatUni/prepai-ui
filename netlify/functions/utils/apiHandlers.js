@@ -4,7 +4,7 @@ import { handleUrlSigning, handleFileUpload } from './cosServerHelper.js';
 export default {
   db_handlers: {
     get: {
-      clients: q => flat('clients', `m_id=${q.id}`),
+      clients: q => flat('clients', `m_id=${q.id}&f_+memberships`),
       courses: q => flat('courses', `${q.seriesId ? `m_series_id=${q.seriesId}&` : ''}f_series|series&f_instructors`),
       instructors: q => flat('instructors', `m_client_id=${q.clientId}`),
       assistants: q => get('assistants'),

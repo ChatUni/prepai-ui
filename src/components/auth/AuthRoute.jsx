@@ -12,10 +12,10 @@ const AuthRoute = observer(({ children }) => {
     // Redirect to login page, but save the current location so we can
     // redirect back after successful login
     return (
-      <Navigate 
-        to="/login" 
-        state={{ from: location }} 
-        replace 
+      <Navigate
+        to="/login"
+        state={{ from: location }}
+        replace
       />
     );
   }

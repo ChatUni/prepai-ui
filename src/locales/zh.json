@@ -63,7 +63,8 @@
       "upload_questions": "上传试题",
       "question_distribution": "试题比例分配",
       "course_settings": "课程设置",
-      "manage_assistant": "AI助手设置"
+      "manage_assistant": "AI助手设置",
+      "price_settings": "价格设置"
     },
     "categories": {
       "testing": "考测",
@@ -390,5 +391,24 @@
     "courseCategories": "课程分类",
     "myMessages": "我的消息",
     "groupedSeries": "分组课程"
+  },
+  "membership": {
+    "title": "会员管理",
+    "list": "会员列表",
+    "name": "会员名称",
+    "type": "类型",
+    "price": "价格",
+    "originalPrice": "原价",
+    "description": "描述",
+    "types": {
+      "monthly": "月卡",
+      "annually": "年卡",
+      "lifetime": "终身会员",
+      "trial": "试用"
+    },
+    "edit": "编辑",
+    "delete": "删除",
+    "confirmDelete": "确定要删除「{name}」会员吗？",
+    "noMemberships": "暂无会员设置"
   }
 }

@@ -31,6 +31,7 @@ import AssistantChatPage from './components/pages/assistant/AssistantChatPage';
 import AccountPage from './components/pages/account/AccountPage';
 import AdminPage from './components/pages/account/AdminPage';
 import LoginPage from './components/pages/account/LoginPage';
+import MembershipListPage from './components/pages/membership/MembershipListPage';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthWrapper from './components/auth/AuthWrapper';
 
@@ -263,6 +264,11 @@ const MainLayout = observer(() => {
                 <Route path="/assistants/:assistantId/chat" element={
                   <AuthRoute>
                     <AssistantChatPage />
+                  </AuthRoute>
+                } />
+                <Route path="/memberships" element={
+                  <AuthRoute>
+                    <MembershipListPage />
                   </AuthRoute>
                 } />
               </Routes>

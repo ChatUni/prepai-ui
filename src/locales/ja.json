@@ -63,7 +63,8 @@
       "upload_questions": "問題をアップロード",
       "question_distribution": "問題の配分",
       "course_settings": "コース設定",
-      "manage_assistant": "アシスタント管理"
+      "manage_assistant": "アシスタント管理",
+      "price_settings": "価格設定"
     },
     "categories": {
       "testing": "テスト",
@@ -394,5 +395,24 @@
     "courseCategories": "コース分類",
     "myMessages": "メッセージ",
     "groupedSeries": "グループ別シリーズ"
+  },
+  "membership": {
+    "title": "メンバーシップ管理",
+    "list": "メンバーシップ一覧",
+    "name": "メンバーシップ名",
+    "type": "タイプ",
+    "price": "価格",
+    "originalPrice": "元価格",
+    "description": "説明",
+    "types": {
+      "monthly": "月額",
+      "annually": "年額",
+      "lifetime": "ライフタイム",
+      "trial": "トライアル"
+    },
+    "edit": "編集",
+    "delete": "削除",
+    "confirmDelete": "「{name}」メンバーシップを削除してもよろしいですか？",
+    "noMemberships": "メンバーシップが設定されていません"
   }
 }

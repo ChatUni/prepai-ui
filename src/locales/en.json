@@ -63,7 +63,8 @@
       "upload_questions": "Upload Questions",
       "question_distribution": "Question Distribution",
       "course_settings": "Course Settings",
-      "manage_assistant": "Manage Assistants"
+      "manage_assistant": "Manage Assistants",
+      "price_settings": "Price Settings"
     },
     "categories": {
       "testing": "Testing",
@@ -391,5 +392,24 @@
     "courseCategories": "Categories",
     "myMessages": "My Messages",
     "groupedSeries": "Grouped Series"
+  },
+  "membership": {
+    "title": "Membership Management",
+    "list": "Membership List",
+    "name": "Membership Name",
+    "type": "Type",
+    "price": "Price",
+    "originalPrice": "Original Price",
+    "description": "Description",
+    "types": {
+      "monthly": "Monthly",
+      "annually": "Annual",
+      "lifetime": "Lifetime",
+      "trial": "Trial"
+    },
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
+    "noMemberships": "No memberships configured"
   }
 }

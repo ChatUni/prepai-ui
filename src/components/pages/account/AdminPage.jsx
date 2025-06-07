@@ -15,7 +15,8 @@ const routeMap = {
   'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
-  'course-settings': '/series/settings'
+  'course-settings': '/series/settings',
+  'price-settings': '/memberships'
 };
 
 const AdminPage = observer(() => {
@@ -54,6 +55,10 @@ const AdminPage = observer(() => {
         <MenuListItem
           label={t('menu.admin_page.course_settings')}
           onClick={() => navigate(routeMap['course-settings'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.price_settings')}
+          onClick={() => navigate(routeMap['price-settings'])}
         />
       </div>
     </div>
