@@ -17,7 +17,7 @@ const SeriesListPage = observer(() => (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
       {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
 
-      {routeStore.isSeriesHomeMode && <ToolsNav />}
+      {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
 
       <div className="mb-6">
         <SearchBar />

@@ -398,6 +398,10 @@
   },
   "membership": {
     "title": "メンバーシップ管理",
+    "priceSettings": {
+      "title": "価格設定",
+      "description": "ここでは、メンバーシップ、コース、試験、代理店パートナーシップなど、さまざまな製品の価格と設定を行うことができます。異なる製品の価格、元価格、製品の組み合わせ、その他の関連設定を設定できます。"
+    },
     "list": "メンバーシップ一覧",
     "name": "メンバーシップ名",
     "type": "タイプ",
@@ -405,11 +409,16 @@
     "originalPrice": "元価格",
     "description": "説明",
     "types": {
+      "all": "全てのタイプ",
       "monthly": "月額",
       "annually": "年額",
       "lifetime": "ライフタイム",
       "trial": "トライアル"
     },
+    "search": {
+      "placeholder": "メンバーシップ名で検索..."
+    },
+    "createNew": "新しいメンバーシップを作成",
     "edit": "編集",
     "delete": "削除",
     "confirmDelete": "「{name}」メンバーシップを削除してもよろしいですか？",

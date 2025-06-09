@@ -1,15 +1,8 @@
 import { observer } from 'mobx-react-lite';
 import lang from '../../../stores/languageStore';
 import ActionButton from '../../ui/ActionButton';
-
-const membershipTypes = [
-  "monthly",
-  "annually",
-  "lifetime",
-  "trial"
-]
-
-const getTypeLabel = (type) => lang.t(`membership.types.${membershipTypes[type]}`) || type;
+import membershipStore from '../../../stores/membershipStore';
+import { getCardBaseClasses } from '../../../utils/cardStyles';
 
 const formatPrice = (price, originalPrice) => {
   if (originalPrice && originalPrice !== price) {
@@ -24,7 +17,7 @@ const formatPrice = (price, originalPrice) => {
 };
 
 const MembershipCard = observer(({ membership, onEdit, onDelete }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+  <div className={getCardBaseClasses(false, false, false)}>
     <div className="p-4">
       {/* Header with name and type */}
       <div className="flex justify-between items-start mb-3">
@@ -33,7 +26,7 @@ const MembershipCard = observer(({ membership, onEdit, onDelete }) => (
             {membership.name}
           </h3>
           <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-            {getTypeLabel(membership.type)}
+            {lang.t(membershipStore.getTypeLabel(membership.type))}
           </span>
         </div>
         <div className="flex items-center gap-2">

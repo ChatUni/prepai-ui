@@ -7,6 +7,7 @@ import uiStore from '../../../stores/uiStore';
 import languageStore from '../../../stores/languageStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import seriesStore from '../../../stores/seriesStore';
+import { getCardBaseClasses } from '../../../utils/cardStyles';
 
 const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;
@@ -78,7 +79,7 @@ const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) =>
   return (
     <div
       ref={isEditMode ? handleRef : null}
-      className={`flex flex-col w-full relative group ${!isEditMode && 'cursor-pointer'} mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
+      className={`flex flex-col w-full relative group mb-4 ${getCardBaseClasses(isDragging, isOver, !isEditMode)}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={isEditMode ? undefined : handleCardClick}

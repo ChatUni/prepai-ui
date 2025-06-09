@@ -394,6 +394,10 @@
   },
   "membership": {
     "title": "会员管理",
+    "priceSettings": {
+      "title": "价格设置",
+      "description": "在这里可以设置各类产品的价格和配置，包括会员、课程、考试和代理加盟等。您可以为不同产品设置价格、原价、产品组合和其他相关配置。"
+    },
     "list": "会员列表",
     "name": "会员名称",
     "type": "类型",
@@ -401,11 +405,16 @@
     "originalPrice": "原价",
     "description": "描述",
     "types": {
+      "all": "全部类型",
       "monthly": "月卡",
       "annually": "年卡",
       "lifetime": "终身会员",
       "trial": "试用"
     },
+    "search": {
+      "placeholder": "搜索会员名称..."
+    },
+    "createNew": "创建会员",
     "edit": "编辑",
     "delete": "删除",
     "confirmDelete": "确定要删除「{name}」会员吗？",

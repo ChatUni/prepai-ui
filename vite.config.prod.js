@@ -7,7 +7,8 @@ export default defineConfig({
   define: {
     'process.env': {
         // In production, use Netlify Functions URL pattern
-        BASE_URL: '/.netlify/functions'
+        // BASE_URL: '/.netlify/functions'
+        BASE_URL: 'https://prepai-ui.netlify.app/.netlify/functions'
     }
   }
 })

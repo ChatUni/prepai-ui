@@ -15,6 +15,7 @@ import seriesStore from '../../../stores/seriesStore';
 import coursesStore from '../../../stores/coursesStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import CourseCard from './CourseCard';
+import { getCardBaseClasses } from '../../../utils/cardStyles';
 
 const SeriesCard = observer(({ series, index, moveItem }) => {
   const { t } = languageStore;
@@ -45,11 +46,10 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
   return (
     <div
       ref={routeStore.isSeriesSettingMode ? handleRef : null}
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${isDragging ? 'opacity-50' : ''} ${isOver ? 'border-2 border-blue-500' : ''}`}
+      className={getCardBaseClasses(isDragging, isOver, !routeStore.isSeriesSettingMode)}
     >
       <div
         onClick={routeStore.isSeriesSettingMode ? undefined : (e) => seriesCardStore.handleSeriesClick(seriesId, navigate, e)}
-        className={`${!routeStore.isSeriesSettingMode && 'cursor-pointer'}`}
       >
         <div className="relative pb-[56.25%]">
           <img

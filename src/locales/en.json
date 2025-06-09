@@ -395,6 +395,10 @@
   },
   "membership": {
     "title": "Membership Management",
+    "priceSettings": {
+      "title": "Price Settings",
+      "description": "Here you can set prices and configurations for various products including memberships, courses, exams, and agency partnerships. You can set prices, original prices, product combinations, and other related configurations for different products."
+    },
     "list": "Membership List",
     "name": "Membership Name",
     "type": "Type",
@@ -402,11 +406,16 @@
     "originalPrice": "Original Price",
     "description": "Description",
     "types": {
+      "all": "All Types",
       "monthly": "Monthly",
       "annually": "Annual",
       "lifetime": "Lifetime",
       "trial": "Trial"
     },
+    "search": {
+      "placeholder": "Search memberships by name..."
+    },
+    "createNew": "Create New Membership",
     "edit": "Edit",
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
