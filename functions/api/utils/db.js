@@ -1,26 +1,26 @@
-import { MongoClient } from 'mongodb'
-import { tap } from './util.js'
+const { MongoClient } = require('mongodb');
+const { tap } = require('./util.js');
 
-let db = null
+let db = null;
 
-export const connectDB = async conn =>
+const connectDB = async conn =>
   (!conn && db) ||
-  (db = await MongoClient.connect(conn).then(x => x.db()))
+  (db = await MongoClient.connect(conn).then(x => x.db()));
 
-export const connect = async dbName => {
-  console.log(`Connect MongoDB ${process.env.DBCS}`)
-  await connectDB(process.env.DBCS.replace('{db}', dbName))
-}
+const connect = async dbName => {
+  console.log(`Connect MongoDB ${process.env.DBCS}`);
+  await connectDB(process.env.DBCS.replace('{db}', dbName));
+};
 
-export const count = doc => db.collection(doc).count()
+const count = doc => db.collection(doc).count();
 
-export const get = doc =>
-  db.collection(tap(doc)).find().project({ _id: 0 }).toArray()
+const get = doc =>
+  db.collection(tap(doc)).find().project({ _id: 0 }).toArray();
 
-export const getById = (doc, id) =>
-  db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } })
+const getById = (doc, id) =>
+  db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } });
 
-export const maxId = doc =>
+const maxId = doc =>
   db
     .collection(doc)
     .find()
@@ -28,7 +28,7 @@ export const maxId = doc =>
     .sort({ id: -1 })
     .limit(1)
     .toArray()
-    .then(r => (r.length > 0 ? r[0].id + 1 : 0))
+    .then(r => (r.length > 0 ? r[0].id + 1 : 0));
 
 // 0: prop ('$videos')
 // 1: number
@@ -62,7 +62,7 @@ const strNum = v => {
   return isNaN(+v) ? v : +v
 }
 
-export const flat = async (doc, agg) => {
+const flat = async (doc, agg) => {
   // agg = 'm_id=1,code='123',firstName=in$Nan;Fiona,name=regex$fan&u_songs&p_id,name=0,img=movies.img&s_type,date=-1&r_size=20'
   console.log(agg)
   const liftUps = []
@@ -132,45 +132,63 @@ export const flat = async (doc, agg) => {
   return r
 }
 
-export const add = (doc, obj) => db.collection(doc).insertMany(makeArray(obj))
+const add = (doc, obj) => db.collection(doc).insertMany(makeArray(obj));
 
-export const replace = async (doc, obj, id = 'id') => {
-  const list = makeArray(obj)
+const replace = async (doc, obj, id = 'id') => {
+  const list = makeArray(obj);
 
   if (id === 'id' && list.some(o => !o.id)) {
-    const id1 = await maxId(doc)
-    const id = Math.max(...list.map(o => o.id || 0), id1) + 1
-    list.filter(o => !o.id).forEach((o, i) => (o.id = id + i))
+    const id1 = await maxId(doc);
+    const id = Math.max(...list.map(o => o.id || 0), id1) + 1;
+    list.filter(o => !o.id).forEach((o, i) => (o.id = id + i));
   }
 
   await Promise.all(
     list.map(o => {
-      delete o._id
-      return db.collection(doc).replaceOne({ [id]: o[id] }, o, { upsert: true })
+      delete o._id;
+      return db.collection(doc).replaceOne({ [id]: o[id] }, o, { upsert: true });
     })
-  )
+  );
 
-  return list
-}
+  return list;
+};
 
-export const save = replace
+const save = replace;
 
-export const addToList = (doc, id, list, obj) =>
-  db.collection(doc).updateOne({ id: +id }, { $addToSet: { [list]: obj } })
+const addToList = (doc, id, list, obj) =>
+  db.collection(doc).updateOne({ id: +id }, { $addToSet: { [list]: obj } });
 
-export const replaceList = (doc, id, list, obj) =>
+const replaceList = (doc, id, list, obj) =>
   db
     .collection(doc)
     .updateOne(
       { id: +id, [list + '.id']: obj.id },
       { $set: { [list + '.$']: obj } }
-    )
+    );
 
-export const update = (doc, obj) =>
-  db.collection(tap(doc)).updateOne({ id: tap(obj.id) }, { $set: obj })
+const update = (doc, obj) =>
+  db.collection(tap(doc)).updateOne({ id: tap(obj.id) }, { $set: obj });
 
-export const remove = (doc, id) => db.collection(doc).deleteOne({ id: +id })
+const remove = (doc, id) => db.collection(doc).deleteOne({ id: +id });
 
-export const removeAll = doc => db.collection(doc).deleteMany({})
+const removeAll = doc => db.collection(doc).deleteMany({});
 
-const makeArray = x => (Array.isArray(x) ? x : [x])
+const makeArray = x => (Array.isArray(x) ? x : [x]);
+
+module.exports = {
+  connectDB,
+  connect,
+  count,
+  get,
+  getById,
+  maxId,
+  flat,
+  add,
+  replace,
+  save,
+  addToList,
+  replaceList,
+  update,
+  remove,
+  removeAll
+};

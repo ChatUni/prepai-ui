@@ -1,4 +1,4 @@
-import COS from 'cos-nodejs-sdk-v5';
+const COS = require('cos-nodejs-sdk-v5');
 
 let cosInstance = null;
 
@@ -33,7 +33,7 @@ const getDefaultParams = () => {
 };
 
 // Get signed URL for object access
-export const getSignedUrl = async (params) => {
+const getSignedUrl = async (params) => {
   const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.getObjectUrl({
@@ -55,7 +55,7 @@ export const getSignedUrl = async (params) => {
 };
 
 // Check if object exists in COS
-export const checkObjectExists = async (params) => {
+const checkObjectExists = async (params) => {
   const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.headObject({
@@ -76,10 +76,10 @@ const verifyCOSParams = () => {
   if (!TENCENT_BUCKET || !TENCENT_REGION) {
     throw new Error('Missing required Tencent Cloud configuration');
   }
-}
+};
 
 // Upload object to COS
-export const uploadObject = async (params) => {
+const uploadObject = async (params) => {
   const cos = getCosClient();
   return new Promise((resolve, reject) => {
     cos.putObject({
@@ -96,33 +96,33 @@ export const uploadObject = async (params) => {
 };
 
 // Extract key from COS URL
-export const extractKeyFromUrl = (url) => {
+const extractKeyFromUrl = (url) => {
   verifyCOSParams();
   const urlPattern = new RegExp(`https://${process.env.TENCENT_BUCKET}\\.cos\\.${process.env.TENCENT_REGION}\\.myqcloud\\.com/(.+?)(?:\\?|$)`);
   const match = url.match(urlPattern);
-  
+
   if (!match) {
     throw new Error('Invalid COS URL format');
   }
-  
+
   return decodeURIComponent(match[1]);
 };
 
 // Parse base64 file data
-export const parseBase64File = (fileData) => {
+const parseBase64File = (fileData) => {
   const contentType = fileData.match(/data:(.*);base64/)[1];
   const fileBuffer = Buffer.from(fileData.split(',')[1], 'base64');
   return { contentType, fileBuffer };
 };
 
 // Generate COS URL
-export const generateCosUrl = (key) => {
+const generateCosUrl = (key) => {
   verifyCOSParams();
   return `https://${process.env.TENCENT_BUCKET}.cos.${process.env.TENCENT_REGION}.myqcloud.com/${key}`;
 };
 
 // High-level function to handle URL signing
-export const handleUrlSigning = async (url) => {
+const handleUrlSigning = async (url) => {
   const key = extractKeyFromUrl(url);
 
   // Check if object exists
@@ -138,7 +138,7 @@ export const handleUrlSigning = async (url) => {
 };
 
 // High-level function to handle file upload
-export const handleFileUpload = async (file, key) => {
+const handleFileUpload = async (file, key) => {
   const { contentType, fileBuffer } = parseBase64File(file);
 
   // Upload the file
@@ -157,4 +157,15 @@ export const handleFileUpload = async (file, key) => {
 
   const url = generateCosUrl(key);
   return { url };
+};
+
+module.exports = {
+  getSignedUrl,
+  checkObjectExists,
+  uploadObject,
+  extractKeyFromUrl,
+  parseBase64File,
+  generateCosUrl,
+  handleUrlSigning,
+  handleFileUpload
 };

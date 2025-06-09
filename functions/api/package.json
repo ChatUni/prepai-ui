@@ -1,0 +1,6 @@
+{
+  "name": "api",
+  "dependencies": {
+    "mongodb": "^6.17.0"
+  }
+}

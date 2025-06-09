@@ -1,17 +1,16 @@
-import OpenAI from 'openai';
-import { parsePathParams } from './utils/pathUtils.js';
-import { parse } from 'multipart-formdata';
-import { headers as getResponseHeaders } from './utils/http.js';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { toFile } from 'openai';
+const OpenAI = require('openai');
+const { parsePathParams } = require('./utils/pathUtils.js');
+const { parse } = require('multipart-formdata');
+const { headers: getResponseHeaders } = require('./utils/http.js');
+const fs = require('fs');
+const path = require('path');
+const { toFile } = require('openai');
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
 const CHATGPT_MODEL = 'gpt-4o-mini';
 
 // Main handler function
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -465,3 +464,5 @@ export const handler = async (event, context) => {
     };
   }
 };
+
+module.exports = { handler };

@@ -1,7 +1,7 @@
-import crypto from 'crypto';
-import { headers as getResponseHeaders } from './utils/http.js';
+const crypto = require('crypto');
+const { headers: getResponseHeaders } = require('./utils/http.js');
 
-export const handler = async (event) => {
+const handler = async (event) => {
   // Handle OPTIONS requests for CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -54,3 +54,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+module.exports = { handler };

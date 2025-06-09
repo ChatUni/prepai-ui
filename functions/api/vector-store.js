@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import { Blob } from 'buffer';
-import { FormData } from '@web-std/form-data';
-import { File } from '@web-std/file';
-import { getResponseHeaders } from './utils/http.js';
-import { get, save, remove, flat, maxId } from './utils/db.js';
+const fs = require('fs');
+const path = require('path');
+const { Blob } = require('buffer');
+const { FormData } = require('@web-std/form-data');
+const { File } = require('@web-std/file');
+const { getResponseHeaders } = require('./utils/http.js');
+const { get, save, remove, flat, maxId } = require('./utils/db.js');
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -148,3 +148,5 @@ export const handler = async (event, context) => {
     };
   }
 };
+
+module.exports = { handler };

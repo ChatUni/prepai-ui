@@ -1,7 +1,7 @@
-import { get, save, remove, flat } from './db.js';
-import { handleUrlSigning, handleFileUpload } from './cosServerHelper.js';
+const { get, save, remove, flat } = require('./db.js');
+const { handleUrlSigning, handleFileUpload } = require('./cosServerHelper.js');
 
-export default {
+module.exports = {
   db_handlers: {
     get: {
       clients: q => flat('clients', `m_id=${q.id}&f_+memberships`),

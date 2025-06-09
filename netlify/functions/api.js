@@ -1,4 +1,4 @@
-import { makeApi } from './utils/http.js';
-import apiHandlers from './utils/apiHandlers.js';
+const { makeApi } = require('../../functions/api/utils/http.js');
+const apiHandlers = require('../../functions/api/utils/apiHandlers.js');
 
-export const handler = makeApi(apiHandlers)
+exports.handler = makeApi(apiHandlers);

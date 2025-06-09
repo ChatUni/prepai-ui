@@ -3,8 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import apiHandlers from './netlify/functions/utils/apiHandlers.js';
-import { connect } from './netlify/functions/utils/db.js';
+import apiHandlers from './functions/api/utils/apiHandlers.js';
+import { connect } from './functions/api/utils/db.js';
 
 // Get current module's directory for ESM
 const __filename = fileURLToPath(import.meta.url);

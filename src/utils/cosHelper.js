@@ -1,4 +1,4 @@
-import { tap } from "../../netlify/functions/utils/util";
+import { tap } from "../../functions/api/utils/util";
 
 export const uploadToCOS = async (file, key) => {
   try {

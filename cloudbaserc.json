@@ -1,0 +1,43 @@
+{
+  "envId": "cloud1-3gue8ppt5706b359",
+  "version": "2.0",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "region": "ap-shanghai",
+  "framework": {
+    "name": "prepai",
+    "plugins": {
+      "function": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functions": [
+            {
+              "name": "api",
+              "path": "./functions/api",
+              "entry": "index.main",
+              "timeout": 300,
+              "memory": 512,
+              "include": [ "./netlify/functions" ]
+            }
+          ]
+        }
+      },
+      "website": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "public": "./dist",
+          "ignore": [
+            ".*"
+          ],
+          "rewrites": [
+            {
+              "source": "/api/.*",
+              "function": "api"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "functionRoot": "./functions",
+  "functions": []
+}
