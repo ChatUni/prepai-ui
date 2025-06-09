@@ -1,5 +1,3 @@
-import { tap } from "../../functions/api/utils/util";
-
 export const uploadToCOS = async (file, key) => {
   try {
     // Convert file to base64

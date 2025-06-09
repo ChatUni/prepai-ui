@@ -1,9 +1,8 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { tap } from '../netlify/functions/utils/util.js'
 
-window.tap = tap
+window.tap = x => { console.log(x); return x; }
 
 createRoot(document.getElementById('root')).render(
     <App />
