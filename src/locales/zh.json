@@ -415,7 +415,7 @@
       "placeholder": "搜索会员名称..."
     },
     "createNew": "创建会员",
-    "edit": "编辑",
+    "edit": "编辑会员",
     "delete": "删除",
     "confirmDelete": "确定要删除「{name}」会员吗？",
     "noMemberships": "暂无会员设置"

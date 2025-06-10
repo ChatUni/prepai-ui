@@ -81,17 +81,6 @@ const AssistantChatPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
   
-  // Fetch all assistants if needed
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!assistantsStore.assistants.length && !assistantsStore.loading) {
-        await assistantsStore.fetchAssistants();
-      }
-    };
-    
-    fetchData();
-  }, []);
-  
   // Find the selected assistant
   useEffect(() => {
     if (assistantsStore.assistants.length && assistantId) {

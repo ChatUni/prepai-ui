@@ -3,6 +3,8 @@ import DEFAULT_AVATAR from '../assets/avatar.png';
 import clientStore from './clientStore';
 import lang from './languageStore';
 import { get } from '../utils/db';
+import seriesStore from './seriesStore';
+import assistantsStore from './assistantsStore';
 
 class UserStore {
   user = {};
@@ -39,7 +41,13 @@ class UserStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.checkSavedLoginState();
+    this.checkSavedLoginState();  
+  }
+
+  async initData() {
+    await clientStore.loadClient();
+    await seriesStore.fetchSeries();
+    await assistantsStore.fetchAssistants();
   }
 
   checkSavedLoginState() {
@@ -49,6 +57,7 @@ class UserStore {
         const parseduser = JSON.parse(saveduser);
         this.user = { ...this.user, ...parseduser };
         console.log('Restored login state:', this.user.isLoggedIn);
+        this.initData();
       }
     } catch (error) {
       console.error('Error restoring login state:', error);
@@ -92,6 +101,7 @@ class UserStore {
         this.saveLoginState();
       });
 
+      this.initData();
       return this.user;
     } catch (error) {
       console.error('Error logging in:', error);

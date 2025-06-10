@@ -7,13 +7,10 @@ import MembershipCard from './MembershipCard';
 import MembershipSearchBar from '../../ui/MembershipSearchBar';
 import Dialog from '../../ui/Dialog';
 import BackButton from '../../ui/BackButton';
+import EditMembershipPage from './EditMembershipPage';
 
 const MembershipListPage = observer(() => {
   const { t } = languageStore;
-
-  useEffect(() => {
-    clientStore.loadClient();
-  }, []);
 
   return (
     <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
@@ -44,8 +41,11 @@ const MembershipListPage = observer(() => {
               <MembershipCard
                 key={membership.id || index}
                 membership={membership}
+                index={index}
+                moveMembership={membershipStore.moveMembership}
                 onEdit={membershipStore.handleEdit}
                 onDelete={membershipStore.handleDelete}
+                isDraggable={true}
               />
             ))}
           </div>
@@ -65,6 +65,17 @@ const MembershipListPage = observer(() => {
             t('membership.confirmDelete', { name: membershipStore.membershipToDelete.name })
           }
         </p>
+      </Dialog>
+
+      {/* Edit Membership Dialog */}
+      <Dialog
+        isOpen={membershipStore.showEditDialog}
+        onClose={membershipStore.closeEditDialog}
+        onConfirm={membershipStore.saveMembership}
+        title={membershipStore.isEditMode ? t('membership.edit') : t('membership.createNew')}
+        isConfirm={true}
+      >
+        <EditMembershipPage />
       </Dialog>
     </div>
   );

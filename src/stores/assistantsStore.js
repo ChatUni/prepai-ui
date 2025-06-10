@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import db from '../utils/db';
+import db, { get } from '../utils/db';
 import { getApiBaseUrl } from '../config';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
@@ -52,10 +52,11 @@ class AssistantsStore {
     this.error = null;
     
     try {
-      const assistants = await db.getAllAssistants();
+      const platform_assistants = await get('platform_assistants');
+      const client_assistants = await get('client_assistants', { clientId: clientStore.client.id });
       
       runInAction(() => {
-        this.assistants = assistants || [];
+        this.assistants = [...(platform_assistants || []), ...(client_assistants || [])];
         this.loading = false;
       });
     } catch (error) {

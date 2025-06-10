@@ -14,6 +14,7 @@ export const post = (type, ps, data) => fetch(api(type, ps), {
   body: JSON.stringify(data)
 }).then(r => r.json())
 export const save = (doc, data) => post('save', { doc }, data)
+export const remove = (doc, id) => post('remove', { doc }, { id })
 
 /**
  * Fetch data from the API

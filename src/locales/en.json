@@ -416,7 +416,7 @@
       "placeholder": "Search memberships by name..."
     },
     "createNew": "Create New Membership",
-    "edit": "Edit",
+    "edit": "Edit Membership",
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
     "noMemberships": "No memberships configured"

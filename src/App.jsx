@@ -80,15 +80,6 @@ const MainLayout = observer(() => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
   
-  // Initialize course state effects
-  useEffect(() => {
-    const init = async () => {
-      await clientStore.loadClient();
-      seriesStore.fetchSeries();
-    }
-    init();
-  }, []);
-  
   return (
     <div className="flex flex-col h-screen bg-white">
       <TopNavBar onMenuToggle={toggleMobileMenu} />

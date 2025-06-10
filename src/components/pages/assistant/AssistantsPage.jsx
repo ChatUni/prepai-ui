@@ -9,17 +9,6 @@ const AssistantsPage = observer(() => {
   const navigate = useNavigate();
   const { t } = languageStore;
   
-  // Fetch assistants data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!assistantsStore.assistants.length && !assistantsStore.loading) {
-        await assistantsStore.fetchAssistants();
-      }
-    };
-    
-    fetchData();
-  }, []);
-
   // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
@@ -58,12 +47,6 @@ const AssistantsPage = observer(() => {
   const errorContent = (
     <div className="flex flex-col items-center justify-center h-full w-full">
       <div className="text-gray-600 mt-2">{assistantsStore.error}</div>
-      <button
-        onClick={() => assistantsStore.fetchAssistants()}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
-      >
-        {t('menu.categories.assistant.retry')}
-      </button>
     </div>
   );
 

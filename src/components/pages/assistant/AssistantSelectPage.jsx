@@ -14,13 +14,6 @@ const AssistantSelectPage = observer(() => {
   // Get mode from URL params
   const mode = searchParams.get('mode') || 'edit';
 
-  useEffect(() => {
-    // Load assistants data if not already loaded
-    if (assistantsStore.assistants.length === 0) {
-      assistantsStore.fetchAssistants();
-    }
-  }, []);
-
   const handleAssistantClick = (assistant) => {
     navigate(`/assistants/${assistant.id}/edit`);
   };

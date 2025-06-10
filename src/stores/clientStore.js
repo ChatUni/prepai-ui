@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
 import lang from './languageStore';
 import { get } from '../utils/db';
+import { omit } from 'lodash';
 
 class ClientStore {
   client = {
@@ -104,13 +105,7 @@ class ClientStore {
       }
 
       // Save client object
-      const response = await fetch('/api/save?doc=clients', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.client)
-      });
+      const response = await save('clients', omit(this.client, ['_id', 'memberships']));
 
       if (!response.ok) {
         throw new Error(`Failed to save changes: ${response.status}`);
@@ -171,6 +166,10 @@ class ClientStore {
       runInAction(() => {
         if (data && data.length > 0) {
           this.client = data[0];
+          // Sort memberships by order field if they exist
+          if (this.client.memberships && Array.isArray(this.client.memberships)) {
+            this.client.memberships.sort((a, b) => a.order - b.order);
+          }
         } else {
           this.error = 'Client not found';
           this.showErrorDialog();
