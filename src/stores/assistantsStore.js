@@ -3,6 +3,8 @@ import db, { get } from '../utils/db';
 import { getApiBaseUrl } from '../config';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
+import languageStore from './languageStore';
+import routeStore from './routeStore';
 
 const defaultAssistant = {
   id: null,
@@ -30,7 +32,12 @@ class AssistantsStore {
   // New assistant form state
   currentAssistant = {...defaultAssistant}
 
-  isEditMode = false;
+  // UI state
+  expandedGroups = new Set();
+  
+  // Group ordering
+  groupOrder = [];
+  pendingGroups = null;
 
   get filteredAssistants() {
     if (!this.searchQuery) return this.assistants;
@@ -44,18 +51,47 @@ class AssistantsStore {
   }
 
   get groupedAssistants() {
-    const grouped = {};
     const assistantsToGroup = this.searchQuery ? this.filteredAssistants : this.assistants;
     
-    assistantsToGroup.forEach(assistant => {
-      const group = assistant.group || 'Default';
-      if (!grouped[group]) {
-        grouped[group] = [];
-      }
-      grouped[group].push(assistant);
+    // Initialize groupOrder if empty - load from saved assistant group order
+    if (this.groupOrder.length === 0) {
+      this.groupOrder = clientStore.client.settings.assistantGroups ||
+        [...new Set(assistantsToGroup.map(assistant => assistant.group || 'Default'))];
+    }
+
+    const groups = this.groupOrder;
+    const grouped = {};
+
+    groups.forEach(group => {
+      const groupAssistants = assistantsToGroup.filter(assistant => (assistant.group || 'Default') === group);
+      grouped[group] = groupAssistants;
     });
-    
+
     return grouped;
+  }
+
+  get isEditMode() {
+    // Check if current URL contains mode=edit parameter
+    if (typeof window !== 'undefined' && window.location) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('mode') === 'edit';
+    }
+    return false;
+  }
+
+  get pageTitle() {
+    return this.isEditMode ? languageStore.t('menu.admin_page.manage_assistant') : languageStore.t('menu.ai');
+  }
+
+  get isEmpty() {
+    return !this.loading && !this.error && !this.assistants.length;
+  }
+
+  get loadingMessage() {
+    if (this.loading) return languageStore.t('menu.categories.assistant.loading');
+    if (this.error) return languageStore.t('menu.categories.assistant.loadingFailed');
+    if (!this.assistants.length) return languageStore.t('menu.categories.assistant.notFound');
+    return null;
   }
   
   constructor() {
@@ -305,6 +341,81 @@ class AssistantsStore {
       runInAction(() => {
         this.error = error.message;
       });
+      throw error;
+    }
+  };
+
+  // UI state methods
+  isGroupExpanded = (group) => {
+    return this.expandedGroups.has(group);
+  };
+
+  toggleGroup = (group) => {
+    if (this.expandedGroups.has(group)) {
+      this.expandedGroups.delete(group);
+    } else {
+      this.expandedGroups.add(group);
+    }
+  };
+
+  // Navigation methods
+  handleAssistantClick = (assistant, navigate) => {
+    if (this.isEditMode) {
+      navigate(`/assistants/${assistant.id}/edit`);
+    } else {
+      navigate(`/assistants/${assistant.id}/chat`);
+    }
+  };
+
+  handleEdit = (assistant, navigate) => {
+    navigate(`/assistants/${assistant.id}/edit`);
+  };
+
+  handleAddAssistant = (navigate) => {
+    navigate('/assistants/add');
+  };
+
+  handleToggleVisibility = async (assistant) => {
+    try {
+      await this.toggleAssistantVisibility(assistant);
+    } catch (error) {
+      console.error('Failed to toggle assistant visibility:', error);
+    }
+  };
+
+  handleDelete = async (assistant) => {
+    if (window.confirm(languageStore.t('assistants.confirmDelete', { name: assistant.name }))) {
+      try {
+        await this.deleteAssistant(assistant);
+      } catch (error) {
+        console.error('Failed to delete assistant:', error);
+      }
+    }
+  };
+
+  // Drag and drop methods
+  moveGroup = (fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+    
+    const groups = this.groupOrder.length > 0
+      ? [...this.groupOrder]
+      : Object.keys(this.groupedAssistants);
+
+    const [removed] = groups.splice(fromIndex, 1);
+    groups.splice(toIndex, 0, removed);
+    
+    this.groupOrder = groups;
+    this.pendingGroups = groups;
+  };
+
+  saveGroupOrder = async () => {
+    if (!this.pendingGroups) return;
+
+    try {
+      await clientStore.saveAssistantGroupOrder(this.pendingGroups);
+      this.pendingGroups = null;
+    } catch (error) {
+      console.error('Failed to save assistant group order:', error);
       throw error;
     }
   };

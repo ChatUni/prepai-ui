@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
 import lang from './languageStore';
-import { get } from '../utils/db';
+import { get, save } from '../utils/db';
 import { omit } from 'lodash';
 
 class ClientStore {
@@ -10,7 +10,8 @@ class ClientStore {
     name: '',
     settings: {
       banners: [],
-      groups: []
+      groups: [],
+      assistantGroups: []
     }
   };
   loading = false;
@@ -231,6 +232,11 @@ class ClientStore {
   async saveGroupOrder(groups) {
     this.client.settings.groups = groups;
     await this.saveChanges('groups');
+  }
+
+  async saveAssistantGroupOrder(assistantGroups) {
+    this.client.settings.assistantGroups = assistantGroups;
+    await this.saveChanges('assistantGroups');
   }
 
 }

@@ -46,6 +46,7 @@ const GroupSection = observer(({ group, index, series }) => (
     maxHeight="96"
     index={index}
     moveGroup={groupedSeriesStore.moveGroup}
+    onDrop={() => seriesStore.saveGroupOrder()}
     isDraggable={isEditable(group)}
     isDanger={isRecycle(group)}
   >

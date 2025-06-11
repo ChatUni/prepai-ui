@@ -298,9 +298,7 @@ class SeriesStore {
     if (!this.pendingGroups) return;
 
     try {
-      clientStore.client.settings.groups = this.pendingGroups;
-      await save('clients', clientStore.client)
-      
+      await clientStore.saveGroupOrder(this.pendingGroups);      
       this.pendingGroups = null;
     } catch (error) {
       console.error('Failed to save group order:', error);

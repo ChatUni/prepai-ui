@@ -36,7 +36,7 @@ const AccordionSection = observer(({
         moveGroup(fromIndex, toIndex);
       }
     },
-    onDrop: () => isDraggable ? seriesStore.saveGroupOrder() : undefined
+    onDrop: () => isDraggable && onDrop ? onDrop() : undefined
   });
 
   return (
