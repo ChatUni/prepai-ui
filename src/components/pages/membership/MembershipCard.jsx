@@ -53,9 +53,9 @@ const MembershipCard = observer(({ membership, onEdit, onDelete, index, moveMemb
           <div className="flex items-center gap-2">
             <ActionButton
               onClick={() => onEdit(membership)}
-              icon="FiEdit2"
+              icon="FiEdit"
               title={lang.t('membership.edit')}
-              color="orange"
+              color="green"
             />
             <ActionButton
               onClick={() => onDelete(membership)}

@@ -10,7 +10,8 @@ const defaultAssistant = {
   greeting: '',
   prompt: '',
   image: '',
-  model: ''
+  model: '',
+  group: ''
 };
 
 class AssistantsStore {
@@ -41,6 +42,21 @@ class AssistantsStore {
       assistant.prompt?.toLowerCase().includes(query)
     );
   }
+
+  get groupedAssistants() {
+    const grouped = {};
+    const assistantsToGroup = this.searchQuery ? this.filteredAssistants : this.assistants;
+    
+    assistantsToGroup.forEach(assistant => {
+      const group = assistant.group || 'Default';
+      if (!grouped[group]) {
+        grouped[group] = [];
+      }
+      grouped[group].push(assistant);
+    });
+    
+    return grouped;
+  }
   
   constructor() {
     makeAutoObservable(this);
@@ -52,7 +68,7 @@ class AssistantsStore {
     this.error = null;
     
     try {
-      const platform_assistants = await get('platform_assistants');
+      const platform_assistants = [] // await get('platform_assistants');
       const client_assistants = await get('client_assistants', { clientId: clientStore.client.id });
       
       runInAction(() => {
@@ -141,7 +157,8 @@ class AssistantsStore {
         greeting: this.currentAssistant.greeting,
         prompt: this.currentAssistant.prompt,
         image: this.currentAssistant.image,
-        model: this.currentAssistant.model
+        model: this.currentAssistant.model,
+        group: this.currentAssistant.group
       };
 
       const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
@@ -231,6 +248,66 @@ class AssistantsStore {
       });
     }
   }
+
+  // Toggle assistant visibility
+  toggleAssistantVisibility = async (assistant) => {
+    try {
+      const updatedAssistant = {
+        ...assistant,
+        hidden: !assistant.hidden
+      };
+
+      const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedAssistant)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update assistant: ${response.statusText}`);
+      }
+
+      runInAction(() => {
+        const index = this.assistants.findIndex(a => a.id === assistant.id);
+        if (index !== -1) {
+          this.assistants[index] = updatedAssistant;
+        }
+      });
+
+      return updatedAssistant;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
+  };
+
+  // Delete assistant
+  deleteAssistant = async (assistant) => {
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/delete?doc=assistants&id=${assistant.id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete assistant: ${response.statusText}`);
+      }
+
+      runInAction(() => {
+        this.assistants = this.assistants.filter(a => a.id !== assistant.id);
+      });
+
+      return true;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
+  };
 }
 
 // Create and export a singleton instance

@@ -124,16 +124,16 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                 ) : (
                   <div className="flex items-center gap-2">
                     <ActionButton
-                      onClick={() => seriesCardStore.openEditDialog(series)}
-                      icon="FiEdit2"
-                      title={t('series.edit.editTitle')}
-                      color="orange"
+                      onClick={() => seriesCardStore.openVisibilityDialog(series)}
+                      icon={`FiEye${series.hidden ? 'Off' : ''}`}
+                      title={t(`series.${series.hidden ? 'show' : 'hide'}`)}
+                      color="blue"
                     />
                     <ActionButton
-                      onClick={() => seriesCardStore.openVisibilityDialog(series)}
-                      icon={`MdVisibility${series.hidden ? 'Off' : ''}`}
-                      title={t(`series.${series.hidden ? 'show' : 'hide'}`)}
-                      color={series.hidden ? 'lightgray' : 'green'}
+                      onClick={() => seriesCardStore.openEditDialog(series)}
+                      icon="FiEdit"
+                      title={t('series.edit.editTitle')}
+                      color="green"
                     />
                     <ActionButton
                       onClick={() => seriesCardStore.openDeleteDialog(series)}

@@ -212,7 +212,8 @@
       "saveError": "Failed to save assistant",
       "model": "AI Model",
       "selectModel": "Select an AI model"
-    }
+    },
+    "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?"
   },
   "course": {
     "edit": "Edit Course",

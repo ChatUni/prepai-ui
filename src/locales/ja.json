@@ -214,7 +214,8 @@
       "saveError": "アシスタントの保存に失敗しました",
       "model": "AIモデル",
       "selectModel": "AIモデルを選択"
-    }
+    },
+    "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？"
   },
   "course": {
     "edit": "コースを編集",

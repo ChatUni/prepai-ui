@@ -212,7 +212,8 @@
       "saveError": "保存助手失败",
       "model": "AI模型",
       "selectModel": "选择AI模型"
-    }
+    },
+    "confirmDelete": "确定要删除「{name}」助手吗？"
   },
   "course": {
     "edit": "编辑课程",

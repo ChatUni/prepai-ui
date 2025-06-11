@@ -11,7 +11,7 @@ const routeMap = {
   'edit-series': '/series/select',
   'edit-banner': '/series/banners',
   'add-course-to-series': '/series/select',
-  'add-assistant': '/assistants/add',
+  'manage-assistant': '/assistants?mode=edit',
   'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
@@ -34,7 +34,7 @@ const AdminPage = observer(() => {
       <div className="space-y-2">
         <MenuListItem
           label={t('menu.admin_page.manage_assistant')}
-          onClick={() => navigate(routeMap['add-assistant'])}
+          onClick={() => navigate(routeMap['manage-assistant'])}
         />
         {/* <MenuListItem
           label={t('series.banners.title')}
