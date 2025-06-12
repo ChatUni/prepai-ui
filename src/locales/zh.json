@@ -171,47 +171,21 @@
       "uploadError": "上传图片失败"
     }
   },
-  "assistant": {
-    "chat": "对话",
-    "search": {
-      "placeholder": "按名称、问候语或提示词搜索助手..."
-    }
-  },
   "assistants": {
-    "chat": "对话",
-    "selectToEdit": "选择要编辑的助手",
+    "description": "从我们的AI助手中选择，帮助您完成各种任务。每个助手都专门针对不同类型的问题和对话进行了优化。",
+    "noAssistants": "暂无可用助手",
+    "delete": "删除助手",
+    "edit": "编辑助手",
+    "createNew": "创建新助手",
+    "name": "名称",
+    "greeting": "问候语",
+    "prompt": "提示词",
+    "model": "AI模型",
+    "selectModel": "选择AI模型",
+    "group": "分组",
+    "image": "图片",
     "add": {
-      "title": "添加新助手",
-      "name": "名称",
-      "greeting": "问候语",
-      "prompt": "提示词",
-      "icon": "图标",
-      "selectImage": "选择图片",
-      "changeImage": "更改图片",
-      "fileSelected": "已选择文件",
-      "iconPreview": "助手图标预览",
-      "creating": "创建中...",
-      "create": "创建助手",
-      "uploadError": "上传图片失败",
-      "createError": "创建助手失败"
-    },
-    "edit": {
-      "button": "编辑",
-      "title": "编辑助手",
-      "name": "名称",
-      "greeting": "问候语",
-      "prompt": "提示词",
-      "icon": "图标",
-      "selectImage": "选择图片",
-      "changeImage": "更改图片",
-      "fileSelected": "已选择文件",
-      "iconPreview": "助手图标预览",
-      "saving": "保存中...",
-      "save": "保存助手",
-      "uploadError": "上传图片失败",
-      "saveError": "保存助手失败",
-      "model": "AI模型",
-      "selectModel": "选择AI模型"
+      "title": "添加新助手"
     },
     "confirmDelete": "确定要删除「{name}」助手吗？"
   },

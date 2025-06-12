@@ -24,7 +24,6 @@ import EditBannerPage from './components/pages/account/EditBannerPage';
 import EditCoursePage from './components/pages/series/EditCoursePage';
 import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
 import AssistantsPage from './components/pages/assistant/AssistantsPage';
-import AssistantSelectPage from './components/pages/assistant/AssistantSelectPage';
 import EditAssistantPage from './components/pages/assistant/EditAssistantPage';
 import EditInstructorPage from './components/pages/instructor/EditInstructorPage';
 import AssistantChatPage from './components/pages/assistant/AssistantChatPage';
@@ -230,11 +229,6 @@ const MainLayout = observer(() => {
                 <Route path="/exam/questions/:courseId" element={
                   <AuthRoute>
                     <QuestionPage />
-                  </AuthRoute>
-                } />
-                <Route path="/assistants/select" element={
-                  <AuthRoute>
-                    <AssistantSelectPage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants" element={

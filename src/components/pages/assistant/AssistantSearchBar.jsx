@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
-import assistantsStore from '../../stores/assistantsStore';
-import languageStore from '../../stores/languageStore';
+import assistantsStore from '../../../stores/assistantsStore';
+import languageStore from '../../../stores/languageStore';
 
 const AssistantSearchBar = observer(() => {
   const { t } = languageStore;

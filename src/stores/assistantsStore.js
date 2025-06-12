@@ -1,13 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import db, { get } from '../utils/db';
-import { getApiBaseUrl } from '../config';
+import { get, save, remove } from '../utils/db';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
 import languageStore from './languageStore';
-import routeStore from './routeStore';
 
 const defaultAssistant = {
-  id: null,
+  client_id: null,
   name: '',
   greeting: '',
   prompt: '',
@@ -21,16 +19,20 @@ class AssistantsStore {
   assistants = [];
   loading = false;
   error = null;
+
+  // Search and filter
+  searchQuery = '';
   
   // OpenRouter models
   models = [];
   loadingModels = false;
   
-  // Search filter
-  searchQuery = '';
-  
-  // New assistant form state
-  currentAssistant = {...defaultAssistant}
+  // Dialog states
+  showDeleteDialog = false;
+  assistantToDelete = null;
+  showEditDialog = false;
+  editingAssistant = {};
+  isEditMode = false;
 
   // UI state
   expandedGroups = new Set();
@@ -39,19 +41,28 @@ class AssistantsStore {
   groupOrder = [];
   pendingGroups = null;
 
+  get assistants() {
+    return clientStore.client.assistants || [];
+  }
+
   get filteredAssistants() {
-    if (!this.searchQuery) return this.assistants;
-    
-    const query = this.searchQuery.toLowerCase();
-    return this.assistants.filter(assistant =>
-      assistant.name?.toLowerCase().includes(query) ||
-      assistant.greeting?.toLowerCase().includes(query) ||
-      assistant.prompt?.toLowerCase().includes(query)
-    );
+    let filtered = this.assistants;
+
+    // Filter by search keyword
+    if (this.searchQuery) {
+      const query = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(assistant =>
+        assistant.name?.toLowerCase().includes(query) ||
+        assistant.greeting?.toLowerCase().includes(query) ||
+        assistant.prompt?.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
   }
 
   get groupedAssistants() {
-    const assistantsToGroup = this.searchQuery ? this.filteredAssistants : this.assistants;
+    const assistantsToGroup = this.filteredAssistants;
     
     // Initialize groupOrder if empty - load from saved assistant group order
     if (this.groupOrder.length === 0) {
@@ -70,7 +81,7 @@ class AssistantsStore {
     return grouped;
   }
 
-  get isEditMode() {
+  get isAdminMode() {
     // Check if current URL contains mode=edit parameter
     if (typeof window !== 'undefined' && window.location) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -80,18 +91,7 @@ class AssistantsStore {
   }
 
   get pageTitle() {
-    return this.isEditMode ? languageStore.t('menu.admin_page.manage_assistant') : languageStore.t('menu.ai');
-  }
-
-  get isEmpty() {
-    return !this.loading && !this.error && !this.assistants.length;
-  }
-
-  get loadingMessage() {
-    if (this.loading) return languageStore.t('menu.categories.assistant.loading');
-    if (this.error) return languageStore.t('menu.categories.assistant.loadingFailed');
-    if (!this.assistants.length) return languageStore.t('menu.categories.assistant.notFound');
-    return null;
+    return this.isAdminMode ? languageStore.t('menu.admin_page.manage_assistant') : languageStore.t('menu.ai');
   }
   
   constructor() {
@@ -121,17 +121,10 @@ class AssistantsStore {
     }
   }
   
-  /**
-   * Set assistants data
-   * @param {Array} assistants - Array of assistant objects
-   */
   setAssistants(assistants) {
     this.assistants = assistants;
   }
   
-  /**
-   * Reset the store state
-   */
   reset() {
     this.assistants = [];
     this.loading = false;
@@ -144,120 +137,125 @@ class AssistantsStore {
     this.searchQuery = query;
   };
 
-  // Assistant form methods
-  setAssistantField = (field, value) => {
-    this.currentAssistant[field] = value;
+  // Dialog state methods
+  setShowDeleteDialog = (show) => {
+    this.showDeleteDialog = show;
   };
 
-  resetAssistant = () => {
-    this.currentAssistant = {...defaultAssistant};
-    this.isEditMode = false;
+  setAssistantToDelete = (assistant) => {
+    this.assistantToDelete = assistant;
+  };
+
+  setShowEditDialog = (show) => {
+    this.showEditDialog = show;
+  };
+
+  setEditingAssistant = (assistant) => {
+    this.editingAssistant = { ...assistant };
+  };
+
+  setIsEditMode = (isEdit) => {
+    this.isEditMode = isEdit;
+  };
+
+  // Assistant form field setters
+  setEditingAssistantName = (name) => {
+    this.editingAssistant.name = name;
+  };
+
+  setEditingAssistantGreeting = (greeting) => {
+    this.editingAssistant.greeting = greeting;
+  };
+
+  setEditingAssistantPrompt = (prompt) => {
+    this.editingAssistant.prompt = prompt;
+  };
+
+  setEditingAssistantModel = (model) => {
+    this.editingAssistant.model = model;
+  };
+
+  setEditingAssistantGroup = (group) => {
+    this.editingAssistant.group = group;
+  };
+
+  setEditingAssistantImage = (image) => {
+    this.editingAssistant.image = image;
   };
 
   uploadAssistantIcon = async (file, assistantId) => {
     try {
       return await uploadToCloudinary(file, `${clientStore.client.id}/assistants/${assistantId}`);
     } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
+      console.error('Error uploading assistant icon:', error);
       throw error;
     }
   };
 
-  selectedImagePreview = null;
-
-  setSelectedImagePreview = (file) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        runInAction(() => {
-          this.selectedImagePreview = reader.result;
-        });
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.selectedImagePreview = null;
-    }
+  // Handle methods following membership store pattern
+  handleEdit = (assistant) => {
+    this.setEditingAssistant(assistant);
+    this.setIsEditMode(true);
+    this.setShowEditDialog(true);
   };
 
-  saveAssistant = async (formData) => {
-    this.loading = true;
-    this.error = null;
+  handleDelete = (assistant) => {
+    this.setAssistantToDelete(assistant);
+    this.setShowDeleteDialog(true);
+  };
 
+  confirmDelete = async () => {
     try {
-      // First save the assistant data
-      const assistantData = {
-        id: this.currentAssistant.id,
-        name: this.currentAssistant.name,
-        greeting: this.currentAssistant.greeting,
-        prompt: this.currentAssistant.prompt,
-        image: this.currentAssistant.image,
-        model: this.currentAssistant.model,
-        group: this.currentAssistant.group
-      };
-
-      const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(assistantData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to create assistant: ${response.statusText}`);
+      if (this.assistantToDelete) {
+        await remove('assistants', this.assistantToDelete.id);
+        await clientStore.loadClient();
+        this.setShowDeleteDialog(false);
+        this.setAssistantToDelete(null);
       }
-
-      const savedAssistant = await response.json();
-
-      // If there's a new icon file, upload it
-      const iconFile = formData.get('icon');
-      if (iconFile instanceof File) {
-        const imageUrl = await this.uploadAssistantIcon(iconFile, savedAssistant.id);
-        savedAssistant.image = imageUrl;
-        
-        // Update the assistant with the new icon URL
-        await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(savedAssistant)
-        });
-      }
-      
-      runInAction(() => {
-        if (this.isEditMode) {
-          const index = this.assistants.findIndex(a => a.id === savedAssistant.id);
-          if (index !== -1) {
-            this.assistants[index] = savedAssistant;
-          }
-        } else {
-          this.assistants.push(savedAssistant);
-        }
-        this.resetAssistant();
-        this.selectedImagePreview = null;
-        this.loading = false;
-      });
-
-      return savedAssistant;
     } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-        this.loading = false;
-      });
-      throw error;
+      console.error('Error deleting assistant:', error);
     }
   };
-  
-  setAssistant(id) {
-    this.currentAssistant = this.assistants.find(a => a.id === +(id || 0)) || {...defaultAssistant} ;
-    this.isEditMode = !!id;
-  }
+
+  closeDeleteDialog = () => {
+    this.setShowDeleteDialog(false);
+    this.setAssistantToDelete(null);
+  };
+
+  handleCreateNew = () => {
+    this.setEditingAssistant({
+      client_id: clientStore.client.id,
+      name: '',
+      greeting: '',
+      prompt: '',
+      image: '',
+      model: '',
+      group: ''
+    });
+    this.setIsEditMode(false);
+    this.setShowEditDialog(true);
+  };
+
+  closeEditDialog = () => {
+    this.setShowEditDialog(false);
+    this.setEditingAssistant({});
+    this.setIsEditMode(false);
+  };
+
+  saveAssistant = async () => {
+    try {
+      const assistant = { ...this.editingAssistant };
+      
+      // Save to database
+      await save('assistants', assistant);
+      await clientStore.loadClient();
+      this.closeEditDialog();
+    } catch (error) {
+      console.error('Error saving assistant:', error);
+    }
+  };
   async fetchOpenRouterModels() {
     this.loadingModels = true;
-    this.error = null;
     
     try {
       const response = await fetch('https://openrouter.ai/api/v1/models', {
@@ -279,9 +277,9 @@ class AssistantsStore {
       });
     } catch (error) {
       runInAction(() => {
-        this.error = error.message;
         this.loadingModels = false;
       });
+      console.error('Error fetching OpenRouter models:', error);
     }
   }
 
@@ -293,55 +291,10 @@ class AssistantsStore {
         hidden: !assistant.hidden
       };
 
-      const response = await fetch(`${getApiBaseUrl()}/save?doc=assistants`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedAssistant)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update assistant: ${response.statusText}`);
-      }
-
-      runInAction(() => {
-        const index = this.assistants.findIndex(a => a.id === assistant.id);
-        if (index !== -1) {
-          this.assistants[index] = updatedAssistant;
-        }
-      });
-
-      return updatedAssistant;
+      await save('assistants', updatedAssistant);
+      await clientStore.loadClient();
     } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
-      throw error;
-    }
-  };
-
-  // Delete assistant
-  deleteAssistant = async (assistant) => {
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/delete?doc=assistants&id=${assistant.id}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete assistant: ${response.statusText}`);
-      }
-
-      runInAction(() => {
-        this.assistants = this.assistants.filter(a => a.id !== assistant.id);
-      });
-
-      return true;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
-      throw error;
+      console.error('Failed to toggle assistant visibility:', error);
     }
   };
 
@@ -360,40 +313,53 @@ class AssistantsStore {
 
   // Navigation methods
   handleAssistantClick = (assistant, navigate) => {
-    if (this.isEditMode) {
-      navigate(`/assistants/${assistant.id}/edit`);
+    if (this.isAdminMode) {
+      this.handleEdit(assistant);
     } else {
       navigate(`/assistants/${assistant.id}/chat`);
     }
   };
 
-  handleEdit = (assistant, navigate) => {
-    navigate(`/assistants/${assistant.id}/edit`);
-  };
-
-  handleAddAssistant = (navigate) => {
-    navigate('/assistants/add');
-  };
-
   handleToggleVisibility = async (assistant) => {
-    try {
-      await this.toggleAssistantVisibility(assistant);
-    } catch (error) {
-      console.error('Failed to toggle assistant visibility:', error);
-    }
-  };
-
-  handleDelete = async (assistant) => {
-    if (window.confirm(languageStore.t('assistants.confirmDelete', { name: assistant.name }))) {
-      try {
-        await this.deleteAssistant(assistant);
-      } catch (error) {
-        console.error('Failed to delete assistant:', error);
-      }
-    }
+    await this.toggleAssistantVisibility(assistant);
   };
 
   // Drag and drop methods
+  moveAssistant = (fromIndex, toIndex) => {
+    // Get the items being moved
+    const fromItem = this.filteredAssistants[fromIndex];
+    const toItem = this.filteredAssistants[toIndex];
+    
+    if (!fromItem || !toItem) return;
+    
+    // Update the order in the original assistants array
+    const allAssistants = [...this.assistants];
+    const fromOriginalIndex = allAssistants.findIndex(a => a.id === fromItem.id);
+    const toOriginalIndex = allAssistants.findIndex(a => a.id === toItem.id);
+    
+    if (fromOriginalIndex !== -1 && toOriginalIndex !== -1) {
+      const [originalMovedItem] = allAssistants.splice(fromOriginalIndex, 1);
+      allAssistants.splice(toOriginalIndex, 0, originalMovedItem);
+      
+      // Update the client's assistants array
+      clientStore.client.assistants = allAssistants;
+    }
+  };
+
+  saveAssistantOrder = async () => {
+    try {
+      const assistantsWithOrder = this.assistants.map((assistant, index) => ({
+        ...assistant,
+        order: index
+      }));
+      
+      await save('assistants', assistantsWithOrder);
+      await clientStore.loadClient();
+    } catch (error) {
+      console.error('Error saving assistant order:', error);
+    }
+  };
+
   moveGroup = (fromIndex, toIndex) => {
     if (fromIndex === toIndex) return;
     

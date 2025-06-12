@@ -137,12 +137,6 @@
       }
     }
   },
-  "assistant": {
-    "chat": "Chat",
-    "search": {
-      "placeholder": "Search assistants by name, greeting, or prompt..."
-    }
-  },
   "instructors": {
     "title": "Instructors",
     "selectToEdit": "Select Instructor to Edit",
@@ -178,40 +172,20 @@
     }
   },
   "assistants": {
-    "chat": "Chat",
-    "selectToEdit": "Select Assistant to Edit",
+    "description": "Choose from our AI assistants to help you with various tasks. Each assistant is specialized for different types of questions and conversations.",
+    "noAssistants": "No assistants available",
+    "delete": "Delete Assistant",
+    "edit": "Edit Assistant",
+    "createNew": "Create New Assistant",
+    "name": "Name",
+    "greeting": "Greeting",
+    "prompt": "Prompt",
+    "model": "AI Model",
+    "selectModel": "Select an AI model",
+    "group": "Group",
+    "image": "Image",
     "add": {
-      "title": "Add New Assistant",
-      "name": "Name",
-      "greeting": "Greeting",
-      "prompt": "Prompt",
-      "icon": "Icon",
-      "selectImage": "Select Image",
-      "changeImage": "Change Image",
-      "fileSelected": "File selected",
-      "iconPreview": "Assistant icon preview",
-      "creating": "Creating...",
-      "create": "Create Assistant",
-      "uploadError": "Failed to upload image",
-      "createError": "Failed to create assistant"
-    },
-    "edit": {
-      "button": "Edit",
-      "title": "Edit Assistant",
-      "name": "Name",
-      "greeting": "Greeting",
-      "prompt": "Prompt",
-      "icon": "Icon",
-      "selectImage": "Select Image",
-      "changeImage": "Change Image",
-      "fileSelected": "File selected",
-      "iconPreview": "Assistant icon preview",
-      "saving": "Saving...",
-      "save": "Save Assistant",
-      "uploadError": "Failed to upload image",
-      "saveError": "Failed to save assistant",
-      "model": "AI Model",
-      "selectModel": "Select an AI model"
+      "title": "Add New Assistant"
     },
     "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?"
   },

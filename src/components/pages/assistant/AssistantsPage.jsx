@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import assistantsStore from '../../../stores/assistantsStore';
 import languageStore from '../../../stores/languageStore';
-import LoadingState from '../../ui/LoadingState';
 import AssistantCard from './AssistantCard';
+import AssistantSearchBar from './AssistantSearchBar';
+import Dialog from '../../ui/Dialog';
+import EditAssistantPage from './EditAssistantPage';
 import { AccordionSection } from '../../ui/AdminAccordion';
 
 const GroupSection = observer(({ group, assistants, index, navigate }) => (
@@ -25,9 +27,9 @@ const GroupSection = observer(({ group, assistants, index, navigate }) => (
           key={assistant.id}
           assistant={assistant}
           onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
-          isEditMode={assistantsStore.isEditMode}
+          isEditMode={assistantsStore.isAdminMode}
           onToggleVisibility={assistantsStore.handleToggleVisibility}
-          onEdit={(assistant) => assistantsStore.handleEdit(assistant, navigate)}
+          onEdit={assistantsStore.handleEdit}
           onDelete={assistantsStore.handleDelete}
         />
       ))}
@@ -39,50 +41,64 @@ const AssistantsPage = observer(() => {
   const { t } = languageStore;
   const navigate = useNavigate();
 
-  const mainContent = (
-    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {assistantsStore.pageTitle}
-        </h1>
-        {assistantsStore.isEditMode && (
-          <button
-            onClick={() => assistantsStore.handleAddAssistant(navigate)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            {t('assistants.add.title')}
-          </button>
+  return (
+    <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
+      <div className="bg-white p-4">
+            <h1 className="text-2xl font-semibold pb-4">{assistantsStore.pageTitle}</h1>
+        
+        {/* Search Bar */}
+        {/* <AssistantSearchBar /> */}
+        
+        {assistantsStore.filteredAssistants.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              {assistantsStore.searchQuery
+                ? t('common.no_results')
+                : t('assistants.noAssistants')
+              }
+            </p>
+          </div>
+        ) : (
+          <div className="w-full space-y-4">
+            {Object.entries(assistantsStore.groupedAssistants).map(([group, assistants], index) => (
+              <GroupSection
+                key={group}
+                group={group}
+                assistants={assistants}
+                index={index}
+                navigate={navigate}
+              />
+            ))}
+          </div>
         )}
       </div>
-      <div className="w-full space-y-4">
-        {Object.entries(assistantsStore.groupedAssistants).map(([group, assistants], index) => (
-          <GroupSection
-            key={group}
-            group={group}
-            assistants={assistants}
-            index={index}
-            navigate={navigate}
-          />
-        ))}
-      </div>
-    </div>
-  );
 
-  const errorContent = (
-    <div className="flex flex-col items-center justify-center h-full w-full">
-      <div className="text-gray-600 mt-2">{assistantsStore.error}</div>
-    </div>
-  );
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        isOpen={assistantsStore.showDeleteDialog}
+        onClose={assistantsStore.closeDeleteDialog}
+        onConfirm={assistantsStore.confirmDelete}
+        title={t('assistants.delete')}
+        isConfirm={true}
+      >
+        <p>
+          {assistantsStore.assistantToDelete &&
+            t('assistants.confirmDelete', { name: assistantsStore.assistantToDelete.name })
+          }
+        </p>
+      </Dialog>
 
-  return (
-    <LoadingState
-      isLoading={assistantsStore.loading}
-      isError={!!assistantsStore.error}
-      isEmpty={assistantsStore.isEmpty}
-      customMessage={assistantsStore.loadingMessage}
-    >
-      {assistantsStore.error ? errorContent : mainContent}
-    </LoadingState>
+      {/* Edit Assistant Dialog */}
+      <Dialog
+        isOpen={assistantsStore.showEditDialog}
+        onClose={assistantsStore.closeEditDialog}
+        onConfirm={assistantsStore.saveAssistant}
+        title={assistantsStore.isEditMode ? t('assistants.edit') : t('assistants.createNew')}
+        isConfirm={true}
+      >
+        <EditAssistantPage />
+      </Dialog>
+    </div>
   );
 });
 
