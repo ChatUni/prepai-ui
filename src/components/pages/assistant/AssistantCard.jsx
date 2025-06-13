@@ -1,9 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
 import { FiEye, FiEyeOff, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { MdDragIndicator } from 'react-icons/md';
 import { getCardBaseClasses } from '../../../utils/cardStyles';
 import languageStore from '../../../stores/languageStore';
+import assistantsStore from '../../../stores/assistantsStore';
 import ActionButton from '../../ui/ActionButton';
+import useDragAndDrop from '../../../hooks/useDragAndDrop';
 
 const AssistantCard = observer(({
   assistant,
@@ -11,14 +14,35 @@ const AssistantCard = observer(({
   isEditMode = false,
   onToggleVisibility,
   onEdit,
-  onDelete
+  onDelete,
+  index,
+  moveItem,
+  group
 }) => {
   const { t } = languageStore;
+  
   // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.src = '/images/avatar.png';
   }, []);
+
+  // Drag and drop functionality
+  const { isDragging, isOver, handleRef } = useDragAndDrop({
+    type: `assistant-${group}`,
+    index,
+    moveItem,
+    onDrop: async () => {
+      // Save the assistant order after drop
+      if (moveItem) {
+        try {
+          await assistantsStore.saveAssistantGroupOrder();
+        } catch (error) {
+          console.error('Error saving assistant order:', error);
+        }
+      }
+    }
+  });
 
   const handleCardClick = (e) => {
     // Don't trigger card click if clicking on action buttons
@@ -45,7 +69,8 @@ const AssistantCard = observer(({
 
   return (
     <div
-      className={getCardBaseClasses(false, false, !isEditMode)}
+      ref={isEditMode ? handleRef : null}
+      className={getCardBaseClasses(isDragging, isOver, !isEditMode)}
       onClick={handleCardClick}
     >
       <div className="p-4">
@@ -75,7 +100,7 @@ const AssistantCard = observer(({
 
           {/* Action buttons for edit mode */}
           {isEditMode && (
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-2 flex-shrink-0 items-center">
               <ActionButton
                 onClick={handleToggleClick}
                 color="blue"
@@ -93,6 +118,10 @@ const AssistantCard = observer(({
                 color="red"
                 icon="FiTrash2"
                 title={t('common.delete')}
+              />
+              <MdDragIndicator
+                className="text-gray-400 text-xl cursor-move"
+                aria-label="Drag to reorder"
               />
             </div>
           )}

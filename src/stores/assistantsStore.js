@@ -33,6 +33,8 @@ class AssistantsStore {
   showEditDialog = false;
   editingAssistant = {};
   isEditMode = false;
+  showVisibilityDialog = false;
+  currentAssistant = null;
 
   // UI state
   expandedGroups = new Set();
@@ -292,7 +294,7 @@ class AssistantsStore {
       };
 
       await save('assistants', updatedAssistant);
-      await clientStore.loadClient();
+      await this.fetchAssistants();
     } catch (error) {
       console.error('Failed to toggle assistant visibility:', error);
     }
@@ -320,8 +322,26 @@ class AssistantsStore {
     }
   };
 
-  handleToggleVisibility = async (assistant) => {
-    await this.toggleAssistantVisibility(assistant);
+  openVisibilityDialog = (assistant) => {
+    this.currentAssistant = assistant;
+    this.showVisibilityDialog = true;
+  };
+
+  closeVisibilityDialog = () => {
+    this.showVisibilityDialog = false;
+    this.currentAssistant = null;
+  };
+
+  confirmVisibilityChange = async () => {
+    if (this.currentAssistant) {
+      await this.toggleAssistantVisibility(this.currentAssistant);
+      await clientStore.loadClient();
+      this.closeVisibilityDialog();
+    }
+  };
+
+  handleToggleVisibility = (assistant) => {
+    this.openVisibilityDialog(assistant);
   };
 
   // Drag and drop methods
@@ -346,6 +366,28 @@ class AssistantsStore {
     }
   };
 
+  moveAssistantInGroup = (group, fromIndex, toIndex) => {
+    const groupAssistants = this.groupedAssistants[group];
+    if (!groupAssistants || fromIndex === toIndex) return;
+
+    // Create a copy of the group assistants
+    const updatedGroupAssistants = [...groupAssistants];
+    const [movedAssistant] = updatedGroupAssistants.splice(fromIndex, 1);
+    updatedGroupAssistants.splice(toIndex, 0, movedAssistant);
+
+    // Update the order in the main assistants array
+    const allAssistants = [...this.assistants];
+    updatedGroupAssistants.forEach((assistant, index) => {
+      const originalIndex = allAssistants.findIndex(a => a.id === assistant.id);
+      if (originalIndex !== -1) {
+        allAssistants[originalIndex] = { ...assistant, groupOrder: index };
+      }
+    });
+
+    // Update the client's assistants array
+    clientStore.client.assistants = allAssistants;
+  };
+
   saveAssistantOrder = async () => {
     try {
       const assistantsWithOrder = this.assistants.map((assistant, index) => ({
@@ -357,6 +399,16 @@ class AssistantsStore {
       await clientStore.loadClient();
     } catch (error) {
       console.error('Error saving assistant order:', error);
+    }
+  };
+
+  saveAssistantGroupOrder = async () => {
+    try {
+      // Save the current state of assistants with their updated positions
+      await save('assistants', this.assistants);
+      await clientStore.loadClient();
+    } catch (error) {
+      console.error('Error saving assistant group order:', error);
     }
   };
 

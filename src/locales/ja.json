@@ -184,10 +184,14 @@
     "selectModel": "AIモデルを選択",
     "group": "グループ",
     "image": "画像",
+    "show": "アシスタントを表示",
+    "hide": "アシスタントを非表示",
     "add": {
       "title": "新規アシスタントを追加"
     },
-    "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？"
+    "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？",
+    "confirmShow": "「{name}」アシスタントを表示してもよろしいですか？",
+    "confirmHide": "「{name}」アシスタントを非表示にしてもよろしいですか？"
   },
   "course": {
     "edit": "コースを編集",

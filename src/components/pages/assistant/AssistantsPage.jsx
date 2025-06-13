@@ -19,13 +19,20 @@ const GroupSection = observer(({ group, assistants, index, navigate }) => (
     index={index}
     moveGroup={assistantsStore.moveGroup}
     onDrop={() => assistantsStore.saveGroupOrder()}
-    isDraggable={assistantsStore.isEditMode}
+    isDraggable={assistantsStore.isAdminMode}
   >
     <div className="space-y-3 p-2">
-      {assistants.map(assistant => (
+      {assistants.map((assistant, index) => (
         <AssistantCard
           key={assistant.id}
           assistant={assistant}
+          index={index}
+          group={group}
+          moveItem={(fromIndex, toIndex) => {
+            if (assistantsStore.isAdminMode) {
+              assistantsStore.moveAssistantInGroup(group, fromIndex, toIndex);
+            }
+          }}
           onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
           isEditMode={assistantsStore.isAdminMode}
           onToggleVisibility={assistantsStore.handleToggleVisibility}
@@ -85,6 +92,21 @@ const AssistantsPage = observer(() => {
           {assistantsStore.assistantToDelete &&
             t('assistants.confirmDelete', { name: assistantsStore.assistantToDelete.name })
           }
+        </p>
+      </Dialog>
+
+      {/* Visibility Confirmation Dialog */}
+      <Dialog
+        isOpen={assistantsStore.showVisibilityDialog}
+        onClose={assistantsStore.closeVisibilityDialog}
+        onConfirm={assistantsStore.confirmVisibilityChange}
+        title={assistantsStore.currentAssistant?.hidden ? t('assistants.show') : t('assistants.hide')}
+        isConfirm={true}
+      >
+        <p>
+          {assistantsStore.currentAssistant?.hidden
+            ? t('assistants.confirmShow', { name: assistantsStore.currentAssistant?.name })
+            : t('assistants.confirmHide', { name: assistantsStore.currentAssistant?.name })}
         </p>
       </Dialog>
 

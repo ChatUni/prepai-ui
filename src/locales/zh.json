@@ -184,10 +184,14 @@
     "selectModel": "选择AI模型",
     "group": "分组",
     "image": "图片",
+    "show": "显示助手",
+    "hide": "隐藏助手",
     "add": {
       "title": "添加新助手"
     },
-    "confirmDelete": "确定要删除「{name}」助手吗？"
+    "confirmDelete": "确定要删除「{name}」助手吗？",
+    "confirmShow": "确定要显示「{name}」助手吗？",
+    "confirmHide": "确定要隐藏「{name}」助手吗？"
   },
   "course": {
     "edit": "编辑课程",

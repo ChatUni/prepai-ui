@@ -184,10 +184,14 @@
     "selectModel": "Select an AI model",
     "group": "Group",
     "image": "Image",
+    "show": "Show Assistant",
+    "hide": "Hide Assistant",
     "add": {
       "title": "Add New Assistant"
     },
-    "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?"
+    "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?",
+    "confirmShow": "Are you sure you want to show \"{name}\" assistant?",
+    "confirmHide": "Are you sure you want to hide \"{name}\" assistant?"
   },
   "course": {
     "edit": "Edit Course",

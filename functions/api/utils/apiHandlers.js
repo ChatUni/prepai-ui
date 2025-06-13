@@ -1,5 +1,5 @@
 const { get, save, remove, flat } = require('./db.js');
-const { handleUrlSigning, handleFileUpload } = require('./cosServerHelper.js');
+// const { handleUrlSigning, handleFileUpload } = require('./cosServerHelper.js');
 
 module.exports = {
   db_handlers: {
@@ -21,8 +21,8 @@ module.exports = {
   },
   handlers: {
     post: {
-      cos_sign: (q, b) => handleUrlSigning(b.url),
-      cos_upload: (q, b) => handleFileUpload(b.file, b.key),
+      // cos_sign: (q, b) => handleUrlSigning(b.url),
+      // cos_upload: (q, b) => handleFileUpload(b.file, b.key),
     },
   },
   nocache: true,
