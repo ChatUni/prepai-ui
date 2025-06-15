@@ -1,12 +1,12 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import ActionButton from '../../ui/ActionButton';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../ui/Button';
 import SeriesCard from './SeriesCard';
 import EditSeriesPage from './EditSeriesPage';
 import EditInstructorPage from '../instructor/EditInstructorPage';
-import { AccordionSection } from '../../ui/AdminAccordion';
-import Dialog from '../../ui/Dialog';
+import GroupedList from '../../ui/GroupedList';
+import { DeleteConfirmDialog, VisibilityConfirmDialog, EditDialog, GroupNameDialog, ErrorDialog } from '../../ui/CrudDialogs';
 import languageStore from '../../../stores/languageStore';
 import routeStore from '../../../stores/routeStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
@@ -16,57 +16,14 @@ import editSeriesStore from '../../../stores/editSeriesStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
 
 const { t } = languageStore;
+
 const isRecycle = (group) => group === t('series.groups.recycle');
 const isEditable = (group) => routeStore.isSeriesSettingMode && !isRecycle(group);
 
-const renderGroupActions = (group) => !isEditable(group) ? null : (
-  <div className="flex items-center gap-2">
-    <ActionButton
-      onClick={() => groupedSeriesStore.openEditGroupDialog(group)}
-      icon="FiEdit2"
-      color="white"
-      title={t('series.groups.editGroup')}
-    />
-    <ActionButton
-      onClick={() => groupedSeriesStore.handleDeleteGroup(group)}
-      icon="FiTrash2"
-      color="white"
-      title={t('series.groups.deleteGroup')}
-    />
-  </div>
-)
+const GroupedSeriesList = observer(() => {
+  const navigate = useNavigate();
 
-const GroupSection = observer(({ group, index, series }) => (
-  <AccordionSection
-    key={group}
-    title={`${group} (${series.length})`}
-    actions={renderGroupActions(group)}
-    isExpanded={groupedSeriesStore.isGroupExpanded(group)}
-    onToggle={() => groupedSeriesStore.toggleGroup(group)}
-    maxHeight="96"
-    index={index}
-    moveGroup={groupedSeriesStore.moveGroup}
-    onDrop={() => seriesStore.saveGroupOrder()}
-    isDraggable={isEditable(group)}
-    isDanger={isRecycle(group)}
-  >
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2">
-      {series.map((seriesItem, index) => (
-        <SeriesCard
-          key={`${group}-${seriesItem.id}-${index}`}
-          series={seriesItem}
-          index={index}
-          moveItem={(fromIndex, toIndex) =>
-            routeStore.isSeriesSettingMode &&
-            groupedSeriesStore.moveSeriesInGroup(group, fromIndex, toIndex)
-          }
-        />
-      ))}
-    </div>
-  </AccordionSection>
-))
-
-const GroupedSeriesList = observer(() => (
+  return (
     <div className="w-full space-y-4">
       {routeStore.isSeriesSettingMode && (
         <div className="grid grid-cols-3 gap-4 mt-8">
@@ -96,91 +53,118 @@ const GroupedSeriesList = observer(() => (
         </div>
       )}
 
-      {Object.entries(seriesStore.groupedSeries).map(([group, series], index) => (
-        <GroupSection
-          key={group}
-          group={group}
-          index={index}
-          series={series}
-        />
-      ))}
+      <GroupedList
+        groupedItems={seriesStore.groupedSeries}
+        store={groupedSeriesStore}
+        isEditMode={routeStore.isSeriesSettingMode}
+        itemsContainerClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2"
+        isGroupEditable={isEditable}
+        isGroupDanger={isRecycle}
+        onItemMove={groupedSeriesStore.moveSeriesInGroup}
+        onGroupDrop={() => seriesStore.saveGroupOrder()}
+        onEditGroup={groupedSeriesStore.openEditGroupDialog}
+        onDeleteGroup={groupedSeriesStore.handleDeleteGroup}
+        editGroupTitle={t('series.groups.editGroup')}
+        deleteGroupTitle={t('series.groups.deleteGroup')}
+        renderItem={(series, index, group, { moveItem, isEditMode }) => (
+          <SeriesCard
+            key={`${group}-${series.id}-${index}`}
+            series={series}
+            index={index}
+            group={group}
+            moveItem={moveItem}
+            isEditMode={isEditMode}
+            onClick={(series) => seriesCardStore.handleSeriesClick(series.id, navigate)}
+            onToggleVisibility={seriesCardStore.handleToggleVisibility}
+            onEdit={seriesCardStore.handleEdit}
+            onDelete={seriesCardStore.handleDelete}
+          />
+        )}
+      />
 
-      {routeStore.isSeriesSettingMode && (
-        <GroupSection
-          key={t('series.groups.recycle')}
-          group={t('series.groups.recycle')}
-          index={-1}
-          series={seriesStore.deletedSeries}
+      {routeStore.isSeriesSettingMode && seriesStore.deletedSeries.length > 0 && (
+        <GroupedList
+          groupedItems={{ [t('series.groups.recycle')]: seriesStore.deletedSeries }}
+          store={groupedSeriesStore}
+          isEditMode={routeStore.isSeriesSettingMode}
+          itemsContainerClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2"
+          isGroupEditable={() => false}
+          isGroupDanger={() => true}
+          renderItem={(series, index, group, { isEditMode }) => (
+            <SeriesCard
+              key={`${group}-${series.id}-${index}`}
+              series={series}
+              index={index}
+              group={group}
+              isEditMode={isEditMode}
+              onEdit={seriesCardStore.handleEdit}
+              onDelete={seriesCardStore.handleRestore}
+            />
+          )}
         />
       )}
 
-      <Dialog
+      {/* Group Management Dialogs */}
+      <GroupNameDialog
         isOpen={groupedSeriesStore.isAddGroupDialogOpen}
         onClose={groupedSeriesStore.closeAddGroupDialog}
         onConfirm={groupedSeriesStore.addGroup}
         title={t('series.groups.newGroup')}
-        isConfirm={true}
-      >
-        <input
-          type="text"
-          value={groupedSeriesStore.newGroupName}
-          onChange={(e) => groupedSeriesStore.setNewGroupName(e.target.value)}
-          placeholder={t('series.groups.enterName')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          autoFocus
-        />
-      </Dialog>
+        value={groupedSeriesStore.newGroupName}
+        onChange={groupedSeriesStore.setNewGroupName}
+        placeholder={t('series.groups.enterName')}
+      />
 
-      <Dialog
+      <GroupNameDialog
         isOpen={groupedSeriesStore.isEditGroupDialogOpen}
         onClose={groupedSeriesStore.closeEditGroupDialog}
         onConfirm={groupedSeriesStore.editGroup}
         title={t('series.groups.editGroup')}
-        isConfirm={true}
-      >
-        <input
-          type="text"
-          value={groupedSeriesStore.newGroupName}
-          onChange={(e) => groupedSeriesStore.setNewGroupName(e.target.value)}
-          placeholder={t('series.groups.enterName')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          autoFocus
-        />
-      </Dialog>
+        value={groupedSeriesStore.newGroupName}
+        onChange={groupedSeriesStore.setNewGroupName}
+        placeholder={t('series.groups.enterName')}
+      />
 
-      <Dialog
+      <DeleteConfirmDialog
         isOpen={groupedSeriesStore.isDeleteGroupDialogOpen}
         onClose={groupedSeriesStore.closeDeleteGroupDialog}
         onConfirm={groupedSeriesStore.deleteGroup}
-        title={t('series.groups.deleteGroup')}
-        isConfirm={true}
-      >
-        <p className="text-gray-700">{t('series.groups.confirmDelete')}</p>
-      </Dialog>
+        item={{ name: groupedSeriesStore.groupToDelete }}
+        itemType="series.groups"
+      />
 
-      <Dialog
+      <ErrorDialog
         isOpen={groupedSeriesStore.isErrorDialogOpen}
         onClose={groupedSeriesStore.closeErrorDialog}
-        title={t('common.error')}
-      >
-        <p className="text-gray-700">{groupedSeriesStore.errorMessage}</p>
-      </Dialog>
+        message={groupedSeriesStore.errorMessage}
+      />
 
+      {/* Series CRUD Dialogs */}
+      <DeleteConfirmDialog
+        isOpen={seriesCardStore.showDeleteDialog}
+        onClose={seriesCardStore.closeDeleteDialog}
+        onConfirm={seriesCardStore.confirmDelete}
+        item={seriesCardStore.currentSeries}
+        itemType="series"
+      />
+
+      <VisibilityConfirmDialog
+        isOpen={seriesCardStore.showVisibilityDialog}
+        onClose={seriesCardStore.closeVisibilityDialog}
+        onConfirm={seriesCardStore.confirmVisibilityChange}
+        item={seriesCardStore.currentSeries}
+        itemType="series"
+      />
+
+      {/* Edit Series Dialog */}
       {(groupedSeriesStore.isEditSeriesDialogOpen || editSeriesStore.series) && (
         <EditSeriesPage
           onClose={groupedSeriesStore.closeEditSeriesDialog}
-          // onSave={async () => {
-          //   const success = await editSeriesStore.saveSeries();
-          //   if (success) {
-          //     await seriesStore.fetchSeries();
-          //     groupedSeriesStore.closeEditSeriesDialog();
-          //     editSeriesStore.reset(null);
-          //   }
-          // }}
         />
       )}
 
-      <Dialog
+      {/* Edit Instructor Dialog */}
+      <EditDialog
         isOpen={seriesCardStore.editInstructorDialogOpen}
         onClose={seriesCardStore.closeEditInstructorDialog}
         onConfirm={async () => {
@@ -192,11 +176,11 @@ const GroupedSeriesList = observer(() => (
         }}
         title={editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}
         size="xl"
-        isConfirm={true}
       >
         <EditInstructorPage />
-      </Dialog>
+      </EditDialog>
     </div>
-));
+  );
+});
 
 export default GroupedSeriesList;

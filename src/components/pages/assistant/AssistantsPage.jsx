@@ -5,44 +5,9 @@ import assistantsStore from '../../../stores/assistantsStore';
 import languageStore from '../../../stores/languageStore';
 import AssistantCard from './AssistantCard';
 import AssistantSearchBar from './AssistantSearchBar';
-import Dialog from '../../ui/Dialog';
 import EditAssistantPage from './EditAssistantPage';
-import { AccordionSection } from '../../ui/AdminAccordion';
-
-const GroupSection = observer(({ group, assistants, index, navigate }) => (
-  <AccordionSection
-    key={group}
-    title={`${group} (${assistants.length})`}
-    isExpanded={assistantsStore.isGroupExpanded(group)}
-    onToggle={() => assistantsStore.toggleGroup(group)}
-    maxHeight="96"
-    index={index}
-    moveGroup={assistantsStore.moveGroup}
-    onDrop={() => assistantsStore.saveGroupOrder()}
-    isDraggable={assistantsStore.isAdminMode}
-  >
-    <div className="space-y-3 p-2">
-      {assistants.map((assistant, index) => (
-        <AssistantCard
-          key={assistant.id}
-          assistant={assistant}
-          index={index}
-          group={group}
-          moveItem={(fromIndex, toIndex) => {
-            if (assistantsStore.isAdminMode) {
-              assistantsStore.moveAssistantInGroup(group, fromIndex, toIndex);
-            }
-          }}
-          onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
-          isEditMode={assistantsStore.isAdminMode}
-          onToggleVisibility={assistantsStore.handleToggleVisibility}
-          onEdit={assistantsStore.handleEdit}
-          onDelete={assistantsStore.handleDelete}
-        />
-      ))}
-    </div>
-  </AccordionSection>
-));
+import GroupedList from '../../ui/GroupedList';
+import { DeleteConfirmDialog, VisibilityConfirmDialog, EditDialog } from '../../ui/CrudDialogs';
 
 const AssistantsPage = observer(() => {
   const { t } = languageStore;
@@ -66,60 +31,56 @@ const AssistantsPage = observer(() => {
             </p>
           </div>
         ) : (
-          <div className="w-full space-y-4">
-            {Object.entries(assistantsStore.groupedAssistants).map(([group, assistants], index) => (
-              <GroupSection
-                key={group}
-                group={group}
-                assistants={assistants}
+          <GroupedList
+            groupedItems={assistantsStore.groupedAssistants}
+            store={assistantsStore}
+            isEditMode={assistantsStore.isAdminMode}
+            onItemMove={assistantsStore.moveAssistantInGroup}
+            renderItem={(assistant, index, group, { moveItem, isEditMode }) => (
+              <AssistantCard
+                key={assistant.id}
+                assistant={assistant}
                 index={index}
-                navigate={navigate}
+                group={group}
+                moveItem={moveItem}
+                onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
+                isEditMode={isEditMode}
+                onToggleVisibility={assistantsStore.handleToggleVisibility}
+                onEdit={assistantsStore.handleEdit}
+                onDelete={assistantsStore.handleDelete}
               />
-            ))}
-          </div>
+            )}
+          />
         )}
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
+      <DeleteConfirmDialog
         isOpen={assistantsStore.showDeleteDialog}
         onClose={assistantsStore.closeDeleteDialog}
         onConfirm={assistantsStore.confirmDelete}
-        title={t('assistants.delete')}
-        isConfirm={true}
-      >
-        <p>
-          {assistantsStore.assistantToDelete &&
-            t('assistants.confirmDelete', { name: assistantsStore.assistantToDelete.name })
-          }
-        </p>
-      </Dialog>
+        item={assistantsStore.itemToDelete}
+        itemType="assistants"
+      />
 
       {/* Visibility Confirmation Dialog */}
-      <Dialog
+      <VisibilityConfirmDialog
         isOpen={assistantsStore.showVisibilityDialog}
         onClose={assistantsStore.closeVisibilityDialog}
         onConfirm={assistantsStore.confirmVisibilityChange}
-        title={assistantsStore.currentAssistant?.hidden ? t('assistants.show') : t('assistants.hide')}
-        isConfirm={true}
-      >
-        <p>
-          {assistantsStore.currentAssistant?.hidden
-            ? t('assistants.confirmShow', { name: assistantsStore.currentAssistant?.name })
-            : t('assistants.confirmHide', { name: assistantsStore.currentAssistant?.name })}
-        </p>
-      </Dialog>
+        item={assistantsStore.currentItem}
+        itemType="assistants"
+      />
 
       {/* Edit Assistant Dialog */}
-      <Dialog
+      <EditDialog
         isOpen={assistantsStore.showEditDialog}
         onClose={assistantsStore.closeEditDialog}
         onConfirm={assistantsStore.saveAssistant}
         title={assistantsStore.isEditMode ? t('assistants.edit') : t('assistants.createNew')}
-        isConfirm={true}
       >
         <EditAssistantPage />
-      </Dialog>
+      </EditDialog>
     </div>
   );
 });

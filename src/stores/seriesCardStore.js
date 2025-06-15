@@ -146,6 +146,27 @@ class SeriesCardStore {
       this.closeRestoreDialog();
     }
   };
+
+  // Methods to match the BaseCard pattern - using arrow functions to ensure proper binding
+  handleToggleVisibility = (series) => {
+    this.openVisibilityDialog(series);
+  };
+
+  handleEdit = (series) => {
+    this.openEditDialog(series);
+  };
+
+  handleDelete = (series) => {
+    if (series.deleted) {
+      this.openRestoreDialog(series);
+    } else {
+      this.openDeleteDialog(series);
+    }
+  };
+
+  handleRestore = (series) => {
+    this.openRestoreDialog(series);
+  };
 }
 
 const seriesCardStore = new SeriesCardStore();

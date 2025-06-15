@@ -1,55 +1,65 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import editSeriesStore from '../../../stores/editSeriesStore';
-import { useState } from 'react';
-import { MdDragIndicator, MdAdd, MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { useCallback } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
-import ActionButton from '../../ui/ActionButton';
+import BaseCard from '../../ui/BaseCard';
 import Dialog from '../../ui/Dialog';
-import ExpandArrow from '../../ui/ExpandArrow';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
 import seriesStore from '../../../stores/seriesStore';
-import coursesStore from '../../../stores/coursesStore';
-import useDragAndDrop from '../../../hooks/useDragAndDrop';
-import CourseCard from './CourseCard';
-import { getCardBaseClasses } from '../../../utils/cardStyles';
 
-const SeriesCard = observer(({ series, index, moveItem }) => {
+const SeriesCard = observer(({
+  series,
+  index,
+  moveItem,
+  group,
+  onClick,
+  onToggleVisibility,
+  onEdit,
+  onDelete,
+  isEditMode = false
+}) => {
   const { t } = languageStore;
   const navigate = useNavigate();
   const validatedSeries = seriesCardStore.validateSeries(series);
   if (!validatedSeries) return null;
 
-  const { id: seriesId, name, desc, cover, group, price } = validatedSeries;
+  const { id: seriesId, name, desc, cover, price } = validatedSeries;
   const image = seriesCardStore.getImage(cover);
   const instructors = seriesStore.getSeriesInstructors(series);
   const courses = series.courses || [];
 
-  const handleMoveCourse = (dragIndex, dropIndex) => {
-    const courses = coursesStore.courses
-      .filter(course => course?.series?.id === seriesId);
-    const [removed] = courses.splice(dragIndex, 1);
-    courses.splice(dropIndex, 0, removed);
-    return coursesStore.saveSeriesUpdates();
-  };
+  const handleCardClick = useCallback((series) => {
+    if (onClick) {
+      onClick(series);
+    } else if (!isEditMode) {
+      seriesCardStore.handleSeriesClick(seriesId, navigate);
+    }
+  }, [onClick, isEditMode, seriesId, navigate]);
 
-  const { isDragging, isOver, handleRef } = useDragAndDrop({
-    type: `series-${group}`,
-    index,
-    moveItem,
-    onDrop: seriesStore.saveSeriesUpdates
-  });
+  const handleInstructorClick = useCallback((e, instructor) => {
+    e.stopPropagation();
+    if (isEditMode) {
+      seriesCardStore.openEditInstructorDialog(instructor);
+    }
+  }, [isEditMode]);
 
   return (
-    <div
-      ref={routeStore.isSeriesSettingMode ? handleRef : null}
-      className={getCardBaseClasses(isDragging, isOver, !routeStore.isSeriesSettingMode)}
-    >
-      <div
-        onClick={routeStore.isSeriesSettingMode ? undefined : (e) => seriesCardStore.handleSeriesClick(seriesId, navigate, e)}
+    <>
+      <BaseCard
+        item={series}
+        index={index}
+        group={group}
+        moveItem={moveItem}
+        isEditMode={isEditMode}
+        onClick={handleCardClick}
+        onToggleVisibility={onToggleVisibility}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onDrop={seriesStore.saveSeriesUpdates}
+        className="relative"
       >
         <div className="relative pb-[56.25%]">
           <img
@@ -68,11 +78,8 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
               {instructors.map((instructor, index) => (
                 <div
                   key={instructor.id}
-                  className={`flex items-center ${routeStore.isSeriesSettingMode ? 'cursor-pointer hover:opacity-80' : ''}`}
-                  onClick={routeStore.isSeriesSettingMode ? (e) => {
-                    e.stopPropagation();
-                    seriesCardStore.openEditInstructorDialog(instructor);
-                  } : undefined}
+                  className={`flex items-center ${isEditMode ? 'cursor-pointer hover:opacity-80' : ''}`}
+                  onClick={(e) => handleInstructorClick(e, instructor)}
                 >
                   <div className="relative">
                     {instructor?.image ? (
@@ -86,7 +93,7 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
                         <span className="text-xs text-gray-600">{instructor?.name?.[0]?.toUpperCase() || '?'}</span>
                       </div>
                     )}
-                    {routeStore.isSeriesSettingMode && (
+                    {isEditMode && (
                       <div className="absolute -top-1 -right-0 p-1 rounded-full bg-blue-800/80">
                         <FiEdit2 size={6} className="text-white" />
                       </div>
@@ -113,79 +120,23 @@ const SeriesCard = observer(({ series, index, moveItem }) => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <p className="text-xs text-gray-600 dark:text-gray-400">{t('series.courseCount', { count: courses.length})}</p>
-              {routeStore.isSeriesSettingMode && (
-                series.deleted ? (
-                  <ActionButton
-                    onClick={() => seriesCardStore.openRestoreDialog(series)}
-                    icon="MdRestoreFromTrash"
-                    title={t('series.edit.restore')}
-                    color="green"
-                  />
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <ActionButton
-                      onClick={() => seriesCardStore.openVisibilityDialog(series)}
-                      icon={`FiEye${series.hidden ? 'Off' : ''}`}
-                      title={t(`series.${series.hidden ? 'show' : 'hide'}`)}
-                      color="blue"
-                    />
-                    <ActionButton
-                      onClick={() => seriesCardStore.openEditDialog(series)}
-                      icon="FiEdit"
-                      title={t('series.edit.editTitle')}
-                      color="green"
-                    />
-                    <ActionButton
-                      onClick={() => seriesCardStore.openDeleteDialog(series)}
-                      icon="FiTrash2"
-                      title={t('series.edit.delete')}
-                      color="red"
-                    />
-                    <MdDragIndicator
-                      className="text-gray-400 text-xl cursor-move"
-                      aria-label="Drag to reorder"
-                    />
-                  </div>
-              ))}
             </div>
-            {/* Course list moved to EditSeriesPage.jsx */}
           </div>
         </div>
-      </div>
-      <Dialog
-        isOpen={seriesCardStore.showVisibilityDialog && seriesCardStore.currentSeries?.id === seriesId}
-        onClose={seriesCardStore.closeVisibilityDialog}
-        onConfirm={seriesCardStore.confirmVisibilityChange}
-        title={series.hidden ? t('series.show') : t('series.hide')}
-        isConfirm={true}
-      >
-        <p>
-          {series.hidden
-            ? t('series.confirmShow', { name: series.name })
-            : t('series.confirmHide', { name: series.name })}
-        </p>
-      </Dialog>
-
-      <Dialog
-        isOpen={seriesCardStore.showDeleteDialog && seriesCardStore.currentSeries?.id === seriesId}
-        onClose={seriesCardStore.closeDeleteDialog}
-        onConfirm={seriesCardStore.confirmDelete}
-        title={t('series.edit.delete')}
-        isConfirm={true}
-      >
-        <p>{t('series.confirmDelete', { name: series.name })}</p>
-      </Dialog>
-
-      <Dialog
-        isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
-        onClose={seriesCardStore.closeRestoreDialog}
-        onConfirm={seriesCardStore.confirmRestore}
-        title={t('series.edit.restore')}
-        isConfirm={true}
-      >
-        <p>{t('series.confirmRestore', { name: series.name })}</p>
-      </Dialog>
-    </div>
+      </BaseCard>
+      {/* Restore dialog for deleted series */}
+      {series.deleted && (
+        <Dialog
+          isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
+          onClose={seriesCardStore.closeRestoreDialog}
+          onConfirm={seriesCardStore.confirmRestore}
+          title={t('series.edit.restore')}
+          isConfirm={true}
+        >
+          <p>{t('series.confirmRestore', { name: series.name })}</p>
+        </Dialog>
+      )}
+    </>
   );
 });
 

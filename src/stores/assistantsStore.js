@@ -3,6 +3,7 @@ import { get, save, remove } from '../utils/db';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
 import languageStore from './languageStore';
+import { createGroupedStoreMethods } from '../utils/groupedStoreUtils';
 
 const defaultAssistant = {
   client_id: null,
@@ -33,15 +34,6 @@ class AssistantsStore {
   showEditDialog = false;
   editingAssistant = {};
   isEditMode = false;
-  showVisibilityDialog = false;
-  currentAssistant = null;
-
-  // UI state
-  expandedGroups = new Set();
-  
-  // Group ordering
-  groupOrder = [];
-  pendingGroups = null;
 
   get assistants() {
     return clientStore.client.assistants || [];
@@ -64,23 +56,7 @@ class AssistantsStore {
   }
 
   get groupedAssistants() {
-    const assistantsToGroup = this.filteredAssistants;
-    
-    // Initialize groupOrder if empty - load from saved assistant group order
-    if (this.groupOrder.length === 0) {
-      this.groupOrder = clientStore.client.settings.assistantGroups ||
-        [...new Set(assistantsToGroup.map(assistant => assistant.group || 'Default'))];
-    }
-
-    const groups = this.groupOrder;
-    const grouped = {};
-
-    groups.forEach(group => {
-      const groupAssistants = assistantsToGroup.filter(assistant => (assistant.group || 'Default') === group);
-      grouped[group] = groupAssistants;
-    });
-
-    return grouped;
+    return this.getGroupedItems();
   }
 
   get isAdminMode() {
@@ -97,7 +73,22 @@ class AssistantsStore {
   }
   
   constructor() {
+    // Mix in grouped store methods
+    Object.assign(this, createGroupedStoreMethods());
+    
     makeAutoObservable(this);
+    
+    // Override methods after makeAutoObservable to ensure they take precedence
+    this.handleToggleVisibility = (assistant) => {
+      this.currentItem = assistant;
+      this.showVisibilityDialog = true;
+    };
+    
+    this.closeVisibilityDialog = () => {
+      this.showVisibilityDialog = false;
+      this.currentItem = null;
+    };
+    
     this.fetchOpenRouterModels();
   }
 
@@ -140,14 +131,6 @@ class AssistantsStore {
   };
 
   // Dialog state methods
-  setShowDeleteDialog = (show) => {
-    this.showDeleteDialog = show;
-  };
-
-  setAssistantToDelete = (assistant) => {
-    this.assistantToDelete = assistant;
-  };
-
   setShowEditDialog = (show) => {
     this.showEditDialog = show;
   };
@@ -201,27 +184,26 @@ class AssistantsStore {
     this.setShowEditDialog(true);
   };
 
-  handleDelete = (assistant) => {
-    this.setAssistantToDelete(assistant);
-    this.setShowDeleteDialog(true);
-  };
 
+  // Implementation methods for grouped store functionality
   confirmDelete = async () => {
     try {
-      if (this.assistantToDelete) {
-        await remove('assistants', this.assistantToDelete.id);
+      if (this.itemToDelete) {
+        await remove('assistants', this.itemToDelete.id);
         await clientStore.loadClient();
-        this.setShowDeleteDialog(false);
-        this.setAssistantToDelete(null);
+        this.closeDeleteDialog();
       }
     } catch (error) {
       console.error('Error deleting assistant:', error);
     }
   };
 
-  closeDeleteDialog = () => {
-    this.setShowDeleteDialog(false);
-    this.setAssistantToDelete(null);
+  confirmVisibilityChange = async () => {
+    if (this.currentItem) {
+      await this.toggleAssistantVisibility(this.currentItem);
+      await clientStore.loadClient();
+      this.closeVisibilityDialog();
+    }
   };
 
   handleCreateNew = () => {
@@ -300,18 +282,6 @@ class AssistantsStore {
     }
   };
 
-  // UI state methods
-  isGroupExpanded = (group) => {
-    return this.expandedGroups.has(group);
-  };
-
-  toggleGroup = (group) => {
-    if (this.expandedGroups.has(group)) {
-      this.expandedGroups.delete(group);
-    } else {
-      this.expandedGroups.add(group);
-    }
-  };
 
   // Navigation methods
   handleAssistantClick = (assistant, navigate) => {
@@ -322,27 +292,6 @@ class AssistantsStore {
     }
   };
 
-  openVisibilityDialog = (assistant) => {
-    this.currentAssistant = assistant;
-    this.showVisibilityDialog = true;
-  };
-
-  closeVisibilityDialog = () => {
-    this.showVisibilityDialog = false;
-    this.currentAssistant = null;
-  };
-
-  confirmVisibilityChange = async () => {
-    if (this.currentAssistant) {
-      await this.toggleAssistantVisibility(this.currentAssistant);
-      await clientStore.loadClient();
-      this.closeVisibilityDialog();
-    }
-  };
-
-  handleToggleVisibility = (assistant) => {
-    this.openVisibilityDialog(assistant);
-  };
 
   // Drag and drop methods
   moveAssistant = (fromIndex, toIndex) => {
@@ -367,25 +316,32 @@ class AssistantsStore {
   };
 
   moveAssistantInGroup = (group, fromIndex, toIndex) => {
-    const groupAssistants = this.groupedAssistants[group];
-    if (!groupAssistants || fromIndex === toIndex) return;
+    if (fromIndex === toIndex) return;
 
-    // Create a copy of the group assistants
-    const updatedGroupAssistants = [...groupAssistants];
-    const [movedAssistant] = updatedGroupAssistants.splice(fromIndex, 1);
-    updatedGroupAssistants.splice(toIndex, 0, movedAssistant);
+    const currentGroupAssistants = [...this.groupedAssistants[group]];
+    
+    const [movedAssistant] = currentGroupAssistants.splice(fromIndex, 1);
+    currentGroupAssistants.splice(toIndex, 0, movedAssistant);
 
-    // Update the order in the main assistants array
-    const allAssistants = [...this.assistants];
-    updatedGroupAssistants.forEach((assistant, index) => {
-      const originalIndex = allAssistants.findIndex(a => a.id === assistant.id);
-      if (originalIndex !== -1) {
-        allAssistants[originalIndex] = { ...assistant, groupOrder: index };
+    // Update order property for each assistant in the group
+    currentGroupAssistants.forEach((assistant, index) => {
+      assistant.order = index;
+    });
+
+    // Update the main assistants array
+    const assistantsList = [...this.assistants];
+    currentGroupAssistants.forEach(assistant => {
+      const assistantIndex = assistantsList.findIndex(a => a.id === assistant.id);
+      if (assistantIndex !== -1) {
+        assistantsList[assistantIndex] = {
+          ...assistantsList[assistantIndex],
+          order: assistant.order
+        };
       }
     });
 
     // Update the client's assistants array
-    clientStore.client.assistants = allAssistants;
+    clientStore.client.assistants = assistantsList;
   };
 
   saveAssistantOrder = async () => {
@@ -402,29 +358,36 @@ class AssistantsStore {
     }
   };
 
-  saveAssistantGroupOrder = async () => {
-    try {
-      // Save the current state of assistants with their updated positions
-      await save('assistants', this.assistants);
-      await clientStore.loadClient();
-    } catch (error) {
-      console.error('Error saving assistant group order:', error);
+
+  // Implementation methods for grouped store functionality
+  getGroupedItems() {
+    const assistantsToGroup = this.filteredAssistants;
+    
+    // Initialize groupOrder if empty - load from saved assistant group order
+    if (this.groupOrder.length === 0) {
+      this.groupOrder = clientStore.client.settings.assistantGroups ||
+        [...new Set(assistantsToGroup.map(assistant => assistant.group || 'Default'))];
     }
-  };
 
-  moveGroup = (fromIndex, toIndex) => {
-    if (fromIndex === toIndex) return;
-    
-    const groups = this.groupOrder.length > 0
-      ? [...this.groupOrder]
-      : Object.keys(this.groupedAssistants);
+    const groups = this.groupOrder;
+    const grouped = {};
 
-    const [removed] = groups.splice(fromIndex, 1);
-    groups.splice(toIndex, 0, removed);
-    
-    this.groupOrder = groups;
-    this.pendingGroups = groups;
-  };
+    groups.forEach(group => {
+      const groupAssistants = assistantsToGroup.filter(assistant => (assistant.group || 'Default') === group);
+      
+      // Ensure each assistant has an order property
+      groupAssistants.forEach((assistant, index) => {
+        if (typeof assistant.order !== 'number') {
+          assistant.order = index;
+        }
+      });
+      
+      // Sort by order property
+      grouped[group] = groupAssistants.sort((a, b) => a.order - b.order);
+    });
+
+    return grouped;
+  }
 
   saveGroupOrder = async () => {
     if (!this.pendingGroups) return;
@@ -435,6 +398,16 @@ class AssistantsStore {
     } catch (error) {
       console.error('Failed to save assistant group order:', error);
       throw error;
+    }
+  };
+
+  saveItemGroupOrder = async () => {
+    try {
+      // Save the current state of assistants with their updated positions
+      await save('assistants', this.assistants);
+      await clientStore.loadClient();
+    } catch (error) {
+      console.error('Error saving assistant group order:', error);
     }
   };
 }
