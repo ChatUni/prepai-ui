@@ -42,6 +42,11 @@ class AssistantsStore {
   get filteredAssistants() {
     let filtered = this.assistants;
 
+    // Filter out hidden assistants when not in admin mode
+    if (!this.isAdminMode) {
+      filtered = filtered.filter(assistant => !assistant.hidden);
+    }
+
     // Filter by search keyword
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();

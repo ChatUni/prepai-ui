@@ -31,6 +31,7 @@ const AssistantsPage = observer(() => {
             groupedItems={assistantsStore.groupedAssistants}
             store={assistantsStore}
             isEditMode={assistantsStore.isAdminMode}
+            isGroupEditable={() => assistantsStore.isAdminMode}
             onItemMove={assistantsStore.moveAssistantInGroup}
             editGroupTitle={t('assistants.groups.editGroup')}
             deleteGroupTitle={t('assistants.groups.deleteGroup')}
