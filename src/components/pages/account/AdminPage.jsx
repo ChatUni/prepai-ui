@@ -6,12 +6,12 @@ import MenuListItem from '../../ui/MenuListItem';
 
 const routeMap = {
   'new-instructor': '/instructors/new',
-  'edit-instructor': '/instructors/select?mode=edit',
+  'edit-instructor': '/instructors/settings',
   'new-series': '/series/new',
   'edit-series': '/series/select',
   'edit-banner': '/series/banners',
   'add-course-to-series': '/series/select',
-  'manage-assistant': '/assistants?mode=edit',
+  'manage-assistant': '/assistants/settings',
   'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',

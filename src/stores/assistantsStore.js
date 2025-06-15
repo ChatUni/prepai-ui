@@ -3,6 +3,7 @@ import { get, save, remove } from '../utils/db';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
 import languageStore from './languageStore';
+import routeStore from './routeStore';
 import { createGroupedStoreMethods } from '../utils/groupedStoreUtils';
 
 const defaultAssistant = {
@@ -65,12 +66,8 @@ class AssistantsStore {
   }
 
   get isAdminMode() {
-    // Check if current URL contains mode=edit parameter
-    if (typeof window !== 'undefined' && window.location) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('mode') === 'edit';
-    }
-    return false;
+    // Check if current path is the settings route
+    return routeStore.currentPath === '/assistants/settings';
   }
 
   get pageTitle() {
