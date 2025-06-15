@@ -1,19 +1,21 @@
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import assistantsStore from '../../../stores/assistantsStore';
+import languageStore from '../../../stores/languageStore';
 import BaseCard from '../../ui/BaseCard';
+import EditAssistantPage from './EditAssistantPage';
 
 const AssistantCard = observer(({
   assistant,
-  onClick,
   isEditMode = false,
-  onToggleVisibility,
-  onEdit,
-  onDelete,
   index,
   moveItem,
-  group
+  group,
+  renderDialogs
 }) => {
+  const { t } = languageStore;
+  const navigate = useNavigate();
   // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
@@ -27,12 +29,18 @@ const AssistantCard = observer(({
       group={group}
       moveItem={moveItem}
       isEditMode={isEditMode}
-      onClick={onClick}
-      onToggleVisibility={onToggleVisibility}
-      onEdit={onEdit}
-      onDelete={onDelete}
+      onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
+      onToggleVisibility={assistantsStore.handleToggleVisibility}
+      onEdit={assistantsStore.handleEdit}
+      onDelete={assistantsStore.handleDelete}
       onDrop={assistantsStore.saveItemGroupOrder}
       className="relative"
+      store={assistantsStore}
+      itemType="assistants"
+      editDialogTitle={assistantsStore.isEditMode ? t('assistants.edit') : t('assistants.createNew')}
+      editDialogChildren={<EditAssistantPage />}
+      editDialogSize="md"
+      renderDialogs={renderDialogs}
     >
       <div className="p-4">
         {/* Horizontal layout with image on left and content on right */}

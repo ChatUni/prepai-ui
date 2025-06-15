@@ -169,7 +169,7 @@ const GroupedList = observer(({
     );
   };
 
-  const GroupSection = observer(({ group, items, index }) => (
+  const GroupSection = observer(({ group, items, index, isFirstGroup }) => (
     <AccordionSection
       key={group}
       title={`${group} (${items.length})`}
@@ -184,7 +184,7 @@ const GroupedList = observer(({
       isDanger={isGroupDanger(group)}
     >
       <div className={itemsContainerClassName}>
-        {items.map((item, itemIndex) => 
+        {items.map((item, itemIndex) =>
           renderItem(item, itemIndex, group, {
             moveItem: onItemMove ? (fromIndex, toIndex) => {
               if (isEditMode) {
@@ -192,7 +192,7 @@ const GroupedList = observer(({
               }
             } : undefined,
             isEditMode
-          })
+          }, isFirstGroup && itemIndex === 0)
         )}
       </div>
     </AccordionSection>
@@ -207,6 +207,7 @@ const GroupedList = observer(({
             group={group}
             items={items}
             index={index}
+            isFirstGroup={index === 0}
           />
         ))}
       </div>

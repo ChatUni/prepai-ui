@@ -5,21 +5,24 @@ import { useCallback } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import BaseCard from '../../ui/BaseCard';
 import Dialog from '../../ui/Dialog';
+import EditSeriesPage from './EditSeriesPage';
+import EditInstructorPage from '../instructor/EditInstructorPage';
+import { EditDialog } from '../../ui/CrudDialogs';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
 import seriesStore from '../../../stores/seriesStore';
+import groupedSeriesStore from '../../../stores/groupedSeriesStore';
+import editInstructorStore from '../../../stores/editInstructorStore';
+import editSeriesStore from '../../../stores/editSeriesStore';
 
 const SeriesCard = observer(({
   series,
   index,
   moveItem,
   group,
-  onClick,
-  onToggleVisibility,
-  onEdit,
-  onDelete,
-  isEditMode = false
+  isEditMode = false,
+  renderDialogs = false
 }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
@@ -55,11 +58,16 @@ const SeriesCard = observer(({
         moveItem={moveItem}
         isEditMode={isEditMode}
         onClick={handleCardClick}
-        onToggleVisibility={onToggleVisibility}
-        onEdit={onEdit}
-        onDelete={onDelete}
+        onToggleVisibility={seriesCardStore.handleToggleVisibility}
+        onEdit={seriesCardStore.handleEdit}
+        onDelete={seriesCardStore.handleDelete}
         onDrop={seriesStore.saveSeriesUpdates}
         className="relative"
+        store={seriesCardStore}
+        itemType="series"
+        editDialogTitle=""
+        editDialogChildren={null}
+        renderDialogs={renderDialogs}
       >
         <div className="relative pb-[56.25%]">
           <img
@@ -124,17 +132,47 @@ const SeriesCard = observer(({
           </div>
         </div>
       </BaseCard>
-      {/* Restore dialog for deleted series */}
-      {series.deleted && (
-        <Dialog
-          isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
-          onClose={seriesCardStore.closeRestoreDialog}
-          onConfirm={seriesCardStore.confirmRestore}
-          title={t('series.edit.restore')}
-          isConfirm={true}
-        >
-          <p>{t('series.confirmRestore', { name: series.name })}</p>
-        </Dialog>
+      
+      {/* Render dialogs only for the first card */}
+      {renderDialogs && (
+        <>
+          {/* Restore dialog for deleted series */}
+          {series.deleted && (
+            <Dialog
+              isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
+              onClose={seriesCardStore.closeRestoreDialog}
+              onConfirm={seriesCardStore.confirmRestore}
+              title={t('series.edit.restore')}
+              isConfirm={true}
+            >
+              <p>{t('series.confirmRestore', { name: series.name })}</p>
+            </Dialog>
+          )}
+
+          {/* Edit Series Dialog */}
+          {(groupedSeriesStore.isEditSeriesDialogOpen || editSeriesStore.series) && (
+            <EditSeriesPage
+              onClose={groupedSeriesStore.closeEditSeriesDialog}
+            />
+          )}
+
+          {/* Edit Instructor Dialog */}
+          <EditDialog
+            isOpen={seriesCardStore.editInstructorDialogOpen}
+            onClose={seriesCardStore.closeEditInstructorDialog}
+            onConfirm={async () => {
+              const success = await editInstructorStore.saveInstructor();
+              if (success) {
+                await seriesStore.fetchSeries();
+                seriesCardStore.closeEditInstructorDialog();
+              }
+            }}
+            title={editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}
+            size="xl"
+          >
+            <EditInstructorPage />
+          </EditDialog>
+        </>
       )}
     </>
   );

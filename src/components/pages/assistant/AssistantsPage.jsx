@@ -1,17 +1,13 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
 import assistantsStore from '../../../stores/assistantsStore';
 import languageStore from '../../../stores/languageStore';
 import AssistantCard from './AssistantCard';
 import AssistantSearchBar from './AssistantSearchBar';
-import EditAssistantPage from './EditAssistantPage';
 import GroupedList from '../../ui/GroupedList';
-import { DeleteConfirmDialog, VisibilityConfirmDialog, EditDialog } from '../../ui/CrudDialogs';
 
 const AssistantsPage = observer(() => {
   const { t } = languageStore;
-  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
@@ -39,52 +35,20 @@ const AssistantsPage = observer(() => {
             editGroupTitle={t('assistants.groups.editGroup')}
             deleteGroupTitle={t('assistants.groups.deleteGroup')}
             itemType="assistants"
-            renderItem={(assistant, index, group, { moveItem, isEditMode }) => (
+            renderItem={(assistant, index, group, { moveItem, isEditMode }, isFirstCard) => (
               <AssistantCard
                 key={assistant.id}
                 assistant={assistant}
                 index={index}
                 group={group}
                 moveItem={moveItem}
-                onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
                 isEditMode={isEditMode}
-                onToggleVisibility={assistantsStore.handleToggleVisibility}
-                onEdit={assistantsStore.handleEdit}
-                onDelete={assistantsStore.handleDelete}
+                renderDialogs={isFirstCard}
               />
             )}
           />
         )}
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmDialog
-        isOpen={assistantsStore.showDeleteDialog}
-        onClose={assistantsStore.closeDeleteDialog}
-        onConfirm={assistantsStore.confirmDelete}
-        item={assistantsStore.itemToDelete}
-        itemType="assistants"
-      />
-
-      {/* Visibility Confirmation Dialog */}
-      <VisibilityConfirmDialog
-        isOpen={assistantsStore.showVisibilityDialog}
-        onClose={assistantsStore.closeVisibilityDialog}
-        onConfirm={assistantsStore.confirmVisibilityChange}
-        item={assistantsStore.currentItem}
-        itemType="assistants"
-      />
-
-      {/* Edit Assistant Dialog */}
-      <EditDialog
-        isOpen={assistantsStore.showEditDialog}
-        onClose={assistantsStore.closeEditDialog}
-        onConfirm={assistantsStore.saveAssistant}
-        title={assistantsStore.isEditMode ? t('assistants.edit') : t('assistants.createNew')}
-      >
-        <EditAssistantPage />
-      </EditDialog>
-
     </div>
   );
 });
