@@ -191,7 +191,19 @@
     },
     "confirmDelete": "确定要删除「{name}」助手吗？",
     "confirmShow": "确定要显示「{name}」助手吗？",
-    "confirmHide": "确定要隐藏「{name}」助手吗？"
+    "confirmHide": "确定要隐藏「{name}」助手吗？",
+    "groups": {
+      "title": "助手分组",
+      "noGroup": "无分组",
+      "noAssistants": "此分组中没有助手",
+      "addGroup": "添加分组",
+      "newGroup": "新分组",
+      "enterName": "输入分组名称",
+      "editGroup": "编辑分组",
+      "deleteGroup": "删除分组",
+      "confirmDelete": "您确定要删除此分组吗？",
+      "cannotDelete": "无法删除包含助手的分组"
+    }
   },
   "course": {
     "edit": "编辑课程",

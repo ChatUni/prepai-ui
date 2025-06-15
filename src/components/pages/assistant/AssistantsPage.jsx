@@ -36,6 +36,9 @@ const AssistantsPage = observer(() => {
             store={assistantsStore}
             isEditMode={assistantsStore.isAdminMode}
             onItemMove={assistantsStore.moveAssistantInGroup}
+            editGroupTitle={t('assistants.groups.editGroup')}
+            deleteGroupTitle={t('assistants.groups.deleteGroup')}
+            itemType="assistants"
             renderItem={(assistant, index, group, { moveItem, isEditMode }) => (
               <AssistantCard
                 key={assistant.id}
@@ -81,6 +84,7 @@ const AssistantsPage = observer(() => {
       >
         <EditAssistantPage />
       </EditDialog>
+
     </div>
   );
 });

@@ -191,7 +191,19 @@
     },
     "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？",
     "confirmShow": "「{name}」アシスタントを表示してもよろしいですか？",
-    "confirmHide": "「{name}」アシスタントを非表示にしてもよろしいですか？"
+    "confirmHide": "「{name}」アシスタントを非表示にしてもよろしいですか？",
+    "groups": {
+      "title": "アシスタントグループ",
+      "noGroup": "グループなし",
+      "noAssistants": "このグループにはアシスタントがありません",
+      "addGroup": "グループを追加",
+      "newGroup": "新しいグループ",
+      "enterName": "グループ名を入力",
+      "editGroup": "グループを編集",
+      "deleteGroup": "グループを削除",
+      "confirmDelete": "このグループを削除してもよろしいですか？",
+      "cannotDelete": "アシスタントが含まれているグループは削除できません"
+    }
   },
   "course": {
     "edit": "コースを編集",

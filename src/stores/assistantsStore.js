@@ -89,6 +89,7 @@ class AssistantsStore {
       this.currentItem = null;
     };
     
+    
     this.fetchOpenRouterModels();
   }
 
@@ -408,6 +409,63 @@ class AssistantsStore {
       await clientStore.loadClient();
     } catch (error) {
       console.error('Error saving assistant group order:', error);
+    }
+  };
+
+
+  addGroup = async (groupName) => {
+    if (!groupName || !groupName.trim()) return;
+
+    try {
+      const newGroups = [...this.groupOrder, groupName.trim()];
+      await clientStore.saveAssistantGroupOrder(newGroups);
+      this.groupOrder = newGroups;
+    } catch (error) {
+      console.error('Error adding group:', error);
+      throw error;
+    }
+  };
+
+  editGroup = async (oldGroupName, newGroupName) => {
+    if (!newGroupName || !newGroupName.trim() || !oldGroupName) return;
+
+    try {
+      const trimmedNewName = newGroupName.trim();
+      
+      // Update group name in assistants
+      const updatedAssistants = this.assistants.map(assistant => ({
+        ...assistant,
+        group: assistant.group === oldGroupName ? trimmedNewName : assistant.group
+      }));
+
+      // Update group order
+      const updatedGroupOrder = this.groupOrder.map(group =>
+        group === oldGroupName ? trimmedNewName : group
+      );
+
+      // Save changes
+      await save('assistants', updatedAssistants);
+      await clientStore.saveAssistantGroupOrder(updatedGroupOrder);
+      
+      this.groupOrder = updatedGroupOrder;
+      clientStore.client.assistants = updatedAssistants;
+    } catch (error) {
+      console.error('Error editing group:', error);
+      throw error;
+    }
+  };
+
+
+  deleteGroup = async (groupName) => {
+    if (!groupName) return;
+
+    try {
+      const updatedGroupOrder = this.groupOrder.filter(group => group !== groupName);
+      await clientStore.saveAssistantGroupOrder(updatedGroupOrder);
+      this.groupOrder = updatedGroupOrder;
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      throw error;
     }
   };
 }

@@ -191,7 +191,19 @@
     },
     "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?",
     "confirmShow": "Are you sure you want to show \"{name}\" assistant?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" assistant?"
+    "confirmHide": "Are you sure you want to hide \"{name}\" assistant?",
+    "groups": {
+      "title": "Assistant Groups",
+      "noGroup": "No Group",
+      "noAssistants": "No assistants in this group",
+      "addGroup": "Add Group",
+      "newGroup": "New Group",
+      "enterName": "Enter group name",
+      "editGroup": "Edit Group",
+      "deleteGroup": "Delete Group",
+      "confirmDelete": "Are you sure you want to delete this group?",
+      "cannotDelete": "Cannot delete group that contains assistants"
+    }
   },
   "course": {
     "edit": "Edit Course",
