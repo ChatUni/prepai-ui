@@ -193,7 +193,7 @@ class AssistantsStore {
     try {
       if (this.itemToDelete) {
         await remove('assistants', this.itemToDelete.id);
-        await clientStore.loadClient();
+        await this.fetchAssistants();
         this.closeDeleteDialog();
       }
     } catch (error) {
@@ -235,7 +235,7 @@ class AssistantsStore {
       
       // Save to database
       await save('assistants', assistant);
-      await clientStore.loadClient();
+      await this.fetchAssistants();
       this.closeEditDialog();
     } catch (error) {
       console.error('Error saving assistant:', error);
@@ -279,7 +279,7 @@ class AssistantsStore {
       };
 
       await save('assistants', updatedAssistant);
-      await this.fetchAssistants();
+      //await this.fetchAssistants();
     } catch (error) {
       console.error('Failed to toggle assistant visibility:', error);
     }
@@ -355,7 +355,7 @@ class AssistantsStore {
       }));
       
       await save('assistants', assistantsWithOrder);
-      await clientStore.loadClient();
+      //await this.fetchAssistants();
     } catch (error) {
       console.error('Error saving assistant order:', error);
     }
@@ -408,7 +408,7 @@ class AssistantsStore {
     try {
       // Save the current state of assistants with their updated positions
       await save('assistants', this.assistants);
-      await clientStore.loadClient();
+      //await this.fetchAssistants();
     } catch (error) {
       console.error('Error saving assistant group order:', error);
     }

@@ -38,9 +38,11 @@ const EditAssistantPage = observer(() => {
     label: model.name
   }));
 
+  const isPlatformAssistant = assistantsStore.editingAssistant.type === 1;
+
   return (
     <div className="space-y-4">
-      {/* Name Input */}
+      {/* Name Input - always shown */}
       <FormInput
         id="assistantName"
         label={t('assistants.name')}
@@ -49,56 +51,61 @@ const EditAssistantPage = observer(() => {
         required
       />
 
-      {/* Greeting Input */}
-      <FormInput
-        id="assistantGreeting"
-        label={t('assistants.greeting')}
-        value={assistantsStore.editingAssistant.greeting || ''}
-        onChange={handleGreetingChange}
-        rows={2}
-      />
+      {/* Only show other fields for non-platform assistants */}
+      {!isPlatformAssistant && (
+        <>
+          {/* Greeting Input */}
+          <FormInput
+            id="assistantGreeting"
+            label={t('assistants.greeting')}
+            value={assistantsStore.editingAssistant.greeting || ''}
+            onChange={handleGreetingChange}
+            rows={2}
+          />
 
-      {/* Prompt Input */}
-      <FormInput
-        id="assistantPrompt"
-        label={t('assistants.prompt')}
-        value={assistantsStore.editingAssistant.prompt || ''}
-        onChange={handlePromptChange}
-        rows={4}
-        required
-      />
+          {/* Prompt Input */}
+          <FormInput
+            id="assistantPrompt"
+            label={t('assistants.prompt')}
+            value={assistantsStore.editingAssistant.prompt || ''}
+            onChange={handlePromptChange}
+            rows={4}
+            required
+          />
 
-      {/* Model and Group in same row */}
-      <div className="grid grid-cols-2 gap-4">
-        <FormSelect
-          id="assistantModel"
-          label={t('assistants.model')}
-          value={assistantsStore.editingAssistant.model || ''}
-          onChange={handleModelChange}
-          options={modelOptions}
-          placeholder={t('assistants.selectModel')}
-          required
-        />
-        <FormInput
-          id="assistantGroup"
-          label={t('assistants.group')}
-          value={assistantsStore.editingAssistant.group || ''}
-          onChange={handleGroupChange}
-          placeholder="Default"
-        />
-      </div>
+          {/* Model and Group in same row */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormSelect
+              id="assistantModel"
+              label={t('assistants.model')}
+              value={assistantsStore.editingAssistant.model || ''}
+              onChange={handleModelChange}
+              options={modelOptions}
+              placeholder={t('assistants.selectModel')}
+              required
+            />
+            <FormInput
+              id="assistantGroup"
+              label={t('assistants.group')}
+              value={assistantsStore.editingAssistant.group || ''}
+              onChange={handleGroupChange}
+              placeholder="Default"
+            />
+          </div>
 
-      {/* Image Upload */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {t('assistants.image')}
-        </label>
-        <ImageUpload
-          currentImage={assistantsStore.editingAssistant.image}
-          onImageChange={handleImageChange}
-          uploadPath={`assistants/${assistantsStore.editingAssistant.id || 'new'}`}
-        />
-      </div>
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('assistants.image')}
+            </label>
+            <ImageUpload
+              currentImage={assistantsStore.editingAssistant.image}
+              onImageChange={handleImageChange}
+              uploadPath={`assistants/${assistantsStore.editingAssistant.id || 'new'}`}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 });

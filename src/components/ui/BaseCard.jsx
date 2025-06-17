@@ -94,12 +94,15 @@ const BaseCard = observer(({
                   icon="FiEdit"
                   title={t('common.edit')}
                 />
-                <ActionButton
-                  onClick={handleDeleteClick}
-                  color="red"
-                  icon="FiTrash2"
-                  title={t('common.delete')}
-                />
+                {/* Hide delete button for platform assistants (type == 1) */}
+                {item.type !== 1 && (
+                  <ActionButton
+                    onClick={handleDeleteClick}
+                    color="red"
+                    icon="FiTrash2"
+                    title={t('common.delete')}
+                  />
+                )}
                 <MdDragIndicator
                   className="text-gray-400 text-xl cursor-move"
                   aria-label="Drag to reorder"
