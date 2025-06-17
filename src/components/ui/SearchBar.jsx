@@ -1,112 +1,102 @@
+import React from 'react';
 import { observer } from 'mobx-react-lite';
-import uiStore from '../../stores/uiStore';
-import coursesStore from '../../stores/coursesStore';
-import { useNavigate } from 'react-router-dom';
 import languageStore from '../../stores/languageStore';
-import useClickOutside from '../../hooks/useClickOutside';
-import seriesStore from '../../stores/seriesStore';
 import DropdownFilter from './DropdownFilter';
+import Button from './Button';
+import useClickOutside from '../../hooks/useClickOutside';
+import Icon from './Icon';
 
-const SearchBar = observer(() => {
-  const { t } = languageStore;
-  const navigate = useNavigate();
+const SearchBar = observer(({
+  // Search functionality
+  searchValue,
+  onSearchChange,
+  searchPlaceholder,
   
-  const [instructorDropdownRef, categoryDropdownRef] = useClickOutside(
-    () => uiStore.closeAllDropdowns(),
-    2
+  // Dropdown filters
+  filters = [],
+  
+  // Action buttons
+  isEditMode = false,
+  newGroupButton,
+  newItemButton,
+  
+  // Styling options
+  className = ''
+}) => {
+  const { t } = languageStore;
+  
+  // Create refs for all dropdowns
+  const dropdownRefs = useClickOutside(
+    () => {
+      filters.forEach(filter => {
+        if (filter.onClose) filter.onClose();
+      });
+    },
+    filters.length
   );
 
-  const handleSearch = (e) => {
-    uiStore.setSearchKeyword(e.target.value);
-  };
-
-  const handleInstructorFilter = (instructorId) => {
-    const parsedId = instructorId === "" ? null : parseInt(instructorId);
-    
-    // Update UI store and trigger filtering
-    uiStore.setSelectedInstructorId(parsedId);
-    uiStore.setInstructorDropdownOpen(false);
-    
-    // Update courses store to trigger series filtering
-    coursesStore.selectInstructor(parsedId);
-    
-    // Only navigate if not on exam or series page
-    if (!window.location.pathname.includes('/exam') && !window.location.pathname.includes('/series')) {
-      navigate(parsedId ? `/instructor/${parsedId}` : '/');
-    }
-  };
-
-  const handleCategoryFilter = (category) => {
-    // Update both stores to maintain consistency
-    uiStore.setActiveCategory(category); // This will also close the dropdowns
-  };
-
-  const toggleInstructorDropdown = () => {
-    uiStore.setInstructorDropdownOpen(!uiStore.isInstructorDropdownOpen);
-  };
-
-  const toggleCategoryDropdown = () => {
-    uiStore.setCategoryDropdownOpen(!uiStore.isCategoryDropdownOpen);
-  };
-
   return (
-    <div className="flex flex-row items-center w-full max-w-3xl gap-1 sm:gap-2">
-      <DropdownFilter
-        isOpen={uiStore.isInstructorDropdownOpen}
-        onToggle={toggleInstructorDropdown}
-        selectedValue={uiStore.selectedInstructorId}
-        displayValue={uiStore.selectedInstructorId
-          ? coursesStore.instructors.find(i => i.id === uiStore.selectedInstructorId)?.name
-          : t('search.allInstructors')}
-        items={[
-          { id: "", name: t('search.allInstructors') },
-          ...coursesStore.instructors
-        ]}
-        onSelect={handleInstructorFilter}
-        dropdownRef={instructorDropdownRef}
-      />
-      
-        <DropdownFilter
-          isOpen={uiStore.isCategoryDropdownOpen}
-          onToggle={toggleCategoryDropdown}
-          selectedValue={uiStore.activeCategory}
-          displayValue={uiStore.activeCategory || t('search.allCategories')}
-          items={[
-            { value: "", label: t('search.allCategories') },
-            ...seriesStore.uniqueCategories.map(category => ({
-              value: category,
-              label: category
-            }))
-          ]}
-          onSelect={handleCategoryFilter}
-          dropdownRef={categoryDropdownRef}
-        />
-      
-      <div className="relative flex-1 flex min-w-0">
-        <div className="absolute top-0 bottom-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+    <div className={`flex items-center gap-3 mb-6 ${className}`}>
+      {/* Search Input */}
+      <div className="relative flex-1">
+        <div className="absolute top-0 bottom-0 left-0 flex items-center pl-3 pointer-events-none">
+          <Icon name="FiSearch" className="w-5 h-5 text-blue-500" />
         </div>
         <input
           type="text"
-          className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none"
-          placeholder={t('search.searchPlaceholder')}
-          value={uiStore.searchKeyword}
-          onChange={handleSearch}
+          className="w-full pl-10 pr-4 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={searchPlaceholder}
+          value={searchValue}
+          onChange={onSearchChange}
         />
       </div>
+
+      {/* Dropdown filters */}
+      {filters.map((filter, index) => (
+        <div key={filter.key || index} className="shrink-0">
+          <DropdownFilter
+            isOpen={filter.isOpen}
+            onToggle={filter.onToggle}
+            selectedValue={filter.selectedValue}
+            displayValue={filter.displayValue}
+            items={filter.items}
+            onSelect={filter.onSelect}
+            dropdownRef={dropdownRefs[index]}
+            buttonClassName={filter.buttonClassName || "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center whitespace-nowrap min-w-max text-base justify-between"}
+          />
+        </div>
+      ))}
+
+      {/* Action Buttons - only show in edit mode */}
+      {isEditMode && (
+        <>
+          {newGroupButton && (
+            <div className="shrink-0">
+              <Button
+                onClick={newGroupButton.onClick}
+                icon={newGroupButton.icon || "FiPlus"}
+                color={newGroupButton.color || "gray"}
+                shade={newGroupButton.shade || 600}
+              >
+                {newGroupButton.label}
+              </Button>
+            </div>
+          )}
+          
+          {newItemButton && (
+            <div className="shrink-0">
+              <Button
+                onClick={newItemButton.onClick}
+                icon={newItemButton.icon || "FiPlus"}
+                color={newItemButton.color || "blue"}
+                shade={newItemButton.shade || 600}
+              >
+                {newItemButton.label}
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 });

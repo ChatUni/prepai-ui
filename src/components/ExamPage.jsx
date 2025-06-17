@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import SearchBar from './ui/SearchBar';
+import SeriesSearchBar from './ui/SeriesSearchBar';
 import coursesStore from '../stores/coursesStore';
 import uiStore from '../stores/uiStore';
 import { useEffect } from 'react';
@@ -32,7 +32,7 @@ const ExamPage = observer(() => {
   return (
     <div className="container mx-auto px-4 py-8 pb-20 md:pb-8 h-full flex flex-col">
       <div className="mb-8 flex-shrink-0">
-        <SearchBar />
+        <SeriesSearchBar />
       </div>
       <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
         <div className="divide-y divide-gray-200 overflow-y-auto h-full">

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import SearchBar from '../ui/SearchBar';
+import SeriesSearchBar from '../ui/SeriesSearchBar';
 import CourseList from '../pages/series/CourseList';
 import coursesStore from '../../stores/coursesStore';
 import uiStore from '../../stores/uiStore';
@@ -25,7 +25,7 @@ const MainContent = observer(() => {
     return (
       <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
         <div className="mb-4 md:mb-6">
-          <SearchBar />
+          <SeriesSearchBar />
         </div>
         
         <LoadingState

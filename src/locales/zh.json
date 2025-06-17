@@ -186,6 +186,9 @@
     "image": "图片",
     "show": "显示助手",
     "hide": "隐藏助手",
+    "search": {
+      "placeholder": "按名称或描述搜索助手..."
+    },
     "add": {
       "title": "添加新助手"
     },

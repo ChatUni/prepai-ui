@@ -14,8 +14,7 @@ const AssistantsPage = observer(() => {
       <div className="bg-white p-4">
             <h1 className="text-2xl font-semibold pb-4">{assistantsStore.pageTitle}</h1>
         
-        {/* Search Bar */}
-        {/* <AssistantSearchBar /> */}
+        <AssistantSearchBar />
         
         {assistantsStore.filteredAssistants.length === 0 ? (
           <div className="text-center py-12">

@@ -186,6 +186,9 @@
     "image": "Image",
     "show": "Show Assistant",
     "hide": "Hide Assistant",
+    "search": {
+      "placeholder": "Search assistants by name or description..."
+    },
     "add": {
       "title": "Add New Assistant"
     },

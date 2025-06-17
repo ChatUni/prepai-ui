@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import SeriesList from './SeriesList';
 import GroupedSeriesList from './GroupedSeriesList';
-import SearchBar from '../../ui/SearchBar';
+import SeriesSearchBar from '../../ui/SeriesSearchBar';
 import Carousel from '../../ui/Carousel';
 import LoadingState from '../../ui/LoadingState';
 import ToolsNav from '../../ui/ToolsNav';
@@ -20,7 +20,7 @@ const SeriesListPage = observer(() => (
       {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
 
       <div className="mb-6">
-        <SearchBar />
+        <SeriesSearchBar />
       </div>
 
       <LoadingState
