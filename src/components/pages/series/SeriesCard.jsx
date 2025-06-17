@@ -15,6 +15,7 @@ import seriesStore from '../../../stores/seriesStore';
 import groupedSeriesStore from '../../../stores/groupedSeriesStore';
 import editInstructorStore from '../../../stores/editInstructorStore';
 import editSeriesStore from '../../../stores/editSeriesStore';
+import userStore from '../../../stores/userStore';
 
 const SeriesCard = observer(({
   series,
@@ -22,7 +23,8 @@ const SeriesCard = observer(({
   moveItem,
   group,
   isEditMode = false,
-  renderDialogs = false
+  renderDialogs = false,
+  onClick
 }) => {
   const { t } = languageStore;
   const navigate = useNavigate();
@@ -115,7 +117,11 @@ const SeriesCard = observer(({
               ))}
             </div>
             {price > 0 && (
-              <span className="text-red-600 dark:text-red-300 font-bold">${price}</span>
+              !userStore.isAdmin && userStore.isPaid('series', seriesId) ? (
+                <span className="text-green-600 dark:text-green-400 font-bold">{t('series.paid')}</span>
+              ) : (
+                <span className="text-red-600 dark:text-red-300 font-bold">${price}</span>
+              )
             )}
           </div>
           

@@ -308,6 +308,7 @@
     "courseCount": "{count} courses",
     "showCourses": "Show {count} courses",
     "hideCourses": "Hide {count} courses",
+    "paid": "Paid",
     "addCourse": "Add course",
     "aboutThisSeries": "About this Series",
     "noCover": "No Cover",

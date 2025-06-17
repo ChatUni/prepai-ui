@@ -307,6 +307,7 @@
     "courseCount": "{count} 个章节",
     "showCourses": "显示 {count} 个章节",
     "hideCourses": "隐藏 {count} 个章节",
+    "paid": "已购",
     "addCourse": "添加章节",
     "aboutThisSeries": "课程介绍",
     "noCover": "无封面",

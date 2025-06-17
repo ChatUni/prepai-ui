@@ -54,7 +54,7 @@ class SeriesStore {
         this.series = data.map((s, index) => ({
           ...s,
           order: typeof s.order === 'number' ? s.order : index,
-          isPaid: userStore.isPaid(1, s.id)
+          isPaid: userStore.isPaid('series', s.id)
         }));
         this.isLoading = false;
       });

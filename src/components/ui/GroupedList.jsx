@@ -155,7 +155,7 @@ const GroupedList = observer(({
       <div className="flex items-center gap-2">
         <ActionButton
           onClick={() => handleGroupEdit(group)}
-          icon="FiEdit2"
+          icon="FiEdit"
           color="white"
           title={editGroupTitle || t(`${itemType}.groups.editGroup`)}
         />
