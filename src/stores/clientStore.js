@@ -106,7 +106,7 @@ class ClientStore {
       }
 
       // Save client object
-      const response = await save('clients', omit(this.client, ['_id', 'memberships']));
+      const response = await this.saveClient();
 
       if (!response.ok) {
         throw new Error(`Failed to save changes: ${response.status}`);
@@ -127,6 +127,8 @@ class ClientStore {
       });
     }
   }
+
+  saveClient = () => save('clients', omit(this.client, ['_id', 'memberships', 'assistants']));
 
   deleteBanner(index) {
     const url = this.client.settings.banners[index];

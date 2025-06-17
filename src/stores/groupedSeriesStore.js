@@ -100,22 +100,16 @@ class GroupedSeriesStore {
     this.newGroupName = name;
   };
 
-  addGroup = async () => {
-    if (!this.newGroupName.trim()) return;
+  addGroup = async (groupName) => {
+    const nameToUse = groupName || this.newGroupName;
+    if (!nameToUse.trim()) return;
 
     try {
-      const groups = [...clientStore.client.settings.groups, this.newGroupName];
+      const groups = [...clientStore.client.settings.groups, nameToUse];
       clientStore.client.settings.groups = groups;
       seriesStore.setGroupOrder(groups);
 
-      await fetch('/api/save?doc=clients', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(clientStore.client)
-      });
-
+      await clientStore.saveClient();
       this.closeAddGroupDialog();
     } catch (error) {
       console.error('Failed to add group:', error);
@@ -123,30 +117,32 @@ class GroupedSeriesStore {
     }
   };
 
-  editGroup = async () => {
-    if (!this.newGroupName.trim() || !this.selectedGroup) return;
+  editGroup = async (oldGroupName, newGroupName) => {
+    const oldName = oldGroupName || this.selectedGroup;
+    const newName = newGroupName || this.newGroupName;
+    if (!newName.trim() || !oldName) return;
 
     try {
       const groups = [...clientStore.client.settings.groups];
-      const index = groups.indexOf(this.selectedGroup);
+      const index = groups.indexOf(oldName);
       if (index !== -1) {
-        groups[index] = this.newGroupName;
+        groups[index] = newName;
         clientStore.client.settings.groups = groups;
         seriesStore.setGroupOrder(groups);
 
         // Update group name in series
         const seriesList = [...seriesStore.series];
         seriesList.forEach(series => {
-          if (series.group === this.selectedGroup) {
-            series.group = this.newGroupName;
+          if (series.group === oldName) {
+            series.group = newName;
           }
         });
         seriesStore.setSeries(seriesList);
 
         await Promise.all([
-          save('clients', clientStore.client),
+          clientStore.saveClient(),
           ...seriesList
-            .filter(series => series.group === this.newGroupName)
+            .filter(series => series.group === newName)
             .map(series => save('series', _.omit(series, ['courses'])))
         ]);
 
@@ -158,22 +154,16 @@ class GroupedSeriesStore {
     }
   };
 
-  deleteGroup = async () => {
-    if (!this.selectedGroup || !this.canDeleteGroup(this.selectedGroup)) return;
+  deleteGroup = async (groupName) => {
+    const nameToDelete = groupName || this.selectedGroup;
+    if (!nameToDelete || !this.canDeleteGroup(nameToDelete)) return;
 
     try {
-      const groups = clientStore.client.settings.groups.filter(g => g !== this.selectedGroup);
+      const groups = clientStore.client.settings.groups.filter(g => g !== nameToDelete);
       clientStore.client.settings.groups = groups;
       seriesStore.setGroupOrder(groups);
 
-      await fetch('/api/save?doc=clients', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(clientStore.client)
-      });
-
+      await clientStore.saveClient();
       this.closeDeleteGroupDialog();
     } catch (error) {
       console.error('Failed to delete group:', error);

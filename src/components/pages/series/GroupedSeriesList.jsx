@@ -54,10 +54,9 @@ const GroupedSeriesList = observer(() => (
       isGroupDanger={isRecycle}
       onItemMove={groupedSeriesStore.moveSeriesInGroup}
       onGroupDrop={() => seriesStore.saveGroupOrder()}
-      onEditGroup={groupedSeriesStore.openEditGroupDialog}
-      onDeleteGroup={groupedSeriesStore.handleDeleteGroup}
       editGroupTitle={t('series.groups.editGroup')}
       deleteGroupTitle={t('series.groups.deleteGroup')}
+      itemType="series"
       renderItem={(series, index, group, { moveItem, isEditMode }, isFirstCard) => (
         <SeriesCard
           key={`${group}-${series.id}-${index}`}

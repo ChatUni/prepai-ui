@@ -445,12 +445,17 @@ class AssistantsStore {
         group === oldGroupName ? trimmedNewName : group
       );
 
-      // Save changes
-      await save('assistants', updatedAssistants);
-      await clientStore.saveAssistantGroupOrder(updatedGroupOrder);
+      // Save changes - save both client and affected assistants
+      await Promise.all([
+        clientStore.saveAssistantGroupOrder(updatedGroupOrder),
+        ...updatedAssistants
+          .filter(assistant => assistant.group === trimmedNewName)
+          .map(assistant => save('assistants', assistant))
+      ]);
       
       this.groupOrder = updatedGroupOrder;
       clientStore.client.assistants = updatedAssistants;
+      await this.fetchAssistants();
     } catch (error) {
       console.error('Error editing group:', error);
       throw error;
