@@ -77,6 +77,15 @@ class AssistantsStore {
   get pageTitle() {
     return this.isAdminMode ? languageStore.t('menu.admin_page.manage_assistant') : languageStore.t('menu.ai');
   }
+
+  get modelOptions() {
+    return this.models
+      .map(model => ({
+        value: model.id,
+        label: model.name.replace(/\s*\(free\)$/, '')
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
   
   constructor() {
     // Mix in grouped store methods

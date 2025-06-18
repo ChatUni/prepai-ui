@@ -56,10 +56,11 @@ class AssistantChatStore {
       console.log("Sending message to assistant:", text);
       console.log("Using assistant prompt:", this.selectedAssistant.prompt);
       
+      // Determine if we should use OpenRouter based on whether a model is selected
+      const useOpenRouter = !!this.selectedAssistant.model;
+      
       // Call OpenAI API with the assistant's prompt as system message
       try {
-        // Determine if we should use OpenRouter based on whether a model is selected
-        const useOpenRouter = !!this.selectedAssistant.model;
         const response = await fetch(`${apiBaseUrl}/chat${useOpenRouter ? '?api=openrouter' : ''}`, {
           method: 'POST',
           headers: {

@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import languageStore from '../../../stores/languageStore';
 import assistantsStore from '../../../stores/assistantsStore';
+import clientStore from '../../../stores/clientStore';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import ImageUpload from '../../ui/ImageUpload';
@@ -33,9 +34,11 @@ const EditAssistantPage = observer(() => {
     assistantsStore.setEditingAssistantImage(imageUrl);
   };
 
-  const modelOptions = assistantsStore.models.map(model => ({
-    value: model.id,
-    label: model.name
+  const modelOptions = assistantsStore.modelOptions;
+
+  const groupOptions = (clientStore.client?.settings?.assistantGroups || []).map(group => ({
+    value: group,
+    label: group
   }));
 
   const isPlatformAssistant = assistantsStore.editingAssistant.type === 1;
@@ -73,25 +76,24 @@ const EditAssistantPage = observer(() => {
             required
           />
 
-          {/* Model and Group in same row */}
-          <div className="grid grid-cols-2 gap-4">
-            <FormSelect
-              id="assistantModel"
-              label={t('assistants.model')}
-              value={assistantsStore.editingAssistant.model || ''}
-              onChange={handleModelChange}
-              options={modelOptions}
-              placeholder={t('assistants.selectModel')}
-              required
-            />
-            <FormInput
-              id="assistantGroup"
-              label={t('assistants.group')}
-              value={assistantsStore.editingAssistant.group || ''}
-              onChange={handleGroupChange}
-              placeholder="Default"
-            />
-          </div>
+          {/* Model and Group in separate rows */}
+          <FormSelect
+            id="assistantModel"
+            label={t('assistants.model')}
+            value={assistantsStore.editingAssistant.model || ''}
+            onChange={handleModelChange}
+            options={modelOptions}
+            placeholder={t('assistants.selectModel')}
+            required
+          />
+          <FormSelect
+            id="assistantGroup"
+            label={t('assistants.group')}
+            value={assistantsStore.editingAssistant.group || ''}
+            onChange={handleGroupChange}
+            options={groupOptions}
+            placeholder={t('assistants.selectGroup')}
+          />
 
           {/* Image Upload */}
           <div>

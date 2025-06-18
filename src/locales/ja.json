@@ -183,6 +183,7 @@
     "model": "AIモデル",
     "selectModel": "AIモデルを選択",
     "group": "グループ",
+    "selectGroup": "グループを選択",
     "image": "画像",
     "show": "アシスタントを表示",
     "hide": "アシスタントを非表示",

@@ -183,6 +183,7 @@
     "model": "AI Model",
     "selectModel": "Select an AI model",
     "group": "Group",
+    "selectGroup": "Select a group",
     "image": "Image",
     "show": "Show Assistant",
     "hide": "Hide Assistant",

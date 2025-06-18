@@ -183,6 +183,7 @@
     "model": "AI模型",
     "selectModel": "选择AI模型",
     "group": "分组",
+    "selectGroup": "选择分组",
     "image": "图片",
     "show": "显示助手",
     "hide": "隐藏助手",
