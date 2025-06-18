@@ -280,7 +280,7 @@ class AssistantsStore {
       console.error('Error saving assistant:', error);
     }
   };
-  async fetchOpenRouterModels() {
+  async updateOpenRouterModels() {
     this.loadingModels = true;
     
     try {
@@ -294,11 +294,25 @@ class AssistantsStore {
         throw new Error(`Failed to fetch models: ${response.statusText}`);
       }
       
-      const data = await response.json();
-      
+      const result = await response.json();
+      const models = result.data;
+      await save('models', models);
+    } catch (error) {
+      console.error('Error updating OpenRouter models:', error);
+    } finally {
+      this.loadingModels = false;
+    }
+  }
+
+  async fetchOpenRouterModels() {
+    this.loadingModels = true;
+    
+    try {      
+      const models = await get('models');
+
       runInAction(() => {
         // Filter for free models only
-        this.models = data.data.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
+        this.models = models.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
         this.loadingModels = false;
       });
     } catch (error) {

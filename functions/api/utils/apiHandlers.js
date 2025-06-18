@@ -9,6 +9,7 @@ module.exports = {
       instructors: q => flat('instructors', `m_client_id=${q.clientId}`),
       platform_assistants: q => flat('assistants', `m_type=1`),
       client_assistants: q => flat('assistants', `m_client_id=${q.clientId}`),
+      models: q => flat('models', `m_enabled=true&p_id,name,pricing`),
       series: q => flat('series', `m_client_id=${q.clientId}&f_+courses|course|series`),
       users: q => flat('users', `m_phone='${q.phone}'&m_client_id=${q.clientId}&f_+transactions`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),

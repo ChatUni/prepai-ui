@@ -57,6 +57,8 @@ const Ops = {
 }
 
 const strNum = v => {
+  if (v === 'true') return true
+  if (v === 'false') return false
   if (!v) return ''
   if (v.length > 2 && v[0] === "'" && v[v.length - 1] === "'") return v.slice(1, -1)
   return isNaN(+v) ? v : +v
