@@ -203,6 +203,7 @@
       "newGroup": "新しいグループ",
       "enterName": "グループ名を入力",
       "editGroup": "グループを編集",
+      "delete": "グループを削除",
       "deleteGroup": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "アシスタントが含まれているグループは削除できません"

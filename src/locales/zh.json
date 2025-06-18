@@ -203,6 +203,7 @@
       "newGroup": "新分组",
       "enterName": "输入分组名称",
       "editGroup": "编辑分组",
+      "delete": "删除分组",
       "deleteGroup": "删除分组",
       "confirmDelete": "您确定要删除此分组吗？",
       "cannotDelete": "无法删除包含助手的分组"

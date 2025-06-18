@@ -75,7 +75,7 @@ const SearchBar = observer(({
               <Button
                 onClick={newGroupButton.onClick}
                 icon={newGroupButton.icon || "FiPlus"}
-                color={newGroupButton.color || "gray"}
+                color={newGroupButton.color || "green"}
                 shade={newGroupButton.shade || 600}
               >
                 {newGroupButton.label}

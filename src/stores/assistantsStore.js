@@ -35,6 +35,10 @@ class AssistantsStore {
   showEditDialog = false;
   editingAssistant = {};
   isEditMode = false;
+  
+  // Group dialog states
+  showAddGroupDialog = false;
+  newGroupName = '';
 
   get assistants() {
     return clientStore.client.assistants || [];
@@ -227,6 +231,32 @@ class AssistantsStore {
     this.setShowEditDialog(false);
     this.setEditingAssistant({});
     this.setIsEditMode(false);
+  };
+
+  // Group dialog methods
+  openAddGroupDialog = () => {
+    this.showAddGroupDialog = true;
+    this.newGroupName = '';
+  };
+
+  closeAddGroupDialog = () => {
+    this.showAddGroupDialog = false;
+    this.newGroupName = '';
+  };
+
+  setNewGroupName = (name) => {
+    this.newGroupName = name;
+  };
+
+  handleAddGroupConfirm = async () => {
+    if (!this.newGroupName.trim()) return;
+    
+    try {
+      await this.addGroup(this.newGroupName.trim());
+      this.closeAddGroupDialog();
+    } catch (error) {
+      console.error('Error adding group:', error);
+    }
   };
 
   saveAssistant = async () => {

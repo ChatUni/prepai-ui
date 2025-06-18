@@ -5,6 +5,7 @@ import languageStore from '../../../stores/languageStore';
 import AssistantCard from './AssistantCard';
 import AssistantSearchBar from './AssistantSearchBar';
 import GroupedList from '../../ui/GroupedList';
+import { GroupNameDialog } from '../../ui/CrudDialogs';
 
 const AssistantsPage = observer(() => {
   const { t } = languageStore;
@@ -49,6 +50,17 @@ const AssistantsPage = observer(() => {
           />
         )}
       </div>
+
+      {/* Add Group Dialog */}
+      <GroupNameDialog
+        isOpen={assistantsStore.showAddGroupDialog}
+        onClose={assistantsStore.closeAddGroupDialog}
+        onConfirm={assistantsStore.handleAddGroupConfirm}
+        title={t('assistants.groups.newGroup')}
+        value={assistantsStore.newGroupName}
+        onChange={assistantsStore.setNewGroupName}
+        placeholder={t('assistants.groups.enterName')}
+      />
     </div>
   );
 });
