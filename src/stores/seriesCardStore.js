@@ -6,17 +6,20 @@ import groupedSeriesStore from './groupedSeriesStore';
 import editCourseStore from './editCourseStore';
 import editInstructorStore from './editInstructorStore';
 import editSeriesStore from './editSeriesStore';
+import { createBaseCardStoreMethods } from '../utils/baseCardStoreUtils';
 
 class SeriesCardStore {
   expandedSeriesId = null;
   editInstructorDialogOpen = false;
   currentEditInstructor = null;
-  showVisibilityDialog = false;
-  showDeleteDialog = false;
   showRestoreDialog = false;
   currentSeries = null;
+  currentItem = null; // Add explicit property to avoid getter conflicts
 
   constructor() {
+    // Mix in base card store methods
+    Object.assign(this, createBaseCardStoreMethods());
+    
     makeAutoObservable(this);
   }
 
@@ -96,24 +99,31 @@ class SeriesCardStore {
     groupedSeriesStore.openEditSeriesDialog(series);
   };
 
+  // Override base methods to sync currentSeries and currentItem
   openVisibilityDialog = (series) => {
     this.currentSeries = series;
+    this.currentItem = series;
     this.showVisibilityDialog = true;
   };
 
   closeVisibilityDialog = () => {
     this.showVisibilityDialog = false;
     this.currentSeries = null;
+    this.currentItem = null;
   };
 
   openDeleteDialog = (series) => {
     this.currentSeries = series;
+    this.currentItem = series;
+    this.itemToDelete = series;
     this.showDeleteDialog = true;
   };
 
   closeDeleteDialog = () => {
     this.showDeleteDialog = false;
     this.currentSeries = null;
+    this.currentItem = null;
+    this.itemToDelete = null;
   };
 
   openRestoreDialog = (series) => {
@@ -126,6 +136,7 @@ class SeriesCardStore {
     this.currentSeries = null;
   };
 
+  // Override base implementations with series-specific logic
   confirmVisibilityChange = () => {
     if (this.currentSeries) {
       seriesStore.toggleSeriesVisibility(this.currentSeries.id);
@@ -147,7 +158,7 @@ class SeriesCardStore {
     }
   };
 
-  // Methods to match the BaseCard pattern - using arrow functions to ensure proper binding
+  // Override base handlers to use series-specific logic
   handleToggleVisibility = (series) => {
     this.openVisibilityDialog(series);
   };
@@ -166,6 +177,22 @@ class SeriesCardStore {
 
   handleRestore = (series) => {
     this.openRestoreDialog(series);
+  };
+
+  // Series-specific edit dialog handling
+  openEditDialog = (series) => {
+    this.currentSeries = series;
+    this.currentItem = series;
+    this.showEditDialog = true;
+    routeStore.setSeriesId(series.id);
+    editSeriesStore.reset(series);
+    groupedSeriesStore.openEditSeriesDialog(series);
+  };
+
+  closeEditDialog = () => {
+    this.showEditDialog = false;
+    this.currentSeries = null;
+    this.currentItem = null;
   };
 }
 

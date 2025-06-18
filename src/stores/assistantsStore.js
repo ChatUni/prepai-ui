@@ -5,6 +5,7 @@ import clientStore from './clientStore';
 import languageStore from './languageStore';
 import routeStore from './routeStore';
 import { createGroupedStoreMethods } from '../utils/groupedStoreUtils';
+import { createBaseCardStoreMethods } from '../utils/baseCardStoreUtils';
 
 const defaultAssistant = {
   client_id: null,
@@ -29,12 +30,12 @@ class AssistantsStore {
   models = [];
   loadingModels = false;
   
-  // Dialog states
-  showDeleteDialog = false;
-  assistantToDelete = null;
-  showEditDialog = false;
+  // Edit dialog specific states
   editingAssistant = {};
   isEditMode = false;
+  
+  // Explicit currentItem property to avoid conflicts
+  currentItem = null;
   
   // Group dialog states
   showAddGroupDialog = false;
@@ -88,22 +89,16 @@ class AssistantsStore {
   }
   
   constructor() {
-    // Mix in grouped store methods
+    // Mix in base card methods first, then grouped store methods
+    Object.assign(this, createBaseCardStoreMethods());
     Object.assign(this, createGroupedStoreMethods());
     
     makeAutoObservable(this);
     
-    // Override methods after makeAutoObservable to ensure they take precedence
-    this.handleToggleVisibility = (assistant) => {
-      this.currentItem = assistant;
-      this.showVisibilityDialog = true;
+    // Ensure our specific methods override the mixed-in ones
+    this.handleEdit = (assistant) => {
+      this.openEditDialog(assistant);
     };
-    
-    this.closeVisibilityDialog = () => {
-      this.showVisibilityDialog = false;
-      this.currentItem = null;
-    };
-    
     
     this.fetchOpenRouterModels();
   }
@@ -193,15 +188,9 @@ class AssistantsStore {
     }
   };
 
-  // Handle methods following membership store pattern
-  handleEdit = (assistant) => {
-    this.setEditingAssistant(assistant);
-    this.setIsEditMode(true);
-    this.setShowEditDialog(true);
-  };
 
 
-  // Implementation methods for grouped store functionality
+  // Override base implementation with assistant-specific logic
   confirmDelete = async () => {
     try {
       if (this.itemToDelete) {
@@ -214,6 +203,7 @@ class AssistantsStore {
     }
   };
 
+  // Override base implementation with assistant-specific logic
   confirmVisibilityChange = async () => {
     if (this.currentItem) {
       await this.toggleAssistantVisibility(this.currentItem);
@@ -236,10 +226,20 @@ class AssistantsStore {
     this.setShowEditDialog(true);
   };
 
+  // Override base closeEditDialog to handle assistant-specific state
   closeEditDialog = () => {
-    this.setShowEditDialog(false);
+    this.showEditDialog = false;
+    this.currentItem = null;
     this.setEditingAssistant({});
     this.setIsEditMode(false);
+  };
+
+  // Override base openEditDialog to handle assistant-specific state
+  openEditDialog = (assistant) => {
+    this.currentItem = assistant;
+    this.showEditDialog = true;
+    this.setEditingAssistant(assistant);
+    this.setIsEditMode(true);
   };
 
   // Group dialog methods

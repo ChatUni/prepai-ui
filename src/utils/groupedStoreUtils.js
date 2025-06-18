@@ -1,18 +1,16 @@
 // Utility functions for grouped stores to avoid inheritance issues with MobX
+import { createBaseCardStoreMethods } from './baseCardStoreUtils';
 
 export const createGroupedStoreMethods = () => ({
+  // Mix in base card store methods for consistent interface
+  ...createBaseCardStoreMethods(),
+  
   // UI state
   expandedGroups: new Set(),
   
   // Group ordering
   groupOrder: [],
   pendingGroups: null,
-
-  // Dialog states
-  showDeleteDialog: false,
-  itemToDelete: null,
-  showVisibilityDialog: false,
-  currentItem: null,
 
   // Group expansion methods
   isGroupExpanded: function(group) {
@@ -42,36 +40,14 @@ export const createGroupedStoreMethods = () => ({
     this.pendingGroups = groups;
   },
 
-  // Dialog state methods
+  // Legacy methods for backward compatibility - delegate to base methods
   setShowDeleteDialog: function(show) {
     this.showDeleteDialog = show;
   },
 
   setItemToDelete: function(item) {
     this.itemToDelete = item;
-  },
-
-  closeDeleteDialog: function() {
-    this.setShowDeleteDialog(false);
-    this.setItemToDelete(null);
-  },
-
-  openVisibilityDialog: function(item) {
-    this.currentItem = item;
-    this.showVisibilityDialog = true;
-  },
-
-  closeVisibilityDialog: function() {
-    this.showVisibilityDialog = false;
-    this.currentItem = null;
-  },
-
-  handleToggleVisibility: function(item) {
-    this.openVisibilityDialog(item);
-  },
-
-  handleDelete: function(item) {
-    this.setItemToDelete(item);
-    this.setShowDeleteDialog(true);
   }
+
+  // Note: Other dialog methods are now provided by createBaseCardStoreMethods()
 });

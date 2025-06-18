@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import clientStore from './clientStore';
 import { remove, save } from '../utils/db';
+import { createBaseCardStoreMethods } from '../utils/baseCardStoreUtils';
 
 const membershipTypes = [
   "all",
@@ -13,14 +14,18 @@ const membershipTypes = [
 class MembershipStore {
   searchKeyword = '';
   selectedType = '';
-  showDeleteDialog = false;
-  membershipToDelete = null;
   isTypeDropdownOpen = false;
-  showEditDialog = false;
   editingMembership = {};
   isEditMode = false;
+  
+  // Explicit properties to avoid conflicts
+  currentItem = null;
+  membershipToDelete = null;
 
   constructor() {
+    // Mix in base card store methods
+    Object.assign(this, createBaseCardStoreMethods());
+    
     makeAutoObservable(this);
   }
 
@@ -36,12 +41,15 @@ class MembershipStore {
     this.isTypeDropdownOpen = open;
   };
 
+  // Keep these for backward compatibility, but they now delegate to base methods
   setShowDeleteDialog = (show) => {
     this.showDeleteDialog = show;
   };
 
   setMembershipToDelete = (membership) => {
     this.membershipToDelete = membership;
+    this.itemToDelete = membership;
+    this.currentItem = membership;
   };
 
   setShowEditDialog = (show) => {
@@ -111,33 +119,50 @@ class MembershipStore {
 
   getTypeLabel = (type) => `membership.types.${membershipTypes[type]}`;
 
+  // Override base handlers to use membership-specific logic
   handleEdit = (membership) => {
-    this.setEditingMembership(membership);
-    this.setIsEditMode(true);
-    this.setShowEditDialog(true);
+    this.openEditDialog(membership);
   };
 
   handleDelete = (membership) => {
-    this.setMembershipToDelete(membership);
-    this.setShowDeleteDialog(true);
+    this.openDeleteDialog(membership);
   };
 
+  // Override base openEditDialog to handle membership-specific state
+  openEditDialog = (membership) => {
+    this.currentItem = membership;
+    this.showEditDialog = true;
+    this.setEditingMembership(membership);
+    this.setIsEditMode(true);
+  };
+
+  // Override base openDeleteDialog to handle membership-specific state
+  openDeleteDialog = (membership) => {
+    this.currentItem = membership;
+    this.itemToDelete = membership;
+    this.membershipToDelete = membership;
+    this.showDeleteDialog = true;
+  };
+
+  // Override base implementation with membership-specific logic
   confirmDelete = async () => {
     try {
       if (this.membershipToDelete) {
         await remove('memberships', this.membershipToDelete.id);
         await clientStore.loadClient();
-        this.setShowDeleteDialog(false);
-        this.setMembershipToDelete(null);
+        this.closeDeleteDialog();
       }
     } catch (error) {
       console.error('Error deleting membership:', error);
     }
   };
 
+  // Override base closeDeleteDialog to handle membership-specific state
   closeDeleteDialog = () => {
-    this.setShowDeleteDialog(false);
-    this.setMembershipToDelete(null);
+    this.showDeleteDialog = false;
+    this.membershipToDelete = null;
+    this.itemToDelete = null;
+    this.currentItem = null;
   };
 
   handleCreateNew = () => {
@@ -153,10 +178,17 @@ class MembershipStore {
     this.setShowEditDialog(true);
   };
 
+  // Override base closeEditDialog to handle membership-specific state
   closeEditDialog = () => {
-    this.setShowEditDialog(false);
+    this.showEditDialog = false;
+    this.currentItem = null;
     this.setEditingMembership({});
     this.setIsEditMode(false);
+  };
+
+  // Provide saveItem method for BaseCard compatibility
+  saveItem = () => {
+    return this.saveMembership();
   };
 
   saveMembership = async () => {
