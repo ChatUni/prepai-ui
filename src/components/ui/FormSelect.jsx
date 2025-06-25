@@ -3,15 +3,13 @@ import { observer } from 'mobx-react-lite';
 import { FaPlus } from 'react-icons/fa';
 import Dialog from './Dialog';
 import uiStore from '../../stores/uiStore';
+import { t } from '../../stores/languageStore';
 
-const FormSelect = observer(({ 
-  id, 
-  label, 
-  value, 
-  onChange, 
+const FormSelect = observer(({
+  store,
+  field, 
   options,
   onOptionsChange,
-  placeholder,
   required = false,
   className = '',
   canAdd = false,
@@ -19,11 +17,14 @@ const FormSelect = observer(({
   addDialogPage: AddDialogPage,
   addDialogTitle
 }) => {
+  const id = `${store.name}-${field}`;
+  const onChange = (e) => store.setEditingField(field, e.target.value);
+
   return (
     <div className={className}>
       <div className="flex justify-between items-center mb-2">
         <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
+          {t(`${store.name}.${field}`)}
         </label>
         {canAdd && (
           <button
@@ -37,12 +38,12 @@ const FormSelect = observer(({
       </div>
       <select
         id={id}
-        value={value}
+        value={store.editingItem[field]}
         onChange={onChange}
         className="w-full p-2 border rounded"
         required={required}
       >
-        <option value="">{placeholder}</option>
+        <option value="">{t(`${store.name}.select${field[0].toUpperCase() + field.slice(1)}`)}</option>
         {options.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}

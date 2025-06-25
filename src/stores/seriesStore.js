@@ -1,4 +1,4 @@
-import { makeObservable, runInAction, computed } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import routeStore from './routeStore';
 import uiStore from './uiStore';
 import languageStore from './languageStore';
@@ -13,28 +13,10 @@ class SeriesStore {
   instructors = [];
   isLoading = false;
   error = null;
-  pendingGroups = null;
-  groupOrder = [];
   pendingSeriesUpdates = new Map();
 
   constructor() {
-    makeObservable(this, {
-      series: true,
-      instructors: true,
-      isLoading: true,
-      error: true,
-      pendingGroups: true,
-      groupOrder: true,
-      pendingSeriesUpdates: true,
-      uniqueCategories: computed,
-      currentSeriesFromRoute: computed,
-      filteredSeriesCourses: computed,
-      seriesInstructors: computed,
-      groupedSeries: computed,
-      isSeriesValid: computed,
-      validSeriesItems: computed,
-      filteredSeries: computed
-    });
+    makeAutoObservable(this);
   }
 
   get uniqueCategories() {
@@ -254,11 +236,7 @@ class SeriesStore {
   get groupedSeries() {
     if (!this.isSeriesValid) return {};
 
-    if (this.groupOrder.length === 0) {
-      this.groupOrder = [...clientStore.client.settings.groups];
-    }
-
-    const groups = this.groupOrder;
+    const groups = clientStore.client.settings.groups || [];
     const grouped = {};
 
     groups.forEach(group => {
@@ -276,34 +254,9 @@ class SeriesStore {
     return grouped;
   }
 
-  setGroupOrder = (groups) => {
-    this.groupOrder = groups;
-  };
-
-  moveGroup = (fromIndex, toIndex) => {
-    if (fromIndex === toIndex) return;
-    
-    const groups = this.groupOrder.length > 0
-      ? [...this.groupOrder]
-      : [...clientStore.client.settings.groups];
-
-    const [removed] = groups.splice(fromIndex, 1);
-    groups.splice(toIndex, 0, removed);
-    
-    this.groupOrder = groups;
-    this.pendingGroups = groups;
-  };
-
   saveGroupOrder = async () => {
-    if (!this.pendingGroups) return;
-
-    try {
-      await clientStore.saveGroupOrder(this.pendingGroups);      
-      this.pendingGroups = null;
-    } catch (error) {
-      console.error('Failed to save group order:', error);
-      throw error;
-    }
+    // This method is called by GroupedList but group order is now managed by groupedListStore
+    // The actual saving is handled by the individual group management methods
   };
 
   saveSeriesUpdates = async () => {
@@ -320,7 +273,7 @@ class SeriesStore {
     }
   };
 
-  toggleSeriesVisibility = async (seriesId) => {
+  toggleVisibility = async (seriesId) => {
     const series = this.series.find(s => s.id === seriesId);
     if (!series) return;
 
@@ -343,7 +296,7 @@ class SeriesStore {
     }
   };
 
-  deleteSeries = async (seriesId, isRestore) => {
+  deleteItem = async (seriesId, isRestore) => {
     const series = this.series.find(s => s.id === seriesId);
     if (!series) return;
     series.deleted = !isRestore;

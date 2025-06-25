@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { getApiBaseUrl } from '../config.js';
 import languageStore from './languageStore';
 import { get } from '../utils/db.js';
@@ -28,38 +28,7 @@ class UIStore {
   };
 
   constructor() {
-    makeObservable(this, {
-      searchKeyword: observable,
-      activeNavItem: observable,
-      activeCategory: observable,
-      formSelectDialogOpen: observable,
-      formSelectDialogData: observable,
-      selectedInstructorId: observable,
-      isInstructorDropdownOpen: observable,
-      isCategoryDropdownOpen: observable,
-      favoriteCourseIds: observable,
-      userId: observable,
-      courseTypeFilter: observable,
-      selectedSeriesId: observable,
-      userInfo: observable,
-      mode: observable,
-      setSearchKeyword: action,
-      setSelectedSeriesId: action,
-      setActiveNavItem: action,
-      setActiveCategory: action,
-      setSelectedInstructorId: action,
-      setInstructorDropdownOpen: action,
-      setCategoryDropdownOpen: action,
-      closeAllDropdowns: action,
-      toggleFavorite: action,
-      setFavorites: action,
-      setCourseTypeFilter: action,
-      updateUserInfo: action,
-      resetFilters: action,
-      setMode: action,
-      openFormSelectDialog: action,
-      closeFormSelectDialog: action
-    });
+    makeAutoObservable(this);
 
     // Load favorites from API
     this.loadFavorites();

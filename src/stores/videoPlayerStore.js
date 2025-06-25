@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, computed, runInAction } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 class VideoPlayerStore {
   // Video state
@@ -12,23 +12,7 @@ class VideoPlayerStore {
   originalTranscriptFormat = null;
   
   constructor() {
-    makeObservable(this, {
-      videoElement: observable,
-      currentTime: observable,
-      duration: observable,
-      isPlaying: observable,
-      transcript: observable,
-      originalTranscriptFormat: observable,
-      
-      setVideoElement: action,
-      setCurrentTime: action,
-      setDuration: action,
-      setIsPlaying: action,
-      setTranscript: action,
-      
-      currentSubtitle: computed,
-      parseSrtTranscript: action
-    });
+    makeAutoObservable(this);
   }
   
   setVideoElement = (element) => {

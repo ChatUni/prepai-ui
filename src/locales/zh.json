@@ -171,9 +171,9 @@
       "uploadError": "上传图片失败"
     }
   },
-  "assistants": {
+  "assistant": {
     "description": "从我们的AI助手中选择，帮助您完成各种任务。每个助手都专门针对不同类型的问题和对话进行了优化。",
-    "noAssistants": "暂无可用助手",
+    "noItems": "暂无可用助手",
     "delete": "删除助手",
     "edit": "编辑助手",
     "createNew": "创建新助手",
@@ -199,7 +199,7 @@
     "groups": {
       "title": "助手分组",
       "noGroup": "无分组",
-      "noAssistants": "此分组中没有助手",
+      "noItems": "此分组中没有助手",
       "addGroup": "添加分组",
       "newGroup": "新分组",
       "enterName": "输入分组名称",
@@ -415,6 +415,26 @@
     "edit": "编辑会员",
     "delete": "删除",
     "confirmDelete": "确定要删除「{name}」会员吗？",
-    "noMemberships": "暂无会员设置"
+    "noMemberships": "暂无会员设置",
+    "addMembership": "添加会员",
+    "managePlans": "管理方案",
+    "allStatuses": "全部状态",
+    "active": "活跃",
+    "expired": "已过期",
+    "pending": "待处理",
+    "allTypes": "全部类型",
+    "premium": "高级",
+    "basic": "基础",
+    "trial": "试用",
+    "searchPlaceholder": "搜索会员..."
+  },
+  "generic": {
+    "listPage": {
+      "title": "列表",
+      "searchPlaceholder": "搜索...",
+      "noItems": "未找到项目",
+      "loading": "加载中...",
+      "error": "数据加载错误"
+    }
   }
 }

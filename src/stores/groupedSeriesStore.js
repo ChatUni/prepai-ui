@@ -1,4 +1,4 @@
-import { makeObservable, computed } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import clientStore from './clientStore';
 import routeStore from './routeStore';
 import seriesStore from './seriesStore';
@@ -20,18 +20,7 @@ class GroupedSeriesStore {
   errorMessage = '';
 
   constructor() {
-    makeObservable(this, {
-      expandedGroups: true,
-      pendingGroupOrder: true,
-      isAddGroupDialogOpen: true,
-      isEditGroupDialogOpen: true,
-      isDeleteGroupDialogOpen: true,
-      isErrorDialogOpen: true,
-      isEditSeriesDialogOpen: true,
-      newGroupName: true,
-      selectedGroup: true,
-      errorMessage: true,
-    });
+    makeAutoObservable(this);
   }
 
   openEditGroupDialog = (group) => {
@@ -109,7 +98,7 @@ class GroupedSeriesStore {
       clientStore.client.settings.groups = groups;
       seriesStore.setGroupOrder(groups);
 
-      await clientStore.saveClient();
+      await clientStore.save();
       this.closeAddGroupDialog();
     } catch (error) {
       console.error('Failed to add group:', error);
@@ -140,7 +129,7 @@ class GroupedSeriesStore {
         seriesStore.setSeries(seriesList);
 
         await Promise.all([
-          clientStore.saveClient(),
+          clientStore.save(),
           ...seriesList
             .filter(series => series.group === newName)
             .map(series => save('series', _.omit(series, ['courses'])))
@@ -163,7 +152,7 @@ class GroupedSeriesStore {
       clientStore.client.settings.groups = groups;
       seriesStore.setGroupOrder(groups);
 
-      await clientStore.saveClient();
+      await clientStore.save();
       this.closeDeleteGroupDialog();
     } catch (error) {
       console.error('Failed to delete group:', error);

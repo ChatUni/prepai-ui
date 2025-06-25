@@ -1,30 +1,16 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import languageStore from '../../stores/languageStore';
+import { t } from '../../stores/languageStore';
 import DropdownFilter from './DropdownFilter';
 import Button from './Button';
 import useClickOutside from '../../hooks/useClickOutside';
 import Icon from './Icon';
 
 const SearchBar = observer(({
-  // Search functionality
-  searchValue,
-  onSearchChange,
-  searchPlaceholder,
-  
-  // Dropdown filters
+  store,
   filters = [],
-  
-  // Action buttons
-  isEditMode = false,
-  newGroupButton,
-  newItemButton,
-  
-  // Styling options
   className = ''
-}) => {
-  const { t } = languageStore;
-  
+}) => {  
   // Create refs for all dropdowns
   const dropdownRefs = useClickOutside(
     () => {
@@ -45,9 +31,9 @@ const SearchBar = observer(({
         <input
           type="text"
           className="w-full pl-10 pr-4 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={searchPlaceholder}
-          value={searchValue}
-          onChange={onSearchChange}
+          placeholder={t(`${store.name}.search.placeholder`)}
+          value={store.searchQuery}
+          onChange={(e) => store.setSearchQuery(e.target.value)}
         />
       </div>
 
@@ -67,34 +53,30 @@ const SearchBar = observer(({
         </div>
       ))}
 
-      {/* Action Buttons - only show in edit mode */}
-      {isEditMode && (
+      {/* Action Buttons - only show in admin mode */}
+      {store.isAdminMode && (
         <>
-          {newGroupButton && (
+          {store.expandedGroups && (
             <div className="shrink-0">
               <Button
-                onClick={newGroupButton.onClick}
-                icon={newGroupButton.icon || "FiPlus"}
-                color={newGroupButton.color || "green"}
-                shade={newGroupButton.shade || 600}
+                onClick={() => store.openAddGroupDialog()}
+                icon="FiPlus"
+                color="green"
               >
-                {newGroupButton.label}
+                {t(`${store.name}.groups.addGroup`)}
               </Button>
             </div>
           )}
           
-          {newItemButton && (
-            <div className="shrink-0">
-              <Button
-                onClick={newItemButton.onClick}
-                icon={newItemButton.icon || "FiPlus"}
-                color={newItemButton.color || "blue"}
-                shade={newItemButton.shade || 600}
-              >
-                {newItemButton.label}
-              </Button>
-            </div>
-          )}
+          <div className="shrink-0">
+            <Button
+              onClick={() => store.openAddDialog()}
+              icon="FiPlus"
+              color="blue"
+            >
+              {t(`${store.name}.createNew`)}
+            </Button>
+          </div>
         </>
       )}
     </div>

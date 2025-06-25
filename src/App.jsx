@@ -23,7 +23,7 @@ import EditSeriesPage from './components/pages/series/EditSeriesPage';
 import EditBannerPage from './components/pages/account/EditBannerPage';
 import EditCoursePage from './components/pages/series/EditCoursePage';
 import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
-import AssistantsPage from './components/pages/assistant/AssistantsPage';
+import AssistantPage from './components/pages/assistant/AssistantPage';
 import EditAssistantPage from './components/pages/assistant/EditAssistantPage';
 import EditInstructorPage from './components/pages/instructor/EditInstructorPage';
 import AssistantChatPage from './components/pages/assistant/AssistantChatPage';
@@ -42,7 +42,7 @@ import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
-import './stores/assistantsStore';
+import './stores/assistantStore';
 import './stores/instructorsStore';
 import './stores/languageStore';
 import './stores/seriesStore';
@@ -233,12 +233,12 @@ const MainLayout = observer(() => {
                 } />
                 <Route path="/assistants" element={
                   <AuthRoute>
-                    <AssistantsPage />
+                    <AssistantPage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants/settings" element={
                   <AuthRoute>
-                    <AssistantsPage />
+                    <AssistantPage />
                   </AuthRoute>
                 } />
                 <Route path="/assistants/:assistantId/chat" element={

@@ -1,13 +1,10 @@
-import { makeObservable, observable, action } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 class CounterStore {
   count = 0;
 
   constructor() {
-    makeObservable(this, {
-      count: observable,
-      increment: action
-    });
+    makeAutoObservable(this);
   }
 
   increment = () => {

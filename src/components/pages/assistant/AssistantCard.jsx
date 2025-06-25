@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import assistantsStore from '../../../stores/assistantsStore';
-import languageStore from '../../../stores/languageStore';
-import BaseCard from '../../ui/BaseCard';
+import store from '../../../stores/assistantStore';
+import CardEditActions from '../../ui/CardEditActions';
 import EditAssistantPage from './EditAssistantPage';
+import DndOrderContainer from '../../ui/DndOrderContainer';
 
 const AssistantCard = observer(({
   assistant,
@@ -14,33 +14,31 @@ const AssistantCard = observer(({
   group,
   renderDialogs
 }) => {
-  const { t } = languageStore;
   const navigate = useNavigate();
+
   // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.src = '/images/avatar.png';
   }, []);
 
+  const handleCardClick = (e) => {
+    // Don't trigger card click if clicking on action buttons
+    if (isEditMode && e.target.closest('.action-button')) {
+      return;
+    }
+    store.handleItemClick(assistant, navigate);
+  };
+
   return (
-    <BaseCard
-      item={assistant}
-      index={index}
-      group={group}
-      moveItem={moveItem}
+    <DndOrderContainer
       isEditMode={isEditMode}
-      onClick={(assistant) => assistantsStore.handleAssistantClick(assistant, navigate)}
-      onToggleVisibility={assistantsStore.handleToggleVisibility}
-      onEdit={assistantsStore.handleEdit}
-      onDelete={assistantsStore.handleDelete}
-      onDrop={assistantsStore.saveItemGroupOrder}
-      className="relative"
-      store={assistantsStore}
-      itemType="assistants"
-      editDialogTitle={assistantsStore.isEditMode ? t('assistants.edit') : t('assistants.createNew')}
-      editDialogChildren={<EditAssistantPage />}
-      editDialogSize="md"
-      renderDialogs={renderDialogs}
+      type={`item-${group}`}
+      index={index}
+      moveItem={moveItem}
+      onDrop={store.saveItemGroupOrder}
+      onClick={handleCardClick}
+      isClickable={!isEditMode}
     >
       <div className="p-4">
         {/* Horizontal layout with image on left and content on right */}
@@ -68,7 +66,16 @@ const AssistantCard = observer(({
           </div>
         </div>
       </div>
-    </BaseCard>
+      
+      {/* Action buttons for edit mode */}
+      {isEditMode && (
+        <CardEditActions
+          item={assistant}
+          store={store}
+          hideDelete={item => item.type === 1}
+        />
+      )}
+    </DndOrderContainer>
   );
 });
 

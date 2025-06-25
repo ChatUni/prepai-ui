@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, computed, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { getAllCourses, getAllInstructors, getAllSeries, fetchFromApi } from '../utils/db';
 import languageStore from './languageStore';
 import clientStore from './clientStore';
@@ -15,7 +15,7 @@ class CoursesStore {
   selectedInstructorId = null;
 
   constructor() {
-    makeObservable(this);
+    makeAutoObservable(this);
   }
 
   setCourses(courses) {

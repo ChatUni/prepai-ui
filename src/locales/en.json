@@ -171,9 +171,9 @@
       "uploadError": "Failed to upload image"
     }
   },
-  "assistants": {
+  "assistant": {
     "description": "Choose from our AI assistants to help you with various tasks. Each assistant is specialized for different types of questions and conversations.",
-    "noAssistants": "No assistants available",
+    "noItems": "No assistants available",
     "delete": "Delete Assistant",
     "edit": "Edit Assistant",
     "createNew": "Create New Assistant",
@@ -199,7 +199,7 @@
     "groups": {
       "title": "Assistant Groups",
       "noGroup": "No Group",
-      "noAssistants": "No assistants in this group",
+      "noItems": "No assistants in this group",
       "addGroup": "Add Group",
       "newGroup": "New Group",
       "enterName": "Enter group name",
@@ -416,6 +416,26 @@
     "edit": "Edit Membership",
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
-    "noMemberships": "No memberships configured"
+    "noMemberships": "No memberships configured",
+    "addMembership": "Add Membership",
+    "managePlans": "Manage Plans",
+    "allStatuses": "All Statuses",
+    "active": "Active",
+    "expired": "Expired",
+    "pending": "Pending",
+    "allTypes": "All Types",
+    "premium": "Premium",
+    "basic": "Basic",
+    "trial": "Trial",
+    "searchPlaceholder": "Search memberships..."
+  },
+  "generic": {
+    "listPage": {
+      "title": "List",
+      "searchPlaceholder": "Search...",
+      "noItems": "No items found",
+      "loading": "Loading...",
+      "error": "Error loading data"
+    }
   }
 }

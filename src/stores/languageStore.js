@@ -66,4 +66,6 @@ class LanguageStore {
 }
 
 const languageStore = new LanguageStore();
+
+export const t = languageStore.t;
 export default languageStore;

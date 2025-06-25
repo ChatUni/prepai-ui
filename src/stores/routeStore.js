@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, computed, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import coursesStore from './coursesStore';
 import seriesStore from './seriesStore';
 import uiStore from './uiStore';
@@ -11,33 +11,7 @@ class RouteStore {
   currentPath = '';
   
   constructor() {
-    makeObservable(this, {
-      instructorId: observable,
-      seriesId: observable,
-      courseId: observable,
-      currentPath: observable,
-      
-      // Actions to update route parameters
-      setInstructorId: action,
-      setSeriesId: action,
-      setCourseId: action,
-      
-      // Computed properties that derive state from route parameters
-      currentInstructor: computed,
-      currentSeries: computed,
-      currentCourse: computed,
-      isTopLevelPage: computed,
-      isSeriesSelectMode: computed,
-      isSeriesExamMode: computed,
-      isSeriesHomeMode: computed,
-      isSeriesGroupMode: computed,
-      
-      // Navigation actions that coordinate with the store
-      navigateToInstructor: action,
-      navigateToSeries: action,
-      navigateToCourse: action,
-      navigateToSeriesWithInstructor: action
-    });
+    makeAutoObservable(this);
   }
   
   // Update route parameters

@@ -4,7 +4,7 @@ import clientStore from './clientStore';
 import lang from './languageStore';
 import { get } from '../utils/db';
 import seriesStore from './seriesStore';
-import assistantsStore from './assistantsStore';
+import assistantStore from './assistantStore';
 
 class UserStore {
   user = {};
@@ -47,7 +47,7 @@ class UserStore {
   async initData() {
     await clientStore.loadClient();
     await seriesStore.fetchSeries();
-    await assistantsStore.fetchAssistants();
+    await assistantStore.fetchItems();
   }
 
   checkSavedLoginState() {

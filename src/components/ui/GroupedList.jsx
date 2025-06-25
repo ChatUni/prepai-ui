@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { AccordionSection } from './AdminAccordion';
 import ActionButton from './ActionButton';
-import languageStore from '../../stores/languageStore';
-import { DeleteConfirmDialog, GroupNameDialog, ErrorDialog } from './CrudDialogs';
+import { t } from '../../stores/languageStore';
+import { DeleteConfirmDialog, GroupNameDialog, ErrorDialog, GroupDeleteDialog } from './Dialogs';
 
 const GroupedList = observer(({
   groupedItems,
   store,
   renderItem,
   renderGroupActions,
-  onEditGroup,
-  onDeleteGroup,
   editGroupTitle,
   deleteGroupTitle,
   isEditMode,
@@ -20,127 +18,14 @@ const GroupedList = observer(({
   isGroupDanger = () => false,
   onItemMove,
   onGroupDrop,
-  // Group management props
   itemType = "items"
 }) => {
-  const { t } = languageStore;
-
-  // Group management dialog states
-  const [isAddGroupDialogOpen, setIsAddGroupDialogOpen] = useState(false);
-  const [isEditGroupDialogOpen, setIsEditGroupDialogOpen] = useState(false);
-  const [isDeleteGroupDialogOpen, setIsDeleteGroupDialogOpen] = useState(false);
-  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
-  const [newGroupName, setNewGroupName] = useState('');
-  const [groupToEdit, setGroupToEdit] = useState(null);
-  const [groupToDelete, setGroupToDelete] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  // Group management methods
-  const openAddGroupDialog = () => {
-    setNewGroupName('');
-    setIsAddGroupDialogOpen(true);
-  };
-
-  const closeAddGroupDialog = () => {
-    setIsAddGroupDialogOpen(false);
-    setNewGroupName('');
-  };
-
-  const openEditGroupDialog = (group) => {
-    setGroupToEdit(group);
-    setNewGroupName(group);
-    setIsEditGroupDialogOpen(true);
-  };
-
-  const closeEditGroupDialog = () => {
-    setIsEditGroupDialogOpen(false);
-    setGroupToEdit(null);
-    setNewGroupName('');
-  };
-
-  const openDeleteGroupDialog = (group) => {
-    setGroupToDelete(group);
-    setIsDeleteGroupDialogOpen(true);
-  };
-
-  const closeDeleteGroupDialog = () => {
-    setIsDeleteGroupDialogOpen(false);
-    setGroupToDelete(null);
-  };
-
-  const openErrorDialog = (message) => {
-    setErrorMessage(message);
-    setIsErrorDialogOpen(true);
-  };
-
-  const closeErrorDialog = () => {
-    setIsErrorDialogOpen(false);
-    setErrorMessage('');
-  };
-
-  const handleAddGroup = async () => {
-    if (!newGroupName.trim()) return;
-
-    try {
-      if (store.addGroup) {
-        await store.addGroup(newGroupName.trim());
-      }
-      closeAddGroupDialog();
-    } catch (error) {
-      console.error('Error adding group:', error);
-      openErrorDialog('Failed to add group');
+  // Sync initial group order with store
+  useEffect(() => {
+    if (store.groupOrder && store.groupOrder.length > 0) {
+      store.setGroupOrder(store.groupOrder);
     }
-  };
-
-  const handleEditGroup = async () => {
-    if (!newGroupName.trim() || !groupToEdit) return;
-
-    try {
-      if (store.editGroup) {
-        await store.editGroup(groupToEdit, newGroupName.trim());
-      }
-      closeEditGroupDialog();
-    } catch (error) {
-      console.error('Error editing group:', error);
-      openErrorDialog('Failed to edit group');
-    }
-  };
-
-  const handleDeleteGroup = async () => {
-    if (!groupToDelete) return;
-
-    try {
-      if (store.deleteGroup) {
-        await store.deleteGroup(groupToDelete);
-      }
-      closeDeleteGroupDialog();
-    } catch (error) {
-      console.error('Error deleting group:', error);
-      openErrorDialog('Failed to delete group');
-    }
-  };
-
-  const handleGroupEdit = (group) => {
-    if (onEditGroup) {
-      onEditGroup(group);
-    } else {
-      openEditGroupDialog(group);
-    }
-  };
-
-  const handleGroupDelete = (group) => {
-    if (onDeleteGroup) {
-      onDeleteGroup(group);
-    } else {
-      // Check if group has items
-      const groupItems = groupedItems[group] || [];
-      if (groupItems.length > 0) {
-        openErrorDialog(t(`${itemType}.groups.cannotDelete`));
-        return;
-      }
-      openDeleteGroupDialog(group);
-    }
-  };
+  }, [store.groupOrder]);
 
   const renderActions = (group) => {
     if (renderGroupActions) {
@@ -154,13 +39,13 @@ const GroupedList = observer(({
     return (
       <div className="flex items-center gap-2">
         <ActionButton
-          onClick={() => handleGroupEdit(group)}
+          onClick={() => store.openEditGroupDialog(group)}
           icon="FiEdit"
           color="white"
           title={editGroupTitle || t(`${itemType}.groups.editGroup`)}
         />
         <ActionButton
-          onClick={() => handleGroupDelete(group)}
+          onClick={() => store.openDeleteGroupDialog(group)}
           icon="FiTrash2"
           color="white"
           title={deleteGroupTitle || t(`${itemType}.groups.deleteGroup`)}
@@ -178,8 +63,10 @@ const GroupedList = observer(({
       onToggle={() => store.toggleGroup(group)}
       maxHeight="96"
       index={index}
-      moveGroup={(fromIndex, toIndex) => store.moveGroup(fromIndex, toIndex)}
-      onDrop={onGroupDrop || (() => store.saveGroupOrder())}
+      moveGroup={(fromIndex, toIndex) => {
+        store.moveGroup(fromIndex, toIndex, () => groupedItems);
+      }}
+      onDrop={() => store.saveGroupOrder()}
       isDraggable={isEditMode && isGroupEditable(group)}
       isDanger={isGroupDanger(group)}
     >
@@ -213,39 +100,9 @@ const GroupedList = observer(({
       </div>
 
       {/* Group Management Dialogs */}
-      <GroupNameDialog
-        isOpen={isAddGroupDialogOpen}
-        onClose={closeAddGroupDialog}
-        onConfirm={handleAddGroup}
-        title={t(`${itemType}.groups.newGroup`)}
-        value={newGroupName}
-        onChange={setNewGroupName}
-        placeholder={t(`${itemType}.groups.enterName`)}
-      />
-
-      <GroupNameDialog
-        isOpen={isEditGroupDialogOpen}
-        onClose={closeEditGroupDialog}
-        onConfirm={handleEditGroup}
-        title={t(`${itemType}.groups.editGroup`)}
-        value={newGroupName}
-        onChange={setNewGroupName}
-        placeholder={t(`${itemType}.groups.enterName`)}
-      />
-
-      <DeleteConfirmDialog
-        isOpen={isDeleteGroupDialogOpen}
-        onClose={closeDeleteGroupDialog}
-        onConfirm={handleDeleteGroup}
-        item={{ name: groupToDelete }}
-        itemType={`${itemType}.groups`}
-      />
-
-      <ErrorDialog
-        isOpen={isErrorDialogOpen}
-        onClose={closeErrorDialog}
-        message={errorMessage}
-      />
+      <GroupNameDialog store={store} />
+      <GroupNameDialog store={store} isEdit={true} />
+      <GroupDeleteDialog store={store} />
     </>
   );
 });

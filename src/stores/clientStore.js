@@ -72,21 +72,21 @@ class ClientStore {
       if (type === 'banners') {
         const folder = `${this.client.id}/banners`;
 
-      // Process changes in order
-      for (const change of this.changes) {
-        if (change.type === 'add') {
-          const url = await uploadToCloudinary(change.data, folder);
-          const index = this.client.settings.banners.indexOf('');
-          if (index > -1) {
-            this.client.settings.banners[index] = url;
+        // Process changes in order
+        for (const change of this.changes) {
+          if (change.type === 'add') {
+            const url = await uploadToCloudinary(change.data, folder);
+            const index = this.client.settings.banners.indexOf('');
+            if (index > -1) {
+              this.client.settings.banners[index] = url;
+            }
+          } else if (change.type === 'delete') {
+            // Extract public_id from the Cloudinary URL
+            const urlParts = change.data.split('/');
+            const publicId = `${folder}/${urlParts[urlParts.length - 1].split('.')[0]}`;
+            await deleteFromCloudinary(publicId);
           }
-        } else if (change.type === 'delete') {
-          // Extract public_id from the Cloudinary URL
-          const urlParts = change.data.split('/');
-          const publicId = `${folder}/${urlParts[urlParts.length - 1].split('.')[0]}`;
-          await deleteFromCloudinary(publicId);
         }
-      }
 
         // Process changes in order
         for (const change of this.changes) {
@@ -106,7 +106,7 @@ class ClientStore {
       }
 
       // Save client object
-      const response = await this.saveClient();
+      const response = await this.save();
 
       if (!response.ok) {
         throw new Error(`Failed to save changes: ${response.status}`);
@@ -128,7 +128,7 @@ class ClientStore {
     }
   }
 
-  saveClient = () => save('clients', omit(this.client, ['_id', 'memberships', 'assistants']));
+  save = () => save('clients', omit(this.client, ['_id', 'memberships', 'assistants']));
 
   deleteBanner(index) {
     const url = this.client.settings.banners[index];
@@ -230,17 +230,6 @@ class ClientStore {
   hideConfirmDialog() {
     this.isConfirmDialogOpen = false;
   }
-
-  async saveGroupOrder(groups) {
-    this.client.settings.groups = groups;
-    await this.saveChanges('groups');
-  }
-
-  async saveAssistantGroupOrder(assistantGroups) {
-    this.client.settings.assistantGroups = assistantGroups;
-    await this.saveChanges('assistantGroups');
-  }
-
 }
 
 // Create and export a singleton instance

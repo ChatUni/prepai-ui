@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import clientStore from './clientStore';
 import { remove, save } from '../utils/db';
-import { createBaseCardStoreMethods } from '../utils/baseCardStoreUtils';
 
 const membershipTypes = [
   "all",
@@ -12,20 +11,14 @@ const membershipTypes = [
 ]
 
 class MembershipStore {
+  // Store-specific observable fields
   searchKeyword = '';
   selectedType = '';
   isTypeDropdownOpen = false;
   editingMembership = {};
   isEditMode = false;
-  
-  // Explicit properties to avoid conflicts
-  currentItem = null;
-  membershipToDelete = null;
 
   constructor() {
-    // Mix in base card store methods
-    Object.assign(this, createBaseCardStoreMethods());
-    
     makeAutoObservable(this);
   }
 
@@ -39,21 +32,6 @@ class MembershipStore {
 
   setTypeDropdownOpen = (open) => {
     this.isTypeDropdownOpen = open;
-  };
-
-  // Keep these for backward compatibility, but they now delegate to base methods
-  setShowDeleteDialog = (show) => {
-    this.showDeleteDialog = show;
-  };
-
-  setMembershipToDelete = (membership) => {
-    this.membershipToDelete = membership;
-    this.itemToDelete = membership;
-    this.currentItem = membership;
-  };
-
-  setShowEditDialog = (show) => {
-    this.showEditDialog = show;
   };
 
   setEditingMembership = (membership) => {
@@ -119,52 +97,6 @@ class MembershipStore {
 
   getTypeLabel = (type) => `membership.types.${membershipTypes[type]}`;
 
-  // Override base handlers to use membership-specific logic
-  handleEdit = (membership) => {
-    this.openEditDialog(membership);
-  };
-
-  handleDelete = (membership) => {
-    this.openDeleteDialog(membership);
-  };
-
-  // Override base openEditDialog to handle membership-specific state
-  openEditDialog = (membership) => {
-    this.currentItem = membership;
-    this.showEditDialog = true;
-    this.setEditingMembership(membership);
-    this.setIsEditMode(true);
-  };
-
-  // Override base openDeleteDialog to handle membership-specific state
-  openDeleteDialog = (membership) => {
-    this.currentItem = membership;
-    this.itemToDelete = membership;
-    this.membershipToDelete = membership;
-    this.showDeleteDialog = true;
-  };
-
-  // Override base implementation with membership-specific logic
-  confirmDelete = async () => {
-    try {
-      if (this.membershipToDelete) {
-        await remove('memberships', this.membershipToDelete.id);
-        await clientStore.loadClient();
-        this.closeDeleteDialog();
-      }
-    } catch (error) {
-      console.error('Error deleting membership:', error);
-    }
-  };
-
-  // Override base closeDeleteDialog to handle membership-specific state
-  closeDeleteDialog = () => {
-    this.showDeleteDialog = false;
-    this.membershipToDelete = null;
-    this.itemToDelete = null;
-    this.currentItem = null;
-  };
-
   handleCreateNew = () => {
     this.setEditingMembership({
       client_id: clientStore.client.id,
@@ -175,19 +107,21 @@ class MembershipStore {
       desc: ''
     });
     this.setIsEditMode(false);
-    this.setShowEditDialog(true);
   };
 
-  // Override base closeEditDialog to handle membership-specific state
-  closeEditDialog = () => {
-    this.showEditDialog = false;
-    this.currentItem = null;
-    this.setEditingMembership({});
-    this.setIsEditMode(false);
+  // Business operation: delete membership
+  deleteItem = async (membershipId) => {
+    try {
+      await remove('memberships', membershipId);
+      await clientStore.loadClient();
+    } catch (error) {
+      console.error('Error deleting membership:', error);
+      throw error;
+    }
   };
 
-  // Provide saveItem method for BaseCard compatibility
-  saveItem = () => {
+  // Business operation: save membership
+  saveItem = async () => {
     return this.saveMembership();
   };
 
@@ -202,9 +136,9 @@ class MembershipStore {
       // Save to database
       await save('memberships', membership);
       await clientStore.loadClient();
-      this.closeEditDialog();
     } catch (error) {
       console.error('Error saving membership:', error);
+      throw error;
     }
   };
 

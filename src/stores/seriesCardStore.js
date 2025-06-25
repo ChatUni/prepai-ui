@@ -1,4 +1,4 @@
-import { makeAutoObservable, computed } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import routeStore from './routeStore';
 import languageStore from './languageStore';
 import seriesStore from './seriesStore';
@@ -6,22 +6,44 @@ import groupedSeriesStore from './groupedSeriesStore';
 import editCourseStore from './editCourseStore';
 import editInstructorStore from './editInstructorStore';
 import editSeriesStore from './editSeriesStore';
-import { createBaseCardStoreMethods } from '../utils/baseCardStoreUtils';
 
 class SeriesCardStore {
+  // Store-specific observable fields
   expandedSeriesId = null;
   editInstructorDialogOpen = false;
   currentEditInstructor = null;
   showRestoreDialog = false;
   currentSeries = null;
-  currentItem = null; // Add explicit property to avoid getter conflicts
 
   constructor() {
-    // Mix in base card store methods
-    Object.assign(this, createBaseCardStoreMethods());
+    // Create an instance of GroupCardEditManager for dialog management
+    this.cardEditManager = {} //new GroupCardEditManager();
+    
+    // Override the callback methods
+    this.cardEditManager.confirmDelete = this.confirmDelete;
+    this.cardEditManager.confirmVisibilityChange = this.confirmVisibilityChange;
+    this.cardEditManager.handleRestore = this.handleRestore;
     
     makeAutoObservable(this);
   }
+
+  // Delegate dialog state properties to cardEditManager
+  get showDeleteDialog() { return this.cardEditManager.showDeleteDialog; }
+  get showVisibilityDialog() { return this.cardEditManager.showVisibilityDialog; }
+  get showEditDialog() { return this.cardEditManager.showEditDialog; }
+  get itemToDelete() { return this.cardEditManager.itemToDelete; }
+  get currentItem() { return this.cardEditManager.currentItem; }
+
+  // Delegate dialog methods to cardEditManager
+  openDeleteDialog = (item) => this.cardEditManager.openDeleteDialog(item);
+  closeDeleteDialog = () => this.cardEditManager.closeDeleteDialog();
+  openVisibilityDialog = (item) => this.cardEditManager.openVisibilityDialog(item);
+  closeVisibilityDialog = () => this.cardEditManager.closeVisibilityDialog();
+  openEditDialog = (item) => this.cardEditManager.openEditDialog(item);
+  closeEditDialog = () => this.cardEditManager.closeEditDialog();
+  handleToggleVisibility = (item) => this.cardEditManager.handleToggleVisibility(item);
+  handleEdit = (item) => this.cardEditManager.handleEdit(item);
+  handleDelete = (item) => this.cardEditManager.handleDelete(item);
 
   openEditInstructorDialog = (instructor) => {
     this.currentEditInstructor = instructor;
@@ -93,37 +115,26 @@ class SeriesCardStore {
     return languageStore.t(key, { count });
   };
 
-  openEditDialog = (series) => {
-    routeStore.setSeriesId(series.id);
-    editSeriesStore.reset(series);
-    groupedSeriesStore.openEditSeriesDialog(series);
-  };
 
-  // Override base methods to sync currentSeries and currentItem
+  // Override methods to sync currentSeries and currentItem
   openVisibilityDialog = (series) => {
+    this.cardEditManager.openVisibilityDialog(series);
     this.currentSeries = series;
-    this.currentItem = series;
-    this.showVisibilityDialog = true;
   };
 
   closeVisibilityDialog = () => {
-    this.showVisibilityDialog = false;
+    this.cardEditManager.closeVisibilityDialog();
     this.currentSeries = null;
-    this.currentItem = null;
   };
 
   openDeleteDialog = (series) => {
+    this.cardEditManager.openDeleteDialog(series);
     this.currentSeries = series;
-    this.currentItem = series;
-    this.itemToDelete = series;
-    this.showDeleteDialog = true;
   };
 
   closeDeleteDialog = () => {
-    this.showDeleteDialog = false;
+    this.cardEditManager.closeDeleteDialog();
     this.currentSeries = null;
-    this.currentItem = null;
-    this.itemToDelete = null;
   };
 
   openRestoreDialog = (series) => {
@@ -136,7 +147,7 @@ class SeriesCardStore {
     this.currentSeries = null;
   };
 
-  // Override base implementations with series-specific logic
+  // Implementation for confirmVisibilityChange callback
   confirmVisibilityChange = () => {
     if (this.currentSeries) {
       seriesStore.toggleSeriesVisibility(this.currentSeries.id);
@@ -144,6 +155,7 @@ class SeriesCardStore {
     }
   };
 
+  // Implementation for confirmDelete callback
   confirmDelete = () => {
     if (this.currentSeries) {
       seriesStore.deleteSeries(this.currentSeries.id);
@@ -158,15 +170,7 @@ class SeriesCardStore {
     }
   };
 
-  // Override base handlers to use series-specific logic
-  handleToggleVisibility = (series) => {
-    this.openVisibilityDialog(series);
-  };
-
-  handleEdit = (series) => {
-    this.openEditDialog(series);
-  };
-
+  // Override handleDelete to use series-specific logic
   handleDelete = (series) => {
     if (series.deleted) {
       this.openRestoreDialog(series);
@@ -175,24 +179,23 @@ class SeriesCardStore {
     }
   };
 
+  // Implementation for handleRestore callback
   handleRestore = (series) => {
     this.openRestoreDialog(series);
   };
 
   // Series-specific edit dialog handling
   openEditDialog = (series) => {
+    this.cardEditManager.openEditDialog(series);
     this.currentSeries = series;
-    this.currentItem = series;
-    this.showEditDialog = true;
     routeStore.setSeriesId(series.id);
     editSeriesStore.reset(series);
     groupedSeriesStore.openEditSeriesDialog(series);
   };
 
   closeEditDialog = () => {
-    this.showEditDialog = false;
+    this.cardEditManager.closeEditDialog();
     this.currentSeries = null;
-    this.currentItem = null;
   };
 }
 

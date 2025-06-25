@@ -5,12 +5,26 @@ import clientStore from '../../../stores/clientStore';
 import membershipStore from '../../../stores/membershipStore';
 import MembershipCard from './MembershipCard';
 import MembershipSearchBar from '../../ui/MembershipSearchBar';
-import Dialog from '../../ui/Dialog';
-import BackButton from '../../ui/BackButton';
+import ListPage from '../../ui/ListPage';
 import EditMembershipPage from './EditMembershipPage';
 
 const MembershipListPage = observer(() => {
   const { t } = languageStore;
+
+  // Transform memberships into grouped format for ListPage
+  const groupedMemberships = {
+    [t('membership.priceSettings.title')]: membershipStore.filteredMemberships
+  };
+
+  const renderMembershipCard = (membership, index) => (
+    <MembershipCard
+      key={membership.id || index}
+      membership={membership}
+      index={index}
+      moveMembership={membershipStore.moveMembership}
+      isDraggable={true}
+    />
+  );
 
   return (
     <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
@@ -23,60 +37,30 @@ const MembershipListPage = observer(() => {
           </p>
         </div>
         
-        {/* Search and Filter Bar */}
-        <MembershipSearchBar />
+        {/* Custom Search Bar */}
+        <div className="mb-6">
+          <MembershipSearchBar />
+        </div>
         
-        {membershipStore.filteredMemberships.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              {membershipStore.searchKeyword || membershipStore.selectedType
-                ? t('common.no_results')
-                : t('membership.noMemberships')
-              }
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {membershipStore.filteredMemberships.map((membership, index) => (
-              <MembershipCard
-                key={membership.id || index}
-                membership={membership}
-                index={index}
-                moveMembership={membershipStore.moveMembership}
-                onEdit={membershipStore.handleEdit}
-                onDelete={membershipStore.handleDelete}
-                isDraggable={true}
-              />
-            ))}
-          </div>
-        )}
+        <ListPage
+          // List props
+          groupedItems={groupedMemberships}
+          store={membershipStore}
+          renderItem={renderMembershipCard}
+          itemsContainerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          itemType="membership"
+          
+          // Dialog props
+          editDialogTitle={membershipStore.isEditMode ? t('membership.edit') : t('membership.createNew')}
+          editDialogChildren={<EditMembershipPage />}
+          editDialogSize="md"
+          
+          // Layout props
+          showBanner={false}
+          className="w-full"
+          containerClassName=""
+        />
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        isOpen={membershipStore.showDeleteDialog}
-        onClose={membershipStore.closeDeleteDialog}
-        onConfirm={membershipStore.confirmDelete}
-        title={t('membership.delete')}
-        isConfirm={true}
-      >
-        <p>
-          {membershipStore.membershipToDelete &&
-            t('membership.confirmDelete', { name: membershipStore.membershipToDelete.name })
-          }
-        </p>
-      </Dialog>
-
-      {/* Edit Membership Dialog */}
-      <Dialog
-        isOpen={membershipStore.showEditDialog}
-        onClose={membershipStore.closeEditDialog}
-        onConfirm={membershipStore.saveMembership}
-        title={membershipStore.isEditMode ? t('membership.edit') : t('membership.createNew')}
-        isConfirm={true}
-      >
-        <EditMembershipPage />
-      </Dialog>
     </div>
   );
 });

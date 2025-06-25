@@ -1,10 +1,8 @@
-import React from 'react';
+import { t } from '../../stores/languageStore';
 
 const FormInput = ({
-  id,
-  label,
-  value,
-  onChange,
+  store,
+  field,
   type = 'text',
   required = false,
   min,
@@ -12,17 +10,17 @@ const FormInput = ({
   className = ''
 }) => {
   const inputProps = {
-    id,
-    value,
-    onChange,
+    id: `${store.name}-${field}`,
+    value: store.editingItem[field] || '',
+    onChange: (e) => store.setEditingField(field, e.target.value),
     className: "w-full p-3 border rounded",
     required,
   };
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
+      <label htmlFor={inputProps.id} className="block text-sm font-medium text-gray-700 mb-1">
+        {t(`${store.name}.${field}`)}
       </label>
       {rows ? (
         <textarea

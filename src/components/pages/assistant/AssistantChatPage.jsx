@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ChatInput from '../../ui/ChatInput';
-import assistantsStore from '../../../stores/assistantsStore';
+import assistantStore from '../../../stores/assistantStore';
 import assistantChatStore from '../../../stores/assistantChatStore';
 import Button from '../../ui/Button';
 import languageStore from '../../../stores/languageStore';
@@ -83,8 +83,8 @@ const AssistantChatPage = observer(() => {
   
   // Find the selected assistant
   useEffect(() => {
-    if (assistantsStore.assistants.length && assistantId) {
-      const assistant = assistantsStore.assistants.find(
+    if (assistantStore.assistants.length && assistantId) {
+      const assistant = assistantStore.assistants.find(
         a => a.id === parseInt(assistantId)
       );
       
@@ -95,7 +95,7 @@ const AssistantChatPage = observer(() => {
         navigate('/assistants');
       }
     }
-  }, [assistantId, assistantsStore.assistants, navigate]);
+  }, [assistantId, assistantStore.assistants, navigate]);
   
   // Handle message sending
   const handleSendMessage = (text) => {
@@ -107,11 +107,11 @@ const AssistantChatPage = observer(() => {
     navigate('/assistants');
   };
 
-  const errorContent = assistantsStore.error && (
+  const errorContent = assistantStore.error && (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <div className="text-gray-600 mt-2">{assistantsStore.error}</div>
+      <div className="text-gray-600 mt-2">{assistantStore.error}</div>
       <button
-        onClick={() => assistantsStore.fetchAssistants()}
+        onClick={() => assistantStore.fetchAssistants()}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
       >
         {t('menu.categories.assistant.retry')}
@@ -152,17 +152,17 @@ const AssistantChatPage = observer(() => {
   
   return (
     <LoadingState
-      isLoading={assistantsStore.loading}
-      isError={!!assistantsStore.error}
-      isEmpty={!assistantsStore.loading && !assistantsStore.error && !assistantChatStore.selectedAssistant}
+      isLoading={assistantStore.loading}
+      isError={!!assistantStore.error}
+      isEmpty={!assistantStore.loading && !assistantStore.error && !assistantChatStore.selectedAssistant}
       customMessage={
-        assistantsStore.loading ? t('menu.assistant.loading') :
-        assistantsStore.error ? t('menu.assistant.loadingFailed') :
+        assistantStore.loading ? t('menu.assistant.loading') :
+        assistantStore.error ? t('menu.assistant.loadingFailed') :
         !assistantChatStore.selectedAssistant ? t('menu.categories.assistant.notFound') :
         null
       }
     >
-      {assistantsStore.error ? errorContent : mainContent}
+      {assistantStore.error ? errorContent : mainContent}
     </LoadingState>
   );
 });

@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, runInAction, computed } from 'mobx';
+import { makeAutoObservable, observable, runInAction } from 'mobx';
 import { getApiBaseUrl } from '../config.js';
 
 class ExamStore {
@@ -10,23 +10,7 @@ class ExamStore {
   isLoading = false;
   
   constructor() {
-    makeObservable(this, {
-      questions: observable,
-      selectedAnswers: observable,
-      isSubmitted: observable,
-      showResults: observable,
-      examResults: observable,
-      isLoading: observable,
-      fetchQuestions: action,
-      selectAnswer: action,
-      submitExam: action,
-      resetExam: action,
-      closeResults: action,
-      questionsWithParsedOptions: computed,
-      getOptionClass: computed,
-      isCorrectAnswer: action,
-      getSelectedAnswer: computed
-    });
+    makeAutoObservable(this);
   }
 
   get getSelectedAnswer() {

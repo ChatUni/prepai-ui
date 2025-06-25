@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
-import BaseCard from '../../ui/BaseCard';
+import CardEditActions from '../../ui/CardEditActions';
 import Dialog from '../../ui/Dialog';
+import { getCardBaseClasses } from '../../../utils/cardStyles';
+import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import EditSeriesPage from './EditSeriesPage';
 import EditInstructorPage from '../instructor/EditInstructorPage';
-import { EditDialog } from '../../ui/CrudDialogs';
+import { EditDialog } from '../../ui/Dialogs';
 import routeStore from '../../../stores/routeStore';
 import languageStore from '../../../stores/languageStore';
 import seriesCardStore from '../../../stores/seriesCardStore';
@@ -36,13 +38,25 @@ const SeriesCard = observer(({
   const instructors = seriesStore.getSeriesInstructors(series);
   const courses = series.courses || [];
 
-  const handleCardClick = useCallback((series) => {
+  // Drag and drop functionality
+  const { isDragging, isOver, handleRef } = useDragAndDrop({
+    type: `item-${group}`,
+    index,
+    moveItem,
+    onDrop: seriesStore.saveSeriesUpdates
+  });
+
+  const handleCardClick = useCallback((e) => {
+    // Don't trigger card click if clicking on action buttons
+    if (isEditMode && e.target.closest('.action-button')) {
+      return;
+    }
     if (onClick) {
       onClick(series);
     } else if (!isEditMode) {
       seriesCardStore.handleSeriesClick(seriesId, navigate);
     }
-  }, [onClick, isEditMode, seriesId, navigate]);
+  }, [onClick, isEditMode, seriesId, navigate, series]);
 
   const handleInstructorClick = useCallback((e, instructor) => {
     e.stopPropagation();
@@ -53,23 +67,10 @@ const SeriesCard = observer(({
 
   return (
     <>
-      <BaseCard
-        item={series}
-        index={index}
-        group={group}
-        moveItem={moveItem}
-        isEditMode={isEditMode}
+      <div
+        ref={isEditMode ? handleRef : null}
+        className={`${getCardBaseClasses(isDragging, isOver, !isEditMode)} relative`}
         onClick={handleCardClick}
-        onToggleVisibility={seriesCardStore.handleToggleVisibility}
-        onEdit={seriesCardStore.handleEdit}
-        onDelete={seriesCardStore.handleDelete}
-        onDrop={seriesStore.saveSeriesUpdates}
-        className="relative"
-        store={seriesCardStore}
-        itemType="series"
-        editDialogTitle=""
-        editDialogChildren={null}
-        renderDialogs={renderDialogs}
       >
         <div className="relative pb-[56.25%]">
           <img
@@ -137,7 +138,17 @@ const SeriesCard = observer(({
             </div>
           </div>
         </div>
-      </BaseCard>
+        
+        {/* Action buttons for edit mode */}
+        {isEditMode && (
+          <CardEditActions
+            item={series}
+            onToggleVisibility={seriesCardStore.handleToggleVisibility}
+            onEdit={seriesCardStore.handleEdit}
+            onDelete={seriesCardStore.handleDelete}
+          />
+        )}
+      </div>
       
       {/* Render dialogs only for the first card */}
       {renderDialogs && (
