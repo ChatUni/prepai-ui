@@ -251,6 +251,11 @@ const MainLayout = observer(() => {
                     <MembershipListPage />
                   </AuthRoute>
                 } />
+                <Route path="/memberships/settings" element={
+                  <AuthRoute>
+                    <MembershipListPage />
+                  </AuthRoute>
+                } />
               </Routes>
             </div>
           </>

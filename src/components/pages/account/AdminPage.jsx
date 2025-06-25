@@ -16,7 +16,7 @@ const routeMap = {
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
   'course-settings': '/series/settings',
-  'price-settings': '/memberships'
+  'price-settings': '/memberships/settings'
 };
 
 const AdminPage = observer(() => {

@@ -18,7 +18,8 @@ const GroupedList = observer(({
   isGroupDanger = () => false,
   onItemMove,
   onGroupDrop,
-  itemType = "items"
+  itemType = "items",
+  isGrouped = true
 }) => {
   // Sync initial group order with store
   useEffect(() => {
@@ -88,15 +89,32 @@ const GroupedList = observer(({
   return (
     <>
       <div className="w-full space-y-4">
-        {Object.entries(groupedItems).map(([group, items], index) => (
-          <GroupSection
-            key={group}
-            group={group}
-            items={items}
-            index={index}
-            isFirstGroup={index === 0}
-          />
-        ))}
+        {isGrouped ? (
+          // Render grouped items with accordion sections
+          Object.entries(groupedItems).map(([group, items], index) => (
+            <GroupSection
+              key={group}
+              group={group}
+              items={items}
+              index={index}
+              isFirstGroup={index === 0}
+            />
+          ))
+        ) : (
+          // Render flat list without groups
+          <div className={itemsContainerClassName}>
+            {groupedItems.map((item, itemIndex) =>
+              renderItem(item, itemIndex, item.originalGroup, {
+                moveItem: onItemMove ? (fromIndex, toIndex) => {
+                  if (isEditMode) {
+                    onItemMove(item.originalGroup, fromIndex, toIndex);
+                  }
+                } : undefined,
+                isEditMode
+              }, itemIndex === 0)
+            )}
+          </div>
+        )}
       </div>
 
       {/* Group Management Dialogs */}

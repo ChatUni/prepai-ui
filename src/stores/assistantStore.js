@@ -107,7 +107,6 @@ class AssistantStore {
         // Filter for free models only
         this.models = models.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
         this.loadingModels = false;
-        console.log(this.models)
       });
     } catch (error) {
       runInAction(() => {

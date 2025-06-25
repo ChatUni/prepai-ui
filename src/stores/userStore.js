@@ -5,6 +5,7 @@ import lang from './languageStore';
 import { get } from '../utils/db';
 import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
+import membershipStore from './membershipStore';
 
 class UserStore {
   user = {};
@@ -48,6 +49,7 @@ class UserStore {
     await clientStore.loadClient();
     await seriesStore.fetchSeries();
     await assistantStore.fetchItems();
+    await membershipStore.fetchItems();
   }
 
   checkSavedLoginState() {

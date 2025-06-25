@@ -152,7 +152,7 @@ class GroupedListStore {
   };
 
   getGroups = function(isFiltered) {
-    const groupsInSettings = clientStore.client.settings[`${this.name}Groups`];
+    const groupsInSettings = clientStore.client.settings[`${this.name}Groups`] || [];
     const hasGroupsInSettings = groupsInSettings || groupsInSettings.length > 0;
     if (!isFiltered && hasGroupsInSettings)
       return groupsInSettings;
@@ -190,6 +190,9 @@ class GroupedListStore {
 
     const itemsToGroup = this.filteredItems;
     const groups = this.getGroups();
+console.log(groups)
+    if (groups.length === 0) return itemsToGroup;
+
     const grouped = {};
 
     groups.forEach(group => {

@@ -7,6 +7,7 @@ import Icon from './Icon';
 
 const SearchBar = observer(({
   store,
+  isGrouped = true,
   filters = [],
   className = ''
 }) => {
@@ -41,7 +42,7 @@ const SearchBar = observer(({
       {/* Action Buttons - only show in admin mode */}
       {store.isAdminMode && (
         <>
-          {store.expandedGroups && (
+          {isGrouped && (
             <div className="shrink-0">
               <Button
                 onClick={() => store.openAddGroupDialog()}

@@ -41,6 +41,10 @@ const ListPage = observer(({
   const hasItems = (store?.groupedItems && Object.keys(store.groupedItems).length > 0) ||
                    (store?.items && store.items.length > 0) ||
                    (additionalGroupedItems && Object.keys(additionalGroupedItems).length > 0);
+  const renderMainGroups = store?.groupedItems &&
+                           (Array.isArray(store.groupedItems)
+                            ? store.groupedItems.length > 0
+                            : Object.keys(store.groupedItems).length > 0);
 
   return (
     <div className={containerClassName}>
@@ -60,7 +64,7 @@ const ListPage = observer(({
       )}
       
       {/* Search Bar */}
-      <SearchBar store={store} />
+      <SearchBar store={store} isGrouped={isGrouped} />
       
       {/* Empty State */}
       {!hasItems && (
@@ -95,8 +99,9 @@ const ListPage = observer(({
         )}
 
         {/* Main Grouped List */}
-        {store?.groupedItems && Object.keys(store.groupedItems).length > 0 && (
+        {renderMainGroups && (
           <GroupedList
+            isGrouped={isGrouped}
             groupedItems={store.groupedItems}
             store={store}
             isEditMode={store.isAdminMode}
