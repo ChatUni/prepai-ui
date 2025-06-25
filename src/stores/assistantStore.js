@@ -38,7 +38,7 @@ class AssistantStore {
   }
 
   get isPlatformAssistant() {
-    this.editingItem.type === 1;
+    return this.editingItem.type === 1;
   }
   
   constructor() {

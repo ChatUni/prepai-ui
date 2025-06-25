@@ -2,10 +2,8 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import ListPage from '../../ui/ListPage';
 import MembershipCard from './MembershipCard';
-import languageStore from '../../../stores/languageStore';
+import { t } from '../../../stores/languageStore';
 import membershipStore from '../../../stores/membershipStore';
-
-const { t } = languageStore;
 
 const GenericMembershipListPage = observer(() => {
   // Define shortcut buttons for membership management

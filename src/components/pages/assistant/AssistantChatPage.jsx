@@ -5,7 +5,7 @@ import ChatInput from '../../ui/ChatInput';
 import assistantStore from '../../../stores/assistantStore';
 import assistantChatStore from '../../../stores/assistantChatStore';
 import Button from '../../ui/Button';
-import languageStore from '../../../stores/languageStore';
+import { t } from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 
 // Loading indicator with animated dots
@@ -28,7 +28,6 @@ const AssistantChatMessages = observer(() => {
   const messagesEndRef = useRef(null);
   const messages = assistantChatStore.messages;
   const isLoading = assistantChatStore.loading;
-  const { t } = languageStore;
 
   // Auto-scroll to bottom when new messages arrive or when loading state changes
   useEffect(() => {
@@ -79,12 +78,11 @@ const AssistantChatMessages = observer(() => {
 const AssistantChatPage = observer(() => {
   const { assistantId } = useParams();
   const navigate = useNavigate();
-  const { t } = languageStore;
   
   // Find the selected assistant
   useEffect(() => {
-    if (assistantStore.assistants.length && assistantId) {
-      const assistant = assistantStore.assistants.find(
+    if (assistantStore.items.length && assistantId) {
+      const assistant = assistantStore.items.find(
         a => a.id === parseInt(assistantId)
       );
       
