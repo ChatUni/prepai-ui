@@ -15,7 +15,7 @@ import FavoritesPage from './components/FavoritesPage';
 import VideoPlayerPage from './components/pages/course/VideoPlayerPage';
 import PPTPlayerPage from './components/pages/course/PPTPlayerPage';
 //import SeriesSettingsPage from './components/pages/series/SeriesSettingsPage';
-import ExamPage from './components/ExamPage';
+import ExamPage from './components/pages/exam/ExamPage';
 import QuestionPage from './components/pages/exam/QuestionPage';
 import SeriesListPage from './components/pages/series/SeriesListPage';
 import SeriesDetailPage from './components/pages/series/SeriesDetailPage';
@@ -37,7 +37,7 @@ import AuthWrapper from './components/auth/AuthWrapper';
 // Import stores to ensure they're initialized
 import './stores/uiStore';
 import seriesStore from './stores/seriesStore';
-import examStore from './stores/examStore';
+import examStore from './stores/questionStore';
 import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
@@ -221,9 +221,14 @@ const MainLayout = observer(() => {
                     <PPTPlayerPage />
                   </AuthRoute>
                 } />
-                <Route path="/exam" element={
+                <Route path="/exams" element={
                   <AuthRoute>
-                    <SeriesListPage />
+                    <ExamPage />
+                  </AuthRoute>
+                } />
+                <Route path="/exams/settings" element={
+                  <AuthRoute>
+                    <ExamPage />
                   </AuthRoute>
                 } />
                 <Route path="/exam/questions/:courseId" element={

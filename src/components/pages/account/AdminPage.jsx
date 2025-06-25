@@ -12,10 +12,10 @@ const routeMap = {
   'edit-banner': '/series/banners',
   'add-course-to-series': '/series/select',
   'manage-assistant': '/assistants/settings',
-  'edit-assistant': '/assistants/select?mode=edit',
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
   'course-settings': '/series/settings',
+  'exam-settings': '/exams/settings',
   'price-settings': '/memberships/settings'
 };
 
@@ -55,6 +55,10 @@ const AdminPage = observer(() => {
         <MenuListItem
           label={t('menu.admin_page.course_settings')}
           onClick={() => navigate(routeMap['course-settings'])}
+        />
+        <MenuListItem
+          label={t('menu.admin_page.exam_settings')}
+          onClick={() => navigate(routeMap['exam-settings'])}
         />
         <MenuListItem
           label={t('menu.admin_page.price_settings')}

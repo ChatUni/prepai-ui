@@ -4,7 +4,7 @@ import CourseList from '../pages/series/CourseList';
 import coursesStore from '../../stores/coursesStore';
 import uiStore from '../../stores/uiStore';
 import InstructorPage from '../pages/instructor/InstructorPage';
-import ExamPage from '../ExamPage';
+import ExamPage from '../OldExamPage';
 import SeriesListPage from '../pages/series/SeriesListPage';
 import languageStore from '../../stores/languageStore';
 import LoadingState from '../ui/LoadingState';
