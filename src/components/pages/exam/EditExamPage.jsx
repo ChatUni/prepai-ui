@@ -8,6 +8,11 @@ const EditExamPage = observer(() => (
     <FormInput store={store} field="name" required />
     <ImageUpload store={store} field="cover" />
     <FormInput store={store} field="desc" rows={4} />
+    <ImageUpload
+      store={store}
+      field="upload_file"
+      selectedFile={store.editingItem?.upload_file}
+    />
   </div>
 ));
 
