@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import languageStore from '../../../stores/languageStore';
+import { t } from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
 import membershipStore from '../../../stores/membershipStore';
 import MembershipCard from './MembershipCard';
@@ -9,7 +9,6 @@ import ListPage from '../../ui/ListPage';
 import EditMembershipPage from './EditMembershipPage';
 
 const MembershipListPage = observer(() => {
-  const { t } = languageStore;
 
   // Transform memberships into grouped format for ListPage
   const groupedMemberships = {

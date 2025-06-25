@@ -20,6 +20,7 @@ const ListPage = observer(({
   store,
   renderItem,
   itemsContainerClassName = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 p-2",
+  isGrouped,
   isGroupDanger = () => false,
   onGroupDrop,
   
@@ -38,6 +39,7 @@ const ListPage = observer(({
 }) => {  
   // Check if there are any items to display
   const hasItems = (store?.groupedItems && Object.keys(store.groupedItems).length > 0) ||
+                   (store?.items && store.items.length > 0) ||
                    (additionalGroupedItems && Object.keys(additionalGroupedItems).length > 0);
 
   return (

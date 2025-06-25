@@ -3,23 +3,13 @@ import { observer } from 'mobx-react-lite';
 import { t } from '../../stores/languageStore';
 import DropdownFilter from './DropdownFilter';
 import Button from './Button';
-import useClickOutside from '../../hooks/useClickOutside';
 import Icon from './Icon';
 
 const SearchBar = observer(({
   store,
   filters = [],
   className = ''
-}) => {  
-  // Create refs for all dropdowns
-  const dropdownRefs = useClickOutside(
-    () => {
-      filters.forEach(filter => {
-        if (filter.onClose) filter.onClose();
-      });
-    },
-    filters.length
-  );
+}) => {
 
   return (
     <div className={`flex items-center gap-3 mb-6 ${className}`}>
@@ -39,18 +29,13 @@ const SearchBar = observer(({
 
       {/* Dropdown filters */}
       {filters.map((filter, index) => (
-        <div key={filter.key || index} className="shrink-0">
-          <DropdownFilter
-            isOpen={filter.isOpen}
-            onToggle={filter.onToggle}
-            selectedValue={filter.selectedValue}
-            displayValue={filter.displayValue}
-            items={filter.items}
-            onSelect={filter.onSelect}
-            dropdownRef={dropdownRefs[index]}
-            buttonClassName={filter.buttonClassName || "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center whitespace-nowrap min-w-max text-base justify-between"}
-          />
-        </div>
+        <DropdownFilter
+          key={filter.key || index}
+          selectedValue={filter.selectedValue}
+          items={filter.items}
+          onSelect={filter.onSelect}
+          buttonClassName={filter.buttonClassName || "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium py-2.5 px-4 rounded-lg text-base appearance-none cursor-pointer"}
+        />
       ))}
 
       {/* Action Buttons - only show in admin mode */}

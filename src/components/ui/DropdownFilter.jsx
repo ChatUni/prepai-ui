@@ -1,58 +1,32 @@
 import { observer } from 'mobx-react-lite';
 
 const DropdownFilter = observer(({
-  isOpen,
-  onToggle,
   selectedValue,
-  displayValue,
   items,
   onSelect,
-  dropdownRef,
   buttonClassName,
-  itemClassName
 }) => {
+  const handleChange = (event) => {
+    onSelect(event.target.value);
+  };
+
   return (
-    <div className="relative shrink-0" ref={dropdownRef}>
-      <button
-        className={buttonClassName || "bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg flex items-center whitespace-nowrap min-w-max text-sm sm:text-base w-full sm:w-auto justify-between"}
-        onClick={onToggle}
+    <div className="relative shrink-0">
+      <select
+        value={selectedValue || ''}
+        onChange={handleChange}
+        className={buttonClassName || "bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg text-sm sm:text-base w-full sm:w-auto appearance-none cursor-pointer"}
       >
-        <span className="truncate max-w-[200px]">
-          {displayValue}
-        </span>
-        <svg
-          className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 flex-shrink-0"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d={isOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
-          />
-        </svg>
-      </button>
-      
-      {isOpen && (
-        <div
-          className="absolute z-10 mt-1 bg-white rounded-md shadow-lg whitespace-nowrap"
-        >
-          <ul className="py-1 max-h-60 overflow-y-auto w-max min-w-full">
-            {items.map(item => (
-              <li
-                key={item.id || item.value}
-                className={`${itemClassName || 'px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base'} ${selectedValue === (item.id || item.value) ? 'bg-blue-50' : ''}`}
-                onClick={() => onSelect(item.id || item.value)}
-              >
-                {item.name || item.label}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        {items.map(item => (
+          <option
+            key={item.id || item.value}
+            value={item.id || item.value}
+            className="text-black bg-white"
+          >
+            {item.name || item.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 });
