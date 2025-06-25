@@ -21,6 +21,10 @@ class AssistantStore {
     return this.isAdminMode ? t('menu.admin_page.manage_assistant') : t('menu.ai');
   }
 
+  get detailRoute() {
+    return `/assistants/{id}/chat`;
+  }
+
   get searchableFields() {
     return ['name', 'greeting', 'prompt'];
   }
@@ -115,12 +119,6 @@ class AssistantStore {
       console.error('Error fetching OpenRouter models:', error);
     }
   }
-
-  handleItemClick = function(item, navigate) {
-    if (!this.isAdminMode) {
-      navigate(`/assistants/${item.id}/chat`);
-    }
-  };
  }
 
 const listPageStore = new ListPageStore();

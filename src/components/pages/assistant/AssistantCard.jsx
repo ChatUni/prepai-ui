@@ -27,7 +27,7 @@ const AssistantCard = observer(({
     if (isEditMode && e.target.closest('.action-button')) {
       return;
     }
-    store.handleItemClick(assistant, navigate);
+    store.gotoDetail(assistant, navigate);
   };
 
   return (

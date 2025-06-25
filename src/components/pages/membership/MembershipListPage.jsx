@@ -7,12 +7,14 @@ import EditMembershipPage from './EditMembershipPage';
 
 const MembershipListPage = observer(() => {
 
-  const renderMembershipCard = (membership, index) => (
+  const renderMembershipCard = (membership, index, group, { moveItem, isEditMode }, isFirstCard) => (
     <MembershipCard
       key={membership.id || index}
       membership={membership}
       index={index}
-      moveMembership={store.moveMembership}
+      moveItem={moveItem}
+      isEditMode={isEditMode}
+      renderDialogs={isFirstCard}
       isDraggable={true}
     />
   );

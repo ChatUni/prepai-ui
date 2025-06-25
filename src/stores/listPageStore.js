@@ -59,6 +59,12 @@ class ListPageStore {
     }
   }
 
+  gotoDetail = function(item, navigate) {
+    if (!this.isAdminMode && this.detailRoute) {
+      navigate(this.detailRoute.replace('{id}', item.id));
+    }
+  };
+
   openErrorDialog = function(error) {
     this.error = error;
     this.isErrorDialogOpen = true;
