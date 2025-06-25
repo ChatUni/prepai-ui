@@ -34,6 +34,8 @@ export const combineStores = (...stores) => {
   makeAutoObservable(combined);
 
   console.log(combined);
-  
+
+  combined.initData && combined.initData();
+
   return combined;
 };

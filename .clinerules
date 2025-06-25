@@ -113,6 +113,12 @@
       "description": "If a store only exports the class (not an instance), it means the store instance will be created elsewhere and merged with other stores using combineStores. The combineStores function calls makeObservable after the merge, so never add a constructor with makeObservable/makeAutoObservable to these stores. Only stores that export instances should have their own MobX decorations.",
       "severity": "error",
       "category": "state-management"
+    },
+    {
+      "name": "no-fallback-data",
+      "description": "Always use data fetched from database or API. If the result is empty, then it should remain empty. Never provide fake fallback data, mock data, or default data when real data is not available. This ensures data integrity and prevents inconsistencies between development and production environments.",
+      "severity": "error",
+      "category": "data-management"
     }
   ]
 }

@@ -12,7 +12,7 @@ const EditAssistantPage = observer(() => (
       <>
         <FormInput store={store} field="greeting" rows={2} />
         <FormInput store={store} field="prompt" required />
-        <FormSelect store={store} field="model" options={store.getModelOptions()} required />
+        <FormSelect store={store} field="model" options={store.modelOptions} required />
         <FormSelect store={store} field="group" options={store.groupOptions} required />
         <ImageUpload store={store} field="image" />
       </>

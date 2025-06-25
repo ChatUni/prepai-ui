@@ -41,8 +41,17 @@ class AssistantStore {
     return this.editingItem.type === 1;
   }
   
-  constructor() {
-    this.fetchOpenRouterModels();
+  get modelOptions() {
+    return this.models
+      .map(model => ({
+        value: model.id,
+        label: model.name.replace(/\s*\(free\)$/, '')
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  initData = async function() {
+    await this.fetchOpenRouterModels();
   }
 
   fetchItemList = async function() {
@@ -106,15 +115,6 @@ class AssistantStore {
       });
       console.error('Error fetching OpenRouter models:', error);
     }
-  }
-
-  getModelOptions = function() {
-    return this.models
-      .map(model => ({
-        value: model.id,
-        label: model.name.replace(/\s*\(free\)$/, '')
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   handleItemClick = function(item, navigate) {
