@@ -36,7 +36,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         navigate('/series');
         break;
       case 'testing':
-        navigate('/exam');
+        navigate('/exams');
         break;
       case 'ai':
         navigate('/assistants');

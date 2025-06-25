@@ -1,7 +1,7 @@
 import { makeAutoObservable, observable, runInAction } from 'mobx';
-import { getApiBaseUrl } from '../config.js';
+import { shuffleArray } from '../utils/utils';
 
-class ExamStore {
+class QuestionStore {
   questions = [];
   selectedAnswers = observable.map({}); // Map of questionId -> selected option
   isSubmitted = false;
@@ -16,34 +16,13 @@ class ExamStore {
   get getSelectedAnswer() {
     return (questionId) => this.selectedAnswers.get(questionId);
   }
-  async fetchQuestions(courseId) {
-    this.isLoading = true;
-    try {
-      const apiBaseUrl = getApiBaseUrl();
-      const response = await fetch(`${apiBaseUrl}/questions/random?courseId=${courseId}&count=10`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch questions');
-    }
-    
-    const questions = await response.json();
-    
-    runInAction(() => {
-      this.questions = questions;
-      this.selectedAnswers.clear();
-      this.isSubmitted = false;
-    });
-    
-    return questions;
-    } catch (error) {
-      throw error;
-    } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
-    }
+
+  setQuestions(questions) {
+    this.questions = shuffleArray(questions).slice(0, 20)
+      .filter(q => q.option)
+      .map(q => ({ ...q, options: Object.values(q.option || {}), id: +q.section * 1000 + +q.no }));
   }
-  
+
   selectAnswer(questionId, option) {
     if (!this.isSubmitted) {
       runInAction(() => {
@@ -59,8 +38,8 @@ class ExamStore {
     this.questions.forEach(question => {
       const selectedAnswer = this.getSelectedAnswer(question.id);
       if (selectedAnswer) {
-        const options = JSON.parse(question.options);
-        if (selectedAnswer === options[question.answer.charCodeAt(0) - 65]) {
+        const options = question.options;
+        if (this.correctOptions(question).includes(selectedAnswer)) {
           correct++;
         } else {
           incorrect++;
@@ -89,23 +68,22 @@ class ExamStore {
     });
   }
   
-  // Computed property that returns questions with parsed options
-  get questionsWithParsedOptions() {
-    return this.questions.map(question => ({
-      ...question,
-      parsedOptions: JSON.parse(question.options)
-    }));
-  }
-  
   // Method to determine if an answer is correct for a given question
   isCorrectAnswer(questionId, option) {
     const question = this.questions.find(q => q.id === questionId);
     if (!question) return false;
     
-    const options = JSON.parse(question.options);
-    return option === options[question.answer.charCodeAt(0) - 65];
+    return this.correctOptions(question).includes(option);
   }
   
+  getAnswers(q) {
+    return Array.isArray(q.answer) ? q.answer : [q.answer];
+  }
+
+  correctOptions(q) {
+    return this.getAnswers(q).map(a => q.options[a.charCodeAt(0) - 65]);
+  }
+
   get getOptionClass() {
     return (questionId, option) => {
       let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
@@ -113,11 +91,9 @@ class ExamStore {
       if (!question) return optionClass;
       
       const selectedAnswer = this.getSelectedAnswer(questionId);
-      const options = JSON.parse(question.options);
-      const correctAnswer = options[question.answer.charCodeAt(0) - 65];
       
       if (this.isSubmitted) {
-        if (option === correctAnswer) {
+        if (this.correctOptions(question).includes(option)) {
           // Always show correct answer in green after submission
           optionClass += " bg-green-100 border-green-500";
         } else if (selectedAnswer === option) {
@@ -138,5 +114,5 @@ class ExamStore {
   }
 }
 
-const examStore = new ExamStore();
-export default examStore;
+const questionStore = new QuestionStore();
+export default questionStore;

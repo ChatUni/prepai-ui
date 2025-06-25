@@ -43,6 +43,11 @@ class ExamStore {
   save = async function(item) {
     await save('exams', item);
   }
+
+  getExamQuestions = function(id) {
+    const exam = this.items.find(item => item.id === +id);
+    return (exam && exam.questions) || []
+  }
 }
 
 const listPageStore = new ListPageStore();
