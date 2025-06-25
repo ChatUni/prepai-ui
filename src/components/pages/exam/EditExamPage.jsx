@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import store from '../../../stores/questionStore';
+import store from '../../../stores/examStore';
 import FormInput from '../../ui/FormInput';
 import ImageUpload from '../../ui/ImageUpload';
 

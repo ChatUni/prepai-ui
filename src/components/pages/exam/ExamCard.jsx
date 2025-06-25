@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
-import store from '../../../stores/questionStore';
+import store from '../../../stores/examStore';
 import CardEditActions from '../../ui/CardEditActions';
 import EditExamPage from './EditExamPage';
 import DndOrderContainer from '../../ui/DndOrderContainer';

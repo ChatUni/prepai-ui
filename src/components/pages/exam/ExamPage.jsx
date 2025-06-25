@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import store from '../../../stores/questionStore';
+import store from '../../../stores/examStore';
 import ExamCard from './ExamCard';
 import ListPage from '../../ui/ListPage';
 import EditExamPage from './EditExamPage';
@@ -13,7 +13,7 @@ const ExamPage = observer(() => (
         renderItem={(exam, index, group, { moveItem, isEditMode }, isFirstCard) => (
           <ExamCard
             key={exam.id}
-            Exam={exam}
+            exam={exam}
             index={index}
             group={group}
             moveItem={moveItem}

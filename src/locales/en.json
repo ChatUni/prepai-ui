@@ -63,6 +63,7 @@
       "upload_questions": "Upload Questions",
       "question_distribution": "Question Distribution",
       "course_settings": "Course Settings",
+      "exam_settings": "Exam Settings",
       "manage_assistant": "Manage Assistants",
       "price_settings": "Price Settings"
     },
@@ -374,6 +375,7 @@
     "disconnect": "Disconnect"
   },
   "exam": {
+    "title": "Exam",
     "back": "Back",
     "submit": "Submit",
     "noQuestions": "No questions available",
@@ -382,7 +384,28 @@
     "correctAnswers": "Correct Answers",
     "incorrectAnswers": "Incorrect Answers",
     "unanswered": "Unanswered",
-    "close": "Close"
+    "close": "Close",
+    "createNew": "Create New Exam",
+    "search": {
+      "placeholder": "Search exams..."
+    },
+    "groups": {
+      "addGroup": "Add Group",
+      "enterName": "Enter group name",
+      "editGroup": "Edit Group",
+      "deleteGroup": "Delete Group",
+      "delete": "Delete Group",
+      "confirmDelete": "Are you sure you want to delete this group?"
+    },
+    "edit": "Edit Exam",
+    "name": "Exam Name",
+    "cover": "Cover Image",
+    "desc": "Description",
+    "delete": "Delete Exam",
+    "hide": "Hide Exam",
+    "confirmDelete": "Are you sure you want to delete \"{name}\" exam?",
+    "confirmHide": "Are you sure you want to hide \"{name}\" exam?",
+    "noItems": "No exams available"
   },
   "tools": {
     "purchasedCourses": "Purchased",

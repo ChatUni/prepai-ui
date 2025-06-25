@@ -63,6 +63,7 @@
       "upload_questions": "問題をアップロード",
       "question_distribution": "問題の配分",
       "course_settings": "コース設定",
+      "exam_settings": "試験設定",
       "manage_assistant": "アシスタント管理",
       "price_settings": "価格設定"
     },
@@ -375,6 +376,7 @@
     "disconnect": "切断"
   },
   "exam": {
+    "title": "試験",
     "back": "戻る",
     "submit": "提出",
     "noQuestions": "問題がありません",
@@ -383,7 +385,28 @@
     "correctAnswers": "正解",
     "incorrectAnswers": "不正解",
     "unanswered": "未回答",
-    "close": "閉じる"
+    "close": "閉じる",
+    "createNew": "新しい試験を作成",
+    "search": {
+      "placeholder": "試験を検索..."
+    },
+    "groups": {
+      "addGroup": "グループを追加",
+      "enterName": "グループ名を入力",
+      "editGroup": "グループを編集",
+      "deleteGroup": "グループを削除",
+      "delete": "グループを削除",
+      "confirmDelete": "このグループを削除してもよろしいですか？"
+    },
+    "edit": "試験を編集",
+    "name": "試験名",
+    "cover": "カバー画像",
+    "desc": "説明",
+    "delete": "試験を削除",
+    "hide": "試験を非表示",
+    "confirmDelete": "「{name}」試験を削除してもよろしいですか？",
+    "confirmHide": "「{name}」試験を非表示にしてもよろしいですか？",
+    "noItems": "利用可能な試験がありません"
   },
   "tools": {
     "purchasedCourses": "購入済みコース",

@@ -15,7 +15,7 @@ class ExamStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('menu.admin_page.manage_exam') : t('menu.ai');
+    return this.isAdminMode ? t('menu.admin_page.exam_settings') : t('exam.title');
   }
 
   get detailRoute() {

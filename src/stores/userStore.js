@@ -6,6 +6,7 @@ import { get } from '../utils/db';
 import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
 import membershipStore from './membershipStore';
+import examStore from './examStore';
 
 class UserStore {
   user = {};
@@ -50,6 +51,7 @@ class UserStore {
     await seriesStore.fetchSeries();
     await assistantStore.fetchItems();
     await membershipStore.fetchItems();
+    await examStore.fetchItems();
   }
 
   checkSavedLoginState() {

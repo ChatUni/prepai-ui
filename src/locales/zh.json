@@ -63,6 +63,7 @@
       "upload_questions": "上传试题",
       "question_distribution": "试题比例分配",
       "course_settings": "课程设置",
+      "exam_settings": "考测设置",
       "manage_assistant": "AI助手设置",
       "price_settings": "价格设置"
     },
@@ -373,6 +374,7 @@
     "disconnect": "断开"
   },
   "exam": {
+    "title": "考试",
     "back": "返回",
     "submit": "提交",
     "noQuestions": "暂无可用的问题",
@@ -381,7 +383,28 @@
     "correctAnswers": "正确答案",
     "incorrectAnswers": "错误答案",
     "unanswered": "未作答",
-    "close": "关闭"
+    "close": "关闭",
+    "createNew": "创建新考试",
+    "search": {
+      "placeholder": "搜索考试..."
+    },
+    "groups": {
+      "addGroup": "添加分组",
+      "enterName": "输入分组名称",
+      "editGroup": "编辑分组",
+      "deleteGroup": "删除分组",
+      "delete": "删除分组",
+      "confirmDelete": "确定要删除此分组吗？"
+    },
+    "edit": "编辑考试",
+    "name": "考试名称",
+    "cover": "封面图片",
+    "desc": "描述",
+    "delete": "删除考试",
+    "hide": "隐藏考试",
+    "confirmDelete": "确定要删除「{name}」考试吗？",
+    "confirmHide": "确定要隐藏「{name}」考试吗？",
+    "noItems": "暂无可用考试"
   },
   "tools": {
     "purchasedCourses": "已购课程",
