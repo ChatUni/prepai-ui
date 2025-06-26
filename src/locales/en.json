@@ -65,7 +65,11 @@
       "course_settings": "Course Settings",
       "exam_settings": "Exam Settings",
       "manage_assistant": "Manage Assistants",
-      "price_settings": "Price Settings"
+      "price_settings": "Price Settings",
+      "system_settings": "System Settings",
+      "basic_settings": "Basic Settings",
+      "banner_settings": "Banner Settings",
+      "back": "Back"
     },
     "categories": {
       "testing": "Testing",

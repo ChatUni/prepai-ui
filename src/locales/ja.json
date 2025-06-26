@@ -65,7 +65,11 @@
       "course_settings": "コース設定",
       "exam_settings": "試験設定",
       "manage_assistant": "アシスタント管理",
-      "price_settings": "価格設定"
+      "price_settings": "価格設定",
+      "system_settings": "システム設定",
+      "basic_settings": "基本設定",
+      "banner_settings": "バナー設定",
+      "back": "戻る"
     },
     "categories": {
       "testing": "テスト",

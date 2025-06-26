@@ -166,11 +166,6 @@ const MainLayout = observer(() => {
                     <EditSeriesPage />
                   </AuthRoute>
                 } />
-                <Route path="/series/banners" element={
-                  <AuthRoute>
-                    <EditBannerPage />
-                  </AuthRoute>
-                } />
                 <Route path="/series/:id/course" element={
                   <AuthRoute>
                     <EditCoursePage />
@@ -259,6 +254,11 @@ const MainLayout = observer(() => {
                 <Route path="/memberships/settings" element={
                   <AuthRoute>
                     <MembershipListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/settings/banners" element={
+                  <AuthRoute>
+                    <EditBannerPage />
                   </AuthRoute>
                 } />
               </Routes>

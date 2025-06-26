@@ -32,15 +32,17 @@ const getFileIcon = () => (
 );
 
 const ImageUpload = observer(({
+  id,
   store,
   field,
   previewUrl,
   buttonText,
   className = '',
   imageStyle = 'rectangular',
-  selectedFile
+  selectedFile,
+  onImageSelect
 }) => {
-  const id = `${store.name}-${field}`;
+  if (!id) id = `${store.name}-${field}`;
   
   const getDefaultButtonText = () => {
     if (selectedFile || previewUrl) {
@@ -49,12 +51,21 @@ const ImageUpload = observer(({
     return t('series.edit.selectFile');
   };
 
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0]
+    if (onImageSelect) {
+      onImageSelect(file);
+    } else {
+      store.setEditingField(field, file);
+    }
+  };
+
   const finalButtonText = buttonText || getDefaultButtonText();
 
   return (
     <div className={className}>
       <label className="block text-sm font-medium mb-1">
-        {t(`${store.name}.${field}`)}
+        {store ? t(`${store.name}.${field}`) : ''}
       </label>
       <div className="relative">
         <input
@@ -62,7 +73,7 @@ const ImageUpload = observer(({
           id={id}
           name={id}
           accept="image/*,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          onChange={(e) => store.setEditingField(field, e.target.files[0])}
+          onChange={handleImageSelect}
           className="hidden"
         />
         <label

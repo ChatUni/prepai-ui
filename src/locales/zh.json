@@ -65,7 +65,11 @@
       "course_settings": "课程设置",
       "exam_settings": "考测设置",
       "manage_assistant": "AI助手设置",
-      "price_settings": "价格设置"
+      "price_settings": "价格设置",
+      "system_settings": "系统设置",
+      "basic_settings": "基础设置",
+      "banner_settings": "横幅设置",
+      "back": "返回"
     },
     "categories": {
       "testing": "考测",
