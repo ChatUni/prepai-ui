@@ -17,7 +17,7 @@ const routeMap = {
   'course-settings': '/series/settings',
   'exam-settings': '/exams/settings',
   'price-settings': '/memberships/settings',
-  'basic-settings': '/admin/basic-settings',
+  'basic-settings': '/client/settings',
   'banner-settings': '/settings/banners'
 };
 

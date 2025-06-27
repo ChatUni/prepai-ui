@@ -3,6 +3,7 @@ import Carousel from './Carousel';
 import SearchBar from './SearchBar';
 import GroupedList from './GroupedList';
 import Button from './Button';
+import PageTitle from './PageTitle';
 import { DeleteConfirmDialog, VisibilityConfirmDialog, EditDialog, ErrorDialog } from './Dialogs';
 import { t } from '../../stores/languageStore';
 
@@ -57,11 +58,7 @@ const ListPage = observer(({
       )}
       
       {/* Title */}
-      {store.pageTitle && (
-        <h1 className="text-2xl font-bold mb-4">
-          {store.pageTitle}
-        </h1>
-      )}
+      <PageTitle title={store.pageTitle} />
       
       {/* Search Bar */}
       <SearchBar store={store} isGrouped={isGrouped} />

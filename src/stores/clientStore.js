@@ -5,9 +5,12 @@ import { get, save } from '../utils/db';
 import { omit } from 'lodash';
 
 class ClientStore {
+  name = 'client';
   client = {
     id: 1,
     name: '',
+    desc: '',
+    logo: '',
     settings: {
       banners: [],
       groups: [],
@@ -22,6 +25,10 @@ class ClientStore {
   originalBanners = [];
   // Track changes as {type: 'add'|'delete', data: File|string}
   changes = [];
+
+  get editingItem() {
+    return this.client;
+  }
 
   get hasEmptyBanners() {
     return this.client.settings.banners.some((banner, index) => {
@@ -51,6 +58,10 @@ class ClientStore {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  setEditingField(field, value) {
+    this.client[field] = value;
   }
 
   startEditing() {

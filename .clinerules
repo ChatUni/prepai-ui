@@ -119,6 +119,12 @@
       "description": "Always use data fetched from database or API. If the result is empty, then it should remain empty. Never provide fake fallback data, mock data, or default data when real data is not available. This ensures data integrity and prevents inconsistencies between development and production environments.",
       "severity": "error",
       "category": "data-management"
+    },
+    {
+      "name": "inline-simple-handlers",
+      "description": "In components, if a handler only has one line (e.g., calls a method on the store), do not define separate handler functions. Instead, use inline arrow functions directly in the JSX. If a handler contains more than one line of code, then the handler should be created in the store, not in the component. This keeps components pure and moves complex logic to stores where it belongs.",
+      "severity": "error",
+      "category": "component-architecture"
     }
   ]
 }

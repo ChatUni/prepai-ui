@@ -460,6 +460,11 @@
     "trial": "トライアル",
     "searchPlaceholder": "メンバーシップを検索..."
   },
+  "client": {
+    "name": "クライアント名",
+    "desc": "説明",
+    "logo": "ロゴ"
+  },
   "generic": {
     "listPage": {
       "title": "リスト",

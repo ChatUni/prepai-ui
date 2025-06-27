@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { createPortal } from 'react-dom';
-import lang from '../../stores/languageStore';
 import useDialogOverflow from '../../hooks/useDialogOverflow';
+import ConfirmButtons from './ConfirmButtons';
 
 const Dialog = observer(({
   isOpen,
@@ -28,31 +28,11 @@ const Dialog = observer(({
           <div className="px-6 py-4">
             {children}
           </div>
-          <div className="px-6 py-4 flex justify-end gap-4">
-            {isConfirm ? (
-              <>
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  {lang.t('common.cancel')}
-                </button>
-                <button
-                  onClick={onConfirm}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {lang.t('common.confirm')}
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                {lang.t('common.ok')}
-              </button>
-            )}
-          </div>
+          <ConfirmButtons
+            isConfirm={isConfirm}
+            onClose={onClose}
+            onConfirm={onConfirm}
+          />
         </div>
       </div>
     </div>,

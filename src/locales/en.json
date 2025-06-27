@@ -459,6 +459,11 @@
     "trial": "Trial",
     "searchPlaceholder": "Search memberships..."
   },
+  "client": {
+    "name": "Client Name",
+    "desc": "Description",
+    "logo": "Logo"
+  },
   "generic": {
     "listPage": {
       "title": "List",

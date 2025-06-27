@@ -53,6 +53,7 @@ import { useEffect } from 'react';
 import uiStore from './stores/uiStore';
 import db from './utils/db';
 import clientStore from './stores/clientStore';
+import EditClientPage from './components/pages/client/EditClientPage';
 
 // RouteHandler component to sync route store with current location
 const RouteHandler = observer(() => {
@@ -259,6 +260,11 @@ const MainLayout = observer(() => {
                 <Route path="/settings/banners" element={
                   <AuthRoute>
                     <EditBannerPage />
+                  </AuthRoute>
+                } />
+                <Route path="/client/settings" element={
+                  <AuthRoute>
+                    <EditClientPage />
                   </AuthRoute>
                 } />
               </Routes>
