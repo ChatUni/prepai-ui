@@ -6,17 +6,7 @@ import { omit } from 'lodash';
 
 class ClientStore {
   name = 'client';
-  client = {
-    id: 1,
-    name: '',
-    desc: '',
-    logo: '',
-    settings: {
-      banners: [],
-      groups: [],
-      assistantGroups: []
-    }
-  };
+  client = {};
   loading = false;
   error = null;
   isErrorDialogOpen = false;
@@ -25,6 +15,24 @@ class ClientStore {
   originalBanners = [];
   // Track changes as {type: 'add'|'delete', data: File|string}
   changes = [];
+
+  get name() {
+    return 'assistant';
+  }
+
+  get newItem() {
+    return {
+      name: '',
+      desc: '',
+      logo: '',
+      settings: {
+        banners: [],
+        examGroups: [],
+        assistantGroups: [],
+        seriesGroups: [],
+      }
+    };
+  }
 
   get editingItem() {
     return this.client;

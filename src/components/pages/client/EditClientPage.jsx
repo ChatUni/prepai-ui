@@ -17,7 +17,6 @@ const EditClientPage = observer(() => (
     <ConfirmButtons
       isConfirm={true}
       onConfirm={() => store.save()}
-      onClose={() => store.cancel()}
     />
   </div>
 ));

@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite';
+import { useState, useEffect } from 'react';
 import { t } from '../../stores/languageStore';
 
 const getImageStyle = (style) => {
@@ -44,9 +45,27 @@ const ImageUpload = observer(({
 }) => {
   if (!id) id = `${store.name}-${field}`;
   
+  const [filePreviewUrl, setFilePreviewUrl] = useState('');
+  
+  // Get the current file from store if not provided as prop
+  const currentFile = selectedFile || (store && store.editingItem && store.editingItem[field]);
+  
+  // Create preview URL when file changes
+  useEffect(() => {
+    if (currentFile instanceof File && isImageFile(currentFile)) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFilePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(currentFile);
+    } else {
+      setFilePreviewUrl('');
+    }
+  }, [currentFile]);
+  
   const getDefaultButtonText = () => {
-    if (selectedFile || previewUrl) {
-      return isImageFile(selectedFile) ? t('series.edit.changeImage') : t('series.edit.changeFile');
+    if (currentFile || previewUrl) {
+      return isImageFile(currentFile) ? t('series.edit.changeImage') : t('series.edit.changeFile');
     }
     return t('series.edit.selectFile');
   };
@@ -61,6 +80,7 @@ const ImageUpload = observer(({
   };
 
   const finalButtonText = buttonText || getDefaultButtonText();
+  const displayPreviewUrl = filePreviewUrl || previewUrl || (store && store.editingItem && store.editingItem[field]);
 
   return (
     <div className={className}>
@@ -80,7 +100,7 @@ const ImageUpload = observer(({
           htmlFor={id}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
         >
-          {selectedFile && isDocumentFile(selectedFile) ? (
+          {currentFile && isDocumentFile(currentFile) ? (
             null //getFileIcon()
           ) : (
             <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,21 +112,21 @@ const ImageUpload = observer(({
           </span>
         </label>
       </div>
-      {(previewUrl || selectedFile) && (
+      {(displayPreviewUrl || currentFile) && (
         <div className="mt-2">
-          {selectedFile && isDocumentFile(selectedFile) ? (
+          {currentFile && isDocumentFile(currentFile) ? (
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
               {getFileIcon()}
               <div>
-                <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
+                <p className="text-sm font-medium text-gray-900">{currentFile.name}</p>
                 <p className="text-xs text-gray-500">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  {(currentFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
             </div>
-          ) : previewUrl && (
+          ) : displayPreviewUrl && (
             <img
-              src={previewUrl}
+              src={displayPreviewUrl}
               alt={finalButtonText}
               className={getImageStyle(imageStyle)}
             />

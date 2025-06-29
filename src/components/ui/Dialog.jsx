@@ -30,6 +30,7 @@ const Dialog = observer(({
           </div>
           <ConfirmButtons
             isConfirm={isConfirm}
+            isDialog={true}
             onClose={onClose}
             onConfirm={onConfirm}
           />

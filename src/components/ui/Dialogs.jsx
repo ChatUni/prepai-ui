@@ -83,6 +83,20 @@ export const GroupDeleteDialog = observer(({ store }) => store && (
   </Dialog>
 ));
 
+export const ConfirmCancelEditDialog = observer(({ store }) => store && (
+  <Dialog
+    isOpen={store.showCancelEditDialog}
+    onClose={() => store.closeCancelEditDialog()}
+    onConfirm={() => store.confirmCancelEdit()}
+    title={t(`${store.name}.cancelEdit`)}
+    isConfirm={true}
+  >
+    <p>
+      {t(`${store.name}.confirmCancelEdit`)}
+    </p>
+  </Dialog>
+));
+
 export const ErrorDialog = observer(({ store }) => store && (
   <Dialog
     isOpen={store.isErrorDialogOpen}

@@ -17,6 +17,7 @@ class UIStore {
   courseTypeFilter = true; // Default to video courses (true = video, false = document)
   selectedSeriesId = null; // Track selected series ID
   mode = ''; // Current mode (e.g., 'exam', 'select', etc.)
+  isConfirmButtonsLoading = false; // Loading state for confirm buttons
   
   // User account information
   userInfo = {
@@ -178,6 +179,11 @@ class UIStore {
   closeFormSelectDialog() {
     this.formSelectDialogOpen = false;
     this.formSelectDialogData = null;
+  }
+
+  // Confirm buttons loading state
+  setConfirmButtonsLoading(isLoading) {
+    this.isConfirmButtonsLoading = isLoading;
   }
 }
 
