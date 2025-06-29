@@ -1,6 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import { t } from '../../stores/languageStore';
 
-const FormInput = ({
+const FormInput = observer(({
   store,
   field,
   type = 'text',
@@ -36,6 +37,6 @@ const FormInput = ({
       )}
     </div>
   );
-};
+});
 
 export default FormInput;

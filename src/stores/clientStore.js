@@ -5,7 +5,6 @@ import { get, save } from '../utils/db';
 import { omit } from 'lodash';
 
 class ClientStore {
-  name = 'client';
   client = {};
   loading = false;
   error = null;
@@ -17,7 +16,7 @@ class ClientStore {
   changes = [];
 
   get name() {
-    return 'assistant';
+    return 'client';
   }
 
   get newItem() {
@@ -193,8 +192,8 @@ class ClientStore {
             this.client.memberships.sort((a, b) => a.order - b.order);
           }
         } else {
-          this.error = 'Client not found';
-          this.showErrorDialog();
+          // Initialize with newItem structure if no client found
+          this.client = { ...this.newItem };
         }
         this.loading = false;
       });
