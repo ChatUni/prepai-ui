@@ -7,10 +7,12 @@ class EditingStore {
   showVisibilityDialog = false;
 
   setEditingItem = function(item) {
-    this.editingItem = { ...item };
+    this.editingItem = { ...(item || this.newItem) };
   };
 
-  setEditingField = function(name, value) {
+  setEditingField = function(name, value, index = -1) {
+    if (Array.isArray(this.editingItem[name]) && index > -1)
+      this.editingItem[name][index] = value;
     this.editingItem[name] = value;
   };
 
@@ -20,7 +22,7 @@ class EditingStore {
   };
 
   openEditDialog = function(item) {
-    this.editingItem = item || this.newItem;
+    this.setEditingItem(item);
     this.isEditMode = item != null;
     this.showEditDialog = true;
   };
