@@ -32,10 +32,17 @@ const getFileIcon = () => (
   </svg>
 );
 
+const getImage = (store, field = 'image', index = -1) => {
+  if (!store || (!store.editingItem && !store.item)) return '';
+  const t = (store.editingItem || store.item)[field];
+  return index === -1 ? t : t[index];
+}
+
 const ImageUpload = observer(({
   id,
   store,
   field,
+  index,
   previewUrl,
   buttonText,
   className = '',
@@ -48,7 +55,7 @@ const ImageUpload = observer(({
   const [filePreviewUrl, setFilePreviewUrl] = useState('');
   
   // Get the current file from store if not provided as prop
-  const currentFile = selectedFile || (store && store.editingItem && store.editingItem[field]);
+  const currentFile = selectedFile || getImage(store, field, index);
   
   // Create preview URL when file changes
   useEffect(() => {
@@ -75,12 +82,12 @@ const ImageUpload = observer(({
     if (onImageSelect) {
       onImageSelect(file);
     } else {
-      store.setEditingField(field, file);
+      store.setEditingField(field, file, index);
     }
   };
 
   const finalButtonText = buttonText || getDefaultButtonText();
-  const displayPreviewUrl = filePreviewUrl || previewUrl || (store && store.editingItem && store.editingItem[field]);
+  const displayPreviewUrl = filePreviewUrl || previewUrl || getImage(store, field, index);
 
   return (
     <div className={className}>
