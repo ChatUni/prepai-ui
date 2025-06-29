@@ -1,6 +1,7 @@
 {
   "name": "api",
   "dependencies": {
+    "@volcengine/tos-sdk": "^2.6.2",
     "busboy": "^1.6.0",
     "file-type": "^21.0.0",
     "mammoth": "^1.9.1",

@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import seriesStore from './seriesStore';
 import routeStore from './routeStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
-import { uploadToCOS } from '../utils/cosHelper';
+import { uploadToTOS } from '../utils/tosHelper';
 import { save } from '../utils/db';
 import _ from 'lodash';
 
@@ -83,7 +83,7 @@ class EditCourseStore {
 
       if (this.url?.isFile) {
         const key = `series/${seriesId}/courses/${Date.now()}-${this.url.file.name}`;
-        const url = await uploadToCOS(this.url.file, key);
+        const url = await uploadToTOS(this.url.file, key);
         courseData.url = url;
       } else if (typeof this.url === 'string') {
         courseData.url = this.url;
@@ -91,7 +91,7 @@ class EditCourseStore {
 
       if (this.image?.isFile) {
         const key = `series/${seriesId}/courses/${Date.now()}-${this.image.file.name}`;
-        const coverUrl = await uploadToCOS(this.image.file, key);
+        const coverUrl = await uploadToTOS(this.image.file, key);
         courseData.image = coverUrl;
       } else if (typeof this.image === 'string') {
         courseData.image = this.image;

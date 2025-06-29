@@ -5,7 +5,7 @@ import coursesStore from '../../../stores/coursesStore';
 import videoPlayerStore from '../../../stores/videoPlayerStore';
 import uiStore from '../../../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl, getBilibiliId } from '../../../utils/videoTranscriptService';
-import { getSignedUrl } from '../../../utils/cosHelper';
+import { getSignedUrl } from '../../../utils/tosHelper';
 import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import TabPanel from '../../ui/TabPanel';
@@ -304,9 +304,9 @@ const VideoPlayerPage = observer(() => {
     };
   }, []);
 
-  // Refresh signed URL periodically for COS videos
+  // Refresh signed URL periodically for TOS videos
   useEffect(() => {
-    if (!course?.url?.includes('.cos.') || !course.url?.includes('.myqcloud.com')) {
+    if (!course?.url?.includes('.tos-s3-') || !course.url?.includes('.volces.com')) {
       return;
     }
 
@@ -360,8 +360,8 @@ const VideoPlayerPage = observer(() => {
         setCourse(foundCourse);
         setVideoUrl(foundCourse.url);
         
-        // Handle COS URLs
-        if (foundCourse.url?.includes('.cos.') && foundCourse.url?.includes('.myqcloud.com')) {
+        // Handle TOS URLs
+        if (foundCourse.url?.includes('.tos-s3-') && foundCourse.url?.includes('.volces.com')) {
           try {
             const signedUrl = await getSignedUrl(foundCourse.url);
             setVideoUrl(signedUrl);
@@ -456,7 +456,7 @@ const VideoPlayerPage = observer(() => {
                 );
               }
 
-              // For COS videos or other video sources, use the video tag
+              // For TOS videos or other video sources, use the video tag
               return (
                 <video
                   ref={(el) => {

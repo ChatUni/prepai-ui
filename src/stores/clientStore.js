@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHelper';
+import { uploadToTOS } from '../utils/tosHelper';
 import lang from './languageStore';
 import { get, save } from '../utils/db';
 import { omit } from 'lodash';
@@ -146,7 +147,38 @@ class ClientStore {
     }
   }
 
-  save = () => save('clients', omit(this.client, ['_id', 'memberships', 'assistants']));
+  save = async () => {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      // Handle logo upload if there's a file selected
+      if (this.client.logo instanceof File) {
+        const logoKey = `clients/${this.client.id}/logo.png`;
+        const logoUrl = await uploadToTOS(this.client.logo, logoKey);
+        
+        runInAction(() => {
+          this.client.logo = logoUrl;
+        });
+      }
+
+      // Save client data to database
+      const response = await save('clients', omit(this.client, ['_id', 'memberships', 'assistants']));
+      
+      runInAction(() => {
+        this.loading = false;
+      });
+      
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.loading = false;
+        this.showErrorDialog();
+      });
+      throw error;
+    }
+  };
 
   deleteBanner(index) {
     const url = this.client.settings.banners[index];

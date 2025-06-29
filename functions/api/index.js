@@ -19,5 +19,26 @@ exports.handler = async (event, context) => {
   if (q.params) q.params = JSON.parse(q.params);
   if (isForm) body = await parseForm(event);
   const r = await t(q, body, event);
+  
+  // Handle file serving responses
+  if (q.type === 'tos_file' && r && r.body) {
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': r.contentType,
+        'Content-Length': r.contentLength,
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'max-age=31536000'
+      },
+      body: r.body.toString('base64'),
+      isBase64Encoded: true
+    };
+  }
+  
+  // Handle error responses from file serving
+  if (q.type === 'tos_file' && r && r.error) {
+    return res({ error: r.error }, r.status || 500, nocache, q.returnType);
+  }
+  
   return res(r || 'done', 200, nocache, q.returnType);
 }
