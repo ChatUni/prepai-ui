@@ -1,11 +1,8 @@
 import { runInAction } from 'mobx';
-import routeStore from './routeStore';
 
 class ListPageStore {
   searchQuery = '';
   items = [];
-  loading = false;
-  error = null;
 
   get filteredItems() {
     let filtered = this.items;
@@ -22,18 +19,13 @@ class ListPageStore {
     return filtered;
   }
 
-  get isAdminMode() {
-    return routeStore.currentPath.endsWith('/settings');
-  }
-
   setItems = function(items) {
     this.items = items;
   }
   
   reset = function() {
+    this.searchQuery = '';
     this.items = [];
-    this.loading = false;
-    this.error = null;
   }
 
   setSearchQuery = function(query) {
@@ -63,16 +55,6 @@ class ListPageStore {
     if (!this.isAdminMode && this.detailRoute) {
       navigate(this.detailRoute.replace('{id}', item.id));
     }
-  };
-
-  openErrorDialog = function(error) {
-    this.error = error;
-    this.isErrorDialogOpen = true;
-  };
-
-  closeErrorDialog = function() {
-    this.isErrorDialogOpen = false;
-    this.error = '';
   };
 }
 

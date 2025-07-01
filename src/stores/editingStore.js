@@ -1,6 +1,7 @@
 class EditingStore {
   editingItem = {};
   isEditMode = false;
+  isPageMode = false;
 
   showEditDialog = false;
   showDeleteDialog = false;
@@ -11,12 +12,33 @@ class EditingStore {
   };
 
   setEditingField = function(name, value, index = -1) {
-    if (Array.isArray(this.editingItem[name]) && index > -1)
+    if (Array.isArray(this.editingItem[name]) && index > -1) {
       this.editingItem[name][index] = value;
-    this.editingItem[name] = value;
+    } else {
+      this.editingItem[name] = value;
+    }
   };
 
-  // Dialog management methods
+  reset = function() {
+    this.editingItem = {};
+    this.isEditMode = false;
+    this.isPageMode = false;
+    this.showEditDialog = false;
+    this.showDeleteDialog = false;
+    this.showVisibilityDialog = false;
+  };
+
+  initPageEditing = function(item) {
+    this.setEditingItem(item);
+    this.isPageMode = true;
+    this.isEditMode = item != null;
+  };
+
+  exitPageEditing = function() {
+    this.isPageMode = false;
+    this.editingItem = {};
+  };
+
   openAddDialog = function() {
     this.openEditDialog();
   };
@@ -24,12 +46,13 @@ class EditingStore {
   openEditDialog = function(item) {
     this.setEditingItem(item);
     this.isEditMode = item != null;
+    this.isPageMode = false;
     this.showEditDialog = true;
   };
 
   closeEditDialog = function() {
     this.showEditDialog = false;
-    this.editingItem = null;
+    this.editingItem = {};
   };
 
   openDeleteDialog = function(item) {
@@ -39,7 +62,7 @@ class EditingStore {
 
   closeDeleteDialog = function() {
     this.showDeleteDialog = false;
-    this.editingItem = null;
+    this.editingItem = {};
   };
 
   openVisibilityDialog = function(item) {
@@ -49,13 +72,14 @@ class EditingStore {
 
   closeVisibilityDialog = function() {
     this.showVisibilityDialog = false;
-    this.editingItem = null;
+    this.editingItem = {};
   };
 
   confirmEdit = async function() {
     if (!this.editingItem) return;
     try {
       await this.save(this.editingItem);
+      if (this.fetchItems) await this.fetchItems();
     } catch (e) {
       this.openErrorDialog('Error saving item');
     } finally {

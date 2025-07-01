@@ -4,20 +4,12 @@ import clientStore from './clientStore';
 import { t } from './languageStore';
 
 class GroupedListStore {
-  // Group expansion state
   expandedGroups = observable.set();
-  
-  // Group ordering state
   groupOrder = [];
   pendingGroups = null;
-  
-  // Dialog states
   isAddGroupDialogOpen = false;
   isEditGroupDialogOpen = false;
   isDeleteGroupDialogOpen = false;
-  isErrorDialogOpen = false;
-  
-  // Dialog data
   newGroupName = '';
   groupToEdit = null;
   groupToDelete = null;
@@ -152,7 +144,7 @@ class GroupedListStore {
   };
 
   getGroups = function(isFiltered) {
-    const groupsInSettings = clientStore.client.settings[`${this.name}Groups`] || [];
+    const groupsInSettings = clientStore.client?.settings?.[`${this.name}Groups`] || [];
     const hasGroupsInSettings = groupsInSettings || groupsInSettings.length > 0;
     if (!isFiltered && hasGroupsInSettings)
       return groupsInSettings;
@@ -190,7 +182,7 @@ class GroupedListStore {
 
     const itemsToGroup = this.filteredItems;
     const groups = this.getGroups();
-console.log(groups)
+
     if (groups.length === 0) return itemsToGroup;
 
     const grouped = {};
@@ -292,7 +284,6 @@ console.log(groups)
     this.isAddGroupDialogOpen = false;
     this.isEditGroupDialogOpen = false;
     this.isDeleteGroupDialogOpen = false;
-    this.isErrorDialogOpen = false;
     this.newGroupName = '';
     this.groupToEdit = null;
     this.groupToDelete = null;

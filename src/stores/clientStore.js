@@ -4,6 +4,8 @@ import { uploadToTOS } from '../utils/tosHelper';
 import lang from './languageStore';
 import { get, save } from '../utils/db';
 import { omit } from 'lodash';
+import { combineStores } from '../utils/storeUtils';
+import EditingStore from './editingStore';
 
 class ClientStore {
   client = {};
@@ -64,9 +66,6 @@ class ClientStore {
     return hasChangedBanners || this.changes.length > 0;
   }
 
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   setEditingField(field, value) {
     this.client[field] = value;
@@ -209,7 +208,7 @@ class ClientStore {
     this.changes.push({ type: 'add', data: file, index });
   }
 
-  async loadClient() {
+  loadClient = async function() {
     this.loading = true;
     this.error = null;
 
@@ -282,6 +281,4 @@ class ClientStore {
   }
 }
 
-// Create and export a singleton instance
-const clientStore = new ClientStore();
-export default clientStore;
+export default combineStores(EditingStore, ClientStore);

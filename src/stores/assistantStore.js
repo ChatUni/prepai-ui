@@ -4,9 +4,8 @@ import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { combineStores } from '../utils/storeUtils';
 import clientStore from './clientStore';
 import { t } from './languageStore';
-import routeStore from './routeStore';
 import EditingStore from './editingStore';
-import ListPageStore from './listPageStore';
+import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
 
 class AssistantStore {
@@ -121,8 +120,4 @@ class AssistantStore {
   }
  }
 
-const listPageStore = new ListPageStore();
-const groupedListStore = new GroupedListStore();
-const editingStore = new EditingStore();
-const assistantStore = new AssistantStore();
-export default combineStores(listPageStore, groupedListStore, editingStore, assistantStore);
+export default combineStores(ListStore, GroupedListStore, EditingStore, AssistantStore);

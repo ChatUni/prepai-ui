@@ -1,9 +1,12 @@
 import { makeAutoObservable } from "mobx";
+import PageStore from '../stores/pageStore';
 
-export const combineStores = (...stores) => {
+export const combineStores = (...storeClasses) => {
   const combined = {};
   
-  stores.forEach(store => {
+  ([PageStore, ...storeClasses]).forEach(storeClass => {
+    const store = new storeClass();
+
     // Copy own properties
     const ownDescriptors = Object.getOwnPropertyDescriptors(store);
     Object.defineProperties(combined, ownDescriptors);
