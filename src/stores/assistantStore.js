@@ -11,6 +11,7 @@ import GroupedListStore from './groupedListStore';
 class AssistantStore {
   models = [];
   loadingModels = false;
+  showMembershipDialog = false;
 
   get name() {
     return 'assistant';
@@ -117,6 +118,15 @@ class AssistantStore {
       });
       console.error('Error fetching OpenRouter models:', error);
     }
+  }
+
+  setShowMembershipDialog = function(show) {
+    this.showMembershipDialog = show;
+  }
+
+  handleMembershipPurchase = function(navigate) {
+    this.showMembershipDialog = false;
+    navigate('/memberships');
   }
  }
 

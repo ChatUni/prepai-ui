@@ -1,4 +1,5 @@
 import { runInAction } from 'mobx';
+import userStore from './userStore';
 
 class ListPageStore {
   searchQuery = '';
@@ -52,8 +53,23 @@ class ListPageStore {
   }
 
   gotoDetail = function(item, navigate) {
-    if (!this.isAdminMode && this.detailRoute) {
-      navigate(this.detailRoute.replace('{id}', item.id));
+    if (!this.isAdminMode) {
+      // Check if this is an assistant and user is not a member
+      if (this.name === 'assistant' && !userStore.isMember) {
+        this.setShowMembershipDialog(true);
+        return;
+      }
+      
+      // Check if this is a membership - show purchase dialog
+      if (this.name === 'membership') {
+        this.showMembershipPurchaseDialog(item);
+        return;
+      }
+      
+      // Default behavior - navigate to detail route
+      if (this.detailRoute) {
+        navigate(this.detailRoute.replace('{id}', item.id));
+      }
     }
   };
 }

@@ -142,6 +142,10 @@ class UserStore {
   isPaid(type, id) {
     return this.isAdmin || this.user.transactions.some(t => t.type === type && t.product_id === id);
   }
+
+  get isMember() {
+    return this.isAdmin || (this.user.transactions && this.user.transactions.some(t => t.type === 'membership1'));
+  }
 }
 
 const userStore = new UserStore();

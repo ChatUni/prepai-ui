@@ -213,6 +213,12 @@
       "deleteGroup": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "アシスタントが含まれているグループは削除できません"
+    },
+    "membershipRequired": {
+      "title": "メンバーシップが必要です",
+      "message": "このアシスタントにアクセスするにはメンバーシップが必要です。メンバーシップを購入しますか？",
+      "purchase": "購入",
+      "cancel": "キャンセル"
     }
   },
   "course": {
@@ -458,7 +464,33 @@
     "premium": "プレミアム",
     "basic": "ベーシック",
     "trial": "トライアル",
-    "searchPlaceholder": "メンバーシップを検索..."
+    "searchPlaceholder": "メンバーシップを検索...",
+    "purchaseConfirm": {
+      "title": "購入確認",
+      "message": "このメンバーシップを購入してもよろしいですか？",
+      "name": "名前",
+      "type": "タイプ",
+      "price": "価格",
+      "purchase": "購入",
+      "cancel": "キャンセル"
+    }
+  },
+  "payment": {
+    "wechat_pay": "WeChat Pay",
+    "creating_order": "支払い注文を作成中...",
+    "scan_qr_code": "QRコードをスキャンして支払い",
+    "amount": "金額",
+    "order_id": "注文ID",
+    "expires_in": "有効期限",
+    "waiting_for_payment": "支払い待ち中...",
+    "wechat_instructions": "WeChatを開いて、上記のQRコードをスキャンして支払いを完了してください",
+    "success": "支払い成功",
+    "success_message": "お支払いが正常に処理されました",
+    "failed": "支払い失敗",
+    "retry": "支払いを再試行",
+    "expired": "支払いが期限切れです",
+    "expired_or_timeout": "支払いが期限切れまたはタイムアウトしました",
+    "close": "閉じる"
   },
   "client": {
     "name": "クライアント名",

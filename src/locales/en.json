@@ -213,6 +213,12 @@
       "deleteGroup": "Delete Group",
       "confirmDelete": "Are you sure you want to delete this group?",
       "cannotDelete": "Cannot delete group that contains assistants"
+    },
+    "membershipRequired": {
+      "title": "Membership Required",
+      "message": "You need a membership to access this assistant. Would you like to purchase a membership?",
+      "purchase": "Purchase",
+      "cancel": "Cancel"
     }
   },
   "course": {
@@ -457,7 +463,33 @@
     "premium": "Premium",
     "basic": "Basic",
     "trial": "Trial",
-    "searchPlaceholder": "Search memberships..."
+    "searchPlaceholder": "Search memberships...",
+    "purchaseConfirm": {
+      "title": "Confirm Purchase",
+      "message": "Are you sure you want to purchase this membership?",
+      "name": "Name",
+      "type": "Type",
+      "price": "Price",
+      "purchase": "Purchase",
+      "cancel": "Cancel"
+    }
+  },
+  "payment": {
+    "wechat_pay": "WeChat Pay",
+    "creating_order": "Creating payment order...",
+    "scan_qr_code": "Scan QR Code to Pay",
+    "amount": "Amount",
+    "order_id": "Order ID",
+    "expires_in": "Expires in",
+    "waiting_for_payment": "Waiting for payment...",
+    "wechat_instructions": "Open WeChat, scan the QR code above to complete payment",
+    "success": "Payment Successful",
+    "success_message": "Your payment has been processed successfully",
+    "failed": "Payment Failed",
+    "retry": "Retry Payment",
+    "expired": "Payment expired",
+    "expired_or_timeout": "Payment expired or timed out",
+    "close": "Close"
   },
   "client": {
     "name": "Client Name",
