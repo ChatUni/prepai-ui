@@ -86,7 +86,7 @@ class UserStore {
     try {
       // Get user info from API using phone and client ID
       const users = await get('users', {
-        phone: phoneNumber,
+        phone: import.meta.env.VITE_TEST_USER_ID || phoneNumber,
         clientId: clientStore.client.id
       });
 
