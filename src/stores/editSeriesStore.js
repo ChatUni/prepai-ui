@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { save } from '../utils/db';
 import languageStore from './languageStore';
-import _ from 'lodash';
+import { omit } from '../utils/omit';
 import editCourseStore from './editCourseStore';
 import clientStore from './clientStore';
 
@@ -245,7 +245,7 @@ class EditSeriesStore {
 
       const isEdit = !!this.editingSeries;
 
-      const seriesData = _.omit({
+      const seriesData = omit({
         ...(isEdit ? this.editingSeries : {}),
         client_id: clientStore.client.id,
         name: this.name,

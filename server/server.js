@@ -1,32 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import apiHandlers from './functions/api/utils/apiHandlers.js';
-import { connect } from './functions/api/utils/db.js';
-
-// Get current module's directory for ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const apiHandlers = require('./utils/apiHandlers.js');
+const { connect } = require('./utils/db.js');
 
 // Load environment variables from .env file
 dotenv.config();
-
-// Verify required environment variables
-const requiredEnvVars = [
-  'TENCENT_SECRETID',
-  'TENCENT_SECRETKEY',
-  'TENCENT_BUCKET',
-  'TENCENT_REGION'
-];
-
-const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
-if (missingEnvVars.length > 0) {
-  console.error('Missing required environment variables:', missingEnvVars.join(', '));
-  console.error('Please ensure these variables are set in your .env file');
-  process.exit(1);
-}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,6 +13,9 @@ const PORT = process.env.PORT || 3001;
 // Enable CORS for all routes
 app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Increased limit for file uploads
+
+// Serve static files from dist folder
+app.use(express.static('dist'));
 
 const handleEndpoint = async (req, res) => {
   try {

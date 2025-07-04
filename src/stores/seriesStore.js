@@ -5,7 +5,7 @@ import { combineStores } from '../utils/storeUtils';
 import clientStore from './clientStore';
 import editSeriesStore from './editSeriesStore';
 import { get, save } from '../utils/db';
-import _ from 'lodash';
+import { omit } from '../utils/omit';
 import userStore from './userStore';
 import EditingStore from './editingStore';
 import GroupedListStore from './groupedListStore';
@@ -75,7 +75,7 @@ class SeriesStore {
   }
 
   save = async function(item) {
-    await save('series', _.omit(item, ['_id', 'courses', 'isPaid']));
+    await save('series', omit(item, ['_id', 'courses', 'isPaid']));
   }
 
   // fetchSeries = async () => {

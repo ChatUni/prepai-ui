@@ -4,7 +4,7 @@ import routeStore from './routeStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { uploadToTOS } from '../utils/tosHelper';
 import { save } from '../utils/db';
-import _ from 'lodash';
+import { omit } from '../utils/omit';
 
 class EditCourseStore {
   // fields
@@ -65,7 +65,7 @@ class EditCourseStore {
 
       const isEdit = !!this.editingCourse;
 
-      const courseData = _.omit({
+      const courseData = omit({
         ...(isEdit ? this.editingCourse : {}),
         series_id: seriesId,
         instructor_id: this.instructor_id,

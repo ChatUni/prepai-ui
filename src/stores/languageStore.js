@@ -1,26 +1,47 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import en from '../locales/en.json';
-import zh from '../locales/zh.json';
-import ja from '../locales/ja.json';
 
 class LanguageStore {
   currentLanguage = 'zh';
-  translations = {
-    en,
-    zh,
-    ja
-  };
+  translations = {};
+  loadingPromises = {};
 
   constructor() {
     makeAutoObservable(this);
     this.loadSavedLanguage();
+    // Load default language immediately
+    this.loadTranslation(this.currentLanguage);
+  }
+
+  async loadTranslation(lang) {
+    if (this.translations[lang] || this.loadingPromises[lang]) {
+      return this.loadingPromises[lang] || Promise.resolve();
+    }
+
+    this.loadingPromises[lang] = (async () => {
+      try {
+        const module = await import(`../locales/${lang}.json`);
+        runInAction(() => {
+          this.translations[lang] = module.default;
+        });
+      } catch (error) {
+        console.error(`Failed to load translation for ${lang}:`, error);
+      }
+    })();
+
+    return this.loadingPromises[lang];
   }
 
   get t() {
     return (key, params = {}) => {
       try {
+        const currentTranslations = this.translations[this.currentLanguage];
+        if (!currentTranslations) {
+          // Translation not loaded yet, return key as fallback
+          return key;
+        }
+
         const keys = key.split('.');
-        let result = this.translations[this.currentLanguage];
+        let result = currentTranslations;
         
         // Navigate through nested objects
         for (const k of keys) {
@@ -48,9 +69,12 @@ class LanguageStore {
     };
   }
 
-  setLanguage = (lang) => {
+  setLanguage = async (lang) => {
     if (['en', 'zh', 'ja'].includes(lang)) {
-      this.currentLanguage = lang;
+      await this.loadTranslation(lang);
+      runInAction(() => {
+        this.currentLanguage = lang;
+      });
       localStorage.setItem('language', lang);
     }
   };
@@ -58,9 +82,8 @@ class LanguageStore {
   loadSavedLanguage = () => {
     const savedLang = localStorage.getItem('language');
     if (savedLang && ['en', 'zh', 'ja'].includes(savedLang)) {
-      runInAction(() => {
-        this.currentLanguage = savedLang;
-      });
+      this.currentLanguage = savedLang;
+      this.loadTranslation(savedLang);
     }
   };
 }

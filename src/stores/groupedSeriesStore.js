@@ -5,7 +5,7 @@ import seriesStore from './seriesStore';
 import editSeriesStore from './editSeriesStore';
 import languageStore from './languageStore';
 import { save } from '../utils/db';
-import _ from 'lodash';
+import { omit } from '../utils/omit';
 
 class GroupedSeriesStore {
   expandedGroups = new Set();
@@ -132,7 +132,7 @@ class GroupedSeriesStore {
           clientStore.save(),
           ...seriesList
             .filter(series => series.group === newName)
-            .map(series => save('series', _.omit(series, ['courses'])))
+            .map(series => save('series', omit(series, ['courses'])))
         ]);
 
         this.closeEditGroupDialog();
