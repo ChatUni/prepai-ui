@@ -5,6 +5,7 @@ import lang from './languageStore';
 import { get, save } from '../utils/db';
 import { omit } from 'lodash';
 import { combineStores } from '../utils/storeUtils';
+import PageStore from './pageStore';
 import EditingStore from './editingStore';
 
 class ClientStore {
@@ -281,4 +282,4 @@ class ClientStore {
   }
 }
 
-export default combineStores(EditingStore, ClientStore);
+export default combineStores(PageStore, EditingStore, ClientStore);

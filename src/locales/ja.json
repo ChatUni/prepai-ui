@@ -30,7 +30,9 @@
   "menu": {
     "home": "ホーム",
     "courses": "コース",
-    "series": "シリーズ",
+    "series": {
+      "title": "シリーズ"
+    },
     "favorites": "お気に入り",
     "account": "アカウント",
     "assistants": "アシスタント",
@@ -266,6 +268,9 @@
     "selectToEdit": "編集するシリーズを選択",
     "edit": "シリーズを編集",
     "category": "カテゴリー",
+    "search": {
+      "placeholder": "シリーズを検索..."
+    },
     "show": "シリーズを表示",
     "hide": "シリーズを非表示",
     "confirmShow": "「{name}」シリーズを表示しますか？",

@@ -32,7 +32,7 @@ class UIStore {
     makeAutoObservable(this);
 
     // Load favorites from API
-    this.loadFavorites();
+    // this.loadFavorites();
   }
   
   // Load favorites from API

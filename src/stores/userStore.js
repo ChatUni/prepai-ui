@@ -48,7 +48,8 @@ class UserStore {
 
   async initData() {
     await clientStore.loadClient();
-    await seriesStore.fetchSeries();
+    await seriesStore.fetchInstructors();
+    await seriesStore.fetchItems();
     await assistantStore.fetchItems();
     await membershipStore.fetchItems();
     await examStore.fetchItems();

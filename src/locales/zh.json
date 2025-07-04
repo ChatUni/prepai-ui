@@ -30,7 +30,9 @@
   "menu": {
     "home": "首页",
     "courses": "课程",
-    "series": "课程",
+    "series": {
+      "title": "课程"
+    },
     "favorites": "收藏",
     "account": "账户",
     "assistants": "助手",
@@ -265,6 +267,9 @@
     "selectTitle": "选择课程",
     "selectToEdit": "选择要编辑的课程",
     "category": "分类",
+    "search": {
+      "placeholder": "搜索课程..."
+    },
     "show": "上架课程",
     "hide": "下架课程",
     "confirmShow": "确定要上架「{name}」课程吗？",

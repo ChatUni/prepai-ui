@@ -5,6 +5,7 @@ import { combineStores } from '../utils/storeUtils';
 import clientStore from './clientStore';
 import { t } from './languageStore';
 import EditingStore from './editingStore';
+import PageStore from './pageStore';
 import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
 
@@ -130,4 +131,4 @@ class AssistantStore {
   }
  }
 
-export default combineStores(ListStore, GroupedListStore, EditingStore, AssistantStore);
+export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, AssistantStore);

@@ -30,7 +30,9 @@
   "menu": {
     "home": "Home",
     "courses": "Courses",
-    "series": "Series",
+    "series": {
+      "title": "Series"
+    },
     "favorites": "Favorites",
     "account": "Account",
     "assistants": "Assistants",
@@ -265,6 +267,9 @@
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
     "category": "Category",
+    "search": {
+      "placeholder": "Search series..."
+    },
     "show": "Show series",
     "hide": "Hide series",
     "confirmShow": "Are you sure you want to show \"{name}\" series?",

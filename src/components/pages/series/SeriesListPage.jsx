@@ -8,38 +8,58 @@ import SeriesSearchBar from '../../ui/SeriesSearchBar';
 import Carousel from '../../ui/Carousel';
 import LoadingState from '../../ui/LoadingState';
 import ToolsNav from '../../ui/ToolsNav';
-import seriesStore from '../../../stores/seriesStore';
+import store from '../../../stores/seriesStore';
 import routeStore from '../../../stores/routeStore';
 import clientStore from '../../../stores/clientStore';
+import ListPage from '../../ui/ListPage';
+import EditSeriesPage from './EditSeriesPage';
+import SeriesCard from './SeriesCard';
 
 const SeriesListPage = observer(() => (
-  <DndProvider backend={HTML5Backend}>
-    <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
-      {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />}
+  <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
+    {/* {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />} */}
 
-      {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
+    {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
 
-      <div className="mb-6">
-        <SeriesSearchBar />
-      </div>
+    {/* <div className="mb-6">
+      <SeriesSearchBar />
+    </div> */}
 
-      <LoadingState
-        isLoading={seriesStore.isLoading}
-        isError={!seriesStore.isSeriesValid}
-        isEmpty={seriesStore.filteredSeries.length === 0}
-      >
-        {routeStore.isSeriesGroupMode ? (
-          <GroupedSeriesList />
-        ) : (
-          <SeriesList
-            title=""
-            series={routeStore.isMySeriesMode ? seriesStore.mySeries : seriesStore.filteredSeries}
-            isAllInstructors={true}
+    {/* <LoadingState
+      isLoading={seriesStore.isLoading}
+      isError={!seriesStore.isSeriesValid}
+      isEmpty={seriesStore.filteredSeries.length === 0}
+    >
+      {routeStore.isSeriesGroupMode ? (
+        <GroupedSeriesList />
+      ) : (
+        <SeriesList
+          title=""
+          series={routeStore.isMySeriesMode ? seriesStore.mySeries : seriesStore.filteredSeries}
+          isAllInstructors={true}
+        />
+      )}
+    </LoadingState> */}
+
+    <div className="bg-white p-4">
+      <ListPage
+        store={store}
+        banners={clientStore.client.settings?.banners}
+        editDialogChildren={<EditSeriesPage />}
+        renderItem={(series, index, group, { moveItem, isEditMode }, isFirstCard) => (
+          <SeriesCard
+            key={`${group}-${series.id}-${index}`}
+            series={series}
+            index={index}
+            group={group}
+            moveItem={moveItem}
+            isEditMode={isEditMode}
+            renderDialogs={isFirstCard}
           />
         )}
-      </LoadingState>
+      />
     </div>
-  </DndProvider>
+  </div>
 ));
 
 export default SeriesListPage;
