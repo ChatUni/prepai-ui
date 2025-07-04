@@ -4,7 +4,7 @@ import zh from '../locales/zh.json';
 import ja from '../locales/ja.json';
 
 class LanguageStore {
-  currentLanguage = 'en';
+  currentLanguage = 'zh';
   translations = {
     en,
     zh,

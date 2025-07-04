@@ -47,7 +47,6 @@ class UserStore {
   }
 
   async initData() {
-    await clientStore.loadClient();
     await seriesStore.fetchInstructors();
     await seriesStore.fetchItems();
     await assistantStore.fetchItems();
@@ -55,8 +54,9 @@ class UserStore {
     await examStore.fetchItems();
   }
 
-  checkSavedLoginState() {
+  checkSavedLoginState = async function() {
     try {
+      await clientStore.loadClient();
       const saveduser = localStorage.getItem('user');
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
