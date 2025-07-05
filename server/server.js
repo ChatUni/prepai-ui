@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const dotenv = require('dotenv');
 const apiHandlers = require('./utils/apiHandlers.js');
 const { connect } = require('./utils/db.js');
@@ -9,6 +10,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Enable compression for all responses
+app.use(compression());
 
 // Enable CORS for all routes
 app.use(cors());
