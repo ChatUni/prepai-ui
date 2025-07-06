@@ -262,6 +262,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "createNew": "创建新课程",
     "addChapter": "添加章节",
     "descriptionImage": "描述图片",
     "selectTitle": "选择课程",

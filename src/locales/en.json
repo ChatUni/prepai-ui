@@ -262,6 +262,7 @@
     "moreKeywords": "+{count}"
   },
   "series": {
+    "createNew": "Create New Series",
     "addChapter": "Add Chapter",
     "descriptionImage": "Description Image",
     "selectTitle": "Select a Series",

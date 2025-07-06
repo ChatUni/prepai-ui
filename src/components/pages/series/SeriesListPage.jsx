@@ -44,7 +44,7 @@ const SeriesListPage = observer(() => (
     <div className="bg-white p-4">
       <ListPage
         store={store}
-        banners={clientStore.client.settings?.banners}
+        bannerImages={clientStore.client.settings?.banners}
         editDialogChildren={<EditSeriesPage />}
         renderItem={(series, index, group, { moveItem, isEditMode }, isFirstCard) => (
           <SeriesCard

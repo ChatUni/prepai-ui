@@ -50,7 +50,7 @@ const ListPage = observer(({
   return (
     <div className={containerClassName}>
       {/* Banner/Carousel */}
-      {bannerImages && bannerImages.length > 0 && (
+      {!store.isAdminMode && bannerImages && bannerImages.length > 0 && (
         <Carousel
           images={bannerImages}
           intervalDuration={bannerIntervalDuration}

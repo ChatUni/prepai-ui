@@ -19,7 +19,7 @@ const CardEditActions = observer(({
     <div className={`absolute ${onTop ? 'top-2' : 'bottom-2'} right-2 flex gap-2 items-center bg-white/90 rounded-lg p-1`}>
       {item.deleted ? (
         <ActionButton
-          onClick={handleDeleteClick}
+          onClick={handleClick('openDeleteDialog')}
           color="green"
           icon="MdRestoreFromTrash"
           title={t('common.restore')}
