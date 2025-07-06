@@ -9,7 +9,7 @@ class ListStore {
     let filtered = this.items;
 
     if (!this.isAdminMode) {
-      filtered = filtered.filter(item => !item.hidden);
+      filtered = filtered.filter(item => !item.hidden && !item.deleted);
     }
 
     if (this.searchQuery && this.searchableFields) {

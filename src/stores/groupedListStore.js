@@ -180,15 +180,15 @@ class GroupedListStore {
       return {};
     }
 
-    const itemsToGroup = this.filteredItems;
+    const items = this.filteredItems;
     const groups = this.getGroups();
 
-    if (groups.length === 0) return itemsToGroup;
+    if (groups.length === 0) return items;
 
     const grouped = {};
 
     groups.forEach(group => {
-      const groupItems = itemsToGroup.filter(item => (item.group || 'Default') === group);
+      const groupItems = items.filter(item => (item.group || 'Default') === group);
       
       // Ensure each item has an order property
       groupItems.forEach((item, index) => {
@@ -200,6 +200,12 @@ class GroupedListStore {
       // Sort by order property
       grouped[group] = groupItems.sort((a, b) => a.order - b.order);
     });
+
+    if (this.isAdminMode) {
+      const deletedItems = items.filter(item => item.deleted);
+      if (deletedItems.length > 0)
+        grouped[t('series.groups.recycle')] = deletedItems;
+    }
 
     return grouped;
   };

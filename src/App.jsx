@@ -142,11 +142,6 @@ const MainLayout = observer(() => {
                     <SeriesListPage />
                   </AuthRoute>
                 } />
-                <Route path="/series/select" element={
-                  <AuthRoute>
-                    <SeriesListPage />
-                  </AuthRoute>
-                } />
                 <Route path="/series/:id" element={
                   <AuthRoute>
                     <SeriesDetailPage />
@@ -157,24 +152,9 @@ const MainLayout = observer(() => {
                     <SeriesListPage />
                   </AuthRoute>
                 } />
-                <Route path="/series/new" element={
+                <Route path="/series/paid" element={
                   <AuthRoute>
-                    <EditSeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:id/edit" element={
-                  <AuthRoute>
-                    <EditSeriesPage />
-                  </AuthRoute>
-                } />
-                <Route path="/series/:id/course" element={
-                  <AuthRoute>
-                    <EditCoursePage />
-                  </AuthRoute>
-                } />
-                <Route path="/my_series" element={
-                  <AuthRoute>
-                    <SeriesListPage />
+                    <SeriesListPage showPaidOnly={true} />
                   </AuthRoute>
                 } />
                 <Route path="/instructors" element={

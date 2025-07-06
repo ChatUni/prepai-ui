@@ -24,7 +24,7 @@ const AccountPage = observer(() => {
         navigate('/admin');
         break;
       case 'my_series':
-        navigate('/my_series');
+        navigate('/series/paid');
         break;
       case 'vip':
         // Navigate to VIP details page

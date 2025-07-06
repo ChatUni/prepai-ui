@@ -6,7 +6,6 @@ import { t } from '../../stores/languageStore';
 import { DeleteConfirmDialog, GroupNameDialog, ErrorDialog, GroupDeleteDialog } from './Dialogs';
 
 const GroupedList = observer(({
-  groupedItems,
   store,
   renderItem,
   renderGroupActions,
@@ -15,9 +14,7 @@ const GroupedList = observer(({
   isEditMode,
   itemsContainerClassName = "space-y-3 p-2",
   isGroupEditable = () => true,
-  isGroupDanger = () => false,
   onItemMove,
-  onGroupDrop,
   itemType = "items",
   isGrouped = true
 }) => {
@@ -65,11 +62,11 @@ const GroupedList = observer(({
       maxHeight="96"
       index={index}
       moveGroup={(fromIndex, toIndex) => {
-        store.moveGroup(fromIndex, toIndex, () => groupedItems);
+        store.moveGroup(fromIndex, toIndex, () => store.groupedItems);
       }}
       onDrop={() => store.saveGroupOrder()}
       isDraggable={isEditMode && isGroupEditable(group)}
-      isDanger={isGroupDanger(group)}
+      isDanger={store.isGroupDanger && store.isGroupDanger(group)}
     >
       <div className={itemsContainerClassName}>
         {items.map((item, itemIndex) =>
@@ -91,7 +88,7 @@ const GroupedList = observer(({
       <div className="w-full space-y-4">
         {isGrouped ? (
           // Render grouped items with accordion sections
-          Object.entries(groupedItems).map(([group, items], index) => (
+          Object.entries(store.groupedItems).map(([group, items], index) => (
             <GroupSection
               key={group}
               group={group}
@@ -103,7 +100,7 @@ const GroupedList = observer(({
         ) : (
           // Render flat list without groups
           <div className={itemsContainerClassName}>
-            {groupedItems.map((item, itemIndex) =>
+            {store.filteredItems.map((item, itemIndex) =>
               renderItem(item, itemIndex, item.originalGroup, {
                 moveItem: onItemMove ? (fromIndex, toIndex) => {
                   if (isEditMode) {

@@ -1,22 +1,9 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { useCallback } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import CardEditActions from '../../ui/CardEditActions';
-import Dialog from '../../ui/Dialog';
-import { getCardBaseClasses } from '../../../utils/cardStyles';
-import useDragAndDrop from '../../../hooks/useDragAndDrop';
-import EditSeriesPage from './EditSeriesPage';
-import EditInstructorPage from '../instructor/EditInstructorPage';
-import { EditDialog } from '../../ui/Dialogs';
-import routeStore from '../../../stores/routeStore';
 import { t } from '../../../stores/languageStore';
-import seriesCardStore from '../../../stores/seriesCardStore';
 import store from '../../../stores/seriesStore';
-import groupedSeriesStore from '../../../stores/groupedSeriesStore';
-import editInstructorStore from '../../../stores/editInstructorStore';
-import editSeriesStore from '../../../stores/editSeriesStore';
 import userStore from '../../../stores/userStore';
 import DndOrderContainer from '../../ui/DndOrderContainer';
 

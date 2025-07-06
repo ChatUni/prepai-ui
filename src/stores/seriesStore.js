@@ -16,6 +16,7 @@ import instructorStore from './instructorStore';
 class SeriesStore {
   selectedCategory;
   selectedInstructorId;
+  showPaidOnly = false;
   pendingSeriesUpdates = new Map();
 
   get name() {
@@ -37,7 +38,8 @@ class SeriesStore {
   get filteringFields() {
     return [
       'category',
-      item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId)
+      item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId),
+      item => this.isAdminMode || !this.showPaidOnly || item.isPaid
     ];
   }
 
@@ -89,6 +91,10 @@ class SeriesStore {
 
   save = async function(item) {
     await save('series', omit(item, ['_id', 'courses', 'isPaid']));
+  }
+
+  isGroupDanger = function(group) {
+    return group === t('series.groups.recycle');
   }
 
   // fetchSeries = async () => {
