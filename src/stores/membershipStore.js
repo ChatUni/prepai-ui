@@ -82,6 +82,10 @@ class MembershipStore {
     await save('memberships', item);
   };
 
+  isGroupDanger = function(group) {
+    return group === t('membership.expired')
+  }
+  
   setShowPurchaseDialog = function(show) {
     this.showPurchaseDialog = show;
   };

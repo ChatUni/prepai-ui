@@ -94,7 +94,6 @@ const ListPage = observer(({
             store={store}
             isEditMode={store.isAdminMode}
             itemsContainerClassName={itemsContainerClassName}
-            isGroupEditable={store?.isAdminMode ? () => true : () => false}
             onItemMove={(group, fromIndex, toIndex) => store?.moveItemInGroup(group, fromIndex, toIndex)}
             onGroupDrop={onGroupDrop}
             editGroupTitle={t(`${store.name}.groups.editGroup`)}

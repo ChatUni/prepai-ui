@@ -188,7 +188,7 @@ class GroupedListStore {
     const grouped = {};
 
     groups.forEach(group => {
-      const groupItems = items.filter(item => (item.group || 'Default') === group);
+      const groupItems = items.filter(item => !item.deleted && (item.group || 'Default') === group);
       
       // Ensure each item has an order property
       groupItems.forEach((item, index) => {
@@ -281,6 +281,10 @@ class GroupedListStore {
       }
     });
   };
+
+  isGroupEditable = function(group) {
+    return this.isAdminMode && (!this.isGroupDanger || !this.isGroupDanger(group));
+  }
 
   // Reset all state
   reset = function() {

@@ -13,7 +13,6 @@ const GroupedList = observer(({
   deleteGroupTitle,
   isEditMode,
   itemsContainerClassName = "space-y-3 p-2",
-  isGroupEditable = () => true,
   onItemMove,
   itemType = "items",
   isGrouped = true
@@ -30,7 +29,7 @@ const GroupedList = observer(({
       return renderGroupActions(group);
     }
     
-    if (!isGroupEditable(group) || !isEditMode) {
+    if (!store.isGroupEditable(group) || !isEditMode) {
       return null;
     }
 
@@ -65,7 +64,7 @@ const GroupedList = observer(({
         store.moveGroup(fromIndex, toIndex, () => store.groupedItems);
       }}
       onDrop={() => store.saveGroupOrder()}
-      isDraggable={isEditMode && isGroupEditable(group)}
+      isDraggable={isEditMode && store.isGroupEditable(group)}
       isDanger={store.isGroupDanger && store.isGroupDanger(group)}
     >
       <div className={itemsContainerClassName}>
