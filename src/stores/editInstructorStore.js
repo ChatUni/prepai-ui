@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { getApiBaseUrl } from '../config';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import clientStore from './clientStore';
-import instructorsStore from './instructorsStore';
+import instructorsStore from './instructorStore';
 import { save } from '../utils/db';
 
 class EditInstructorStore {

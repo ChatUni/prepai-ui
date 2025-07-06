@@ -44,7 +44,7 @@ const SeriesListPage = observer(() => (
           },
           {
             selectedField: 'selectedInstructorId',
-            optionsField: 'instructors',
+            optionsField: 'allInstructors',
             allLabel: t('series.search.allInstructors'),
             //onSelect: handleInstructorFilter
           },

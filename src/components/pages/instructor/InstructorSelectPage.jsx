@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import instructorsStore from '../../../stores/instructorsStore';
+import instructorStore from '../../../stores/instructorStore';
 import languageStore from '../../../stores/languageStore';
 import InstructorSearchBar from '../../ui/InstructorSearchBar';
 import LoadingState from '../../ui/LoadingState';
@@ -16,8 +16,8 @@ const InstructorSelectPage = observer(() => {
 
   useEffect(() => {
     // Load instructors data if not already loaded
-    if (instructorsStore.instructors.length === 0) {
-      instructorsStore.fetchInstructors();
+    if (instructorStore.instructors.length === 0) {
+      instructorStore.fetchInstructors();
     }
   }, []);
 
@@ -36,15 +36,15 @@ const InstructorSelectPage = observer(() => {
       <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
         <div className="divide-y divide-gray-200 overflow-y-auto h-full">
           <LoadingState
-            isLoading={instructorsStore.loading}
-            isEmpty={!instructorsStore.loading && instructorsStore.filteredInstructors.length === 0}
+            isLoading={instructorStore.loading}
+            isEmpty={!instructorStore.loading && instructorStore.filteredInstructors.length === 0}
             customMessage={
-              instructorsStore.loading ? t('common.loading') :
-              instructorsStore.filteredInstructors.length === 0 ? t('common.no_results') :
+              instructorStore.loading ? t('common.loading') :
+              instructorStore.filteredInstructors.length === 0 ? t('common.no_results') :
               null
             }
           >
-            {instructorsStore.filteredInstructors.map(instructor => (
+            {instructorStore.filteredInstructors.map(instructor => (
               <div
                 key={instructor.id}
                 onClick={() => handleInstructorClick(instructor)}

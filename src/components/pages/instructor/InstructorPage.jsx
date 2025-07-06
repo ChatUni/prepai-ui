@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import instructorsStore from '../../../stores/instructorsStore';
+import instructorStore from '../../../stores/instructorStore';
 import languageStore from '../../../stores/languageStore';
 import routeStore from '../../../stores/routeStore';
 import LoadingState from '../../ui/LoadingState';
@@ -13,8 +13,8 @@ const InstructorPage = observer(() => {
   // Fetch instructors data on component mount
   useEffect(() => {
     const fetchData = async () => {
-      if (!instructorsStore.instructors.length && !instructorsStore.loading) {
-        await instructorsStore.fetchInstructors();
+      if (!instructorStore.instructors.length && !instructorStore.loading) {
+        await instructorStore.fetchInstructors();
       }
     };
     
@@ -27,11 +27,11 @@ const InstructorPage = observer(() => {
     e.target.src = '/images/avatar.png';
   }, []);
 
-  const errorContent = instructorsStore.error && (
+  const errorContent = instructorStore.error && (
     <>
-      <div className="text-gray-600 mt-2">{instructorsStore.error}</div>
+      <div className="text-gray-600 mt-2">{instructorStore.error}</div>
       <button
-        onClick={() => instructorsStore.fetchInstructors()}
+        onClick={() => instructorStore.fetchInstructors()}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
       >
         {t('instructors.retry')}
@@ -46,7 +46,7 @@ const InstructorPage = observer(() => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {instructorsStore.instructors.map(instructor => (
+        {instructorStore.instructors.map(instructor => (
           <div
             key={instructor.id}
             className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 cursor-pointer"
@@ -86,17 +86,17 @@ const InstructorPage = observer(() => {
 
   return (
     <LoadingState
-      isLoading={instructorsStore.loading}
-      isError={!!instructorsStore.error}
-      isEmpty={!instructorsStore.loading && !instructorsStore.error && !instructorsStore.instructors.length}
+      isLoading={instructorStore.loading}
+      isError={!!instructorStore.error}
+      isEmpty={!instructorStore.loading && !instructorStore.error && !instructorStore.instructors.length}
       customMessage={
-        instructorsStore.loading ? t('instructors.loading') :
-        instructorsStore.error ? t('instructors.loadingFailed') :
-        !instructorsStore.instructors.length ? t('instructors.notFound') :
+        instructorStore.loading ? t('instructors.loading') :
+        instructorStore.error ? t('instructors.loadingFailed') :
+        !instructorStore.instructors.length ? t('instructors.notFound') :
         null
       }
     >
-      {instructorsStore.error ? errorContent : mainContent}
+      {instructorStore.error ? errorContent : mainContent}
     </LoadingState>
   );
 });

@@ -7,6 +7,7 @@ import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
 import membershipStore from './membershipStore';
 import examStore from './examStore';
+import instructorStore from './instructorStore';
 
 class UserStore {
   user = {};
@@ -47,7 +48,7 @@ class UserStore {
   }
 
   async initData() {
-    await seriesStore.fetchInstructors();
+    await instructorStore.fetchItems();
     await seriesStore.fetchItems();
     await assistantStore.fetchItems();
     await membershipStore.fetchItems();

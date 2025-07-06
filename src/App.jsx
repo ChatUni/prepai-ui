@@ -43,7 +43,7 @@ import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
 import './stores/instructorChatStore';
 import './stores/assistantStore';
-import './stores/instructorsStore';
+import './stores/instructorStore';
 import './stores/languageStore';
 import './stores/seriesStore';
 import './stores/clientStore';

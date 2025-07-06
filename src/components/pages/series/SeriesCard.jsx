@@ -98,7 +98,7 @@ const SeriesCard = observer(({
       <div className="p-3">
         <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
           <div className="flex flex-wrap gap-2">
-            {tap(instructors).map((instructor, index) => (
+            {instructors.map((instructor, index) => (
               <div
                 key={instructor.id}
                 className={`flex items-center ${isEditMode ? 'cursor-pointer hover:opacity-80' : ''}`}

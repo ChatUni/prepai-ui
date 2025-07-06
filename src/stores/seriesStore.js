@@ -11,9 +11,11 @@ import EditingStore from './editingStore';
 import GroupedListStore from './groupedListStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
+import instructorStore from './instructorStore';
 
 class SeriesStore {
-  instructors = [];
+  selectedCategory;
+  selectedInstructorId;
   pendingSeriesUpdates = new Map();
 
   get name() {
@@ -32,6 +34,13 @@ class SeriesStore {
     return ['name', 'desc'];
   }
 
+  get filteringFields() {
+    return [
+      'category',
+      item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId)
+    ];
+  }
+
   get newItem() {
     return {
       client_id: clientStore.client.id,
@@ -44,6 +53,10 @@ class SeriesStore {
       desc: '',
       cover: '',
     };
+  }
+
+  get allInstructors() {
+    return instructorStore.items || [];
   }
 
   get uniqueCategories() {
@@ -128,22 +141,6 @@ class SeriesStore {
   //     });
   //   }
   // }
-
-  fetchInstructors = async () => {
-    try {
-      this.isLoading = true;
-      const data = await get('instructors', { clientId: clientStore.client.id });
-      runInAction(() => {
-        this.instructors = data;
-        this.isLoading = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-        this.isLoading = false;
-      });
-    }
-  }
 
   // handleSubmit = async (form, navigate) => {
   //   try {
@@ -233,14 +230,14 @@ class SeriesStore {
   // }
 
   getInstructorById = function(id) {
-    return (this.instructors || []).find(instructor => instructor.id === id);
+    return this.allInstructors.find(instructor => instructor.id === id);
   }
 
   // get seriesInstructors() {
   //   return this.getSeriesInstructors(this.currentSeriesFromRoute, true);
   // }
 
-  getSeriesInstructors = function(series, isFiltered) {
+  getSeriesInstructors = function(series) {
     if (!series) return [];
 
     const ids = new Set((series.courses || [])

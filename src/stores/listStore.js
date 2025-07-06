@@ -1,7 +1,7 @@
 import { runInAction } from 'mobx';
 import userStore from './userStore';
 
-class ListPageStore {
+class ListStore {
   searchQuery = '';
   items = [];
 
@@ -9,7 +9,7 @@ class ListPageStore {
     let filtered = this.items;
 
     if (!this.isAdminMode) {
-      filtered = filtered.filter(assistant => !assistant.hidden);
+      filtered = filtered.filter(item => !item.hidden);
     }
 
     if (this.searchQuery && this.searchableFields) {
@@ -17,6 +17,15 @@ class ListPageStore {
       filtered = filtered.filter(item => this.searchableFields.some(field => (item[field] || '').toLowerCase().includes(query)));
     }
 
+    (this.filteringFields || []).forEach(filter => {
+      if (typeof filter === 'function') {
+        filtered = filtered.filter(filter)
+      } else {
+        const selectedField = `selected${filter[0].toUpperCase()}${filter.slice(1)}`
+        filtered = filtered.filter(item => !this[selectedField] || item[filter] == this[selectedField])
+      }
+    })
+    
     return filtered;
   }
 
@@ -74,4 +83,4 @@ class ListPageStore {
   };
 }
 
-export default ListPageStore;
+export default ListStore;
