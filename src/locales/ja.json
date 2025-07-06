@@ -270,6 +270,8 @@
     "edit": "シリーズを編集",
     "category": "カテゴリー",
     "search": {
+      "allInstructors": "全ての講師",
+      "allCategories": "全てのカテゴリー",
       "placeholder": "シリーズを検索..."
     },
     "show": "シリーズを表示",
@@ -372,11 +374,6 @@
       "addSeries": "シリーズを追加",
       "recycle": "リサイクル"
     }
-  },
-  "search": {
-    "allInstructors": "全ての講師",
-    "allCategories": "全てのカテゴリー",
-    "searchPlaceholder": "コースを検索..."
   },
   "chat": {
     "sendMessage": "メッセージを送信",

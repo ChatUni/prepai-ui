@@ -269,6 +269,8 @@
     "selectToEdit": "选择要编辑的课程",
     "category": "分类",
     "search": {
+      "allInstructors": "所有老师",
+      "allCategories": "所有分类",
       "placeholder": "搜索课程..."
     },
     "show": "上架课程",
@@ -370,11 +372,6 @@
       "addSeries": "添加课程",
       "recycle": "回收站"
     }
-  },
-  "search": {
-    "allInstructors": "所有老师",
-    "allCategories": "所有分类",
-    "searchPlaceholder": "搜索课程..."
   },
   "chat": {
     "sendMessage": "发送消息",

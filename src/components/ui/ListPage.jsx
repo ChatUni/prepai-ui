@@ -12,6 +12,8 @@ const ListPage = observer(({
   bannerImages = [],
   bannerIntervalDuration = 3000,
   
+  filters = [],
+
   // Shortcut buttons props
   shortcutButtons = [],
   showShortcutButtons = false,
@@ -61,7 +63,7 @@ const ListPage = observer(({
       <PageTitle title={store.pageTitle} />
       
       {/* Search Bar */}
-      <SearchBar store={store} isGrouped={isGrouped} />
+      <SearchBar store={store} isGrouped={isGrouped} filters={filters} />
       
       {/* Empty State */}
       {!hasItems && (

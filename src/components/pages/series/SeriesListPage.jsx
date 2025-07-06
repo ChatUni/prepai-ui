@@ -14,32 +14,11 @@ import clientStore from '../../../stores/clientStore';
 import ListPage from '../../ui/ListPage';
 import EditSeriesPage from './EditSeriesPage';
 import SeriesCard from './SeriesCard';
+import { t } from '../../../stores/languageStore';
 
 const SeriesListPage = observer(() => (
   <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
-    {/* {routeStore.isSeriesHomeMode && <Carousel images={clientStore.client.settings.banners} />} */}
-
     {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
-
-    {/* <div className="mb-6">
-      <SeriesSearchBar />
-    </div> */}
-
-    {/* <LoadingState
-      isLoading={seriesStore.isLoading}
-      isError={!seriesStore.isSeriesValid}
-      isEmpty={seriesStore.filteredSeries.length === 0}
-    >
-      {routeStore.isSeriesGroupMode ? (
-        <GroupedSeriesList />
-      ) : (
-        <SeriesList
-          title=""
-          series={routeStore.isMySeriesMode ? seriesStore.mySeries : seriesStore.filteredSeries}
-          isAllInstructors={true}
-        />
-      )}
-    </LoadingState> */}
 
     <div className="bg-white p-4">
       <ListPage
@@ -57,6 +36,19 @@ const SeriesListPage = observer(() => (
             renderDialogs={isFirstCard}
           />
         )}
+        filters={[
+          {
+            selectedField: 'selectedCategory',
+            optionsField: 'uniqueCategories',
+            allLabel: t('series.search.allCategories'),
+          },
+          {
+            selectedField: 'selectedInstructorId',
+            optionsField: 'instructors',
+            allLabel: t('series.search.allInstructors'),
+            //onSelect: handleInstructorFilter
+          },
+        ]}
       />
     </div>
   </div>

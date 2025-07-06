@@ -269,6 +269,8 @@
     "selectToEdit": "Select Series to Edit",
     "category": "Category",
     "search": {
+      "allInstructors": "All Instructors",
+      "allCategories": "All Categories",
       "placeholder": "Search series..."
     },
     "show": "Show series",
@@ -371,11 +373,6 @@
       "cannotDelete": "Cannot delete group that contains series",
       "recycle": "Recycle Bin"
     }
-  },
-  "search": {
-    "allInstructors": "All Instructors",
-    "allCategories": "All Categories",
-    "searchPlaceholder": "Search courses..."
   },
   "chat": {
     "sendMessage": "Send Message",
