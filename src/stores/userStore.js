@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import DEFAULT_AVATAR from '../assets/avatar.png';
 import clientStore from './clientStore';
 import lang from './languageStore';
-import { get } from '../utils/db';
+import { get, save } from '../utils/db';
 import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
 import membershipStore from './membershipStore';
@@ -91,11 +91,27 @@ class UserStore {
         clientId: clientStore.client.id
       });
 
-      if (!users || users.length === 0) {
-        throw new Error('User not found');
-      }
+      let user;
 
-      const user = users[0];
+      if (!users || users.length === 0) {
+        // User doesn't exist, create a new one
+        const newUser = {
+          id: `${clientStore.client.id}_${phoneNumber}_${Date.now()}`,
+          phone: phoneNumber,
+          client_id: clientStore.client.id,
+          name: `用户${phoneNumber.slice(-4)}`, // Default name using last 4 digits
+          role: 'user',
+          avatar: '',
+          createdAt: new Date().toISOString(),
+          isActive: true
+        };
+
+        // Save the new user to database
+        await save('users', newUser);
+        user = newUser;
+      } else {
+        user = users[0];
+      }
       
       runInAction(() => {
         this.user = {

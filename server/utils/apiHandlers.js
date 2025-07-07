@@ -1,6 +1,7 @@
 const { get, save, remove, flat } = require('./db.js');
 const { handleUrlSigning, handleFileUpload, handleFileServing } = require('./volcHelper.js');
 const { WeChatPay, utils } = require('./wechat.js');
+const { sendSms } = require('./sms.js');
 
 module.exports = {
   db_handlers: {
@@ -141,6 +142,124 @@ module.exports = {
           return {
             success: false,
             error: error.message
+          };
+        }
+      },
+      send_sms: async (q, b) => {
+        try {
+          // Validate required parameters
+          if (!b.phone) {
+            return {
+              success: false,
+              error: 'Phone number is required'
+            };
+          }
+
+          // Set default country code if not provided
+          const countryCode = b.countryCode || '+86';
+          
+          // Generate 6-digit verification code
+          const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+          // Send SMS
+          await sendSms(b.phone, countryCode, verificationCode);
+          
+          // Store verification code in database for later verification
+          // Using a temporary collection with expiration
+          const verificationData = {
+            id: `${countryCode}${b.phone}`,
+            phone: b.phone,
+            countryCode: countryCode,
+            code: verificationCode,
+            createdAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 300000).toISOString(), // 5 minutes expiration
+            verified: false
+          };
+          
+          await save('sms_verifications', verificationData);
+          
+          return {
+            success: true,
+            message: 'SMS verification code sent successfully',
+            expiresIn: 300 // 5 minutes in seconds
+          };
+          
+        } catch (error) {
+          console.error('SMS sending error:', error);
+          return {
+            success: false,
+            error: error.message || 'Failed to send SMS verification code'
+          };
+        }
+      },
+      verify_sms: async (q, b) => {
+        try {
+          // Validate required parameters
+          if (!b.phone || !b.code) {
+            return {
+              success: false,
+              error: 'Phone number and verification code are required'
+            };
+          }
+
+          const countryCode = b.countryCode || '+86';
+          const verificationId = `${countryCode}${b.phone}`;
+          
+          // Get verification record from database
+          const verifications = await get('sms_verifications', `m_id=${verificationId}`);
+          
+          if (!verifications || verifications.length === 0) {
+            return {
+              success: false,
+              error: 'No verification code found for this phone number'
+            };
+          }
+          
+          const verification = verifications[0];
+          
+          // Check if code has expired
+          if (new Date() > new Date(verification.expiresAt)) {
+            return {
+              success: false,
+              error: 'Verification code has expired'
+            };
+          }
+          
+          // Check if code has already been used
+          if (verification.verified) {
+            return {
+              success: false,
+              error: 'Verification code has already been used'
+            };
+          }
+          
+          // Verify the code
+          if (verification.code !== b.code) {
+            return {
+              success: false,
+              error: 'Invalid verification code'
+            };
+          }
+          
+          // Mark as verified
+          const updatedVerification = {
+            ...verification,
+            verified: true,
+            verifiedAt: new Date().toISOString()
+          };
+          
+          await save('sms_verifications', updatedVerification);
+          
+          return {
+            success: true,
+            message: 'Phone number verified successfully'
+          };
+          
+        } catch (error) {
+          console.error('SMS verification error:', error);
+          return {
+            success: false,
+            error: error.message || 'Failed to verify SMS code'
           };
         }
       }

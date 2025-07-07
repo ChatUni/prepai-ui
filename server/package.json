@@ -17,6 +17,7 @@
     "node-fetch": "^2.7.0",
     "openai": "^4.90.0",
     "qrcode": "^1.5.4",
+    "tencentcloud-sdk-nodejs": "^4.1.72",
     "word-extractor": "^1.0.4",
     "xml2js": "^0.6.2"
   }

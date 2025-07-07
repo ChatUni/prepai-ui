@@ -5,7 +5,6 @@ import seriesStore from './seriesStore';
 import groupedSeriesStore from './groupedSeriesStore';
 import editCourseStore from './editCourseStore';
 import editInstructorStore from './editInstructorStore';
-import editSeriesStore from './editSeriesStore';
 
 class SeriesCardStore {
   // Store-specific observable fields
@@ -189,7 +188,7 @@ class SeriesCardStore {
     this.cardEditManager.openEditDialog(series);
     this.currentSeries = series;
     routeStore.setSeriesId(series.id);
-    editSeriesStore.reset(series);
+    seriesStore.reset(series);
     groupedSeriesStore.openEditSeriesDialog(series);
   };
 

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate, useLocation } from 'react-router-dom';
 import userStore from '../../../stores/userStore';
 import Logo from '../../ui/Logo';
+import { post } from '../../../utils/db';
 
 const LoginPage = observer(() => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -17,10 +18,6 @@ const LoginPage = observer(() => {
   
   // Get the redirect path from location state or default to home
   const from = location.state?.from?.pathname || '/';
-  
-  // Add more detailed debugging
-  console.log('LoginPage rendered, current step:', step, 'phone:', phoneNumber,
-    'location state:', location.state, 'redirect path:', from);
 
   useEffect(() => {
     // If already logged in, redirect to the original page
@@ -51,60 +48,65 @@ const LoginPage = observer(() => {
     setError('');
   };
 
-  const sendVerificationCode = () => {
-    console.log('Send verification code button clicked');
-    
-    // Allow any phone number without validation
+  const sendVerificationCode = async () => {
     if (!phoneNumber) {
       setError('请输入手机号码');
       return;
     }
 
     setIsLoading(true);
-    console.log('Setting loading state, phone number:', phoneNumber);
+    setError('');
     
     try {
-      // For demo purposes, immediately switch to verify step
-      console.log('Changing to verify step immediately for testing');
+      const response = await post('send_sms', {}, {
+        phone: phoneNumber,
+        countryCode: '+86'
+      });
       
-      // Simulate verification code sent to the phone
-      const mockCode = '123456';
-      console.log('Verification code for testing:', mockCode);
-      
-      // Use setTimeout to allow UI to update with loading state first
-      setTimeout(() => {
+      if (response.success) {
         setStep('verify');
         setCountdown(60); // 60 second countdown for resend
         setIsLoading(false);
-        console.log('Step changed to:', 'verify');
-      }, 500);
+      } else {
+        setError(response.error || '发送验证码失败，请稍后再试');
+        setIsLoading(false);
+      }
     } catch (error) {
-      console.error('Error in send verification:', error);
+      console.error('Error sending SMS:', error);
       setIsLoading(false);
       setError('发送验证码失败，请稍后再试');
     }
   };
-const verifyAndLogin = async () => {
-  if (!verificationCode) {
-    setError('请输入验证码');
-    return;
-  }
+  const verifyAndLogin = async () => {
+    if (!verificationCode) {
+      setError('请输入验证码');
+      return;
+    }
 
-  setIsLoading(true);
-  console.log('Verifying code:', verificationCode, 'for phone:', phoneNumber);
-  
-  try {
-    // Accept any verification code
-    console.log('Verification successful, logging in');
-      console.log('Verification successful, logging in');
-      await userStore.loginWithPhone(phoneNumber, verificationCode);
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      // First verify the SMS code
+      const verifyResponse = await post('verify_sms', {}, {
+        phone: phoneNumber,
+        code: verificationCode,
+        countryCode: '+86'
+      });
       
-      console.log('Login successful, redirecting to:', from);
-      // Redirect to the original page after successful login
-      navigate(from, { replace: true });
+      if (verifyResponse.success) {
+        // SMS verification successful, now login with phone
+        await userStore.loginWithPhone(phoneNumber, verificationCode);
+        
+        // Redirect to the original page after successful login
+        navigate(from, { replace: true });
+      } else {
+        setError(verifyResponse.error || '验证码无效，请重试');
+        setIsLoading(false);
+      }
     } catch (error) {
-      console.error('Login error:', error);
-      setError('验证码无效，请重试 (提示: 测试用验证码为123456)');
+      console.error('Verification or login error:', error);
+      setError('验证码无效，请重试');
       setIsLoading(false);
     }
   };
@@ -178,12 +180,12 @@ const verifyAndLogin = async () => {
                 />
                 <button
                   className={`rounded-r-md border border-gray-300 bg-gray-50 px-3 text-sm ${
-                    countdown > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600'
+                    countdown > 0 || isLoading ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600'
                   }`}
-                  onClick={() => countdown === 0 && sendVerificationCode()}
-                  disabled={countdown > 0}
+                  onClick={() => countdown === 0 && !isLoading && sendVerificationCode()}
+                  disabled={countdown > 0 || isLoading}
                 >
-                  {countdown > 0 ? `${countdown}秒后重发` : '重新获取'}
+                  {isLoading ? '发送中...' : countdown > 0 ? `${countdown}秒后重发` : '重新获取'}
                 </button>
               </div>
               <p className="text-sm text-gray-500 mt-1">

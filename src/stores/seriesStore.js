@@ -9,14 +9,16 @@ import GroupedListStore from './groupedListStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import instructorStore from './instructorStore';
-import editSeriesStore from './editSeriesStore';
+import { uploadToCloudinary } from '../utils/cloudinaryHelper';
+import { runInAction } from 'mobx';
+import editCourseStore from './editCourseStore';
 
 class SeriesStore {
   selectedCategory;
   selectedInstructorId;
   showPaidOnly = false;
   pendingSeriesUpdates = new Map();
-
+  
   get name() {
     return 'series';
   }
@@ -316,6 +318,48 @@ class SeriesStore {
   //   }
   // };
 
+  // Edit series field setters
+  setName = (name) => {
+    this.name = name;
+  }
+
+  setCategory = (category) => {
+    this.category = category;
+    this.isDropdownOpen = false;
+  }
+
+  setGroup = (group) => {
+    this.group = group;
+  }
+
+  setPrice = (price) => {
+    this.price = price;
+  }
+
+  setDuration = (duration) => {
+    this.duration = duration;
+  }
+
+  setDescType = (type) => {
+    this.descType = type;
+  }
+
+  setDescription = (desc) => {
+    this.description = desc;
+  }
+
+  setImage = (file) => {
+    this.image = file;
+  }
+
+  setDescImage = (file) => {
+    this.descImage = file;
+  }
+
+  setCourses = (courses) => {
+    this.courses = courses;
+  }
+
   get totalSteps() {
     return this.stepTitles.length;
   }
@@ -421,26 +465,135 @@ class SeriesStore {
   }
 
   reset = (series = null) => {
-    this.editingSeries = series;
-    this.name = series?.name || '';
-    this.category = series?.category || '';
-    this.group = series?.group || '';
-    this.price = series?.price || '';
-    this.duration = series?.duration || '30days';
-    this.descType = series?.desc.startsWith('http') ? 'image' : 'text';
-    this.description = series?.desc || '';
-    this.image = series?.cover || '';
-    this.descImage = this.descType === 'image' ? series?.desc : '';
-    this.courses = series?.courses || [];
-    this.isLoading = false;
-    this.error = null;
-    this.currentStep = 1;
-    this.isDropdownOpen = false;
+    // this.editingSeries = series;
+    // this.name = series?.name || '';
+    // this.category = series?.category || '';
+    // this.group = series?.group || '';
+    // this.price = series?.price || '';
+    // this.duration = series?.duration || '30days';
+    // this.descType = series?.desc && series.desc.startsWith('http') ? 'image' : 'text';
+    // this.description = series?.desc || '';
+    // this.image = series?.cover || '';
+    // this.descImage = this.descType === 'image' ? series?.desc : '';
+    // this.courses = series?.courses || [];
+    // this.isLoading = false;
+    // this.error = null;
+    // this.currentStep = 1;
+    // this.isDropdownOpen = false;
+    // this.editCourseDialogOpen = false;
+    // this.currentEditCourse = null;
+  }
+
+  openEditCourseDialog = (course) => {
+    this.currentEditCourse = course;
+    editCourseStore.reset(course);
+    this.editCourseDialogOpen = true;
+  }
+
+  closeEditCourseDialog = () => {
+    this.editCourseDialogOpen = false;
+    this.currentEditCourse = null;
+    editCourseStore.reset(null);
+  }
+
+  uploadImage = async (file, path) => {
+    try {
+      return await uploadToCloudinary(file, path);
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
+  }
+
+  saveSeries = async (isBackground) => {
+    try {
+      this.error = null;
+      if (!isBackground) this.isLoading = true;
+
+      const isEdit = !!this.editingSeries;
+
+      const seriesData = omit({
+        ...(isEdit ? this.editingSeries : {}),
+        client_id: clientStore.client.id,
+        name: this.name,
+        category: this.category,
+        group: this.group,
+        price: Number(this.price),
+        duration: this.duration,
+        desc: this.descType === 'text' ? this.description : this.descImage,
+        [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
+      }, ['_id', 'courses', 'isPaid']);
+
+      // Save new series to get id
+      if (!isEdit) {
+        const data = await save('series', seriesData);
+        seriesData.id = data.id;
+        this.editingSeries = seriesData;
+      }
+
+      // Handle cover image upload
+      if (this.image instanceof File) {
+        const coverUrl = await this.uploadImage(this.image, `series/${seriesData.id}`);
+        seriesData.cover = coverUrl;
+      }
+
+      // Handle description image upload
+      if (this.descType === 'image' && this.descImage instanceof File) {
+        const descImageUrl = await this.uploadImage(this.descImage, `series/${seriesData.id}`);
+        seriesData.desc = descImageUrl;
+      }
+
+      await save('series', seriesData);
+
+      if (!isBackground) {
+        this.isLoading = false;
+        this.reset();
+      }
+
+      return seriesData;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+        this.isLoading = false;
+      });
+      throw error;
+    }
+  }
+
+  updateCourse = async () => {
+    try {
+      const course = await editCourseStore.saveCourse(this.editingSeries?.id);
+      
+      runInAction(() => {
+        const courses = [...this.courses];
+        const existingIndex = courses.findIndex(c => c.id === course.id);
+        
+        if (existingIndex >= 0) {
+          // Replace existing course
+          courses[existingIndex] = course;
+        } else {
+          // Add new course to the end
+          courses.push(course);
+        }
+        
+        this.courses = courses;
+        this.closeEditCourseDialog();
+      });
+
+      return course;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message;
+      });
+      throw error;
+    }
   }
 
   openEditDialog = function(item) {
-    // Initialize editSeriesStore with the series data
-    editSeriesStore.reset(item);
+    // Initialize series data for editing
+    this.reset(item);
     
     // Call the parent openEditDialog method
     this.setEditingItem(item);
@@ -450,8 +603,8 @@ class SeriesStore {
   };
 
   closeEditDialog = function() {
-    // Reset editSeriesStore when closing
-    editSeriesStore.reset();
+    // Reset series data when closing
+    this.reset();
     
     // Call the parent closeEditDialog method
     this.showEditDialog = false;
