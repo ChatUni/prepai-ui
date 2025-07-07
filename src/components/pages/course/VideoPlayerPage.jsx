@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import coursesStore from '../../../stores/coursesStore';
+import seriesStore from '../../../stores/seriesStore';
 import videoPlayerStore from '../../../stores/videoPlayerStore';
 import uiStore from '../../../stores/uiStore';
 import { getYoutubeId, getGoogleDriveId, getGoogleDriveDirectUrl, getBilibiliId } from '../../../utils/videoTranscriptService';
@@ -10,11 +10,10 @@ import languageStore from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import TabPanel from '../../ui/TabPanel';
 import BackButton from '../../ui/BackButton';
-import seriesStore from '../../../stores/seriesStore';
 
 const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
-  const { courseId } = useParams();
+  const { seriesId, courseId } = useParams();
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const [course, setCourse] = useState(null);
@@ -345,8 +344,8 @@ const VideoPlayerPage = observer(() => {
     const loadCourse = async () => {
       setLoading(true);
       try {
-        // Find the course in the store
-        const foundCourse = seriesStore.currentSeriesFromRoute?.courses.find(c => c.id === parseInt(courseId));
+        const series = seriesStore.items.find(x => x.id == seriesId);
+        const foundCourse = series.courses.find(c => c.id === parseInt(courseId));
         
         if (!foundCourse) {
           throw new Error('Course not found');

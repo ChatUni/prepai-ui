@@ -3,7 +3,7 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryHel
 import { uploadToTOS } from '../utils/tosHelper';
 import lang from './languageStore';
 import { get, save } from '../utils/db';
-import { omit } from '../utils/omit';
+import { omit } from '../utils/utils';
 import { combineStores } from '../utils/storeUtils';
 import PageStore from './pageStore';
 import EditingStore from './editingStore';

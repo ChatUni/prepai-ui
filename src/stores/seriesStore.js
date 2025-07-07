@@ -1,11 +1,8 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import uiStore from './uiStore';
 import { t } from './languageStore';
 import { combineStores } from '../utils/storeUtils';
 import clientStore from './clientStore';
-import editSeriesStore from './editSeriesStore';
 import { get, save } from '../utils/db';
-import { omit } from '../utils/omit';
+import { omit } from '../utils/utils';
 import userStore from './userStore';
 import EditingStore from './editingStore';
 import GroupedListStore from './groupedListStore';
@@ -100,57 +97,6 @@ class SeriesStore {
   isGroupDanger = function(group) {
     return group === t('series.groups.recycle');
   }
-
-  // fetchSeries = async () => {
-  //   try {
-  //     this.isLoading = true;
-  //     await this.fetchInstructors();
-  //     const data = await get('series', { clientId: clientStore.client.id });
-  //     runInAction(() => {
-  //       this.series = data.map((s, index) => ({
-  //         ...s,
-  //         order: typeof s.order === 'number' ? s.order : index,
-  //         isPaid: userStore.isPaid('series', s.id)
-  //       }));
-  //       this.isLoading = false;
-  //     });
-  //   } catch (error) {
-  //     runInAction(() => {
-  //       this.error = error.message;
-  //       this.isLoading = false;
-  //     });
-  //   }
-  // }
-
-  // fetchSeriesById = async (id) => {
-  //   if (!id) {
-  //     console.warn('Attempted to fetch series with undefined ID');
-  //     return;
-  //   }
-
-  //   try {
-  //     this.isLoading = true;
-      
-  //     await this.fetchInstructors();
-  //     const data = await get('series', { id });
-      
-  //     if (!data || !data[0]) {
-  //       throw new Error('Series not found');
-  //     }
-
-  //     const series = data[0];
-      
-  //     runInAction(() => {
-  //       editSeriesStore.reset(series);
-  //       this.isLoading = false;
-  //     });
-  //   } catch (error) {
-  //     runInAction(() => {
-  //       this.error = error.message;
-  //       this.isLoading = false;
-  //     });
-  //   }
-  // }
 
   // handleSubmit = async (form, navigate) => {
   //   try {

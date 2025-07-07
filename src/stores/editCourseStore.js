@@ -4,7 +4,7 @@ import routeStore from './routeStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { uploadToTOS } from '../utils/tosHelper';
 import { save } from '../utils/db';
-import { omit } from '../utils/omit';
+import { omit } from '../utils/utils';
 
 class EditCourseStore {
   // fields

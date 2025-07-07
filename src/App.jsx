@@ -187,12 +187,12 @@ const MainLayout = observer(() => {
                     <FavoritesPage />
                   </AuthRoute>
                 } />
-                <Route path="/video/:courseId" element={
+                <Route path="/video/:seriesId/:courseId" element={
                   <AuthRoute>
                     <VideoPlayerPage />
                   </AuthRoute>
                 } />
-                <Route path="/ppt/:courseId" element={
+                <Route path="/ppt/:seriesId/:courseId" element={
                   <AuthRoute>
                     <PPTPlayerPage />
                   </AuthRoute>

@@ -9,7 +9,7 @@ import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import seriesStore from '../../../stores/seriesStore';
 import { getCardBaseClasses } from '../../../utils/cardStyles';
 
-const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) => {
+const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,10 +59,10 @@ const CourseCard = observer(({ course, isEditMode, onEdit, index, moveItem }) =>
   // Handle card click to navigate to video player or PPT player
   const handleCardClick = () => {
     if (course.isVideo) {
-      navigate(`/video/${course.id}`);
+      navigate(`/video/${series.id}/${course.id}`);
     } else {
       // For PPT/documents, navigate to the PPT player page
-      navigate(`/ppt/${course.id}`);
+      navigate(`/ppt/${series.id}/${course.id}`);
     }
   };
 

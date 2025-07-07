@@ -10,3 +10,9 @@ export const shuffleArray = (array) => {
   }
   return array;
 }
+
+export const omit = (obj, keys) => {
+  const result = { ...obj };
+  keys.forEach(key => delete result[key]);
+  return result;
+}

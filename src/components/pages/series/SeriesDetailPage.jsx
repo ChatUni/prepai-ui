@@ -2,17 +2,15 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import CourseList from './CourseList';
 import seriesStore from '../../../stores/seriesStore';
-import languageStore from '../../../stores/languageStore';
+import { t } from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';
+import { useParams } from 'react-router-dom';
 
 const SeriesDetailPage = observer(() => {
-  const { t } = languageStore;
-  const selectedSeries = seriesStore.currentSeriesFromRoute;
-  const seriesCourses = seriesStore.filteredSeriesCourses;
-
-  if (!selectedSeries) {
-    return null;
-  }
+  const { id } = useParams();
+  const selectedSeries = seriesStore.items.find(x => x.id == id);
+  if (!selectedSeries) return null;
+  const instructors = seriesStore.getSeriesInstructors(selectedSeries);
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
@@ -75,9 +73,9 @@ const SeriesDetailPage = observer(() => {
         
         <TabPanel.Tab label={t('series.instructorList')}>
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            {seriesStore.seriesInstructors.length > 0 ? (
+            {instructors.length > 0 ? (
               <div className="space-y-4">
-                {seriesStore.seriesInstructors.map((instructor) => (
+                {instructors.map((instructor) => (
                   <div key={instructor.id} className="flex items-start space-x-4">
                     {instructor.image ? (
                       <img
@@ -109,7 +107,7 @@ const SeriesDetailPage = observer(() => {
         </TabPanel.Tab>
 
         <TabPanel.Tab label={t('series.courseList')}>
-          <CourseList courses={seriesCourses} />
+          <CourseList courses={selectedSeries.courses} series={selectedSeries} />
         </TabPanel.Tab>
       </TabPanel>
     </div>

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import CourseCard from './CourseCard';
 import languageStore from '../../../stores/languageStore';
 
-const CourseList = observer(({ title, courses }) => {
+const CourseList = observer(({ title, series, courses }) => {
   const { t } = languageStore;
   // Better mobile optimization
   return (
@@ -14,7 +14,7 @@ const CourseList = observer(({ title, courses }) => {
       {/* Adjusted grid for better mobile display */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2">
         {courses.map((course, index) => (
-          <CourseCard key={`${title}-${course.id}-${index}`} course={course} />
+          <CourseCard key={`${title}-${course.id}-${index}`} series={series} course={course} />
         ))}
       </div>
       

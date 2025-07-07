@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { save } from '../utils/db';
 import languageStore from './languageStore';
-import { omit } from '../utils/omit';
+import { omit } from '../utils/utils';
 import editCourseStore from './editCourseStore';
 import clientStore from './clientStore';
 
