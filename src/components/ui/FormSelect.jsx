@@ -5,10 +5,20 @@ import Dialog from './Dialog';
 import uiStore from '../../stores/uiStore';
 import { t } from '../../stores/languageStore';
 
+const buildOptions = (options) => options.map(option => {
+  if (typeof option === 'string') {
+    return { value: option, label: option };
+  }
+  return {
+    value: option.id || option.value,
+    label: option.name || option.label
+  };
+})
+
 const FormSelect = observer(({
   store,
   field, 
-  options,
+  options = [],
   onOptionsChange,
   required = false,
   className = '',
@@ -18,6 +28,7 @@ const FormSelect = observer(({
   addDialogTitle
 }) => {
   const id = `${store.name}-${field}`;
+  const opts = buildOptions(options);
   const onChange = (e) => store.setEditingField(field, e.target.value);
 
   return (
@@ -44,7 +55,7 @@ const FormSelect = observer(({
         required={required}
       >
         <option value="">{t(`${store.name}.select${field[0].toUpperCase() + field.slice(1)}`)}</option>
-        {options.map(option => (
+        {opts.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
@@ -58,7 +69,7 @@ const FormSelect = observer(({
             if (uiStore.formSelectDialogData?.onAdd) {
               const newItem = await uiStore.formSelectDialogData.onAdd();
               if (newItem && onOptionsChange) {
-                const newOptions = [...options, { value: newItem.value, label: newItem.label }];
+                const newOptions = [...opts, { value: newItem.value, label: newItem.label }];
                 onOptionsChange(newOptions);
                 onChange({ target: { value: newItem.value } });
               }

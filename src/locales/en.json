@@ -267,7 +267,19 @@
     "descriptionImage": "Description Image",
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
+    "name": "Series Name",
+    "description": "Description",
+    "descriptionType": {
+      "text": "Text",
+      "image": "Image"
+    },
     "category": "Category",
+    "price": "Price",
+    "duration": "Duration",
+    "image": "Cover Image",
+    "selectImage": "Select Image",
+    "group": "Group",
+    "selectGroup": "Select Group",
     "search": {
       "allInstructors": "All Instructors",
       "allCategories": "All Categories",
@@ -286,24 +298,13 @@
       "createTitle": "Create New Series",
       "instructor": "Instructor",
       "selectInstructor": "Please select an instructor",
-      "name": "Series Name",
-      "description": "Description",
-      "descriptionType": {
-        "text": "Text",
-        "image": "Image"
-      },
-      "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
-      "price": "Price",
-      "duration": "Duration",
       "durationOptions": {
         "30days": "30 Days",
         "90days": "90 Days",
         "180days": "180 Days",
         "365days": "365 Days"
       },
-      "image": "Cover Image",
-      "selectImage": "Select Image",
       "changeImage": "Change Image",
       "selectFile": "Select File",
       "changeFile": "Change File",

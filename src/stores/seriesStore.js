@@ -9,6 +9,7 @@ import GroupedListStore from './groupedListStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import instructorStore from './instructorStore';
+import editSeriesStore from './editSeriesStore';
 
 class SeriesStore {
   selectedCategory;
@@ -436,6 +437,26 @@ class SeriesStore {
     this.currentStep = 1;
     this.isDropdownOpen = false;
   }
+
+  openEditDialog = function(item) {
+    // Initialize editSeriesStore with the series data
+    editSeriesStore.reset(item);
+    
+    // Call the parent openEditDialog method
+    this.setEditingItem(item);
+    this.isEditMode = item != null;
+    this.isPageMode = false;
+    this.showEditDialog = true;
+  };
+
+  closeEditDialog = function() {
+    // Reset editSeriesStore when closing
+    editSeriesStore.reset();
+    
+    // Call the parent closeEditDialog method
+    this.showEditDialog = false;
+    this.editingItem = {};
+  };
 
 }
 

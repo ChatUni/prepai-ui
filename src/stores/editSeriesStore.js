@@ -204,7 +204,7 @@ class EditSeriesStore {
     this.group = series?.group || '';
     this.price = series?.price || '';
     this.duration = series?.duration || '30days';
-    this.descType = series?.desc.startsWith('http') ? 'image' : 'text';
+    this.descType = series?.desc && series.desc.startsWith('http') ? 'image' : 'text';
     this.description = series?.desc || '';
     this.image = series?.cover || '';
     this.descImage = this.descType === 'image' ? series?.desc : '';
@@ -213,6 +213,8 @@ class EditSeriesStore {
     this.error = null;
     this.currentStep = 1;
     this.isDropdownOpen = false;
+    this.editCourseDialogOpen = false;
+    this.currentEditCourse = null;
   }
 
   openEditCourseDialog = (course) => {
