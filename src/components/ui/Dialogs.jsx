@@ -8,11 +8,25 @@ export const DeleteConfirmDialog = observer(({ store }) => store && (
     isOpen={store.showDeleteDialog}
     onClose={() => store.closeDeleteDialog()}
     onConfirm={() => store.confirmDelete()}
-    title={t(`${store.name}.delete`)}
+    title={t(`${store.name}.edit.delete`)}
     isConfirm={true}
   >
     <p>
       {store.editingItem && t(`${store.name}.confirmDelete`, { name: store.editingItem.name || '' })}
+    </p>
+  </Dialog>
+));
+
+export const RestoreConfirmDialog = observer(({ store }) => store && (
+  <Dialog
+    isOpen={store.showRestoreDialog}
+    onClose={() => store.closeRestoreDialog()}
+    onConfirm={() => store.confirmRestore()}
+    title={t(`${store.name}.edit.restore`)}
+    isConfirm={true}
+  >
+    <p>
+      {store.editingItem && t(`${store.name}.confirmRestore`, { name: store.editingItem.name || '' })}
     </p>
   </Dialog>
 ));

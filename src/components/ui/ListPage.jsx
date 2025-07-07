@@ -4,7 +4,7 @@ import SearchBar from './SearchBar';
 import GroupedList from './GroupedList';
 import Button from './Button';
 import PageTitle from './PageTitle';
-import { DeleteConfirmDialog, VisibilityConfirmDialog, EditDialog, ErrorDialog } from './Dialogs';
+import { DeleteConfirmDialog, RestoreConfirmDialog, VisibilityConfirmDialog, EditDialog, ErrorDialog } from './Dialogs';
 import { t } from '../../stores/languageStore';
 
 const ListPage = observer(({
@@ -107,6 +107,7 @@ const ListPage = observer(({
       {showDialogs && (
         <>
           <DeleteConfirmDialog store={store} />
+          <RestoreConfirmDialog store={store} />
           <VisibilityConfirmDialog store={store} />
           <EditDialog store={store} size={editDialogSize}>
             {editDialogChildren}

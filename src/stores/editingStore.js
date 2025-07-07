@@ -5,6 +5,7 @@ class EditingStore {
 
   showEditDialog = false;
   showDeleteDialog = false;
+  showRestoreDialog = false;
   showVisibilityDialog = false;
 
   setEditingItem = function(item) {
@@ -25,6 +26,7 @@ class EditingStore {
     this.isPageMode = false;
     this.showEditDialog = false;
     this.showDeleteDialog = false;
+    this.showRestoreDialog = false;
     this.showVisibilityDialog = false;
   };
 
@@ -65,6 +67,16 @@ class EditingStore {
     this.editingItem = {};
   };
 
+  openRestoreDialog = function(item) {
+    this.editingItem = item;
+    this.showRestoreDialog = true;
+  };
+
+  closeRestoreDialog = function() {
+    this.showRestoreDialog = false;
+    this.editingItem = {};
+  };
+
   openVisibilityDialog = function(item) {
     this.editingItem = item;
     this.showVisibilityDialog = true;
@@ -95,6 +107,17 @@ class EditingStore {
       this.openErrorDialog('Error deleting item');
     } finally {
       this.closeDeleteDialog();
+    }
+  };
+
+  confirmRestore = async function() {
+    if (!this.editingItem) return;
+    try {
+      await this.toggleField('deleted');
+    } catch (e) {
+      this.openErrorDialog('Error restoring item');
+    } finally {
+      this.closeRestoreDialog();
     }
   };
 

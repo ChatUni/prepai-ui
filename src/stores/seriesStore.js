@@ -93,6 +93,10 @@ class SeriesStore {
     await save('series', omit(item, ['_id', 'courses', 'isPaid']));
   }
 
+  remove = async function() {
+    await this.toggleField('deleted');
+  }
+
   isGroupDanger = function(group) {
     return group === t('series.groups.recycle');
   }
