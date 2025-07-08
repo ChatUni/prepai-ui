@@ -15,7 +15,7 @@ module.exports = {
       exams: q => flat('exams', `m_client_id=${q.clientId}`),
       models: q => flat('models', `m_enabled=true&p_id,name,pricing`),
       series: q => flat('series', `m_client_id=${q.clientId}&f_+courses|course|series`),
-      users: q => flat('users', `m_phone='${q.phone}'&m_client_id=${q.clientId}&f_+transactions`),
+      users: q => flat('users', `m_phone='${q.phone}'&m_client_id=${q.clientId}&f_+orders`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),
       favorites: q => flat('favorites', `m_user_id=${q.userId}`),
     },
@@ -74,15 +74,15 @@ module.exports = {
           // Save order to database
           const orderData = {
             id: outTradeNo,
-            prepayId: result.prepayId,
-            codeUrl: result.codeUrl,
+            prepay_id: result.prepayId,
+            code_url: result.codeUrl,
             amount: b.amount,
             status: 'PENDING',
-            userId: b.userId,
-            productId: b.productId,
+            user_id: b.userId,
+            product_id: b.productId,
             body: b.body,
-            createdAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 7200000).toISOString() // 2 hours
+            date_created: new Date().toISOString(),
+            expires: new Date(Date.now() + 7200000).toISOString() // 2 hours
           };
 
           await save('orders', orderData);

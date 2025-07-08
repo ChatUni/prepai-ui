@@ -54,6 +54,12 @@ const LoginPage = observer(() => {
       return;
     }
 
+    if (import.meta.env.VITE_NO_SMS) {
+      await userStore.loginWithPhone(phoneNumber);
+      navigate(from, { replace: true });
+      return;
+    }
+
     setIsLoading(true);
     setError('');
     

@@ -42,6 +42,10 @@ class AssistantStore {
     };
   }
 
+  get requireMembership() {
+    return true;
+  }
+
   get isPlatformAssistant() {
     return this.editingItem.type === 1;
   }

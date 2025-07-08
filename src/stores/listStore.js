@@ -63,8 +63,7 @@ class ListStore {
 
   gotoDetail = function(item, navigate) {
     if (!this.isAdminMode) {
-      // Check if this is an assistant and user is not a member
-      if (this.name === 'assistant' && !userStore.isMember) {
+      if (this.requireMembership && !userStore.isMember) {
         this.setShowMembershipDialog(true);
         return;
       }

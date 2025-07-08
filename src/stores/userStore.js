@@ -87,7 +87,7 @@ class UserStore {
     try {
       // Get user info from API using phone and client ID
       const users = await get('users', {
-        phone: import.meta.env.VITE_TEST_USER_ID || phoneNumber,
+        phone: phoneNumber,
         clientId: clientStore.client.id
       });
 
@@ -158,11 +158,22 @@ class UserStore {
   }
 
   isPaid(type, id) {
-    return this.isAdmin || this.user.transactions.some(t => t.type === type && t.product_id === id);
+    return this.isAdmin || this.user.orders.some(t => t.type === type && t.product_id === id);
   }
 
   get isMember() {
-    return this.isAdmin || (this.user.transactions && this.user.transactions.some(t => t.type === 'membership1'));
+    if (this.isAdmin) return true;
+    
+    if (!this.user.orders) return false;
+    
+    const now = new Date();
+    return this.user.orders.some(order =>
+      order.client_id == clientStore.client.id &&
+      order.product_id.startsWith('membership') &&
+      order.status === 'PAID' &&
+      order.expires &&
+      new Date(order.expires) > now
+    );
   }
 }
 

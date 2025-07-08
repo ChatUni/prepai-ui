@@ -160,26 +160,26 @@ class MembershipStore {
     // 4. Refresh user data
     
     // Update user membership status
-    if (userStore.user && paymentData) {
-      // Add transaction record to user
-      if (!userStore.user.transactions) {
-        userStore.user.transactions = [];
-      }
+    // if (userStore.user && paymentData) {
+    //   // Add transaction record to user
+    //   if (!userStore.user.transactions) {
+    //     userStore.user.transactions = [];
+    //   }
       
-      userStore.user.transactions.push({
-        type: 'membership',
-        product_id: this.selectedMembership.id,
-        membershipType: membershipTypes[this.selectedMembership.type] || 'monthly',
-        amount: this.selectedMembership.price,
-        orderId: paymentData.orderId || paymentData.data?.out_trade_no,
-        transactionId: paymentData.data?.transaction_id,
-        purchaseDate: new Date().toISOString(),
-        expiresAt: this.calculateMembershipExpiry(this.selectedMembership.type)
-      });
+    //   userStore.user.transactions.push({
+    //     type: 'membership',
+    //     product_id: this.selectedMembership.id,
+    //     membershipType: membershipTypes[this.selectedMembership.type] || 'monthly',
+    //     amount: this.selectedMembership.price,
+    //     orderId: paymentData.orderId || paymentData.data?.out_trade_no,
+    //     transactionId: paymentData.data?.transaction_id,
+    //     purchaseDate: new Date().toISOString(),
+    //     expiresAt: this.calculateMembershipExpiry(this.selectedMembership.type)
+    //   });
       
-      // Save updated user data
-      userStore.saveLoginState();
-    }
+    //   // Save updated user data
+    //   userStore.saveLoginState();
+    // }
     
     // Show success message or redirect
     alert(t('payment.success_message'));
