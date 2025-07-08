@@ -1,5 +1,6 @@
 import { runInAction } from 'mobx';
 import userStore from './userStore';
+import paymentManagerStore from './paymentManagerStore';
 
 class ListStore {
   searchQuery = '';
@@ -64,7 +65,7 @@ class ListStore {
   gotoDetail = function(item, navigate) {
     if (!this.isAdminMode) {
       if (this.requireMembership && !userStore.isMember) {
-        this.setShowMembershipDialog(true);
+        paymentManagerStore.setShowMembershipDialog(true);
         return;
       }
       

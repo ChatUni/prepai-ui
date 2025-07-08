@@ -3,6 +3,7 @@ import store from '../../../stores/examStore';
 import ExamCard from './ExamCard';
 import ListPage from '../../ui/ListPage';
 import EditExamPage from './EditExamPage';
+import PaymentManager from '../../ui/PaymentManager';
 
 const ExamPage = observer(() => (
   <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
@@ -23,6 +24,7 @@ const ExamPage = observer(() => (
         )}
       />
     </div>
+    <PaymentManager />
   </div>
 ));
 

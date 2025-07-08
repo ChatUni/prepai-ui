@@ -8,6 +8,7 @@ import languageStore from '../../../stores/languageStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import seriesStore from '../../../stores/seriesStore';
 import { getCardBaseClasses } from '../../../utils/cardStyles';
+import PaymentManager from '../../ui/PaymentManager';
 
 const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;
@@ -213,6 +214,7 @@ const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveIt
           </div>
         )}
       </div>
+      <PaymentManager />
     </div>
   );
 });

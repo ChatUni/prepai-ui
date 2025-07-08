@@ -34,6 +34,10 @@ class ExamStore {
     };
   }
 
+  get requireMembership() {
+    return true;
+  }
+
   fetchItemList = async function() {
     return await get('exams', { clientId: clientStore.client.id });
   };

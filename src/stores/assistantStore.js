@@ -12,7 +12,6 @@ import GroupedListStore from './groupedListStore';
 class AssistantStore {
   models = [];
   loadingModels = false;
-  showMembershipDialog = false;
 
   get name() {
     return 'assistant';
@@ -125,14 +124,6 @@ class AssistantStore {
     }
   }
 
-  setShowMembershipDialog = function(show) {
-    this.showMembershipDialog = show;
-  }
-
-  handleMembershipPurchase = function(navigate) {
-    this.showMembershipDialog = false;
-    navigate('/memberships');
-  }
  }
 
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, AssistantStore);

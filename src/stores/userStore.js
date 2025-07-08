@@ -157,11 +157,15 @@ class UserStore {
     return Promise.resolve(this.coupons);
   }
 
-  isPaid(type, id) {
-    return this.isAdmin || this.user.orders.some(t => t.type === type && t.product_id === id);
+  isSeriesPaid(id) {
+    return this.isPaid('series', id);
   }
 
   get isMember() {
+    return this.isPaid('membership');
+  }
+
+  isPaid(type, id) {
     if (this.isAdmin) return true;
     
     if (!this.user.orders) return false;
@@ -169,7 +173,8 @@ class UserStore {
     const now = new Date();
     return this.user.orders.some(order =>
       order.client_id == clientStore.client.id &&
-      order.product_id.startsWith('membership') &&
+      order.product_id.startsWith(type) &&
+      (!id || order.product_id.endsWith(`_${id}`)) &&
       order.status === 'PAID' &&
       order.expires &&
       new Date(order.expires) > now
