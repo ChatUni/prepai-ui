@@ -79,6 +79,7 @@ module.exports = {
             amount: b.amount,
             status: 'PENDING',
             user_id: b.userId,
+            client_id: b.clientId,
             product_id: b.productId,
             body: b.body,
             date_created: new Date().toISOString(),

@@ -4,6 +4,7 @@ import CourseList from './CourseList';
 import seriesStore from '../../../stores/seriesStore';
 import { t } from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';
+import PaymentManager from '../../ui/PaymentManager';
 import { useParams } from 'react-router-dom';
 
 const SeriesDetailPage = observer(() => {
@@ -110,6 +111,7 @@ const SeriesDetailPage = observer(() => {
           <CourseList courses={selectedSeries.courses} series={selectedSeries} />
         </TabPanel.Tab>
       </TabPanel>
+      <PaymentManager />
     </div>
   );
 });

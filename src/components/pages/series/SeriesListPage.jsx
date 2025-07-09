@@ -4,6 +4,7 @@ import clientStore from '../../../stores/clientStore';
 import ListPage from '../../ui/ListPage';
 import EditSeriesPage from './EditSeriesPage';
 import SeriesCard from './SeriesCard';
+import PaymentManager from '../../ui/PaymentManager';
 import { t } from '../../../stores/languageStore';
 import { useEffect } from 'react';
 
@@ -47,6 +48,7 @@ const SeriesListPage = observer(({ showPaidOnly }) => {
           ]}
         />
       </div>
+      <PaymentManager />
     </div>
   );
 });

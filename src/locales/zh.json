@@ -372,6 +372,12 @@
       "cannotDelete": "无法删除包含课程的分组",
       "addSeries": "添加课程",
       "recycle": "回收站"
+    },
+    "seriesPurchaseRequired": {
+      "title": "需要购买系列课程",
+      "message": "您需要购买此系列课程才能使用。您想购买吗？",
+      "purchase": "购买",
+      "cancel": "取消"
     }
   },
   "chat": {

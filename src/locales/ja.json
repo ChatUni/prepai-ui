@@ -373,6 +373,12 @@
       "cannotDelete": "シリーズが含まれているグループは削除できません",
       "addSeries": "シリーズを追加",
       "recycle": "リサイクル"
+    },
+    "seriesPurchaseRequired": {
+      "title": "シリーズの購入が必要です",
+      "message": "このコースにアクセスするにはシリーズを購入する必要があります。購入しますか？",
+      "purchase": "購入",
+      "cancel": "キャンセル"
     }
   },
   "chat": {

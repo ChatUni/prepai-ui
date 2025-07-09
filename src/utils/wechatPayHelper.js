@@ -96,18 +96,30 @@ export const queryWeChatPayOrder = async (orderId) => {
  * @param {number} options.maxWaitTime - Maximum wait time in milliseconds (default: 300000 = 5 minutes)
  * @param {number} options.pollInterval - Polling interval in milliseconds (default: 3000 = 3 seconds)
  * @param {Function} options.onStatusChange - Callback for status changes
+ * @param {AbortController} options.abortController - AbortController to cancel polling
  * @returns {Promise<Object>} Final payment result
  */
 export const pollWeChatPayStatus = async (orderId, options = {}) => {
   const {
     maxWaitTime = 300000, // 5 minutes
     pollInterval = 3000,  // 3 seconds
-    onStatusChange = () => {}
+    onStatusChange = () => {},
+    abortController = null
   } = options;
 
   const startTime = Date.now();
   
   while (Date.now() - startTime < maxWaitTime) {
+    // Check if polling was cancelled
+    if (abortController?.signal.aborted) {
+      return {
+        success: true,
+        status: 'CANCELLED',
+        paid: false,
+        cancelled: true
+      };
+    }
+
     try {
       const result = await queryWeChatPayOrder(orderId);
       
@@ -147,11 +159,31 @@ export const pollWeChatPayStatus = async (orderId, options = {}) => {
       }
 
       // Continue polling for NOTPAY, USERPAYING states
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
+      await new Promise(resolve => {
+        const timeoutId = setTimeout(resolve, pollInterval);
+        
+        // Cancel the timeout if abort signal is triggered
+        if (abortController) {
+          abortController.signal.addEventListener('abort', () => {
+            clearTimeout(timeoutId);
+            resolve();
+          });
+        }
+      });
       
     } catch (error) {
       console.error('Polling error:', error);
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
+      await new Promise(resolve => {
+        const timeoutId = setTimeout(resolve, pollInterval);
+        
+        // Cancel the timeout if abort signal is triggered
+        if (abortController) {
+          abortController.signal.addEventListener('abort', () => {
+            clearTimeout(timeoutId);
+            resolve();
+          });
+        }
+      });
     }
   }
 

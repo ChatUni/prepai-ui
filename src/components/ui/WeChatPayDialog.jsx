@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
+import { createPortal } from 'react-dom';
 import { createWeChatPayOrder, pollWeChatPayStatus } from '../../utils/wechatPayHelper.js';
-import Dialog from './Dialog.jsx';
 import Button from './Button.jsx';
 import LoadingState from './LoadingState.jsx';
 import { t } from '../../stores/languageStore.js';
@@ -17,10 +17,29 @@ const WeChatPayDialog = observer(({
   const [qrCodeData, setQrCodeData] = useState(null);
   const [error, setError] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  const abortControllerRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && paymentState === 'idle') {
       handleCreatePayment();
+    }
+  }, [isOpen]);
+
+  // Cleanup effect to cancel polling when component unmounts or dialog closes
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, []);
+
+  // Cancel polling when dialog is closed
+  useEffect(() => {
+    if (!isOpen && abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
     }
   }, [isOpen]);
 
@@ -69,14 +88,24 @@ const WeChatPayDialog = observer(({
   const startPolling = async (orderId) => {
     setPaymentState('polling');
     
+    // Create a new AbortController for this polling session
+    abortControllerRef.current = new AbortController();
+    
     try {
       const result = await pollWeChatPayStatus(orderId, {
         maxWaitTime: 600000, // 10 minutes
         pollInterval: 3000,  // 3 seconds
+        abortController: abortControllerRef.current,
         onStatusChange: (status, data) => {
           console.log('Payment status:', status, data);
         }
       });
+
+      // Don't update state if polling was cancelled
+      if (result.cancelled) {
+        console.log('Payment polling was cancelled');
+        return;
+      }
 
       if (result.paid) {
         setPaymentState('success');
@@ -91,6 +120,12 @@ const WeChatPayDialog = observer(({
         onPaymentError?.(result.error || t('payment.failed'));
       }
     } catch (err) {
+      // Don't update state if the error is due to cancellation
+      if (abortControllerRef.current?.signal.aborted) {
+        console.log('Payment polling was cancelled');
+        return;
+      }
+      
       setPaymentState('error');
       setError(err.message);
       onPaymentError?.(err.message);
@@ -98,6 +133,12 @@ const WeChatPayDialog = observer(({
   };
 
   const handleClose = () => {
+    // Cancel any ongoing polling
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    
     setPaymentState('idle');
     setQrCodeData(null);
     setError(null);
@@ -208,39 +249,49 @@ const WeChatPayDialog = observer(({
     }
   };
 
-  return (
-    <Dialog 
-      isOpen={isOpen} 
-      onClose={handleClose}
-      className="max-w-md"
-    >
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{t('payment.wechat_pay')}</h2>
-          <button 
-            onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+  if (!isOpen) return null;
 
-        {renderContent()}
+  return createPortal(
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4">
+        {/* Backdrop without onClick to prevent click-outside cancellation */}
+        <div className="fixed inset-0 bg-black opacity-50" />
+        <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div className="p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold">{t('payment.wechat_pay')}</h2>
+            </div>
 
-        {(paymentState === 'success' || paymentState === 'error') && (
-          <div className="mt-6 flex justify-end">
-            <Button 
-              onClick={handleClose}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-            >
-              {t('common.close')}
-            </Button>
+            {renderContent()}
+
+            {/* Cancel button - always visible except in success state */}
+            {paymentState !== 'success' && (
+              <div className="mt-6 flex justify-end">
+                <Button
+                  onClick={handleClose}
+                  className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                >
+                  {t('common.cancel')}
+                </Button>
+              </div>
+            )}
+
+            {/* Close button only for success state */}
+            {paymentState === 'success' && (
+              <div className="mt-6 flex justify-end">
+                <Button
+                  onClick={handleClose}
+                  className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                >
+                  {t('common.close')}
+                </Button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </Dialog>
+    </div>,
+    document.body
   );
 });
 

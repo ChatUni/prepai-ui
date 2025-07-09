@@ -373,6 +373,12 @@
       "confirmDelete": "Are you sure you want to delete this group?",
       "cannotDelete": "Cannot delete group that contains series",
       "recycle": "Recycle Bin"
+    },
+    "seriesPurchaseRequired": {
+      "title": "Series Purchase Required",
+      "message": "You need to purchase this series to access the course. Would you like to purchase it?",
+      "purchase": "Purchase",
+      "cancel": "Cancel"
     }
   },
   "chat": {

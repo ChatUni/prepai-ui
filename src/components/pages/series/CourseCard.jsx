@@ -7,8 +7,8 @@ import uiStore from '../../../stores/uiStore';
 import languageStore from '../../../stores/languageStore';
 import useDragAndDrop from '../../../hooks/useDragAndDrop';
 import seriesStore from '../../../stores/seriesStore';
+import paymentManagerStore from '../../../stores/paymentManagerStore';
 import { getCardBaseClasses } from '../../../utils/cardStyles';
-import PaymentManager from '../../ui/PaymentManager';
 
 const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveItem }) => {
   const { t } = languageStore;
@@ -59,6 +59,12 @@ const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveIt
   
   // Handle card click to navigate to video player or PPT player
   const handleCardClick = () => {
+    // Check if series is paid
+    if (!series.isPaid) {
+      paymentManagerStore.setShowSeriesDialog(true, series);
+      return;
+    }
+
     if (course.isVideo) {
       navigate(`/video/${series.id}/${course.id}`);
     } else {
@@ -214,7 +220,6 @@ const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveIt
           </div>
         )}
       </div>
-      <PaymentManager />
     </div>
   );
 });
