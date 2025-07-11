@@ -268,15 +268,14 @@
     "selectTitle": "Select a Series",
     "selectToEdit": "Select Series to Edit",
     "name": "Series Name",
-    "description": "Description",
     "desc": "Description",
-    "descriptionType": {
-      "text": "Text",
-      "image": "Image"
-    },
+    "descType": "Description",
+    "descTypeText": "Text",
+    "descTypeImage": "Image",
     "category": "Category",
     "price": "Price",
     "duration": "Duration",
+    "selectDuration": "Select Duration",
     "image": "Cover Image",
     "selectImage": "Select Image",
     "group": "Group",
@@ -301,6 +300,7 @@
       "selectInstructor": "Please select an instructor",
       "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
+      "days": "Days",
       "durationOptions": {
         "30days": "30 Days",
         "90days": "90 Days",

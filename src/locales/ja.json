@@ -268,15 +268,14 @@
     "selectTitle": "シリーズを選択",
     "selectToEdit": "編集するシリーズを選択",
     "name": "シリーズ名",
-    "description": "説明",
     "desc": "説明",
-    "descriptionType": {
-      "text": "テキスト",
-      "image": "画像"
-    },
+    "descType": "説明",
+    "descTypeText": "テキスト",
+    "descTypeImage": "画像",
     "category": "カテゴリー",
     "price": "価格",
     "duration": "期間",
+    "selectDuration": "期間を選択",
     "image": "カバー画像",
     "selectImage": "画像を選択",
     "group": "グループ",
@@ -313,6 +312,7 @@
       "selectInstructor": "講師を選択してください",
       "category": "カテゴリー",
       "categoryPlaceholder": "カテゴリーを選択または入力",
+      "days": "日",
       "durationOptions": {
         "30days": "30日",
         "90days": "90日",

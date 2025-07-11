@@ -9,7 +9,8 @@ const FormInput = observer(({
   min,
   rows,
   choices,
-  className = ''
+  className = '',
+  hasTitle = true
 }) => {
   const inputProps = {
     id: `${store.name}-${field}`,
@@ -21,9 +22,11 @@ const FormInput = observer(({
 
   return (
     <div className={className}>
-      <label htmlFor={inputProps.id} className="block text-sm font-medium text-gray-700 mb-1">
-        {t(`${store.name}.${field}`)}
-      </label>
+      {hasTitle && (
+        <label htmlFor={inputProps.id} className="block text-sm font-medium text-gray-700 mb-1">
+          {t(`${store.name}.${field}`)}
+        </label>
+      )}
       {rows ? (
         <textarea
           {...inputProps}

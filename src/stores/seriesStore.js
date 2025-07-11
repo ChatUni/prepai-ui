@@ -66,13 +66,7 @@ class SeriesStore {
   }
 
   get durationOptions() {
-    return [
-      { key: '30days', value: '30 Days' },
-      { key: '60days', value: '60 Days' },
-      { key: '90days', value: '90 Days' },
-      { key: '180days', value: '180 Days' },
-      { key: '365days', value: '365 Days' }
-    ];
+    return [30, 60, 90, 180, 365].map(x => ({ value: `${x}days`, text: `${x} ${t('series.edit.days')}` }))
   }
 
   get stepData() {
@@ -95,7 +89,7 @@ class SeriesStore {
       },
       {
         title: 'description',
-        isValid: x => (x.descType === 'text' && x.description) || (x.descType === 'image' && x.descImage),
+        isValid: x => x.desc,
         error: 'descriptionRequired',
       },
       {

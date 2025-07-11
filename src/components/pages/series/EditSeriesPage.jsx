@@ -32,8 +32,8 @@ const steps = [
         }))}
       />
 
-      {store.descType === 'text'
-        ? <FormInput store={store} field="desc" required />
+      {store.editingItem.descType === 'text'
+        ? <FormInput store={store} field="desc" rows={10} required hasTitle={false} />
         : <ImageUpload store={store} field="desc" required hasTitle={false} />
       }
     </>
@@ -41,40 +41,8 @@ const steps = [
 
   () => (
     <div className="space-y-6">
-      {/* Price Input */}
-      <div className="space-y-1">
-        <label htmlFor="price" className="block text-sm font-medium">
-          {t('series.edit.price')}
-        </label>
-        <input
-          id="price"
-          type="number"
-          value={store.price}
-          onChange={(e) => store.setPrice(e.target.value)}
-          className="w-full p-2 border rounded bg-white"
-          required
-        />
-      </div>
-
-      {/* Duration Select */}
-      <div className="space-y-1">
-        <label htmlFor="duration" className="block text-sm font-medium">
-          {t('series.edit.duration')}
-        </label>
-        <select
-          id="duration"
-          value={store.duration}
-          onChange={(e) => store.setDuration(e.target.value)}
-          className="w-full p-2 border rounded bg-white"
-          required
-        >
-          {store.durationOptions.map(({ key, value }) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-      </div>
+      <FormInput store={store} field="price" type="number" required />
+      <FormSelect store={store} field="duration" options={store.durationOptions} required />
     </div>
   ),
 

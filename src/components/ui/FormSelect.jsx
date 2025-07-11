@@ -10,8 +10,8 @@ const buildOptions = (options) => options.map(option => {
     return { value: option, label: option };
   }
   return {
-    value: option.id || option.value,
-    label: option.name || option.label
+    value: option.value || option.id,
+    label: option.label || option.text || option.name
   };
 })
 

@@ -275,6 +275,7 @@
     "category": "分类",
     "price": "价格",
     "duration": "时长",
+    "selectDuration": "选择时长",
     "image": "封面图片",
     "selectImage": "选择图片",
     "group": "分组",
@@ -300,6 +301,7 @@
       "selectInstructor": "请选择讲师",
       "category": "分类",
       "categoryPlaceholder": "选择或输入分类",
+      "days": "天",
       "durationOptions": {
         "30days": "30天",
         "90days": "90天",
