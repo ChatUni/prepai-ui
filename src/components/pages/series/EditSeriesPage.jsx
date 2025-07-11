@@ -8,6 +8,7 @@ import CourseCard from './CourseCard';
 import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
+import FormRadio from '../../ui/FormRadio';
 import ImageUpload from '../../ui/ImageUpload';
 
 const steps = [
@@ -23,53 +24,19 @@ const steps = [
   () => <ImageUpload store={store} field="image" required />,
 
   () => (
-    <div className="space-y-6">
-      {/* Description Type Selection */}
-      <div className="space-y-1">
-        <div className="flex justify-between items-center">
-          <label className="block text-sm font-medium">
-            {t('series.description')}
-          </label>
-          <div className="flex gap-4">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name="desc_type"
-                value="text"
-                checked={store.descType === 'text'}
-                onChange={(e) => store.setDescType(e.target.value)}
-                className="form-radio h-4 w-4 text-blue-600"
-              />
-              <span className="ml-2 text-sm">{t('series.descriptionType.text')}</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name="desc_type"
-                value="image"
-                checked={store.descType === 'image'}
-                onChange={(e) => store.setDescType(e.target.value)}
-                className="form-radio h-4 w-4 text-blue-600"
-              />
-              <span className="ml-2 text-sm">{t('series.descriptionType.image')}</span>
-            </label>
-          </div>
-        </div>
+    <>
+      <FormRadio store={store} field="descType"
+        options={['text', 'image'].map(type => ({
+          value: type,
+          label: t(`series.descType${type[0].toUpperCase() + type.slice(1)}`)
+        }))}
+      />
 
-        {store.descType === 'text' ? (
-          <textarea
-            id="description"
-            value={store.description}
-            onChange={(e) => store.setDescription(e.target.value)}
-            rows={5}
-            className="w-full p-2 border rounded bg-white"
-            required={store.descType === 'text'}
-          />
-        ) : (
-          <ImageUpload store={store} field="desc" required={store.descType === 'image'} hasTitle={false} />
-        )}
-      </div>
-    </div>
+      {store.descType === 'text'
+        ? <FormInput store={store} field="desc" required />
+        : <ImageUpload store={store} field="desc" required hasTitle={false} />
+      }
+    </>
   ),
 
   () => (
@@ -141,9 +108,12 @@ const steps = [
       </div>
     );
   }
-]
+].map(observer);
 
-const EditSeriesPage = observer(({ step }) => steps[step - 1]())
+const EditSeriesPage = ({ step }) => {
+  const Step = steps[step - 1];
+  return <Step />;
+}
 
 const EditSeriesPage1 = observer(({ onClose, onSave }) => {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);

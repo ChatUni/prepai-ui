@@ -90,7 +90,7 @@ class SeriesStore {
       },
       {
         title: 'cover',
-        isValid: x => x.image,
+        isValid: x => true,//x.image,
         error: 'coverImageRequired',
       },
       {
@@ -118,6 +118,7 @@ class SeriesStore {
     return series.map((s, index) => ({
       ...s,
       order: typeof s.order === 'number' ? s.order : index,
+      descType: s.desc?.startsWith('https://') ? 'image' : 'text',
       isPaid: userStore.isSeriesPaid(s.id)
     }));
   }

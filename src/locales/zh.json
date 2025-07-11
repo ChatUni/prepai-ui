@@ -268,12 +268,10 @@
     "selectTitle": "选择课程",
     "selectToEdit": "选择要编辑的课程",
     "name": "课程名称",
-    "description": "描述",
     "desc": "描述",
-    "descriptionType": {
-      "text": "文字",
-      "image": "图片"
-    },
+    "descType": "描述",
+    "descTypeText": "文字",
+    "descTypeImage": "图片",
     "category": "分类",
     "price": "价格",
     "duration": "时长",
