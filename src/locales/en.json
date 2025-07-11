@@ -269,6 +269,7 @@
     "selectToEdit": "Select Series to Edit",
     "name": "Series Name",
     "description": "Description",
+    "desc": "Description",
     "descriptionType": {
       "text": "Text",
       "image": "Image"
@@ -327,7 +328,8 @@
       "errors": {
         "groupRequired": "Please select a group before proceeding",
         "nameAndCategoryRequired": "Please enter both name and category before proceeding",
-        "descriptionRequired": "Please enter a description before proceeding"
+        "descriptionRequired": "Please enter a description before proceeding",
+        "coverImageRequired": "Please select a cover image before proceeding"
       }
     },
     "seriesCount": "Showing {count} series",

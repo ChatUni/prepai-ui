@@ -29,7 +29,7 @@ const useDialogSteps = ({ store }) => {
       return;
     }
     
-    if (step.save) {
+    if (store.isDirty && step.save) {
       try {
         setIsSaving(true);
         await step.save(store.editingItem);

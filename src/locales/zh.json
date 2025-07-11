@@ -269,6 +269,7 @@
     "selectToEdit": "选择要编辑的课程",
     "name": "课程名称",
     "description": "描述",
+    "desc": "描述",
     "descriptionType": {
       "text": "文字",
       "image": "图片"
@@ -326,7 +327,8 @@
       "errors": {
         "groupRequired": "请选择分组后继续",
         "nameAndCategoryRequired": "请输入名称和分类后继续",
-        "descriptionRequired": "请输入描述后继续"
+        "descriptionRequired": "请输入描述后继续",
+        "coverImageRequired": "请选择封面图片后继续"
       }
     },
     "seriesCount": "显示 {count} 个课程",

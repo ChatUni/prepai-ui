@@ -11,9 +11,7 @@ import FormSelect from '../../ui/FormSelect';
 import ImageUpload from '../../ui/ImageUpload';
 
 const steps = [
-  () => (
-    <FormSelect store={store} field="group" options={clientStore.client.settings.seriesGroups} required />
-  ),
+  () => <FormSelect store={store} field="group" options={clientStore.client.settings.seriesGroups} required />,
 
   () => (
     <div className="space-y-6">
@@ -22,11 +20,7 @@ const steps = [
     </div>
   ),
 
-  () => (
-    <div className="space-y-6">
-      <ImageUpload store={store} field="image" required />
-    </div>
-  ),
+  () => <ImageUpload store={store} field="image" required />,
 
   () => (
     <div className="space-y-6">
@@ -34,7 +28,7 @@ const steps = [
       <div className="space-y-1">
         <div className="flex justify-between items-center">
           <label className="block text-sm font-medium">
-            {t('series.edit.description')}
+            {t('series.description')}
           </label>
           <div className="flex gap-4">
             <label className="inline-flex items-center">
@@ -46,7 +40,7 @@ const steps = [
                 onChange={(e) => store.setDescType(e.target.value)}
                 className="form-radio h-4 w-4 text-blue-600"
               />
-              <span className="ml-2 text-sm">{t('series.edit.descriptionType.text')}</span>
+              <span className="ml-2 text-sm">{t('series.descriptionType.text')}</span>
             </label>
             <label className="inline-flex items-center">
               <input
@@ -57,7 +51,7 @@ const steps = [
                 onChange={(e) => store.setDescType(e.target.value)}
                 className="form-radio h-4 w-4 text-blue-600"
               />
-              <span className="ml-2 text-sm">{t('series.edit.descriptionType.image')}</span>
+              <span className="ml-2 text-sm">{t('series.descriptionType.image')}</span>
             </label>
           </div>
         </div>
@@ -72,13 +66,7 @@ const steps = [
             required={store.descType === 'text'}
           />
         ) : (
-          <MediaUpload
-            id="desc_image"
-            previewUrl={store.descImage}
-            onMediaSelect={store.setDescImage}
-            type="image"
-            required={store.descType === 'image'}
-          />
+          <ImageUpload store={store} field="desc" required={store.descType === 'image'} hasTitle={false} />
         )}
       </div>
     </div>

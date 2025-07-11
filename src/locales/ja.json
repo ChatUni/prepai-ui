@@ -269,6 +269,7 @@
     "selectToEdit": "編集するシリーズを選択",
     "name": "シリーズ名",
     "description": "説明",
+    "desc": "説明",
     "descriptionType": {
       "text": "テキスト",
       "image": "画像"
@@ -337,7 +338,8 @@
       "errors": {
         "groupRequired": "次に進むにはグループを選択してください",
         "nameAndCategoryRequired": "次に進むには名前とカテゴリーを入力してください",
-        "descriptionRequired": "次に進むには説明を入力してください"
+        "descriptionRequired": "次に進むには説明を入力してください",
+        "coverImageRequired": "次に進むにはカバー画像を選択してください"
       }
     },
     "seriesCount": "{count}件のシリーズを表示",

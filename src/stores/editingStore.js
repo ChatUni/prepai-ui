@@ -1,5 +1,6 @@
 class EditingStore {
   editingItem = {};
+  isDirty = false;
   isEditMode = false;
   isPageMode = false;
 
@@ -18,10 +19,12 @@ class EditingStore {
     } else {
       this.editingItem[name] = value;
     }
+    this.isDirty = true;
   };
 
   reset = function() {
     this.editingItem = {};
+    this.isDirty = false;
     this.isEditMode = false;
     this.isPageMode = false;
     this.showEditDialog = false;
@@ -32,6 +35,7 @@ class EditingStore {
 
   initPageEditing = function(item) {
     this.setEditingItem(item);
+    this.isDirty = false;
     this.isPageMode = true;
     this.isEditMode = item != null;
   };
@@ -39,6 +43,7 @@ class EditingStore {
   exitPageEditing = function() {
     this.isPageMode = false;
     this.editingItem = {};
+    this.isDirty = false;
   };
 
   openAddDialog = function() {
@@ -47,6 +52,7 @@ class EditingStore {
 
   openEditDialog = function(item) {
     this.setEditingItem(item);
+    this.isDirty = false;
     this.isEditMode = item != null;
     this.isPageMode = false;
     this.showEditDialog = true;
@@ -55,6 +61,7 @@ class EditingStore {
   closeEditDialog = function() {
     this.showEditDialog = false;
     this.editingItem = {};
+    this.isDirty = false;
   };
 
   openDeleteDialog = function(item) {
@@ -92,6 +99,7 @@ class EditingStore {
     try {
       await this.save(this.editingItem);
       if (isReload && this.fetchItems) await this.fetchItems();
+      this.isDirty = false;
     } catch (e) {
       this.openErrorDialog('Error saving item');
     } finally {

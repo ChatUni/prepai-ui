@@ -48,7 +48,8 @@ const ImageUpload = observer(({
   className = '',
   imageStyle = 'rectangular',
   selectedFile,
-  onImageSelect
+  onImageSelect,
+  hasTitle = true
 }) => {
   if (!id) id = `${store.name}-${field}`;
   
@@ -91,9 +92,11 @@ const ImageUpload = observer(({
 
   return (
     <div className={className}>
-      <label className="block text-sm font-medium mb-1">
-        {store ? t(`${store.name}.${field}`) : ''}
-      </label>
+      {hasTitle && (
+        <label className="block text-sm font-medium mb-1">
+          {store ? t(`${store.name}.${field}`) : ''}
+        </label>
+      )}
       <div className="relative">
         <input
           type="file"
