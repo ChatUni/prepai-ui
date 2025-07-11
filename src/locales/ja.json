@@ -310,6 +310,7 @@
       "createTitle": "新規シリーズを作成",
       "instructor": "講師",
       "selectInstructor": "講師を選択してください",
+      "category": "カテゴリー",
       "categoryPlaceholder": "カテゴリーを選択または入力",
       "durationOptions": {
         "30days": "30日",

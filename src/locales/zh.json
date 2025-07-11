@@ -299,6 +299,7 @@
       "createTitle": "创建新课程",
       "instructor": "讲师",
       "selectInstructor": "请选择讲师",
+      "category": "分类",
       "categoryPlaceholder": "选择或输入分类",
       "durationOptions": {
         "30days": "30天",

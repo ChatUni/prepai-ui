@@ -298,6 +298,7 @@
       "createTitle": "Create New Series",
       "instructor": "Instructor",
       "selectInstructor": "Please select an instructor",
+      "category": "Category",
       "categoryPlaceholder": "Select or enter a category",
       "durationOptions": {
         "30days": "30 Days",
