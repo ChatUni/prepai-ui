@@ -4,6 +4,8 @@ const useDialogSteps = ({ totalSteps, validateStep, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState('');
 
+  if (!totalSteps) return {};
+
   const nextStep = () => {
     setCurrentStep(prev => prev + 1);
   };

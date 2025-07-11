@@ -30,6 +30,7 @@ const ListPage = observer(({
   editDialogChildren,
   editDialogSize = "md",
   showDialogs = true,
+  renderEdit,
   
   // Layout props
   className = "w-full space-y-4",
@@ -109,9 +110,7 @@ const ListPage = observer(({
           <DeleteConfirmDialog store={store} />
           <RestoreConfirmDialog store={store} />
           <VisibilityConfirmDialog store={store} />
-          <EditDialog store={store} size={editDialogSize}>
-            {editDialogChildren}
-          </EditDialog>
+          <EditDialog store={store} size={editDialogSize} renderEdit={renderEdit} />
         </>
       )}
       

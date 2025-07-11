@@ -22,7 +22,7 @@ const SeriesListPage = observer(({ showPaidOnly }) => {
           store={store}
           bannerImages={showPaidOnly ? [] : clientStore.client.settings?.banners}
           isGrouped={!showPaidOnly}
-          editDialogChildren={<EditSeriesPage />}
+          renderEdit={(step) => <EditSeriesPage step={step} />}
           renderItem={(series, index, group, { moveItem, isEditMode }, isFirstCard) => (
             <SeriesCard
               key={`${group}-${series.id}-${index}`}

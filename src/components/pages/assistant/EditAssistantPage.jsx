@@ -10,8 +10,8 @@ const EditAssistantPage = observer(() => (
 
     {!store.isPlatformAssistant && (
       <>
-        <FormInput store={store} field="greeting" rows={2} />
-        <FormInput store={store} field="prompt" required />
+        <FormInput store={store} field="greeting" rows={4} />
+        <FormInput store={store} field="prompt" rows={10} required />
         <FormSelect store={store} field="model" options={store.modelOptions} required />
         <FormSelect store={store} field="group" options={store.groupOptions} required />
         <ImageUpload store={store} field="image" />

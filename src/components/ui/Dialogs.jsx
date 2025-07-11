@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Dialog from './Dialog';
 import { t } from '../../stores/languageStore';
+import StepDialog from './StepDialog';
 
 export const DeleteConfirmDialog = observer(({ store }) => store && (
   <Dialog
@@ -48,18 +49,22 @@ export const VisibilityConfirmDialog = observer(({ store }) => store && (
   </Dialog>
 ));
 
-export const EditDialog = observer(({ store, children, size = "md" }) => store && (
+export const EditDialog = observer(({ store, renderEdit, children, size = "md" }) => store &&
   <Dialog
     isOpen={store.showEditDialog}
     onClose={() => store.closeEditDialog()}
     onConfirm={() => store.confirmEdit()}
+    onComplete={() => store.confirmEdit()}
     title={t(`${store.name}.${store.isEditMode ? 'edit' : 'createNew'}`)}
+    stepTitles={store.stepTitles}
+    validateStep={store.validateStep}
     size={size}
     isConfirm={true}
+    renderChildren={renderEdit}
   >
     {children}
   </Dialog>
-));
+);
 
 export const GroupNameDialog = observer(({ store, isEdit }) => store && (
   <Dialog

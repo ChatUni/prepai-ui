@@ -46,7 +46,7 @@ const StepDialog = observer(({
                 </div>
               </div>
               <div className="flex-grow mb-6">
-                {Array.isArray(children) ? children[currentStep - 1] : children}
+                {steps[currentStep - 1]}
                 {error && (
                   <div className="mt-4 text-red-600 text-sm">{error}</div>
                 )}
