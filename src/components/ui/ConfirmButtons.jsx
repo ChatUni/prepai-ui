@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import lang from '../../stores/languageStore';
+import { t } from '../../stores/languageStore';
 import uiStore from '../../stores/uiStore';
 
 const ConfirmButtons = observer(({
@@ -37,13 +37,13 @@ const ConfirmButtons = observer(({
                 onClick={handleClick(onClose)}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                {lang.t('common.cancel')}
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleClick(onConfirm)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                {lang.t('common.confirm')}
+                {t('common.confirm')}
               </button>
             </>
           ) : (
@@ -51,7 +51,7 @@ const ConfirmButtons = observer(({
               onClick={handleClick(onClose)}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              {lang.t('common.ok')}
+              {t('common.ok')}
             </button>
           )}
         </>

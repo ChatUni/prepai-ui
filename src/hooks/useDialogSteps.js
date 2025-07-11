@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { t } from '../stores/languageStore';
 
-const useDialogSteps = ({ totalSteps, validateStep, onComplete }) => {
+const useDialogSteps = ({ store }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-  if (!totalSteps) return {};
+  if (!store || (store.stepData || []).length === 0) return {};
+
+  const step = store.stepData[currentStep - 1];
 
   const nextStep = () => {
     setCurrentStep(prev => prev + 1);
@@ -14,21 +18,31 @@ const useDialogSteps = ({ totalSteps, validateStep, onComplete }) => {
     setCurrentStep(prev => prev > 1 ? prev - 1 : prev);
   };
 
-  const clearError = () => {
+  const clearStep = () => {
     setError('');
+    setCurrentStep(1);
   };
 
   const handleNext = async () => {
-    if (validateStep) {
-      const validationError = await validateStep(currentStep);
-      if (validationError) {
-        setError(validationError);
-        return;
-      }
+    if (!step.isValid(store.editingItem)) {
+      setError(t(`${store.name}.edit.errors.${step.error}`));
+      return;
     }
     
-    clearError();
-    if (currentStep === totalSteps) {
+    if (step.save) {
+      try {
+        setIsSaving(true);
+        await step.save(store.editingItem);
+      } catch (e) {
+        setError(e);
+        return;
+      } finally {
+        setIsSaving(false);
+      }
+    }
+
+    setError('');
+    if (currentStep === store.stepData.length) {
       onComplete?.();
     } else {
       nextStep();
@@ -38,10 +52,10 @@ const useDialogSteps = ({ totalSteps, validateStep, onComplete }) => {
   return {
     currentStep,
     error,
+    isSaving,
     nextStep,
     prevStep,
-    setError,
-    clearError,
+    clearStep,
     handleNext
   };
 };

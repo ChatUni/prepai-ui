@@ -75,9 +75,42 @@ class SeriesStore {
     ];
   }
 
-  get stepTitles() {
-    return ['selectGroup', 'nameAndCategory', 'cover', 'description', 'priceAndDuration']
-      .map(x => t(`series.edit.steps.${x}`));
+  get stepData() {
+    return [
+      {
+        title: 'selectGroup',
+        isValid: x => x.group,
+        error: 'groupRequired',
+      },
+      {
+        title: 'nameAndCategory',
+        isValid: x => x.name && x.category,
+        error: 'nameAndCategoryRequired',
+        save: () => this.confirmEdit(true, false)
+      },
+      {
+        title: 'cover',
+        isValid: x => x.image,
+        error: 'coverImageRequired',
+      },
+      {
+        title: 'description',
+        isValid: x => (x.descType === 'text' && x.description) || (x.descType === 'image' && x.descImage),
+        error: 'descriptionRequired',
+      },
+      {
+        title: 'priceAndDuration',
+        isValid: x => x.price && x.duration,
+        error: 'priceAndDurationRequired',
+        save: () => this.confirmEdit(true, false)
+      },
+      {
+        title: 'courses',
+        isValid: x => x.courses && x.courses.length > 0,
+        error: 'coursesRequired',
+        save: x => this.saveCourses(x)
+      }
+    ];
   }
 
   fetchItemList = async function() {
@@ -101,70 +134,6 @@ class SeriesStore {
     return group === t('series.groups.recycle');
   }
 
-  // handleSubmit = async (form, navigate) => {
-  //   try {
-  //     const savedSeries = await editSeriesStore.saveSeries();
-  //     if (savedSeries) {
-  //       routeStore.navigateToSeries(savedSeries.id, navigate);
-  //     }
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Failed to save series:', error);
-  //     return false;
-  //   }
-  // }
-
-  // get currentSeriesFromRoute() {
-  //   return routeStore.currentSeries;
-  // }
-
-  // get isSeriesValid() {
-  //   return Array.isArray(this.series);
-  // }
-
-  // get validSeriesItems() {
-  //   if (!this.isSeriesValid) return [];
-  //   return this.series.filter(series => series && typeof series === 'object' && !series.deleted);
-  // }
-
-  // get deletedSeries() {
-  //   return this.series.filter(series => series && typeof series === 'object' && series.deleted);
-  // }
-
-  // get filteredSeries() {
-  //   if (!this.isSeriesValid) return [];
-    
-  //   const searchKeyword = (uiStore.searchKeyword || '').toLowerCase();
-  //   const selectedInstructorId = uiStore.selectedInstructorId || null;
-  //   const activeCategory = uiStore.activeCategory || '';
-  //   const isGroupMode = uiStore.activeNavItem === 'group';
-  //   const validGroups = new Set(clientStore.client.settings.groups);
-  //   const isSettingsMode = routeStore.isSeriesSettingMode;
-    
-  //   return this.validSeriesItems.filter(series => {
-  //     if (isGroupMode && (!series.group || !validGroups.has(series.group))) {
-  //       return false;
-  //     }
-
-  //     // Hide series if hidden is true and not in settings mode
-  //     if (!isSettingsMode && series.hidden) {
-  //       return false;
-  //     }
-      
-  //     const matchesSearch = !searchKeyword ||
-  //       (series.name?.toLowerCase().includes(searchKeyword)) ||
-  //       (series.desc?.toLowerCase().includes(searchKeyword)) ||
-  //       (series.instructor?.name?.toLowerCase().includes(searchKeyword));
-      
-  //     const matchesInstructor = selectedInstructorId === null ||
-  //       (series.instructor?.id === selectedInstructorId);
-
-  //     const matchesCategory = !activeCategory || series.category === activeCategory;
-      
-  //     return matchesSearch && matchesInstructor && matchesCategory;
-  //   });
-  // }
-
   // get filteredSeriesCourses() {
   //   const currentSeries = this.currentSeriesFromRoute;
   //   if (!currentSeries) return [];
@@ -184,17 +153,9 @@ class SeriesStore {
   //   });
   // }
 
-  // get mySeries() {
-  //   return this.filteredSeries.filter(series => series.isPaid);
-  // }
-
   getInstructorById = function(id) {
     return this.allInstructors.find(instructor => instructor.id === id);
   }
-
-  // get seriesInstructors() {
-  //   return this.getSeriesInstructors(this.currentSeriesFromRoute, true);
-  // }
 
   getSeriesInstructors = function(series) {
     if (!series) return [];
@@ -203,285 +164,6 @@ class SeriesStore {
       .map(course => course.instructor_id))
 
     return [...ids].map(id => this.getInstructorById(id)).filter(x => x);
-  }
-
-  // handleBackNavigation = () => {
-  //   const currentSeries = this.currentSeriesFromRoute;
-  //   if (currentSeries?.instructor?.id) {
-  //     routeStore.navigateToInstructor(currentSeries.instructor?.id);
-  //   } else {
-  //     routeStore.setSeriesId(null);
-  //   }
-  // }
-
-  // moveSeries = (group, fromIndex, toIndex) => {
-  //   if (fromIndex === toIndex) return;
-
-  //   const currentGroupSeries = [...this.groupedSeries[group]];
-    
-  //   const [movedSeries] = currentGroupSeries.splice(fromIndex, 1);
-  //   currentGroupSeries.splice(toIndex, 0, movedSeries);
-
-  //   currentGroupSeries.forEach((series, index) => {
-  //     series.order = index;
-  //   });
-
-  //   const seriesList = [...this.series];
-  //   currentGroupSeries.forEach(series => {
-  //     const seriesIndex = seriesList.findIndex(s => s.id === series.id);
-  //     if (seriesIndex !== -1) {
-  //       const updatedSeries = {
-  //         ...seriesList[seriesIndex],
-  //         order: series.order
-  //       };
-  //       seriesList[seriesIndex] = updatedSeries;
-  //       this.pendingSeriesUpdates.set(series.id, updatedSeries);
-  //     }
-  //   });
-
-  //   this.series = seriesList;
-  // }
-
-  // get groupedSeries() {
-  //   if (!this.isSeriesValid) return {};
-
-  //   const groups = clientStore.client.settings.groups || [];
-  //   const grouped = {};
-
-  //   groups.forEach(group => {
-  //     const groupSeries = this.filteredSeries.filter(series => series.group === group);
-      
-  //     groupSeries.forEach((series, index) => {
-  //       if (typeof series.order !== 'number') {
-  //         series.order = index;
-  //       }
-  //     });
-      
-  //     grouped[group] = groupSeries.sort((a, b) => a.order - b.order);
-  //   });
-
-  //   return grouped;
-  // }
-
-  // saveGroupOrder = async () => {
-  //   // This method is called by GroupedList but group order is now managed by groupedListStore
-  //   // The actual saving is handled by the individual group management methods
-  // };
-
-  // saveSeriesUpdates = async () => {
-  //   if (this.pendingSeriesUpdates.size === 0) return;
-
-  //   try {
-  //     for (const series of this.pendingSeriesUpdates.values()) {
-  //       await save('series', series);
-  //     }
-  //     this.pendingSeriesUpdates.clear();
-  //   } catch (error) {
-  //     console.error('Failed to save series updates:', error);
-  //     throw error;
-  //   }
-  // };
-
-  // toggleVisibility = async (seriesId) => {
-  //   const series = this.series.find(s => s.id === seriesId);
-  //   if (!series) return;
-
-  //   const updatedSeries = {
-  //     ...series,
-  //     hidden: !series.hidden
-  //   };
-
-  //   // Update local state
-  //   this.series = this.series.map(s =>
-  //     s.id === seriesId ? updatedSeries : s
-  //   );
-
-  //   // Save to database
-  //   try {
-  //     await save('series', updatedSeries);
-  //   } catch (error) {
-  //     console.error('Failed to toggle series visibility:', error);
-  //     throw error;
-  //   }
-  // };
-
-  // deleteItem = async (seriesId, isRestore) => {
-  //   const series = this.series.find(s => s.id === seriesId);
-  //   if (!series) return;
-  //   series.deleted = !isRestore;
-
-  //   try {
-  //     await save('series', series);
-  //   } catch (error) {
-  //     console.error('Failed to delete series:', error);
-  //     throw error;
-  //   }
-  // };
-
-  // Edit series field setters
-  setName = (name) => {
-    this.name = name;
-  }
-
-  setCategory = (category) => {
-    this.category = category;
-    this.isDropdownOpen = false;
-  }
-
-  setGroup = (group) => {
-    this.group = group;
-  }
-
-  setPrice = (price) => {
-    this.price = price;
-  }
-
-  setDuration = (duration) => {
-    this.duration = duration;
-  }
-
-  setDescType = (type) => {
-    this.descType = type;
-  }
-
-  setDescription = (desc) => {
-    this.description = desc;
-  }
-
-  setImage = (file) => {
-    this.image = file;
-  }
-
-  setDescImage = (file) => {
-    this.descImage = file;
-  }
-
-  setCourses = (courses) => {
-    this.courses = courses;
-  }
-
-  get totalSteps() {
-    return this.stepTitles.length;
-  }
-
-  nextStep = () => {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
-    }
-  }
-
-  prevStep = () => {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
-
-  setStep = (step) => {
-    this.currentStep = step;
-  }
-
-  get canProceedToStep2() {
-    return this.group !== '';
-  }
-
-  get canProceedToStep3() {
-    return this.name !== '' && this.category !== '';
-  }
-
-  get canProceedToStep4() {
-    return this.image !== '';
-  }
-
-  get canProceedToStep5() {
-    return (this.descType === 'text' && this.description !== '') ||
-           (this.descType === 'image' && this.descImage !== '');
-  }
-
-  get canSave() {
-    return (
-      this.name &&
-      this.price &&
-      this.duration &&
-      ((this.descType === 'text' && this.description) ||
-        (this.descType === 'image' && this.descImage))
-    );
-  }
-
-  setError = (error) => {
-    this.error = error;
-  }
-
-  clearError = () => {
-    this.error = null;
-  }
-
-  validateStep = async (step) => {
-    switch (step) {
-      case 1:
-        if (!this.canProceedToStep2) {
-          return t('series.edit.errors.groupRequired');
-        }
-        break;
-      case 2:
-        if (!this.canProceedToStep3) {
-          return t('series.edit.errors.nameAndCategoryRequired');
-        }
-        await this.saveSeries(true);
-        break;
-      case 3:
-        if (!this.canProceedToStep4) {
-          return t('series.edit.errors.coverImageRequired');
-        }
-        break;
-      case 4:
-        if (!this.canProceedToStep5) {
-          if (this.descType === 'text') {
-            return t('series.edit.errors.descriptionRequired');
-          }
-          return t('series.edit.errors.descriptionImageRequired');
-        }
-        break;
-      case 5:
-        if (!this.canSave) {
-          return t('series.edit.errors.priceAndDurationRequired');
-        }
-        await this.saveSeries(true);
-        break;
-      case 6:
-        if (!this.courses || this.courses.length === 0) {
-          return t('series.edit.errors.coursesRequired');
-        }
-        break;
-    }
-    return null;
-  }
-
-  toggleDropdown = () => {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  closeDropdown = () => {
-    this.isDropdownOpen = false;
-  }
-
-  reset = (series = null) => {
-    // this.editingSeries = series;
-    // this.name = series?.name || '';
-    // this.category = series?.category || '';
-    // this.group = series?.group || '';
-    // this.price = series?.price || '';
-    // this.duration = series?.duration || '30days';
-    // this.descType = series?.desc && series.desc.startsWith('http') ? 'image' : 'text';
-    // this.description = series?.desc || '';
-    // this.image = series?.cover || '';
-    // this.descImage = this.descType === 'image' ? series?.desc : '';
-    // this.courses = series?.courses || [];
-    // this.isLoading = false;
-    // this.error = null;
-    // this.currentStep = 1;
-    // this.isDropdownOpen = false;
-    // this.editCourseDialogOpen = false;
-    // this.currentEditCourse = null;
   }
 
   openEditCourseDialog = (course) => {
@@ -590,27 +272,6 @@ class SeriesStore {
       throw error;
     }
   }
-
-  openEditDialog = function(item) {
-    // Initialize series data for editing
-    this.reset(item);
-    
-    // Call the parent openEditDialog method
-    this.setEditingItem(item);
-    this.isEditMode = item != null;
-    this.isPageMode = false;
-    this.showEditDialog = true;
-  };
-
-  closeEditDialog = function() {
-    // Reset series data when closing
-    this.reset();
-    
-    // Call the parent closeEditDialog method
-    this.showEditDialog = false;
-    this.editingItem = {};
-  };
-
 }
 
 

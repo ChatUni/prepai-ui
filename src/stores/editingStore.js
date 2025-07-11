@@ -87,15 +87,15 @@ class EditingStore {
     this.editingItem = {};
   };
 
-  confirmEdit = async function() {
+  confirmEdit = async function(isReload = true, isClose = true) {
     if (!this.editingItem) return;
     try {
       await this.save(this.editingItem);
-      if (this.fetchItems) await this.fetchItems();
+      if (isReload && this.fetchItems) await this.fetchItems();
     } catch (e) {
       this.openErrorDialog('Error saving item');
     } finally {
-      this.closeEditDialog();
+      isClose && this.closeEditDialog();
     }
   };
 

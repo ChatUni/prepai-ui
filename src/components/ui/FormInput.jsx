@@ -8,6 +8,7 @@ const FormInput = observer(({
   required = false,
   min,
   rows,
+  choices,
   className = ''
 }) => {
   const inputProps = {
@@ -34,6 +35,23 @@ const FormInput = observer(({
           type={type}
           min={min}
         />
+      )}
+      {choices && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {choices.map((choice) => (
+            <button
+              key={choice}
+              type="button"
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors
+                ${choice === inputProps.value
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              onClick={() => store.setEditingField(field, choice)}
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );

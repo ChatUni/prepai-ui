@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { createPortal } from 'react-dom';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { t } from '../../stores/languageStore';
 import useDialogOverflow from '../../hooks/useDialogOverflow';
 import ConfirmButtons from './ConfirmButtons';
@@ -7,30 +8,27 @@ import useDialogSteps from '../../hooks/useDialogSteps';
 import Button from './Button';
 
 const Dialog = observer(({
+  store,
   isOpen,
   onClose,
   onConfirm,
-  onComplete,
   title,
   isConfirm = false,
-  stepTitles = [],
-  validateStep,
   renderChildren,
   children,
 }) => {
-  const totalSteps = stepTitles.length;
+  const stepData = store?.stepData || [];
+  const totalSteps = stepData.length;
   const isSteps = totalSteps > 0;
 
   const {
     currentStep,
     error,
+    isSaving,
     prevStep,
-    handleNext
-  } = useDialogSteps({
-    totalSteps,
-    validateStep,
-    onComplete
-  });
+    handleNext,
+    clearStep
+  } = useDialogSteps({ store });
 
   useDialogOverflow(isOpen);
 
@@ -39,10 +37,17 @@ const Dialog = observer(({
   return createPortal(
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
+        <div className="fixed inset-0 bg-black opacity-50" onClick={isSteps ? null : onClose} />
         <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
           <div className="px-6 py-4">
-            {isSteps ? StepTitle(stepTitles, currentStep, totalSteps) : Title(title)}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                {isSteps ? StepTitle(store, currentStep, totalSteps) : Title(title)}
+              </div>
+              {isSaving && (
+                <AiOutlineLoading3Quarters className="animate-spin text-blue-500 ml-4" size={20} />
+              )}
+            </div>
             <div className="mb-6" />
             {renderChildren ? renderChildren(currentStep) : children}
             {error && (
@@ -50,7 +55,7 @@ const Dialog = observer(({
             )}
           </div>
           {isSteps
-            ? StepButtons(currentStep, totalSteps, prevStep, handleNext, onClose)
+            ? StepButtons(currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving)
             : <ConfirmButtons
                 isConfirm={isConfirm}
                 isDialog={true}
@@ -69,10 +74,10 @@ const Title = (title) => title && (
   <h3 className="text-lg font-medium">{title}</h3>
 )
 
-const StepTitle = (stepTitles, currentStep, totalSteps) => (
+const StepTitle = (store, currentStep, totalSteps) => (
   <>
     <h2 className="text-xl font-semibold">
-      {stepTitles[currentStep - 1]}
+      {t(`${store.name}.edit.steps.${store.stepData[currentStep - 1].title}`)}
     </h2>
     <div className="text-sm text-gray-500">
       {t('common.step')} {currentStep} {t('common.of')} {totalSteps}
@@ -80,23 +85,28 @@ const StepTitle = (stepTitles, currentStep, totalSteps) => (
   </>
 )
 
-const StepButtons = (currentStep, totalSteps, prevStep, handleNext, onClose) => (
+const StepButtons = (currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving) => (
   <div className="flex justify-between items-center px-6 py-4">
     <Button
-      onClick={onClose}
+      onClick={() => {
+        clearStep();
+        onClose();
+      }}
       color="gray"
+      disabled={isSaving}
     >
       {t('common.cancel')}
     </Button>
     <div className="flex gap-4">
       <Button
         onClick={prevStep}
-        disabled={currentStep === 1}
+        disabled={isSaving || currentStep === 1}
       >
         {t('common.previous')}
       </Button>
       <Button
         onClick={handleNext}
+        disabled={isSaving}
       >
         {currentStep === totalSteps ? t('common.finish') : t('common.next')}
       </Button>
