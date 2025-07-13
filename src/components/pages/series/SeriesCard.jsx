@@ -20,7 +20,7 @@ const SeriesCard = observer(({
   // const validatedSeries = seriesCardStore.validateSeries(series);
   // if (!validatedSeries) return null;
 
-  const { id: seriesId, name, desc, cover, price } = series; // validatedSeries;
+  const { id: seriesId, name, desc, image, price } = series; // validatedSeries;
   // const image = seriesCardStore.getImage(cover);
   const instructors = store.getSeriesInstructors(series);
   const courses = series.courses || [];
@@ -73,7 +73,7 @@ const SeriesCard = observer(({
     >
       <div className="relative pb-[56.25%]">
         <img
-          src={cover}
+          src={image}
           alt={name}
           className="absolute inset-0 w-full h-full object-cover"
         />

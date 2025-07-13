@@ -12,6 +12,7 @@ const ListPage = observer(({
   bannerImages = [],
   bannerIntervalDuration = 3000,
   
+  showSearchBar = true,
   filters = [],
 
   // Shortcut buttons props
@@ -55,7 +56,7 @@ const ListPage = observer(({
       
       <PageTitle title={store.pageTitle} />
       
-      <SearchBar store={store} isGrouped={isGrouped} filters={filters} />
+      {showSearchBar && <SearchBar store={store} filters={filters} />}
       
       {!hasItems && (
         <div className="text-center py-12">
@@ -85,6 +86,35 @@ const ListPage = observer(({
                 {button.label}
               </Button>
             ))}
+          </div>
+        )}
+
+        {/* Action Buttons - only show in admin mode */}
+        {store && store.isAdminMode && (
+          <div className='flex justify-center gap-2'>
+            {isGrouped && (
+              <div className="grow-1">
+                <Button
+                  onClick={() => store.openAddGroupDialog()}
+                  icon="FiPlus"
+                  color="green"
+                  className="w-full"
+                >
+                  {t(`${store.name}.groups.addGroup`)}
+                </Button>
+              </div>
+            )}
+            
+            <div className="grow-1">
+              <Button
+                onClick={() => store.openAddDialog()}
+                icon="FiPlus"
+                color="blue"
+                className="w-full"
+              >
+                {t(`${store.name}.createNew`)}
+              </Button>
+            </div>
           </div>
         )}
 

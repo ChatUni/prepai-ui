@@ -1,61 +1,52 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdDragIndicator } from 'react-icons/md';
-import { FiEdit2 } from 'react-icons/fi';
 import uiStore from '../../../stores/uiStore';
-import languageStore from '../../../stores/languageStore';
-import useDragAndDrop from '../../../hooks/useDragAndDrop';
+import { t } from '../../../stores/languageStore';
 import seriesStore from '../../../stores/seriesStore';
 import paymentManagerStore from '../../../stores/paymentManagerStore';
-import { getCardBaseClasses } from '../../../utils/cardStyles';
+import DndOrderContainer from '../../ui/DndOrderContainer';
+import CardEditActions from '../../ui/CardEditActions';
+import courseStore from '../../../stores/courseStore';
 
 const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveItem }) => {
-  const { t } = languageStore;
-  const [isHovered, setIsHovered] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-
-  const { isDragging, isOver, handleRef } = useDragAndDrop({
-    type: 'course',
-    index,
-    moveItem,
-    disabled: !isEditMode
-  });
   
   // Check if device is mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
+  // useEffect(() => {
+  //   const checkMobile = () => {
+  //     setIsMobile(window.innerWidth < 640);
+  //   };
     
-    // Initial check
-    checkMobile();
+  //   // Initial check
+  //   checkMobile();
     
-    // Add event listener for window resize
-    window.addEventListener('resize', checkMobile);
+  //   // Add event listener for window resize
+  //   window.addEventListener('resize', checkMobile);
     
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  //   // Cleanup
+  //   return () => window.removeEventListener('resize', checkMobile);
+  // }, []);
 
   const instructor = seriesStore.getInstructorById(course.instructor_id);
 
   // Check if the course is favorited
-  const isFavorite = uiStore.favoriteCourseIds.has(course.id);
+  // const isFavorite = uiStore.favoriteCourseIds.has(course.id);
   
   // Handle favorite toggle
-  const handleFavoriteToggle = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // const handleFavoriteToggle = async (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
     
-    if (isLoading) return;
+  //   if (isLoading) return;
     
-    setIsLoading(true);
-    await uiStore.toggleFavorite(course.id);
-    setIsLoading(false);
-  };
+  //   setIsLoading(true);
+  //   await uiStore.toggleFavorite(course.id);
+  //   setIsLoading(false);
+  // };
   
   // Handle card click to navigate to video player or PPT player
   const handleCardClick = () => {
@@ -74,23 +65,30 @@ const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveIt
   };
 
   // Handle practice button click
-  const handlePracticeClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate(`/exam/questions/${course.id}`);
-  };
+  // const handlePracticeClick = (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   navigate(`/exam/questions/${course.id}`);
+  // };
   
   // Parse keywords from the comma-separated string
-  const keywords = course.keywords ? course.keywords.split(',') : [];
+  // const keywords = course.keywords ? course.keywords.split(',') : [];
   
   return (
-    <div
-      ref={isEditMode ? handleRef : null}
-      className={`flex flex-col w-full relative group mb-4 ${getCardBaseClasses(isDragging, isOver, !isEditMode)}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <DndOrderContainer
+      isEditMode={isEditMode}
+      type="course"
+      index={index}
+      moveItem={moveItem}
       onClick={isEditMode ? undefined : handleCardClick}
+      isClickable={!isEditMode}
+      className="flex flex-col w-full relative group mb-4"
     >
+      <div
+        // onMouseEnter={() => setIsHovered(true)}
+        // onMouseLeave={() => setIsHovered(false)}
+        className="w-full h-full"
+      >
       {/* Course Image */}
       {/* <div className="bg-amber-300 overflow-hidden aspect-video relative shadow-sm">
         <img
@@ -201,26 +199,15 @@ const CourseCard = observer(({ series, course, isEditMode, onEdit, index, moveIt
 
         {/* Edit Mode Buttons - Bottom Right */}
         {isEditMode && (
-          <div className="flex items-center gap-2 absolute bottom-3 right-3">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onEdit();
-              }}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-              title={t('course.edit')}
-            >
-              <FiEdit2 size={16} />
-            </button>
-            <MdDragIndicator
-              className="text-gray-400 text-xl cursor-move"
-              aria-label="Drag to reorder"
-            />
-          </div>
+          <CardEditActions
+            store={courseStore}
+            item={course}
+            hideDelete={() => true}
+          />
         )}
       </div>
-    </div>
+      </div>
+    </DndOrderContainer>
   );
 });
 

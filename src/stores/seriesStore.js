@@ -12,6 +12,7 @@ import instructorStore from './instructorStore';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { runInAction } from 'mobx';
 import editCourseStore from './editCourseStore';
+import { uploadImage } from '../utils/uploadHelper';
 
 class SeriesStore {
   selectedCategory;
@@ -53,7 +54,7 @@ class SeriesStore {
       duration: '30days',
       descType: 'text',
       desc: '',
-      cover: '',
+      image: '',
     };
   }
 
@@ -80,11 +81,11 @@ class SeriesStore {
         title: 'nameAndCategory',
         isValid: x => x.name && x.category,
         error: 'nameAndCategoryRequired',
-        save: () => this.confirmEdit(true, false)
+        // save: () => this.confirmEdit(true, false)
       },
       {
         title: 'cover',
-        isValid: x => true,//x.image,
+        isValid: x => x.image,
         error: 'coverImageRequired',
       },
       {
@@ -117,8 +118,30 @@ class SeriesStore {
     }));
   }
 
-  save = async function(item) {
-    await save('series', omit(item, ['_id', 'courses', 'isPaid']));
+  save = async function(item = this.editingItem || {}) {
+    if (!item.id) {
+      const data = await this.saveSeries(item);
+      item.id = data.id;
+    }
+
+    if (item.image instanceof File) {
+      const url = await uploadImage(item.image, `series/${item.id}`);
+      item.image = url;
+    }
+
+    if (item.descType === 'image' && item.desc instanceof File) {
+      const url = await uploadImage(this.desc, `series/${item.id}`);
+      item.desc = url;
+    }
+
+    await this.saveSeries(item);
+  }
+
+  saveSeries = async function(item) {
+    await save('series', omit({
+      ...item,
+      date_modified: new Date().toISOString()
+    }, ['_id', 'courses', 'isPaid']));
   }
 
   remove = async function() {
@@ -128,25 +151,6 @@ class SeriesStore {
   isGroupDanger = function(group) {
     return group === t('series.groups.recycle');
   }
-
-  // get filteredSeriesCourses() {
-  //   const currentSeries = this.currentSeriesFromRoute;
-  //   if (!currentSeries) return [];
-
-  //   return currentSeries.courses.filter(course => {
-  //     const selectedInstructorId = uiStore?.selectedInstructorId;
-  //     const matchesInstructor = !selectedInstructorId ||
-  //       course.instructor_id === selectedInstructorId;
-      
-  //     const searchKeyword = uiStore?.searchKeyword?.toLowerCase() || '';
-  //     const matchesSearch = !searchKeyword ||
-  //       course.title.toLowerCase().includes(searchKeyword) ||
-  //       (this.getInstructorById(course.instructor_id)?.name.toLowerCase().includes(searchKeyword)) ||
-  //       (course.description && course.description.toLowerCase().includes(searchKeyword));
-      
-  //     return matchesInstructor && matchesSearch;
-  //   });
-  // }
 
   getInstructorById = function(id) {
     return this.allInstructors.find(instructor => instructor.id === id);
@@ -161,85 +165,7 @@ class SeriesStore {
     return [...ids].map(id => this.getInstructorById(id)).filter(x => x);
   }
 
-  openEditCourseDialog = (course) => {
-    this.currentEditCourse = course;
-    editCourseStore.reset(course);
-    this.editCourseDialogOpen = true;
-  }
-
-  closeEditCourseDialog = () => {
-    this.editCourseDialogOpen = false;
-    this.currentEditCourse = null;
-    editCourseStore.reset(null);
-  }
-
-  uploadImage = async (file, path) => {
-    try {
-      return await uploadToCloudinary(file, path);
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
-      throw error;
-    }
-  }
-
-  saveSeries = async (isBackground) => {
-    try {
-      this.error = null;
-      if (!isBackground) this.isLoading = true;
-
-      const isEdit = !!this.editingSeries;
-
-      const seriesData = omit({
-        ...(isEdit ? this.editingSeries : {}),
-        client_id: clientStore.client.id,
-        name: this.name,
-        category: this.category,
-        group: this.group,
-        price: Number(this.price),
-        duration: this.duration,
-        desc: this.descType === 'text' ? this.description : this.descImage,
-        [`date_${isEdit ? 'modified' : 'added'}`]: new Date()
-      }, ['_id', 'courses', 'isPaid']);
-
-      // Save new series to get id
-      if (!isEdit) {
-        const data = await save('series', seriesData);
-        seriesData.id = data.id;
-        this.editingSeries = seriesData;
-      }
-
-      // Handle cover image upload
-      if (this.image instanceof File) {
-        const coverUrl = await this.uploadImage(this.image, `series/${seriesData.id}`);
-        seriesData.cover = coverUrl;
-      }
-
-      // Handle description image upload
-      if (this.descType === 'image' && this.descImage instanceof File) {
-        const descImageUrl = await this.uploadImage(this.descImage, `series/${seriesData.id}`);
-        seriesData.desc = descImageUrl;
-      }
-
-      await save('series', seriesData);
-
-      if (!isBackground) {
-        this.isLoading = false;
-        this.reset();
-      }
-
-      return seriesData;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-        this.isLoading = false;
-      });
-      throw error;
-    }
-  }
-
-  updateCourse = async () => {
+  updateCourse = async function() {
     try {
       const course = await editCourseStore.saveCourse(this.editingSeries?.id);
       

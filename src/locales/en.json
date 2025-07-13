@@ -224,6 +224,12 @@
     }
   },
   "course": {
+    "instructor_id": "Instructor ID",
+    "selectInstructor_id": "Select Instructor ID",
+    "title": "Course Title",
+    "duration": "Duration",
+    "url": "Course URL",
+    "createNew": "Create New Course",
     "edit": "Edit Course",
     "settings": "Course Settings",
     "management": "Course Management",

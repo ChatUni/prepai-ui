@@ -1,10 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import SeriesSearchBar from '../ui/SeriesSearchBar';
-import CourseList from '../pages/series/CourseList';
-import coursesStore from '../../stores/coursesStore';
+import CourseListPage from '../pages/series/CourseListPage';
+import courseStore from '../../stores/courseStore';
 import uiStore from '../../stores/uiStore';
 import InstructorPage from '../pages/instructor/InstructorPage';
-import ExamPage from '../OldExamPage';
 import SeriesListPage from '../pages/series/SeriesListPage';
 import languageStore from '../../stores/languageStore';
 import LoadingState from '../ui/LoadingState';
@@ -16,7 +14,7 @@ const MainContent = observer(() => {
 
   // Show appropriate content based on route
   if (location === '/exam') {
-    return <ExamPage />;
+    return null;
   } else if (location === '/instructor') {
     return <InstructorPage />;
   } else if (location === '/series' || location.startsWith('/series/')) {
@@ -25,17 +23,17 @@ const MainContent = observer(() => {
     return (
       <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
         <div className="mb-4 md:mb-6">
-          <SeriesSearchBar />
+          {/* <SeriesSearchBar /> */}
         </div>
         
         <LoadingState
-          isLoading={coursesStore.isLoading}
-          isError={!!coursesStore.error}
-          isEmpty={!coursesStore.isLoading && !coursesStore.error && coursesStore.courses.length === 0}
+          isLoading={courseStore.isLoading}
+          isError={!!courseStore.error}
+          isEmpty={!courseStore.isLoading && !courseStore.error && courseStore.courses.length === 0}
           customMessage={
-            coursesStore.isLoading ? "Loading courses from database..." :
-            coursesStore.error ? coursesStore.error :
-            coursesStore.courses.length === 0 ? "No courses found in the database." :
+            courseStore.isLoading ? "Loading courses from database..." :
+            courseStore.error ? courseStore.error :
+            courseStore.courses.length === 0 ? "No courses found in the database." :
             null
           }
         >
@@ -63,18 +61,18 @@ const MainContentCoursesSection = observer(() => {
   }
   
   // Construct the title
-  const mainTitle = `${typeText} ${categoryText} (${coursesStore.filteredCourses.length})`;
+  const mainTitle = `${typeText} ${categoryText} (${courseStore.filteredCourses.length})`;
   
   return (
     <>
       {/* All Courses Section */}
       <div className="mb-6 md:mb-8">
-        <CourseList title={mainTitle} courses={coursesStore.filteredCourses} />
+        <CourseListPage title={mainTitle} courses={courseStore.filteredCourses} />
       </div>
       
       {/* Most Viewed Section */}
       <div className="border-t border-gray-200 pt-4 md:pt-6 mt-6 md:mt-8">
-        <CourseList title={t('menu.categories.mostViewed')} courses={coursesStore.popularCourses} />
+        <CourseListPage title={t('menu.categories.mostViewed')} courses={courseStore.popularCourses} />
       </div>
     </>
   );

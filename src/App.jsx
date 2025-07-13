@@ -22,7 +22,6 @@ import SeriesDetailPage from './components/pages/series/SeriesDetailPage';
 import EditSeriesPage from './components/pages/series/EditSeriesPage';
 import EditBannerPage from './components/pages/account/EditBannerPage';
 import EditCoursePage from './components/pages/series/EditCoursePage';
-import InstructorSelectPage from './components/pages/instructor/InstructorSelectPage';
 import AssistantPage from './components/pages/assistant/AssistantPage';
 import EditAssistantPage from './components/pages/assistant/EditAssistantPage';
 import EditInstructorPage from './components/pages/instructor/EditInstructorPage';
@@ -165,11 +164,6 @@ const MainLayout = observer(() => {
                 <Route path="/instructors/new" element={
                   <AuthRoute>
                     <EditInstructorPage />
-                  </AuthRoute>
-                } />
-                <Route path="/instructors/select" element={
-                  <AuthRoute>
-                    <InstructorSelectPage />
                   </AuthRoute>
                 } />
                 <Route path="/instructors/:id/edit" element={

@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import CourseList from './pages/series/CourseList.jsx';
-import SeriesSearchBar from './ui/SeriesSearchBar';
+import CourseListPage from './pages/series/CourseListPage.jsx';
 import uiStore from '../stores/uiStore';
 import { getApiBaseUrl } from '../config.js';
 import LoadingState from './ui/LoadingState';
@@ -60,7 +59,7 @@ const FavoritesPage = observer(() => {
     <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
       {/* Filter Bar */}
       <div className="mb-4 md:mb-6">
-        <SeriesSearchBar />
+        {/* <SeriesSearchBar /> */}
       </div>
       
       <LoadingState
@@ -76,7 +75,7 @@ const FavoritesPage = observer(() => {
       >
         <div>
           <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-6">我的收藏 ({filteredFavorites.length})</h2>
-          <CourseList
+          <CourseListPage
             title=""
             courses={filteredFavorites}
           />

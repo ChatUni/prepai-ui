@@ -10,6 +10,7 @@ import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import FormRadio from '../../ui/FormRadio';
 import ImageUpload from '../../ui/ImageUpload';
+import CourseListPage from './CourseListPage';
 
 const steps = [
   () => <FormSelect store={store} field="group" options={clientStore.client.settings.seriesGroups} required />,
@@ -46,36 +47,11 @@ const steps = [
     </div>
   ),
 
-  () => {
-    const courses = store.courses || [];
-
-    const handleMoveCourse = (dragIndex, dropIndex) => {
-      const [removed] = courses.splice(dragIndex, 1);
-      courses.splice(dropIndex, 0, removed);
-      store.setCourses(courses);
-    };
-
-    return (
-      <div className="space-y-4">
-        <Button
-          onClick={() => store.openEditCourseDialog()}
-          className="w-full"
-        >
-          {t('series.addChapter')}
-        </Button>
-        {courses.map((course, idx) => (
-          <CourseCard
-            key={course.id}
-            course={course}
-            isEditMode={true}
-            onEdit={() => store.openEditCourseDialog(course)}
-            index={idx}
-            moveItem={handleMoveCourse}
-          />
-        ))}
-      </div>
-    );
-  }
+  () => (
+    <div className="space-y-2">
+      <CourseListPage series={store.editingItem} />
+    </div>
+  )
 ].map(observer);
 
 const EditSeriesPage = ({ step }) => {

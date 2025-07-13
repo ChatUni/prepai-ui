@@ -224,6 +224,12 @@
     }
   },
   "course": {
+    "instructor_id": "講師ID",
+    "selectInstructor_id": "講師IDを選択",
+    "title": "コースタイトル",
+    "duration": "時間",
+    "url": "コースURL",
+    "createNew": "新しいコースを作成",
     "edit": "コースを編集",
     "settings": "コース設定",
     "management": "コース管理",

@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction, computed } from 'mobx';
 import db from '../utils/db';
 import realtimeSessionStore from './realtimeSessionStore';
-import coursesStore from './coursesStore';
+import courseStore from './courseStore';
 
 class InstructorChatStore {
   // Messages stored by instructor ID
@@ -21,7 +21,7 @@ class InstructorChatStore {
 
   // Computed property to get the current instructor object
   get currentInstructor() {
-    return coursesStore.instructors.find(instructor =>
+    return courseStore.instructors.find(instructor =>
       instructor.id === this.activeInstructorId
     );
   }

@@ -220,11 +220,6 @@ class MembershipStore {
   };
 }
 
-// const listPageStore = new ListPageStore();
-// const groupedListStore = new GroupedListStore();
-// const editingStore = new EditingStore();
-// const membershipStore = new MembershipStore();
-// export default combineStores(listPageStore, groupedListStore, editingStore, membershipStore);
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, MembershipStore);
 
 // Filter by type

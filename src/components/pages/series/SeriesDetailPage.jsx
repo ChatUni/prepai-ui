@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import CourseList from './CourseList';
+import CourseListPage from './CourseListPage';
 import seriesStore from '../../../stores/seriesStore';
 import { t } from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';
@@ -23,10 +23,10 @@ const SeriesDetailPage = observer(() => {
       
       {/* Series cover image */}
       <div className="mb-6 rounded-lg overflow-hidden shadow-lg">
-        {typeof selectedSeries.cover === 'string' ? (
+        {typeof selectedSeries.image === 'string' ? (
           <div className="relative pb-[56.25%]"> {/* 16:9 aspect ratio */}
             <img
-              src={selectedSeries.cover}
+              src={selectedSeries.image}
               alt={selectedSeries.name || t('series.imageAlt')}
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -108,7 +108,9 @@ const SeriesDetailPage = observer(() => {
         </TabPanel.Tab>
 
         <TabPanel.Tab label={t('series.courseList')}>
-          <CourseList courses={selectedSeries.courses} series={selectedSeries} />
+          <div className="p-2">
+            <CourseListPage series={selectedSeries} />
+          </div>
         </TabPanel.Tab>
       </TabPanel>
       <PaymentManager />

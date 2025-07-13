@@ -1,6 +1,7 @@
+import { post } from "./db";
+
 export const uploadToTOS = async (file, key) => {
   try {
-    // Convert file to base64
     const reader = new FileReader();
     const fileBase64Promise = new Promise((resolve, reject) => {
       reader.onload = () => resolve(reader.result);
@@ -9,24 +10,7 @@ export const uploadToTOS = async (file, key) => {
     reader.readAsDataURL(file);
     const fileBase64 = await fileBase64Promise;
 
-    // Upload via serverless function
-    const response = await fetch('/.netlify/functions/api?type=tos_upload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        file: fileBase64,
-        key: key
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Upload failed with status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    // Return the proxy URL for immediate access (backward compatible)
+    const data = await post('tos_upload', {}, { file: fileBase64, key: key });
     return data.url;
   } catch (error) {
     console.error('Error uploading to TOS:', error);
@@ -47,16 +31,7 @@ export const uploadToTOSWithDetails = async (file, key) => {
     const fileBase64 = await fileBase64Promise;
 
     // Upload via serverless function
-    const response = await fetch('/.netlify/functions/api?type=tos_upload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        file: fileBase64,
-        key: key
-      })
-    });
+    const response = await post('tos_upload', {}, { file: fileBase64, key: key });
 
     if (!response.ok) {
       throw new Error(`Upload failed with status: ${response.status}`);
@@ -77,19 +52,7 @@ export const uploadToTOSWithDetails = async (file, key) => {
 
 export const getSignedUrl = async (url) => {
   try {
-    const response = await fetch('/.netlify/functions/api?type=tos_sign', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to get signed URL with status: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await post('tos_sign', {}, { url });
     return data.url;
   } catch (error) {
     console.error('Error getting signed URL:', error);

@@ -12,7 +12,7 @@ export const uploadToCloudinary = async (file, folder) => {
   formData.append('folder', `${clientStore.client.id}/${folder}`);
   formData.append('type', file.type.startsWith('video/') ? 'video' : 'image');
 
-  const response = await fetch(`/api/cloudinary_upload`, {
+  const response = await post('cloudinary_upload', {
     method: 'POST',
     body: formData
   });

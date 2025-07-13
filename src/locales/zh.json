@@ -224,6 +224,12 @@
     }
   },
   "course": {
+    "instructor_id": "讲师",
+    "selectInstructor_id": "选择讲师",
+    "title": "课程标题",
+    "duration": "时长",
+    "url": "视频",
+    "createNew": "添加章节",
     "edit": "编辑课程",
     "settings": "课程设置",
     "management": "课程管理",

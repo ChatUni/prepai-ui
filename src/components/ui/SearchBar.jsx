@@ -34,7 +34,6 @@ const handleFilterSelect = (store, filter, value) => {
 
 const SearchBar = observer(({
   store,
-  isGrouped = true,
   filters = [],
   className = ''
 }) => (
@@ -63,33 +62,6 @@ const SearchBar = observer(({
         buttonClassName={filter.buttonClassName || ""}
       />
     ))}
-
-    {/* Action Buttons - only show in admin mode */}
-    {store && store.isAdminMode && (
-      <>
-        {isGrouped && (
-          <div className="shrink-0">
-            <Button
-              onClick={() => store.openAddGroupDialog()}
-              icon="FiPlus"
-              color="green"
-            >
-              {t(`${store.name}.groups.addGroup`)}
-            </Button>
-          </div>
-        )}
-        
-        <div className="shrink-0">
-          <Button
-            onClick={() => store.openAddDialog()}
-            icon="FiPlus"
-            color="blue"
-          >
-            {t(`${store.name}.createNew`)}
-          </Button>
-        </div>
-      </>
-    )}
   </div>
 ));
 

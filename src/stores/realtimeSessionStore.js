@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { BASE_URL } from '../config.js';
-import coursesStore from './coursesStore';
+import courseStore from './courseStore';
 
 class RealtimeSessionStore {
   isSessionActive = false;
@@ -24,7 +24,7 @@ class RealtimeSessionStore {
   updateVectorStoreIds(instructorId) {
     runInAction(() => {
       // Get all series for this instructor
-      const instructorSeries = coursesStore.series.filter(s => s.instructor?.id === instructorId);
+      const instructorSeries = courseStore.series.filter(s => s.instructor?.id === instructorId);
       // Extract vector_store_ids, filter out any undefined/null values
       this.currentVectorStoreIds = instructorSeries
         .map(s => s.vector_store_id)
