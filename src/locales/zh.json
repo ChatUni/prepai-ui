@@ -232,10 +232,10 @@
     "url": "视频",
     "createNew": "添加章节",
     "edit": {
-      "title": "编辑课程",
-      "editTitle": "编辑课程",
-      "delete": "删除课程",
-      "restore": "恢复课程"
+      "title": "编辑章节",
+      "editTitle": "编辑章节",
+      "delete": "删除章节",
+      "restore": "恢复章节"
     },
     "settings": "课程设置",
     "management": "课程管理",
@@ -273,10 +273,12 @@
     "pptFormat": "PPT",
     "moreKeywords": "+{count}",
     "noItems": "暂无可用课程",
-    "hide": "隐藏课程",
-    "confirmDelete": "确定要删除「{name}」课程吗？",
-    "confirmRestore": "确定要恢复「{name}」课程吗？",
-    "confirmHide": "确定要隐藏「{name}」课程吗？",
+    "show": "显示章节",
+    "hide": "隐藏章节",
+    "confirmShow": "确定要显示「{name}」章节吗？",
+    "confirmDelete": "确定要删除「{name}」章节吗？",
+    "confirmRestore": "确定要恢复「{name}」章节吗？",
+    "confirmHide": "确定要隐藏「{name}」章节吗？",
     "groups": {
       "addGroup": "添加分组",
       "enterName": "输入分组名称",

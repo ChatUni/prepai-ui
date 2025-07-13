@@ -41,7 +41,7 @@ export const VisibilityConfirmDialog = observer(({ store }) => store && (
     <p>
       {store.editingItem && t(
         `${store.name}.confirm${(store.editingItem.hidden ? 'Show' : 'Hide')}`,
-        { name: store.editingItem.name || '' }
+        { name: store.editingItem.name || store.editingItem.title || '' }
       )}
     </p>
   </Dialog>
