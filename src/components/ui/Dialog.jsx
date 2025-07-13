@@ -55,7 +55,7 @@ const Dialog = observer(({
             )}
           </div>
           {isSteps
-            ? StepButtons(currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving)
+            ? StepButtons(store, currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving)
             : <ConfirmButtons
                 isConfirm={isConfirm}
                 isDialog={true}
@@ -85,7 +85,7 @@ const StepTitle = (store, currentStep, totalSteps) => (
   </>
 )
 
-const StepButtons = (currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving) => (
+const StepButtons = (store, currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving) => (
   <div className="flex justify-between items-center px-6 py-4">
     <Button
       onClick={() => {
@@ -108,7 +108,12 @@ const StepButtons = (currentStep, totalSteps, prevStep, handleNext, onClose, cle
         onClick={handleNext}
         disabled={isSaving}
       >
-        {currentStep === totalSteps ? t('common.finish') : t('common.next')}
+        {currentStep === totalSteps
+          ? t('common.finish')
+          : (store.stepData[currentStep - 1].save && store.isDirty
+            ? t('common.saveAndNext')
+            : t('common.next'))
+        }
       </Button>
     </div>
   </div>

@@ -18,7 +18,8 @@
     "unexpectedError": "An unexpected error occurred",
     "ok": "OK",
     "confirm": "Confirm",
-    "closeWithoutSaving": "Do you want to close without saving?"
+    "closeWithoutSaving": "Do you want to close without saving?",
+    "saveAndNext": "Save and Next"
   },
   "auth": {
     "login": "Login",
@@ -230,7 +231,12 @@
     "duration": "Duration",
     "url": "Course URL",
     "createNew": "Create New Course",
-    "edit": "Edit Course",
+    "edit": {
+      "title": "Edit Course",
+      "editTitle": "Edit Course",
+      "delete": "Delete Course",
+      "restore": "Restore Course"
+    },
     "settings": "Course Settings",
     "management": "Course Management",
     "management.description": "Here you can create and manage course categories and courses, set course details, pricing, and online/offline status, as well as adjust the display order on the homepage.",
@@ -265,7 +271,20 @@
     "addToFavorites": "Add to favorites",
     "removeFromFavorites": "Remove from favorites",
     "pptFormat": "PPT",
-    "moreKeywords": "+{count}"
+    "moreKeywords": "+{count}",
+    "noItems": "No courses available",
+    "hide": "Hide Course",
+    "confirmDelete": "Are you sure you want to delete \"{name}\" course?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" course?",
+    "confirmHide": "Are you sure you want to hide \"{name}\" course?",
+    "groups": {
+      "addGroup": "Add Group",
+      "enterName": "Enter group name",
+      "delete": "Delete Group",
+      "confirmDelete": "Are you sure you want to delete this group?",
+      "editGroup": "Edit Group",
+      "deleteGroup": "Delete Group"
+    }
   },
   "series": {
     "createNew": "Create New Series",
@@ -381,7 +400,8 @@
       "deleteGroup": "Delete Group",
       "confirmDelete": "Are you sure you want to delete this group?",
       "cannotDelete": "Cannot delete group that contains series",
-      "recycle": "Recycle Bin"
+      "recycle": "Recycle Bin",
+      "delete": "Delete Group"
     },
     "seriesPurchaseRequired": {
       "title": "Series Purchase Required",

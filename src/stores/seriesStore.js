@@ -103,7 +103,7 @@ class SeriesStore {
         title: 'courses',
         isValid: x => x.courses && x.courses.length > 0,
         error: 'coursesRequired',
-        save: x => this.saveCourses(x)
+        // save: x => this.saveCourses(x)
       }
     ];
   }

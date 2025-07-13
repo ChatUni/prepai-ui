@@ -18,7 +18,8 @@
     "unexpectedError": "予期せぬエラーが発生しました",
     "ok": "OK",
     "confirm": "確認",
-    "closeWithoutSaving": "保存せずに閉じますか？"
+    "closeWithoutSaving": "保存せずに閉じますか？",
+    "saveAndNext": "保存して次へ"
   },
   "auth": {
     "login": "ログイン",
@@ -230,7 +231,12 @@
     "duration": "時間",
     "url": "コースURL",
     "createNew": "新しいコースを作成",
-    "edit": "コースを編集",
+    "edit": {
+      "title": "コースを編集",
+      "editTitle": "コースを編集",
+      "delete": "コースを削除",
+      "restore": "コースを復元"
+    },
     "settings": "コース設定",
     "management": "コース管理",
     "management.description": "ここではコースのカテゴリーやコースの作成・管理、コースの詳細設定、価格設定、オンライン/オフライン状態の設定、およびホームページでの表示順序の調整ができます。",
@@ -265,7 +271,20 @@
     "addToFavorites": "お気に入りに追加",
     "removeFromFavorites": "お気に入りから削除",
     "pptFormat": "PPT",
-    "moreKeywords": "+{count}"
+    "moreKeywords": "+{count}",
+    "noItems": "利用可能なコースがありません",
+    "hide": "コースを非表示",
+    "confirmDelete": "「{name}」コースを削除してもよろしいですか？",
+    "confirmRestore": "「{name}」コースを復元してもよろしいですか？",
+    "confirmHide": "「{name}」コースを非表示にしてもよろしいですか？",
+    "groups": {
+      "addGroup": "グループを追加",
+      "enterName": "グループ名を入力",
+      "delete": "グループを削除",
+      "confirmDelete": "このグループを削除してもよろしいですか？",
+      "editGroup": "グループを編集",
+      "deleteGroup": "グループを削除"
+    }
   },
   "series": {
     "createNew": "新しいシリーズを作成",
@@ -381,7 +400,8 @@
       "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "シリーズが含まれているグループは削除できません",
       "addSeries": "シリーズを追加",
-      "recycle": "リサイクル"
+      "recycle": "リサイクル",
+      "delete": "グループを削除"
     },
     "seriesPurchaseRequired": {
       "title": "シリーズの購入が必要です",
