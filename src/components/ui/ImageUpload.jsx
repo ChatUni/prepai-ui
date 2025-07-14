@@ -1,11 +1,35 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'react';
 import { t } from '../../stores/languageStore';
+import { getSignedUrl } from '../../utils/tosHelper';
 
 const getYouTubeEmbedUrl = (url) => {
   const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(youtubeRegex);
   return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+};
+
+const isYouTubeUrl = (url) => {
+  const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)/;
+  return youtubeRegex.test(url);
+};
+
+const isTOSVideoUrl = (url) => {
+  if (!url) return false;
+  
+  // Check for common video file extensions
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.flv', '.mkv'];
+  const hasVideoExtension = videoExtensions.some(ext => url.toLowerCase().includes(ext));
+  
+  // Check for TOS domain patterns (adjust based on actual TOS URL structure)
+  const hasTOSPattern = url.includes('tos-') || url.includes('volcengine') || url.includes('bytedance');
+  
+  return hasVideoExtension || hasTOSPattern;
+};
+
+const isValidPreviewUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  return url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:');
 };
 
 const getMediaStyle = (style, type) => {
@@ -74,6 +98,8 @@ const ImageUpload = observer(({
   if (!id) id = `${store.name}-${field}`;
   
   const [filePreviewUrl, setFilePreviewUrl] = useState('');
+  const [signedVideoUrl, setSignedVideoUrl] = useState('');
+  const [loadingSignedUrl, setLoadingSignedUrl] = useState(false);
   
   // Get the current file from store if not provided as prop
   const currentFile = selectedFile || getImage(store, field, index);
@@ -90,6 +116,30 @@ const ImageUpload = observer(({
       setFilePreviewUrl('');
     }
   }, [currentFile]);
+
+  // Handle signed URL generation for TOS videos
+  useEffect(() => {
+    const generateSignedUrl = async () => {
+      const displayUrl = previewUrl || getImage(store, field, index);
+      if (displayUrl && typeof displayUrl === 'string' && isTOSVideoUrl(displayUrl) && type === 'video') {
+        setLoadingSignedUrl(true);
+        try {
+          const signed = await getSignedUrl(displayUrl);
+          setSignedVideoUrl(signed);
+        } catch (error) {
+          console.warn('Failed to get signed URL for TOS video:', error);
+          setSignedVideoUrl(displayUrl); // Fallback to original URL
+        } finally {
+          setLoadingSignedUrl(false);
+        }
+      } else {
+        setSignedVideoUrl('');
+        setLoadingSignedUrl(false);
+      }
+    };
+
+    generateSignedUrl();
+  }, [previewUrl, store, field, index, type]);
   
   const getDefaultButtonText = () => {
     if (currentFile || previewUrl) {
@@ -183,18 +233,65 @@ const ImageUpload = observer(({
           Your browser does not support the video tag.
         </video>
       );
-    } else if (displayPreviewUrl && type === 'video' && !isVideoFile(currentFile)) {
-      // Handle YouTube embed or other video URLs
-      return (
-        <iframe
-          src={getYouTubeEmbedUrl(displayPreviewUrl)}
-          className={getMediaStyle(finalMediaStyle, 'video')}
-          allowFullScreen
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        />
-      );
-    } else if (displayPreviewUrl) {
+    } else if (displayPreviewUrl && isValidPreviewUrl(displayPreviewUrl) && type === 'video' && !isVideoFile(currentFile)) {
+      // Handle different types of video URLs
+      if (isYouTubeUrl(displayPreviewUrl)) {
+        // Handle YouTube embed
+        return (
+          <iframe
+            src={getYouTubeEmbedUrl(displayPreviewUrl)}
+            className={getMediaStyle(finalMediaStyle, 'video')}
+            allowFullScreen
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          />
+        );
+      } else if (isTOSVideoUrl(displayPreviewUrl)) {
+        // Handle TOS video URLs with native video element using signed URL
+        if (loadingSignedUrl) {
+          return (
+            <div className={`${getMediaStyle(finalMediaStyle, 'video')} flex items-center justify-center bg-gray-100`}>
+              <div className="flex items-center gap-2 text-gray-600">
+                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span className="text-sm">Loading video...</span>
+              </div>
+            </div>
+          );
+        }
+        
+        const videoSrc = signedVideoUrl || displayPreviewUrl;
+        return (
+          <video
+            src={videoSrc}
+            controls
+            className={getMediaStyle(finalMediaStyle, 'video')}
+            preload="metadata"
+            onError={(e) => {
+              console.warn('Video failed to load:', videoSrc, e);
+            }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        );
+      } else {
+        // Handle other video URLs with native video element
+        return (
+          <video
+            src={displayPreviewUrl}
+            controls
+            className={getMediaStyle(finalMediaStyle, 'video')}
+            preload="metadata"
+            onError={(e) => {
+              console.warn('Video failed to load:', displayPreviewUrl, e);
+            }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        );
+      }
+    } else if (displayPreviewUrl && isValidPreviewUrl(displayPreviewUrl)) {
       return (
         <img
           src={displayPreviewUrl}

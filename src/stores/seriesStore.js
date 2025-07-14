@@ -129,12 +129,12 @@ class SeriesStore {
     }
 
     if (item.image instanceof File) {
-      const url = await uploadImage(item.image, `series/${item.id}`);
+      const url = await uploadImage(item.image, `series/${item.id}/cover.jpg`);
       item.image = url;
     }
 
     if (item.descType === 'image' && item.desc instanceof File) {
-      const url = await uploadImage(this.desc, `series/${item.id}`);
+      const url = await uploadImage(item.desc, `series/${item.id}/desc.jpg`);
       item.desc = url;
     }
 

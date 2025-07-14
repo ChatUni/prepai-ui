@@ -48,6 +48,7 @@ class CourseStore {
   saveCourses = async function(item) {
     await save('courses', {
       ...item,
+      isVideo: 1,
       date_modified: new Date().toISOString()
     });
   }
@@ -59,7 +60,7 @@ class CourseStore {
     }
 
     if (item.url instanceof File) {
-      const url = await uploadImage(item.url, `series/${this.series.id}/courses/${item.id}`);
+      const url = await uploadImage(item.url, `series/${this.series.id}/courses/${item.id}/video.mp4`);
       item.url = url;
     }
 
