@@ -1,4 +1,3 @@
-import { makeAutoObservable } from 'mobx';
 import clientStore from './clientStore';
 import userStore from './userStore';
 import { get, remove, save } from '../utils/db';
@@ -8,7 +7,6 @@ import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
-import { createWeChatPayOrder } from '../utils/wechatPayHelper';
 
 const membershipTypes = [
   "all",
@@ -221,10 +219,3 @@ class MembershipStore {
 }
 
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, MembershipStore);
-
-// Filter by type
-// if (this.selectedType) {
-//   filtered = filtered.filter(membership =>
-//     this.selectedType === 'all' || membershipTypes[membership.type] === this.selectedType
-//   );
-// }

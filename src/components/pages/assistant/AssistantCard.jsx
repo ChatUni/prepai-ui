@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import store from '../../../stores/assistantStore';
 import CardEditActions from '../../ui/CardEditActions';
-import EditAssistantPage from './EditAssistantPage';
 import DndOrderContainer from '../../ui/DndOrderContainer';
 
 const AssistantCard = observer(({
@@ -12,18 +11,15 @@ const AssistantCard = observer(({
   index,
   moveItem,
   group,
-  renderDialogs
 }) => {
   const navigate = useNavigate();
 
-  // Handle image loading errors - defined outside render function to prevent rerenders
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.src = '/images/avatar.png';
   }, []);
 
   const handleCardClick = (e) => {
-    // Don't trigger card click if clicking on action buttons
     if (isEditMode && e.target.closest('.action-button')) {
       return;
     }
@@ -41,9 +37,7 @@ const AssistantCard = observer(({
       isClickable={!isEditMode}
     >
       <div className="p-4">
-        {/* Horizontal layout with image on left and content on right */}
         <div className="flex items-start gap-4">
-          {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
             <img
               src={assistant.image || '/images/avatar.png'}
@@ -53,7 +47,6 @@ const AssistantCard = observer(({
             />
           </div>
           
-          {/* Content */}
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               {assistant.name}
@@ -67,7 +60,6 @@ const AssistantCard = observer(({
         </div>
       </div>
       
-      {/* Action buttons for edit mode */}
       {isEditMode && (
         <CardEditActions
           item={assistant}

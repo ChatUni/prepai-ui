@@ -13,55 +13,20 @@ const SeriesCard = observer(({
   moveItem,
   group,
   isEditMode = false,
-  renderDialogs = false,
-  onClick
 }) => {
   const navigate = useNavigate();
-  // const validatedSeries = seriesCardStore.validateSeries(series);
-  // if (!validatedSeries) return null;
-
-  const { id: seriesId, name, desc, image, price } = series; // validatedSeries;
-  // const image = seriesCardStore.getImage(cover);
+  const { id: seriesId, name, desc, image, price } = series;
   const instructors = store.getSeriesInstructors(series);
   const courses = series.courses || [];
 
-  // Drag and drop functionality
-  // const { isDragging, isOver, handleRef } = useDragAndDrop({
-  //   type: `item-${group}`,
-  //   index,
-  //   moveItem,
-  //   onDrop: seriesStore.saveSeriesUpdates
-  // });
-
   const handleCardClick = (e) => {
-    // Don't trigger card click if clicking on action buttons
     if (isEditMode && e.target.closest('.action-button')) {
       return;
     }
     store.gotoDetail(series, navigate);
   };
 
-  // const handleCardClick = useCallback((e) => {
-  //   // Don't trigger card click if clicking on action buttons
-  //   if (isEditMode && e.target.closest('.action-button')) {
-  //     return;
-  //   }
-  //   if (onClick) {
-  //     onClick(series);
-  //   } else if (!isEditMode) {
-  //     seriesCardStore.handleSeriesClick(seriesId, navigate);
-  //   }
-  // }, [onClick, isEditMode, seriesId, navigate, series]);
-
-  // const handleInstructorClick = useCallback((e, instructor) => {
-  //   e.stopPropagation();
-  //   if (isEditMode) {
-  //     seriesCardStore.openEditInstructorDialog(instructor);
-  //   }
-  // }, [isEditMode]);
-
   return (
-    <>
     <DndOrderContainer
       isEditMode={isEditMode}
       type={`item-${group}`}
@@ -138,7 +103,6 @@ const SeriesCard = observer(({
         </div>
       </div>
       
-      {/* Action buttons for edit mode */}
       {isEditMode && (
         <CardEditActions
           item={series}
@@ -146,47 +110,7 @@ const SeriesCard = observer(({
           hideDelete={item => item.deleted}
         />
       )}
-    </DndOrderContainer>
-      
-      {/* Render dialogs only for the first card */}
-      {/* {renderDialogs && (
-        <>
-          {series.deleted && (
-            <Dialog
-              isOpen={seriesCardStore.showRestoreDialog && seriesCardStore.currentSeries?.id === seriesId}
-              onClose={seriesCardStore.closeRestoreDialog}
-              onConfirm={seriesCardStore.confirmRestore}
-              title={t('series.edit.restore')}
-              isConfirm={true}
-            >
-              <p>{t('series.confirmRestore', { name: series.name })}</p>
-            </Dialog>
-          )}
-
-          {(groupedSeriesStore.isEditSeriesDialogOpen || editSeriesStore.series) && (
-            <EditSeriesPage
-              onClose={groupedSeriesStore.closeEditSeriesDialog}
-            />
-          )}
-
-          <EditDialog
-            isOpen={seriesCardStore.editInstructorDialogOpen}
-            onClose={seriesCardStore.closeEditInstructorDialog}
-            onConfirm={async () => {
-              const success = await editInstructorStore.saveInstructor();
-              if (success) {
-                await seriesStore.fetchSeries();
-                seriesCardStore.closeEditInstructorDialog();
-              }
-            }}
-            title={editInstructorStore.editingInstructor ? t('instructors.edit.title') : t('instructors.add.title')}
-            size="xl"
-          >
-            <EditInstructorPage />
-          </EditDialog>
-        </>
-      )} */}
-    </>
+    </DndOrderContainer>      
   );
 });
 

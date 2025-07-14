@@ -9,9 +9,6 @@ import GroupedListStore from './groupedListStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import instructorStore from './instructorStore';
-import { uploadToCloudinary } from '../utils/cloudinaryHelper';
-import { runInAction } from 'mobx';
-import editCourseStore from './editCourseStore';
 import { uploadImage } from '../utils/uploadHelper';
 
 class SeriesStore {
@@ -167,35 +164,6 @@ class SeriesStore {
       .map(course => course.instructor_id))
 
     return [...ids].map(id => this.getInstructorById(id)).filter(x => x);
-  }
-
-  updateCourse = async function() {
-    try {
-      const course = await editCourseStore.saveCourse(this.editingSeries?.id);
-      
-      runInAction(() => {
-        const courses = [...this.courses];
-        const existingIndex = courses.findIndex(c => c.id === course.id);
-        
-        if (existingIndex >= 0) {
-          // Replace existing course
-          courses[existingIndex] = course;
-        } else {
-          // Add new course to the end
-          courses.push(course);
-        }
-        
-        this.courses = courses;
-        this.closeEditCourseDialog();
-      });
-
-      return course;
-    } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-      });
-      throw error;
-    }
   }
 }
 

@@ -117,13 +117,3 @@ const MembershipListPage = observer(() => {
 });
 
 export default MembershipListPage;
-
-        // {/* Description Box */}
-        // <div className="bg-white text-gray-800 p-6 rounded-lg mb-6 border border-gray-200">
-        //   <h1 className="text-2xl font-semibold mb-3">{t('membership.priceSettings.title')}</h1>
-        //   <p className="text-gray-600 leading-relaxed">
-        //     {t('membership.priceSettings.description')}
-        //   </p>
-        // </div>
-
-//                  editDialogTitle={store.isEditMode ? t('membership.edit') : t('membership.createNew')}

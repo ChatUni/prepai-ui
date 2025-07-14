@@ -1,10 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
-import Button from '../../ui/Button';
 import { t } from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
 import store from '../../../stores/seriesStore';
-import CourseCard from './CourseCard';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import FormRadio from '../../ui/FormRadio';
@@ -57,64 +54,5 @@ const EditSeriesPage = ({ step }) => {
   const Step = steps[step - 1];
   return <Step />;
 }
-
-const EditSeriesPage1 = observer(({ onClose, onSave }) => {
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-
-  const handleCancel = () => {
-    setShowCancelConfirm(true);
-  };
-
-  const handleComplete = async () => {
-    try {
-      await store.saveSeries();
-      store.reset();
-      onClose();
-    } catch (error) {
-      console.error('Failed to save series:', error);
-    }
-  };
-
-  return (
-    <>
-          <Step1Content key="step1" />,
-          <Step2Content key="step2" />,
-          <Step3Content key="step3" />,
-          <Step4Content key="step4" />,
-          <Step5Content key="step5" />,
-          <Step6Content key="step6" />
-
-      {/* <Dialog
-        isOpen={showCancelConfirm}
-        onClose={() => setShowCancelConfirm(false)}
-        onConfirm={() => {
-          setShowCancelConfirm(false);
-          store.reset();
-          onClose();
-        }}
-        title={t('common.confirm')}
-        isConfirm={true}
-      >
-        <p>{t('common.closeWithoutSaving')}</p>
-      </Dialog> */}
-    </>
-  );
-});
-
-// const EditCourseDialog = observer(() => (
-//   <Dialog
-//     isOpen={store.editCourseDialogOpen}
-//     onClose={store.closeEditCourseDialog}
-//     onConfirm={store.updateCourse}
-//     title={editCourseStore.editingCourse ? t('course.editCourse') : t('course.addCourse')}
-//     size="xl"
-//     isConfirm={true}
-//   >
-//     <EditCoursePage
-//       courseId={store.currentEditCourse?.id}
-//       seriesId={store.editingSeries?.id}
-//     />
-//   </Dialog>
-// ));
 
 export default EditSeriesPage;

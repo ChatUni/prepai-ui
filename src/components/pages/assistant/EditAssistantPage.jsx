@@ -21,6 +21,3 @@ const EditAssistantPage = observer(() => (
 ));
 
 export default EditAssistantPage;
-
-
-//            uploadPath={`assistants/${store.editingItem.id || 'new'}`}

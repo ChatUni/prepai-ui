@@ -1,8 +1,6 @@
-import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { t } from '../../stores/languageStore';
 import DropdownFilter from './DropdownFilter';
-import Button from './Button';
 import Icon from './Icon';
 
 const buildFilterItems = (store, filter) => {
