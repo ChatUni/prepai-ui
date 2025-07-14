@@ -17,7 +17,7 @@ const EditCoursePage = observer(() => (
       { value: false, label: t('common.no') }
     ]} />
     <FormInput store={store} field="duration" type="number" min="0" required />
-    <ImageUpload store={store} field="url" />
+    <ImageUpload store={store} field="url" type="video" required />
   </div>
 ));
 

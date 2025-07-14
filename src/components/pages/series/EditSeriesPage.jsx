@@ -5,7 +5,6 @@ import { t } from '../../../stores/languageStore';
 import clientStore from '../../../stores/clientStore';
 import store from '../../../stores/seriesStore';
 import CourseCard from './CourseCard';
-import MediaUpload from '../../ui/MediaUpload';
 import FormInput from '../../ui/FormInput';
 import FormSelect from '../../ui/FormSelect';
 import FormRadio from '../../ui/FormRadio';

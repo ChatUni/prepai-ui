@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import editInstructorStore from '../../../stores/editInstructorStore';
 import languageStore from '../../../stores/languageStore';
-import MediaUpload from '../../ui/MediaUpload';
+import ImageUpload from '../../ui/ImageUpload';
 import FormInput from '../../ui/FormInput';
 
 const EditInstructorPage = observer(() => {
@@ -49,7 +49,7 @@ const EditInstructorPage = observer(() => {
             required
           />
 
-          <MediaUpload
+          <ImageUpload
             id="icon"
             label={t('instructors.edit.icon')}
             previewUrl={editInstructorStore.image}
