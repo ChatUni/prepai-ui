@@ -6,6 +6,7 @@ import { t } from '../../../stores/languageStore';
 import store from '../../../stores/seriesStore';
 import userStore from '../../../stores/userStore';
 import DndOrderContainer from '../../ui/DndOrderContainer';
+import instructorStore from '../../../stores/instructorStore';
 
 const SeriesCard = observer(({
   series,
@@ -54,7 +55,7 @@ const SeriesCard = observer(({
               <div
                 key={instructor.id}
                 className={`flex items-center ${isEditMode ? 'cursor-pointer hover:opacity-80' : ''}`}
-                onClick={(e) => handleInstructorClick(e, instructor)}
+                onClick={() => instructorStore.openEditDialog(instructor)}
               >
                 <div className="relative">
                   {instructor?.image ? (

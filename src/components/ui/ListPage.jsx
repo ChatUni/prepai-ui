@@ -7,6 +7,23 @@ import PageTitle from './PageTitle';
 import { DeleteConfirmDialog, RestoreConfirmDialog, VisibilityConfirmDialog, EditDialog, ErrorDialog } from './Dialogs';
 import { t } from '../../stores/languageStore';
 
+const shortcusts = store => [
+  {
+    label: t(`${store.name}.groups.addGroup`),
+    icon: 'FiPlus',
+    color: 'green',
+    onClick: () => store.openAddGroupDialog(),
+    isVisible: (s, g) => s.isAdminMode && g,
+  },
+  {
+    label: t(`${store.name}.createNew`),
+    icon: 'FiPlus',
+    color: 'blue',
+    onClick: () => store.openAddDialog(),
+    isVisible: (s, g) => s.isAdminMode,
+  },
+]
+
 const ListPage = observer(({
   // Banner/Carousel props
   bannerImages = [],
@@ -17,8 +34,8 @@ const ListPage = observer(({
 
   // Shortcut buttons props
   shortcutButtons = [],
-  showShortcutButtons = false,
-  shortcutButtonsClassName = "grid grid-cols-3 gap-4 mt-8",
+  showShortcutButtons = true,
+  shortcutButtonsClassName = "flex justify-center gap-2",
   
   // List props
   store,
@@ -28,7 +45,6 @@ const ListPage = observer(({
   onGroupDrop,
   
   // Dialog props (from CardEditDialogs)
-  editDialogChildren,
   editDialogSize = "md",
   showDialogs = true,
   renderEdit,
@@ -44,6 +60,8 @@ const ListPage = observer(({
                            (Array.isArray(store.groupedItems)
                             ? store.groupedItems.length > 0
                             : Object.keys(store.groupedItems).length > 0);
+  shortcutButtons = [...shortcutButtons, ...shortcusts(store)].filter(b => !b.isVisible || b.isVisible(store, isGrouped));
+
 
   return (
     <div className={containerClassName}>
@@ -74,47 +92,19 @@ const ListPage = observer(({
         {showShortcutButtons && shortcutButtons.length > 0 && (
           <div className={shortcutButtonsClassName}>
             {shortcutButtons.map((button, index) => (
-              <Button
-                key={button.key || index}
-                onClick={button.onClick}
-                icon={button.icon}
-                color={button.color || 'blue'}
-                shade={button.shade}
-                disabled={button.disabled}
-                className={button.className}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {/* Action Buttons - only show in admin mode */}
-        {store && store.isAdminMode && (
-          <div className='flex justify-center gap-2'>
-            {isGrouped && (
               <div className="grow-1">
                 <Button
-                  onClick={() => store.openAddGroupDialog()}
-                  icon="FiPlus"
-                  color="green"
-                  className="w-full"
+                  key={button.key || index}
+                  onClick={button.onClick}
+                  icon={button.icon}
+                  color={button.color || 'blue'}
+                  disabled={button.disabled}
+                  className={button.className || 'w-full'}
                 >
-                  {t(`${store.name}.groups.addGroup`)}
+                  {button.label}
                 </Button>
               </div>
-            )}
-            
-            <div className="grow-1">
-              <Button
-                onClick={() => store.openAddDialog()}
-                icon="FiPlus"
-                color="blue"
-                className="w-full"
-              >
-                {t(`${store.name}.createNew`)}
-              </Button>
-            </div>
+            ))}
           </div>
         )}
 

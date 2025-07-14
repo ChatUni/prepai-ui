@@ -21,7 +21,13 @@
     "yes": "Yes",
     "no": "No",
     "closeWithoutSaving": "Do you want to close without saving?",
-    "saveAndNext": "Save and Next"
+    "saveAndNext": "Save and Next",
+    "selectImage": "Select Image",
+    "selectVideo": "Select Video",
+    "selectFile": "Select File",
+    "changeImage": "Change Image",
+    "changeVideo": "Change Video",
+    "changeFile": "Change File"
   },
   "auth": {
     "login": "Login",
@@ -147,8 +153,14 @@
       }
     }
   },
-  "instructors": {
-    "title": "Instructors",
+  "instructor": {
+    "title": "Title",
+    "createNew": "Create New Instructor",
+    "name": "Name",
+    "bio": "Biography",
+    "expertise": "Areas of Expertise",
+    "image": "Profile Photo",
+    "selectImage": "Select Image",
     "selectToEdit": "Select Instructor to Edit",
     "search": {
       "placeholder": "Search instructors by name, title, or expertise..."
@@ -167,12 +179,7 @@
     "edit": {
       "button": "Edit",
       "title": "Edit Instructor",
-      "name": "Name",
       "titleField": "Title",
-      "bio": "Biography",
-      "expertise": "Areas of Expertise",
-      "icon": "Profile Photo",
-      "selectImage": "Select Image",
       "changeImage": "Change Image",
       "fileSelected": "File selected",
       "iconPreview": "Instructor photo preview",

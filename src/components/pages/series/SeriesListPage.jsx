@@ -7,6 +7,7 @@ import SeriesCard from './SeriesCard';
 import PaymentManager from '../../ui/PaymentManager';
 import { t } from '../../../stores/languageStore';
 import { useEffect } from 'react';
+import InstructorListPage from '../instructor/InstructorListPage';
 
 const SeriesListPage = observer(({ showPaidOnly }) => {
   useEffect(() => {
@@ -46,9 +47,18 @@ const SeriesListPage = observer(({ showPaidOnly }) => {
               allLabel: t('series.search.allInstructors'),
             },
           ]}
+          shortcutButtons={[
+            {
+              label: t('instructor.createNew'),
+              icon: 'FiPlus',
+              color: 'amber',
+              onClick: () => store.openAddDialog(),
+            },
+          ]}
         />
       </div>
       <PaymentManager />
+      <InstructorListPage />
     </div>
   );
 });

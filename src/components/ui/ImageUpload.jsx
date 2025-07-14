@@ -92,7 +92,6 @@ const ImageUpload = observer(({
   type = 'image',
   label,
   onMediaSelect,
-  mediaStyle = 'rectangular',
   required = false
 }) => {
   if (!id) id = `${store.name}-${field}`;
@@ -144,21 +143,21 @@ const ImageUpload = observer(({
   const getDefaultButtonText = () => {
     if (currentFile || previewUrl) {
       if (isImageFile(currentFile)) {
-        return t('series.edit.changeImage');
+        return t('common.changeImage');
       } else if (isVideoFile(currentFile)) {
-        return t('course.add.changeVideo');
+        return t('common.changeVideo');
       } else {
-        return t('series.edit.changeFile');
+        return t('common.changeFile');
       }
     }
     
     if (type === 'video') {
-      return t('course.add.selectVideo');
+      return t('common.selectVideo');
     } else if (type === 'image') {
-      return t('series.edit.selectImage');
+      return t('common.selectImage');
     }
     
-    return t('series.edit.selectFile');
+    return t('common.selectFile');
   };
 
   const handleImageSelect = (e) => {
@@ -180,7 +179,6 @@ const ImageUpload = observer(({
 
   const finalButtonText = buttonText || getDefaultButtonText();
   const displayPreviewUrl = filePreviewUrl || previewUrl || getImage(store, field, index);
-  const finalMediaStyle = mediaStyle || imageStyle;
 
   const getAcceptAttribute = () => {
     if (type === 'video') {
@@ -228,7 +226,7 @@ const ImageUpload = observer(({
         <video
           src={filePreviewUrl}
           controls
-          className={getMediaStyle(finalMediaStyle, 'video')}
+          className={getMediaStyle(imageStyle, 'video')}
         >
           Your browser does not support the video tag.
         </video>
@@ -240,7 +238,7 @@ const ImageUpload = observer(({
         return (
           <iframe
             src={getYouTubeEmbedUrl(displayPreviewUrl)}
-            className={getMediaStyle(finalMediaStyle, 'video')}
+            className={getMediaStyle(imageStyle, 'video')}
             allowFullScreen
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -250,7 +248,7 @@ const ImageUpload = observer(({
         // Handle TOS video URLs with native video element using signed URL
         if (loadingSignedUrl) {
           return (
-            <div className={`${getMediaStyle(finalMediaStyle, 'video')} flex items-center justify-center bg-gray-100`}>
+            <div className={`${getMediaStyle(imageStyle, 'video')} flex items-center justify-center bg-gray-100`}>
               <div className="flex items-center gap-2 text-gray-600">
                 <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -266,7 +264,7 @@ const ImageUpload = observer(({
           <video
             src={videoSrc}
             controls
-            className={getMediaStyle(finalMediaStyle, 'video')}
+            className={getMediaStyle(imageStyle, 'video')}
             preload="metadata"
             onError={(e) => {
               console.warn('Video failed to load:', videoSrc, e);
@@ -281,7 +279,7 @@ const ImageUpload = observer(({
           <video
             src={displayPreviewUrl}
             controls
-            className={getMediaStyle(finalMediaStyle, 'video')}
+            className={getMediaStyle(imageStyle, 'video')}
             preload="metadata"
             onError={(e) => {
               console.warn('Video failed to load:', displayPreviewUrl, e);
@@ -296,7 +294,7 @@ const ImageUpload = observer(({
         <img
           src={displayPreviewUrl}
           alt={finalButtonText}
-          className={getMediaStyle(finalMediaStyle, 'image')}
+          className={getMediaStyle(imageStyle, 'image')}
         />
       );
     }

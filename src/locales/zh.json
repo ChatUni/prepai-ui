@@ -21,7 +21,13 @@
     "yes": "是",
     "no": "否",
     "closeWithoutSaving": "确定要不保存就关闭吗？",
-    "saveAndNext": "保存并下一步"
+    "saveAndNext": "保存并下一步",
+    "selectImage": "选择图片",
+    "selectVideo": "选择视频",
+    "selectFile": "选择文件",
+    "changeImage": "更改图片",
+    "changeVideo": "更改视频",
+    "changeFile": "更改文件"
   },
   "auth": {
     "login": "登录",
@@ -147,8 +153,14 @@
       }
     }
   },
-  "instructors": {
-    "title": "讲师列表",
+  "instructor": {
+    "title": "职称",
+    "createNew": "创建新讲师",
+    "name": "姓名",
+    "bio": "个人简介",
+    "expertise": "专业领域",
+    "image": "头像",
+    "selectImage": "选择图片",
     "selectToEdit": "选择要编辑的讲师",
     "search": {
       "placeholder": "按姓名、职称或专业领域搜索讲师..."
@@ -167,12 +179,7 @@
     "edit": {
       "button": "编辑",
       "title": "编辑讲师",
-      "name": "姓名",
       "titleField": "职称",
-      "bio": "个人简介",
-      "expertise": "专业领域",
-      "icon": "头像",
-      "selectImage": "选择图片",
       "changeImage": "更改图片",
       "fileSelected": "已选择文件",
       "iconPreview": "讲师头像预览",

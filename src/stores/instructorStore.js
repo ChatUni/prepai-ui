@@ -4,8 +4,9 @@ import PageStore from './pageStore';
 import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
 import { get, save, remove } from '../utils/db';
+import { uploadImage } from '../utils/uploadHelper';
 
-class InstructorsStore {
+class InstructorStore {
   get name() {
     return 'instructor';
   }
@@ -32,9 +33,23 @@ class InstructorsStore {
     return await get('instructors', { clientId: clientStore.client.id });
   };
   
-  save = async function(item) {
+  saveInstructor = async function(item) {
     await save('instructors', item);
+  }
+
+  save = async function(item = this.editingItem || {}) {
+    if (!item.id) {
+      const data = await this.saveInstructor(item);
+      item.id = data.id;
+    }
+
+    if (item.image instanceof File) {
+      const url = await uploadImage(item.image, `instructors/${item.id}/video.mp4`);
+      item.image = url;
+    }
+
+    await this.saveInstructor(item);
   }
 }
 
-export default combineStores(PageStore, ListStore, EditingStore, InstructorsStore);
+export default combineStores(PageStore, ListStore, EditingStore, InstructorStore);
