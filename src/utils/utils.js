@@ -16,3 +16,14 @@ export const omit = (obj, keys) => {
   keys.forEach(key => delete result[key]);
   return result;
 }
+
+export const buildOptions = (options) => options.map(option => {
+  if (typeof option === 'string') {
+    return { value: option, label: option };
+  }
+
+  let value = option.value;
+  if (value === undefined) value = option.id;
+
+  return { value, label: option.label || option.text || option.name };
+})

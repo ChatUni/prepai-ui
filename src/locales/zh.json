@@ -18,6 +18,8 @@
     "unexpectedError": "发生意外错误",
     "ok": "确定",
     "confirm": "确认",
+    "yes": "是",
+    "no": "否",
     "closeWithoutSaving": "确定要不保存就关闭吗？",
     "saveAndNext": "保存并下一步"
   },
@@ -183,7 +185,9 @@
     "description": "从我们的AI助手中选择，帮助您完成各种任务。每个助手都专门针对不同类型的问题和对话进行了优化。",
     "noItems": "暂无可用助手",
     "delete": "删除助手",
-    "edit": "编辑助手",
+    "edit": {
+      "title": "编辑助手"
+    },
     "createNew": "创建新助手",
     "name": "名称",
     "greeting": "问候语",
@@ -228,8 +232,9 @@
     "instructor_id": "讲师",
     "selectInstructor_id": "选择讲师",
     "title": "课程标题",
-    "duration": "时长",
+    "duration": "时长(分钟)",
     "url": "视频",
+    "isFree": "免费",
     "createNew": "添加章节",
     "edit": {
       "title": "编辑章节",

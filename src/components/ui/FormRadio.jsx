@@ -1,21 +1,31 @@
 import { observer } from 'mobx-react-lite';
 import { t } from '../../stores/languageStore';
+import { buildOptions } from '../../utils/utils';
 
 const FormRadio = observer(({
   store,
   field,
   options = [],
   required = false,
-  className = ''
+  className = '',
+  defaultValue
 }) => {
   const id = `${store.name}-${field}`;
-  const value = store.editingItem[field] || store[field];
+  let value = store.editingItem[field];
+  if (value === undefined) value = store[field];
+  if (value === undefined) value = defaultValue;
+  const opts = buildOptions(options);
+
   const onChange = (e) => {
-    const setter = store.setEditingField || store[`set${field[0].toUpperCase() + field.slice(1)}`];
+    let v = e.target.value;
+    const type = options.length > 0 ? typeof options[0].value : '';
+    if (type === 'number') v = parseInt(v);
+    if (type === 'boolean') v = v === 'true';
     if (store.setEditingField) {
-      store.setEditingField(field, e.target.value);
+      store.setEditingField(field, v);
     } else {
-      setter(e.target.value);
+      const setter = store[`set${field[0].toUpperCase() + field.slice(1)}`];
+      setter(v);
     }
   };
 
@@ -26,7 +36,7 @@ const FormRadio = observer(({
           {t(`${store.name}.${field}`)}
         </label>
         <div className="flex gap-4">
-          {options.map((option) => (
+          {opts.map((option) => (
             <label key={option.value} className="inline-flex items-center">
               <input
                 type="radio"

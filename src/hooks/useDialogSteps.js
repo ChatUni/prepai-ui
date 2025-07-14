@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { t } from '../stores/languageStore';
 
 const useDialogSteps = ({ store }) => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(6);
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 

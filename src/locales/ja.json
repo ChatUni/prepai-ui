@@ -18,6 +18,8 @@
     "unexpectedError": "予期せぬエラーが発生しました",
     "ok": "OK",
     "confirm": "確認",
+    "yes": "はい",
+    "no": "いいえ",
     "closeWithoutSaving": "保存せずに閉じますか？",
     "saveAndNext": "保存して次へ"
   },
@@ -183,7 +185,9 @@
     "description": "様々なタスクをサポートするAIアシスタントからお選びください。各アシスタントは異なる種類の質問や会話に特化しています。",
     "noItems": "利用可能なアシスタントがありません",
     "delete": "アシスタントを削除",
-    "edit": "アシスタントを編集",
+    "edit": {
+      "title": "アシスタントを編集"
+    },
     "createNew": "新しいアシスタントを作成",
     "name": "名前",
     "greeting": "挨拶",
@@ -230,6 +234,7 @@
     "title": "コースタイトル",
     "duration": "時間",
     "url": "コースURL",
+    "isFree": "無料",
     "createNew": "新しいコースを作成",
     "edit": {
       "title": "コースを編集",

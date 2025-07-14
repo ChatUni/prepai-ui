@@ -53,7 +53,7 @@ export const EditDialog = observer(({ store, renderEdit, children, size = "md" }
     isOpen={store.showEditDialog}
     onClose={() => store.closeEditDialog()}
     onConfirm={() => store.confirmEdit()}
-    title={t(`${store.name}.${store.isEditMode ? 'edit' : 'createNew'}`)}
+    title={t(`${store.name}.${store.isEditMode ? 'edit.title' : 'createNew'}`)}
     size={size}
     isConfirm={true}
     renderChildren={renderEdit}

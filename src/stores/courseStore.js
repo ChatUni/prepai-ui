@@ -4,6 +4,7 @@ import EditingStore from './editingStore';
 import GroupedListStore from './groupedListStore';
 import ListStore from './listStore';
 import PageStore from './pageStore';
+import seriesStore from './seriesStore';
 
 class CourseStore {
   series;
@@ -45,6 +46,8 @@ class CourseStore {
   
   save = async function(item) {
     await save('courses', item);
+    await seriesStore.fetchItems();
+    this.setSeries(seriesStore.items.find(x => x.id == this.series.id));
   }
 }
 

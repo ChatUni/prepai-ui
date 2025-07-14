@@ -114,7 +114,11 @@ class SeriesStore {
       ...s,
       order: typeof s.order === 'number' ? s.order : index,
       descType: s.desc?.startsWith('https://') ? 'image' : 'text',
-      isPaid: userStore.isSeriesPaid(s.id)
+      isPaid: userStore.isSeriesPaid(s.id),
+      courses: s.courses.map(c => ({
+        ...c,
+        isFree: c.isFree == null ? false : c.isFree
+      }))
     }));
   }
 

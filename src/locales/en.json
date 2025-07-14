@@ -18,6 +18,8 @@
     "unexpectedError": "An unexpected error occurred",
     "ok": "OK",
     "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
     "closeWithoutSaving": "Do you want to close without saving?",
     "saveAndNext": "Save and Next"
   },
@@ -183,7 +185,9 @@
     "description": "Choose from our AI assistants to help you with various tasks. Each assistant is specialized for different types of questions and conversations.",
     "noItems": "No assistants available",
     "delete": "Delete Assistant",
-    "edit": "Edit Assistant",
+    "edit": {
+      "title": "Edit Assistant"
+    },
     "createNew": "Create New Assistant",
     "name": "Name",
     "greeting": "Greeting",
@@ -230,6 +234,7 @@
     "title": "Course Title",
     "duration": "Duration",
     "url": "Course URL",
+    "isFree": "Free",
     "createNew": "Create New Course",
     "edit": {
       "title": "Edit Course",

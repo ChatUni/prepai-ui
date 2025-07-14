@@ -4,16 +4,7 @@ import { FaPlus } from 'react-icons/fa';
 import Dialog from './Dialog';
 import uiStore from '../../stores/uiStore';
 import { t } from '../../stores/languageStore';
-
-const buildOptions = (options) => options.map(option => {
-  if (typeof option === 'string') {
-    return { value: option, label: option };
-  }
-  return {
-    value: option.value || option.id,
-    label: option.label || option.text || option.name
-  };
-})
+import { buildOptions } from '../../utils/utils';
 
 const FormSelect = observer(({
   store,
