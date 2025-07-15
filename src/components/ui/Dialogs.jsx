@@ -118,6 +118,8 @@ export const ErrorDialog = observer(({ store }) => store && (
     onClose={() => store.closeErrorDialog()}
     title={t('common.error')}
   >
-    <p className="text-gray-700">{store.error}</p>
+    {(Array.isArray(store.error) ? store.error : [store.error]).map(e =>
+      <div className="text-gray-700">{e}</div>
+    )}
   </Dialog>
 ));

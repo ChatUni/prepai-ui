@@ -27,7 +27,8 @@
     "selectFile": "ファイルを選択",
     "changeImage": "画像を変更",
     "changeVideo": "動画を変更",
-    "changeFile": "ファイルを変更"
+    "changeFile": "ファイルを変更",
+    "required": "{name}フィールドは必須です"
   },
   "auth": {
     "login": "ログイン",

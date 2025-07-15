@@ -29,12 +29,19 @@ class InstructorStore {
     };
   }
 
+  get validator() {
+    return {
+      name: 1,
+      image: 1,
+    }
+  }
+
   fetchItemList = async function() {
     return await get('instructors', { clientId: clientStore.client.id });
   };
   
   saveInstructor = async function(item) {
-    await save('instructors', item);
+    return await save('instructors', item);
   }
 
   save = async function(item = this.editingItem || {}) {
@@ -44,7 +51,7 @@ class InstructorStore {
     }
 
     if (item.image instanceof File) {
-      const url = await uploadImage(item.image, `instructors/${item.id}/video.mp4`);
+      const url = await uploadImage(item.image, `instructors/${item.id}/image.mp4`);
       item.image = url;
     }
 

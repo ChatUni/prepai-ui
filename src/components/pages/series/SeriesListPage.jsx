@@ -8,6 +8,7 @@ import PaymentManager from '../../ui/PaymentManager';
 import { t } from '../../../stores/languageStore';
 import { useEffect } from 'react';
 import InstructorListPage from '../instructor/InstructorListPage';
+import instructorStore from '../../../stores/instructorStore';
 
 const SeriesListPage = observer(({ showPaidOnly }) => {
   useEffect(() => {
@@ -52,7 +53,7 @@ const SeriesListPage = observer(({ showPaidOnly }) => {
               label: t('instructor.createNew'),
               icon: 'FiPlus',
               color: 'amber',
-              onClick: () => store.openAddDialog(),
+              onClick: () => instructorStore.openAddDialog(),
             },
           ]}
         />

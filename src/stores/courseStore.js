@@ -29,11 +29,20 @@ class CourseStore {
   get newItem() {
     return {
       title: '',
-      image: '',
       url: '',
       isVideo: true,
+      isFree: false,
       series_id: this.series.id,
     };
+  }
+
+  get validator() {
+    return {
+      instructor_id: 1,
+      title: 1,
+      url: 1,
+      duration: 1,
+    }
   }
 
   setSeries = function(series) {
@@ -42,11 +51,11 @@ class CourseStore {
   }
 
   fetchItemList = function() {
-    return series.courses;
+    return this.series.courses;
   };
   
-  saveCourses = async function(item) {
-    await save('courses', {
+  saveCourse = async function(item) {
+    return await save('courses', {
       ...item,
       isVideo: 1,
       date_modified: new Date().toISOString()
@@ -55,7 +64,7 @@ class CourseStore {
 
   save = async function(item = this.editingItem || {}) {
     if (!item.id) {
-      const data = await this.saveCourses(item);
+      const data = await this.saveCourse(item);
       item.id = data.id;
     }
 
@@ -64,7 +73,7 @@ class CourseStore {
       item.url = url;
     }
 
-    await this.saveCourses(item);
+    await this.saveCourse(item);
 
     await seriesStore.fetchItems();
     this.setSeries(seriesStore.items.find(x => x.id == this.series.id));

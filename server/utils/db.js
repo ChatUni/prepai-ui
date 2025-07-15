@@ -28,7 +28,7 @@ const maxId = doc =>
     .sort({ id: -1 })
     .limit(1)
     .toArray()
-    .then(r => (r.length > 0 ? r[0].id + 1 : 0));
+    .then(r => (r.length > 0 ? r[0].id : 0));
 
 // 0: prop ('$videos')
 // 1: number

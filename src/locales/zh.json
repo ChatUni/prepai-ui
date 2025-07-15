@@ -27,7 +27,8 @@
     "selectFile": "选择文件",
     "changeImage": "更改图片",
     "changeVideo": "更改视频",
-    "changeFile": "更改文件"
+    "changeFile": "更改文件",
+    "required": "{name}不能为空"
   },
   "auth": {
     "login": "登录",

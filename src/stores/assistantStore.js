@@ -41,6 +41,16 @@ class AssistantStore {
     };
   }
 
+  get validator() {
+    return {
+      name: 1,
+      greeting: 1,
+      prompt: 1,
+      image: 1,
+      model: 1,
+    }
+  }
+
   get requireMembership() {
     return true;
   }

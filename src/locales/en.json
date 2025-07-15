@@ -27,7 +27,8 @@
     "selectFile": "Select File",
     "changeImage": "Change Image",
     "changeVideo": "Change Video",
-    "changeFile": "Change File"
+    "changeFile": "Change File",
+    "required": "The {name} field is required"
   },
   "auth": {
     "login": "Login",

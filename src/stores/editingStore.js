@@ -1,3 +1,5 @@
+import { t } from './languageStore';
+
 class EditingStore {
   editingItem = {};
   isDirty = false;
@@ -96,11 +98,29 @@ class EditingStore {
 
   confirmEdit = async function(isReload = true, isClose = true) {
     if (!this.editingItem) return;
+
+    if (this.validator) {
+      const err = Object.entries(this.validator).map(([k, v]) => {
+        const iv = this.editingItem[k];
+        const f = t(`${this.name}.${k}`);
+        if (v === 1) {
+          if (iv === null || iv === undefined || iv === '') return t('common.required', { name: f });
+        } else if (typeof v === 'function') {
+          return v(iv);
+        }
+      }).filter(x => x);
+      if (err.length > 0) {
+        this.openErrorDialog(err);
+        return;
+      }
+    }
+
     try {
       await this.save(this.editingItem);
       if (isReload && this.fetchItems) await this.fetchItems();
       this.isDirty = false;
     } catch (e) {
+      console.log(e);
       this.openErrorDialog('Error saving item');
     } finally {
       isClose && this.closeEditDialog();
