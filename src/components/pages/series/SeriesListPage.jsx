@@ -53,6 +53,7 @@ const SeriesListPage = observer(({ showPaidOnly }) => {
               label: t('instructor.createNew'),
               icon: 'FiPlus',
               color: 'amber',
+              isVisible: x => x.isAdminMode,
               onClick: () => instructorStore.openAddDialog(),
             },
           ]}

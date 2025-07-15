@@ -1,13 +1,17 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import DEFAULT_AVATAR from '../assets/avatar.png';
 import clientStore from './clientStore';
-import lang from './languageStore';
+import { t } from './languageStore';
 import { get, save } from '../utils/db';
 import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
 import membershipStore from './membershipStore';
 import examStore from './examStore';
 import instructorStore from './instructorStore';
+import EditingStore from './editingStore';
+import PageStore from './pageStore';
+import ListStore from './listStore';
+import { combineStores } from '../utils/storeUtils';
 
 class UserStore {
   user = {};
@@ -15,7 +19,30 @@ class UserStore {
   coupons = [];
 
   get name() {
-    return this.user.name || lang.t('menu.account_page.guest');
+    return 'user';
+  }
+  
+  get userName() {
+    return this.user.name || t('menu.account_page.guest');
+  }
+
+  get searchableFields() {
+    return ['name', 'id', 'phone'];
+  }
+
+  get newItem() {
+    return {
+      client_id: clientStore.client.id,
+      name: '',
+      phone: '',
+      role: 'user'
+    };
+  }
+
+  get mediaInfo() {
+    return {
+      avatar: x => `users/${x.id}/avatar.jpg`
+    }
   }
 
   get isLoggedIn() {
@@ -42,12 +69,15 @@ class UserStore {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
   }
 
+  get isMember() {
+    return this.isPaid('membership');
+  }
+
   constructor() {
-    makeAutoObservable(this);
     this.checkSavedLoginState();  
   }
 
-  async initData() {
+  initData = async function() {
     await instructorStore.fetchItems();
     await seriesStore.fetchItems();
     await assistantStore.fetchItems();
@@ -70,7 +100,7 @@ class UserStore {
     }
   }
 
-  saveLoginState() {
+  saveLoginState = function() {
     try {
       localStorage.setItem('user', JSON.stringify(this.user));
     } catch (error) {
@@ -78,12 +108,12 @@ class UserStore {
     }
   }
 
-  setUser(info) {
+  setUser = function(info) {
     this.user = { ...this.user, ...info };
     this.saveLoginState();
   }
 
-  async loginWithPhone(phoneNumber, verificationCode) {
+  loginWithPhone = async function(phoneNumber, verificationCode) {
     try {
       // Get user info from API using phone and client ID
       const users = await get('users', {
@@ -131,41 +161,37 @@ class UserStore {
     }
   }
 
-  login(credentials) {
+  login = function(credentials) {
     console.log('Login with credentials:', credentials);
     this.user.isLoggedIn = true
     this.saveLoginState();
     return Promise.resolve(this.user);
   }
 
-  logout() {
+  logout = function() {
     console.log('Logging out user');
     this.user.isLoggedIn = false
     this.saveLoginState();
     return Promise.resolve();
   }
 
-  fetchExamRecords() {
+  fetchExamRecords = function() {
     console.log('Fetching exam records');
     this.examRecords = []    
     return Promise.resolve(this.examRecords);
   }
   
-  fetchCoupons() {
+  fetchCoupons = function() {
     console.log('Fetching coupons');
     this.coupons = []    
     return Promise.resolve(this.coupons);
   }
 
-  isSeriesPaid(id) {
+  isSeriesPaid = function(id) {
     return this.isPaid('series', id);
   }
 
-  get isMember() {
-    return this.isPaid('membership');
-  }
-
-  isPaid(type, id) {
+  isPaid = function(type, id) {
     if (this.isAdmin) return true;
     
     if (!this.user.orders) return false;
@@ -182,5 +208,4 @@ class UserStore {
   }
 }
 
-const userStore = new UserStore();
-export default userStore;
+export default combineStores(PageStore, ListStore, EditingStore, UserStore);

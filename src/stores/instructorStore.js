@@ -3,8 +3,7 @@ import EditingStore from './editingStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
-import { get, save, remove } from '../utils/db';
-import { uploadImage } from '../utils/uploadHelper';
+import { get, save } from '../utils/db';
 
 class InstructorStore {
   get name() {

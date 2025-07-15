@@ -72,7 +72,7 @@ const AccountPage = observer(() => {
             
             {/* User Info */}
             <div className="ml-4">
-              <h2 className="text-xl font-semibold">{userStore.name}</h2>
+              <h2 className="text-xl font-semibold">{userStore.userName}</h2>
               <p className="text-gray-600">ID: {userStore.user.id}</p>
             </div>
           </div>
@@ -86,11 +86,11 @@ const AccountPage = observer(() => {
         </div>
         {/* Menu Options */}
         {/* Menu Items */}
-        <MenuListItem
+        {/* <MenuListItem
           label={t('menu.account_page.my_vip')}
           onClick={() => handleMenuItemClick('vip')}
           // extraInfo={`${t('menu.account_page.valid_until')} 2025-12-27 10:33:52`}
-        />
+        /> */}
         {/* <MenuListItem
           label={t('menu.account_page.exam_records')}
           onClick={() => handleMenuItemClick('exams')}
