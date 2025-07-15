@@ -44,6 +44,12 @@
     "name": "姓名",
     "avatar": "头像",
     "phone": "电话",
+    "role": {
+      "user": "用户",
+      "admin": "管理员",
+      "toggle": "切换角色"
+    },
+    "subAdmin": "子管理员",
     "search": {
       "placeholder": "按姓名或电话搜索用户..."
     }

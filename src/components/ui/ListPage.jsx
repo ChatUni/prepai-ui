@@ -54,14 +54,14 @@ const ListPage = observer(({
   containerClassName = ""
 }) => {  
   // Check if there are any items to display
-  const hasItems = (store?.groupedItems && Object.keys(store.groupedItems).length > 0) ||
-                   (store?.items && store.items.length > 0);
+  // const hasItems = (store?.groupedItems && Object.keys(store.groupedItems).length > 0) ||
+  //                  (store?.items && store.items.length > 0);
   const renderMainGroups = store?.groupedItems &&
                            (Array.isArray(store.groupedItems)
                             ? store.groupedItems.length > 0
                             : Object.keys(store.groupedItems).length > 0);
   shortcutButtons = [...shortcutButtons, ...shortcusts(store)].filter(b => !b.isVisible || b.isVisible(store, isGrouped));
-
+tap(store?.groupedItems)
 
   return (
     <div className={containerClassName}>

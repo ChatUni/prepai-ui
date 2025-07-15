@@ -44,6 +44,12 @@
     "name": "名前",
     "avatar": "アバター",
     "phone": "電話番号",
+    "role": {
+      "user": "ユーザー",
+      "admin": "管理者",
+      "toggle": "役割を切り替え"
+    },
+    "subAdmin": "サブ管理者",
     "search": {
       "placeholder": "名前やメールでユーザーを検索..."
     }

@@ -77,7 +77,7 @@ class UserStore {
 
   initData = async function() {
     if (clientStore.client?.id) {
-      await this.fetchItems();
+      await this.fetchItems?.();
       await instructorStore.fetchItems();
       await seriesStore.fetchItems();
       await assistantStore.fetchItems();
@@ -92,8 +92,8 @@ class UserStore {
   
   save = async function(item) {
     const user = await save('users', omit(item, ['orders', 'isLoggedIn']));
-    this.user = { ...item, ...user[0] };
-    return this.user;
+    if (item.id == this.user.id) this.user = { ...item, ...user[0] };
+    return user[0];
   }
   
   checkSavedLoginState = async function() {
@@ -232,6 +232,13 @@ class UserStore {
     
     const now = new Date();
     return expireDate > now;
+  }
+
+  toggleRole = async function(user) {
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    const updatedUser = { ...user, role: newRole };
+    await this.save(updatedUser);
+    this.fetchItems();
   }
 }
 

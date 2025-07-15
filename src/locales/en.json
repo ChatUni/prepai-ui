@@ -44,6 +44,12 @@
     "name": "Name",
     "avatar": "Avatar",
     "phone": "Phone",
+    "role": {
+      "user": "User",
+      "admin": "Admin",
+      "toggle": "Toggle Role"
+    },
+    "subAdmin": "Sub Admin",
     "search": {
       "placeholder": "Search users by name or phone..."
     }
