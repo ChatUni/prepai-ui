@@ -39,7 +39,8 @@
   },
   "user": {
     "edit": {
-      "title": "Edit User"
+      "title": "Edit User",
+      "editTitle": "Edit User"
     },
     "name": "Name",
     "avatar": "Avatar",

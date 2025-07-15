@@ -39,7 +39,8 @@
   },
   "user": {
     "edit": {
-      "title": "编辑用户"
+      "title": "编辑用户",
+      "editTitle": "编辑用户"
     },
     "name": "姓名",
     "avatar": "头像",

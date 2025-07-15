@@ -41,6 +41,12 @@ class UserStore {
     };
   }
 
+  get filteringFields() {
+    return [
+      item => item.role === 'sub' || item.role === 'user'
+    ];
+  }
+
   get mediaInfo() {
     return {
       avatar: x => `users/${x.id}/avatar.jpg`
@@ -137,13 +143,13 @@ class UserStore {
       if (!users || users.length === 0) {
         // User doesn't exist, create a new one
         const newUser = {
-          id: `${clientStore.client.id}_${phone}_${Date.now()}`,
+          id: `${clientStore.client.id}_${phone}`,
           phone: phone,
           client_id: clientStore.client.id,
           name: `用户${phone.slice(-4)}`, // Default name using last 4 digits
           role: 'user',
           avatar: '',
-          createdAt: new Date().toISOString(),
+          date_created: new Date().toISOString(),
           isActive: true
         };
 
@@ -235,7 +241,7 @@ class UserStore {
   }
 
   toggleRole = async function(user) {
-    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    const newRole = user.role === 'sub' ? 'user' : 'sub';
     const updatedUser = { ...user, role: newRole };
     await this.save(updatedUser);
     this.fetchItems();

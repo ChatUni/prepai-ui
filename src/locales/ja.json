@@ -39,7 +39,8 @@
   },
   "user": {
     "edit": {
-      "title": "ユーザーを編集"
+      "title": "ユーザーを編集",
+      "editTitle": "ユーザーを編集"
     },
     "name": "名前",
     "avatar": "アバター",

@@ -13,7 +13,7 @@ const UserCard = observer(({ user, isProfile }) => (
           {t('user.subAdmin')}
         </span>
         <Toggle
-          checked={user.role === 'admin'}
+          checked={user.role === 'sub'}
           onChange={() => store.toggleRole(user)}
         />
       </div>
