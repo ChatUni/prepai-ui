@@ -36,6 +36,12 @@ class CourseStore {
     };
   }
 
+  get mediaInfo() {
+    return {
+      url: x => `series/${this.series.id}/courses/${x.id}/video.mp4`
+    }
+  }
+
   get validator() {
     return {
       instructor_id: 1,
@@ -50,33 +56,26 @@ class CourseStore {
     this.items = series.courses;
   }
 
-  fetchItemList = function() {
-    return this.series.courses;
+  fetchItemList = async function(isReload) {
+    let series = this.series;
+
+    if (isReload) {
+      await seriesStore.fetchItems();
+      series = seriesStore.items.find(x => x.id == this.series.id);
+      this.setSeries(series);
+    }
+
+    return series.courses;
   };
   
-  saveCourse = async function(item) {
+  save = async function(item) {
     return await save('courses', {
       ...item,
+      instructor_id: +item.instructor_id,
       isVideo: 1,
+      duration: +item.duration,
       date_modified: new Date().toISOString()
     });
-  }
-
-  save = async function(item = this.editingItem || {}) {
-    if (!item.id) {
-      const data = await this.saveCourse(item);
-      item.id = data.id;
-    }
-
-    if (item.url instanceof File) {
-      const url = await uploadImage(item.url, `series/${this.series.id}/courses/${item.id}/video.mp4`);
-      item.url = url;
-    }
-
-    await this.saveCourse(item);
-
-    await seriesStore.fetchItems();
-    this.setSeries(seriesStore.items.find(x => x.id == this.series.id));
   }
 }
 

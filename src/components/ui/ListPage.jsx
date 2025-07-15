@@ -76,7 +76,7 @@ const ListPage = observer(({
       
       {showSearchBar && <SearchBar store={store} filters={filters} />}
       
-      {!hasItems && (
+      {/* {!hasItems && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">
             {store?.searchQuery
@@ -85,7 +85,7 @@ const ListPage = observer(({
             }
           </p>
         </div>
-      )}
+      )} */}
       
       <div className={className}>
         {/* Shortcut Buttons */}

@@ -1,3 +1,4 @@
+import { uploadImage } from '../utils/uploadHelper';
 import { t } from './languageStore';
 
 class EditingStore {
@@ -116,8 +117,8 @@ class EditingStore {
     }
 
     try {
-      await this.save(this.editingItem);
-      if (isReload && this.fetchItems) await this.fetchItems();
+      await this.saveItem(this.editingItem);
+      if (isReload && this.fetchItems) await this.fetchItems(true);
       this.isDirty = false;
     } catch (e) {
       console.log(e);
@@ -127,6 +128,28 @@ class EditingStore {
     }
   };
 
+  saveItem = async function(item = this.editingItem || {}) {
+    let dirty = true;
+
+    if (!item.id) {
+      const data = await this.save(item);
+      item.id = data[0].id;
+      dirty = false;
+    }
+
+    if (this.mediaInfo) {
+      for (const k of Object.keys(this.mediaInfo)) {
+        if (item[k] instanceof File) {
+          const url = await uploadImage(item[k], this.mediaInfo[k](item));
+          item[k] = url;
+          dirty = true;
+        }
+      }
+    }
+
+    dirty && await this.save(item);
+  }
+  
   confirmDelete = async function() {
     if (!this.editingItem) return;
     try {

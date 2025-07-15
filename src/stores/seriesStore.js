@@ -55,6 +55,13 @@ class SeriesStore {
     };
   }
 
+  get mediaInfo() {
+    return {
+      image: x => `series/${x.id}/cover.jpg`,
+      desc: x => `series/${x.id}/desc.jpg`
+    }
+  }
+
   get allInstructors() {
     return instructorStore.items || [];
   }
@@ -98,8 +105,6 @@ class SeriesStore {
       },
       {
         title: 'courses',
-        isValid: x => x.courses && x.courses.length > 0,
-        error: 'coursesRequired',
         // save: x => this.saveCourses(x)
       }
     ];
@@ -119,27 +124,8 @@ class SeriesStore {
     }));
   }
 
-  save = async function(item = this.editingItem || {}) {
-    if (!item.id) {
-      const data = await this.saveSeries(item);
-      item.id = data.id;
-    }
-
-    if (item.image instanceof File) {
-      const url = await uploadImage(item.image, `series/${item.id}/cover.jpg`);
-      item.image = url;
-    }
-
-    if (item.descType === 'image' && item.desc instanceof File) {
-      const url = await uploadImage(item.desc, `series/${item.id}/desc.jpg`);
-      item.desc = url;
-    }
-
-    await this.saveSeries(item);
-  }
-
-  saveSeries = async function(item) {
-    await save('series', omit({
+  save = async function(item) {
+    return await save('series', omit({
       ...item,
       date_modified: new Date().toISOString()
     }, ['_id', 'courses', 'isPaid']));

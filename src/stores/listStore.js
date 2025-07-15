@@ -43,12 +43,12 @@ class ListStore {
     this.searchQuery = query;
   };
 
-  fetchItems = async function() {
+  fetchItems = async function(isReload) {
     this.loading = true;
     this.error = null;
     
     try {
-      const items = await this.fetchItemList();
+      const items = await this.fetchItemList(isReload);
       runInAction(() => {
         this.items = items;
         this.loading = false;

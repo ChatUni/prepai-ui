@@ -29,6 +29,12 @@ class InstructorStore {
     };
   }
 
+  get mediaInfo() {
+    return {
+      image: x => `instructors/${x.id}/image.jpg`
+    }
+  }
+
   get validator() {
     return {
       name: 1,
@@ -40,22 +46,8 @@ class InstructorStore {
     return await get('instructors', { clientId: clientStore.client.id });
   };
   
-  saveInstructor = async function(item) {
+  save = async function(item) {
     return await save('instructors', item);
-  }
-
-  save = async function(item = this.editingItem || {}) {
-    if (!item.id) {
-      const data = await this.saveInstructor(item);
-      item.id = data.id;
-    }
-
-    if (item.image instanceof File) {
-      const url = await uploadImage(item.image, `instructors/${item.id}/image.mp4`);
-      item.image = url;
-    }
-
-    await this.saveInstructor(item);
   }
 }
 

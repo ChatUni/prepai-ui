@@ -44,6 +44,8 @@ const useDialogSteps = ({ store }) => {
     setError('');
     if (currentStep === store.stepData.length) {
       // onComplete?.();
+      clearStep();
+      store.closeEditDialog();
     } else {
       nextStep();
     }
