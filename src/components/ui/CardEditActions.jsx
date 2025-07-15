@@ -8,6 +8,8 @@ const CardEditActions = observer(({
   store,
   item,
   hideDelete,
+  hideDrag,
+  hideVisibility,
   onTop = false,
 }) => {
   const handleClick = (handler) => (e) => {
@@ -26,19 +28,21 @@ const CardEditActions = observer(({
         />
       ) : (
         <>
-          <ActionButton
-            onClick={handleClick('openVisibilityDialog')}
-            color="blue"
-            icon={item.hidden ? 'FiEyeOff' : 'FiEye'}
-            title={t(`${store.name}.${item.hidden ? 'show' : 'hide'}`)}
-          />
+          {!hideVisibility &&
+            <ActionButton
+              onClick={handleClick('openVisibilityDialog')}
+              color="blue"
+              icon={item.hidden ? 'FiEyeOff' : 'FiEye'}
+              title={t(`${store.name}.${item.hidden ? 'show' : 'hide'}`)}
+            />
+          }
           <ActionButton
             onClick={handleClick('openEditDialog')}
             color="green"
             icon="FiEdit"
             title={t(`${store.name}.edit.editTitle`)}
           />
-          {hideDelete && !hideDelete(item) && (
+          {(!hideDelete || !hideDelete(item)) && (
             <ActionButton
               onClick={handleClick('openDeleteDialog')}
               color="red"
@@ -46,10 +50,9 @@ const CardEditActions = observer(({
               title={t(`${store.name}.edit.delete`)}
             />
           )}
-          <MdDragIndicator
-            className="text-gray-400 text-xl cursor-move"
-            aria-label="Drag to reorder"
-          />
+          {!hideDrag &&
+            <MdDragIndicator className="text-gray-400 text-xl cursor-move" aria-label="Drag to reorder" />
+          }
         </>
       )}
     </div>

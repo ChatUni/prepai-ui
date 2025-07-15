@@ -61,7 +61,8 @@
       "coupons": "Coupons",
       "admin_portal": "Admin Portal",
       "logout": "Logout",
-      "valid_until": "Valid until"
+      "valid_until": "Valid until",
+      "membership_expires": "Membership expires"
     },
     "admin_page": {
       "title": "Admin Portal",

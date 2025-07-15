@@ -61,7 +61,8 @@
       "coupons": "クーポン",
       "admin_portal": "管理ポータル",
       "logout": "ログアウト",
-      "valid_until": "有効期限"
+      "valid_until": "有効期限",
+      "membership_expires": "メンバーシップ有効期限"
     },
     "admin_page": {
       "title": "管理ポータル",

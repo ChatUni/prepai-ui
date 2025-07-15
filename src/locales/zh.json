@@ -61,7 +61,8 @@
       "coupons": "优惠券",
       "admin_portal": "管理后台",
       "logout": "退出登录",
-      "valid_until": "有效期至"
+      "valid_until": "有效期至",
+      "membership_expires": "会员到期时间"
     },
     "admin_page": {
       "title": "管理后台",

@@ -22,10 +22,6 @@ class UserStore {
     return 'user';
   }
   
-  get userName() {
-    return this.user.name || t('menu.account_page.guest');
-  }
-
   get searchableFields() {
     return ['name', 'id', 'phone'];
   }
@@ -47,10 +43,6 @@ class UserStore {
 
   get isLoggedIn() {
     return this.user.isLoggedIn;
-  }
-
-  get avatar() {
-    return this.user.avatar || DEFAULT_AVATAR;
   }
 
   get isClientAdmin() {
@@ -187,24 +179,40 @@ class UserStore {
     return Promise.resolve(this.coupons);
   }
 
+  getUserName = function(user = this.user) {
+    return user.name || t('menu.account_page.guest');
+  }
+
+  getAvatar = function(user = this.user) {
+    return user.avatar || DEFAULT_AVATAR;
+  }
+
   isSeriesPaid = function(id) {
     return this.isPaid('series', id);
+  }
+
+  getExpireDate = function(type, id) {
+    if (!this.user.orders) return null;
+    
+    const matchingOrder = this.user.orders.find(order =>
+      order.client_id == clientStore.client.id &&
+      order.product_id.startsWith(type) &&
+      (!id || order.product_id.endsWith(`_${id}`)) &&
+      order.status === 'PAID' &&
+      order.expires
+    );
+    
+    return matchingOrder ? new Date(matchingOrder.expires) : null;
   }
 
   isPaid = function(type, id) {
     if (this.isAdmin) return true;
     
-    if (!this.user.orders) return false;
+    const expireDate = this.getExpireDate(type, id);
+    if (!expireDate) return false;
     
     const now = new Date();
-    return this.user.orders.some(order =>
-      order.client_id == clientStore.client.id &&
-      order.product_id.startsWith(type) &&
-      (!id || order.product_id.endsWith(`_${id}`)) &&
-      order.status === 'PAID' &&
-      order.expires &&
-      new Date(order.expires) > now
-    );
+    return expireDate > now;
   }
 }
 
