@@ -19,6 +19,7 @@ const UserCard = observer(({ user, isProfile }) => (
       <div className="ml-4">
         <h2 className="text-xl font-semibold">{store.getUserName(user)}</h2>
         <p className="text-gray-600">ID: {user.id}</p>
+        <p className="text-gray-600">{`${t('user.phone')}: ${user.phone}`}</p>
         {isProfile && store.isMember && (
           <p className="text-green-600 text-sm">
             {t('menu.account_page.membership_expires')}: {store.getExpireDate('membership')?.toLocaleDateString()}

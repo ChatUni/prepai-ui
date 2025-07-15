@@ -6,6 +6,7 @@ import languageStore, { t } from '../../../stores/languageStore';
 import DEFAULT_AVATAR from '../../../assets/avatar.png';
 import MenuListItem from '../../ui/MenuListItem';
 import UserCard from './UserCard';
+import UserListPage from './UserListPage';
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
@@ -91,6 +92,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('logout')}
         />
       </div>
+      <UserListPage showSearchBar={false} hideList={true} />
     </div>
   );
 });

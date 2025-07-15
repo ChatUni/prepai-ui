@@ -12,6 +12,8 @@ import EditingStore from './editingStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
+import { omit } from '../utils/utils';
+import GroupedListStore from './groupedListStore';
 
 class UserStore {
   user = {};
@@ -22,6 +24,10 @@ class UserStore {
     return 'user';
   }
   
+  get pageTitle() {
+    return t('menu.admin_page.sub_admin_settings');
+  }
+
   get searchableFields() {
     return ['name', 'id', 'phone'];
   }
@@ -70,13 +76,26 @@ class UserStore {
   }
 
   initData = async function() {
-    await instructorStore.fetchItems();
-    await seriesStore.fetchItems();
-    await assistantStore.fetchItems();
-    await membershipStore.fetchItems();
-    await examStore.fetchItems();
+    if (clientStore.client?.id) {
+      await this.fetchItems();
+      await instructorStore.fetchItems();
+      await seriesStore.fetchItems();
+      await assistantStore.fetchItems();
+      await membershipStore.fetchItems();
+      await examStore.fetchItems();
+    }
   }
 
+  fetchItemList = async function() {
+    return await get('users', { clientId: clientStore.client.id });
+  };
+  
+  save = async function(item) {
+    const user = await save('users', omit(item, ['orders', 'isLoggedIn']));
+    this.user = { ...item, ...user[0] };
+    return this.user;
+  }
+  
   checkSavedLoginState = async function() {
     try {
       await clientStore.loadClient();
@@ -105,11 +124,11 @@ class UserStore {
     this.saveLoginState();
   }
 
-  loginWithPhone = async function(phoneNumber, verificationCode) {
+  loginWithPhone = async function(phone, verificationCode) {
     try {
       // Get user info from API using phone and client ID
-      const users = await get('users', {
-        phone: phoneNumber,
+      const users = await get('user', {
+        phone: phone,
         clientId: clientStore.client.id
       });
 
@@ -118,10 +137,10 @@ class UserStore {
       if (!users || users.length === 0) {
         // User doesn't exist, create a new one
         const newUser = {
-          id: `${clientStore.client.id}_${phoneNumber}_${Date.now()}`,
-          phone: phoneNumber,
+          id: `${clientStore.client.id}_${phone}_${Date.now()}`,
+          phone: phone,
           client_id: clientStore.client.id,
-          name: `用户${phoneNumber.slice(-4)}`, // Default name using last 4 digits
+          name: `用户${phone.slice(-4)}`, // Default name using last 4 digits
           role: 'user',
           avatar: '',
           createdAt: new Date().toISOString(),
@@ -140,7 +159,7 @@ class UserStore {
           ...this.user,
           ...user,
           isLoggedIn: true,
-          phoneNumber: phoneNumber
+          phone: phone
         };
         this.saveLoginState();
       });
@@ -216,4 +235,4 @@ class UserStore {
   }
 }
 
-export default combineStores(PageStore, ListStore, EditingStore, UserStore);
+export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, UserStore);

@@ -37,6 +37,17 @@
     "password": "Password",
     "loginError": "Invalid email or password"
   },
+  "user": {
+    "edit": {
+      "title": "Edit User"
+    },
+    "name": "Name",
+    "avatar": "Avatar",
+    "phone": "Phone",
+    "search": {
+      "placeholder": "Search users by name or phone..."
+    }
+  },
   "menu": {
     "home": "Home",
     "courses": "Courses",
@@ -80,6 +91,7 @@
       "manage_assistant": "Manage Assistants",
       "price_settings": "Price Settings",
       "system_settings": "System Settings",
+      "sub_admin_settings": "Sub Admin Settings",
       "basic_settings": "Basic Settings",
       "banner_settings": "Banner Settings",
       "back": "Back"

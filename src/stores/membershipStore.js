@@ -121,14 +121,14 @@ class MembershipStore {
       const orderData = {
         amount: this.selectedMembership.price,
         body: `${this.selectedMembership.name} - ${t(`membership.types.${membershipTypes[this.selectedMembership.type] || 'monthly'}`)}`,
-        userId: userStore.user?.id || userStore.user?.phoneNumber || 'guest',
+        userId: userStore.user?.id || userStore.user?.phone || 'guest',
         productId: `membership_${this.selectedMembership.id}`,
         detail: this.selectedMembership.desc || '',
         attach: JSON.stringify({
           membershipId: this.selectedMembership.id,
           membershipType: membershipTypes[this.selectedMembership.type] || 'monthly',
           clientId: clientStore.client.id,
-          userId: userStore.user?.id || userStore.user?.phoneNumber
+          userId: userStore.user?.id || userStore.user?.phone
         })
       };
 

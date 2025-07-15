@@ -15,6 +15,7 @@ const routeMap = {
   'upload-questions': '/exam/upload',
   'question-distribution': '/exam/distribution',
   'course-settings': '/series/settings',
+  'sub-admin-settings': '/users/settings',
   'exam-settings': '/exams/settings',
   'price-settings': '/memberships/settings',
   'basic-settings': '/client/settings',
@@ -38,6 +39,10 @@ const AdminPage = observer(() => {
       <MenuListItem
         label={t('menu.admin_page.system_settings')}
         onClick={handleSystemSettingsClick}
+      />
+      <MenuListItem
+        label={t('menu.admin_page.sub_admin_settings')}
+        onClick={() => navigate(routeMap['sub-admin-settings'])}
       />
       <MenuListItem
         label={t('menu.admin_page.course_settings')}

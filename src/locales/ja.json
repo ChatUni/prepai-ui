@@ -37,6 +37,17 @@
     "password": "パスワード",
     "loginError": "メールアドレスまたはパスワードが無効です"
   },
+  "user": {
+    "edit": {
+      "title": "ユーザーを編集"
+    },
+    "name": "名前",
+    "avatar": "アバター",
+    "phone": "電話番号",
+    "search": {
+      "placeholder": "名前やメールでユーザーを検索..."
+    }
+  },
   "menu": {
     "home": "ホーム",
     "courses": "コース",
@@ -80,6 +91,7 @@
       "manage_assistant": "アシスタント管理",
       "price_settings": "価格設定",
       "system_settings": "システム設定",
+      "sub_admin_settings": "サブ管理者設定",
       "basic_settings": "基本設定",
       "banner_settings": "バナー設定",
       "back": "戻る"

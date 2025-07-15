@@ -15,7 +15,7 @@ class ListStore {
 
     if (this.searchQuery && this.searchableFields) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(item => this.searchableFields.some(field => (item[field] || '').toLowerCase().includes(query)));
+      filtered = filtered.filter(item => this.searchableFields.some(field => (item[field].toString() || '').toLowerCase().includes(query)));
     }
 
     (this.filteringFields || []).forEach(filter => {

@@ -48,7 +48,7 @@ const steps = [
       <CourseListPage series={store.editingItem} />
     </div>
   )
-].map(observer);
+].map(x => observer(x));
 
 const EditSeriesPage = ({ step }) => {
   const Step = steps[step - 1];
