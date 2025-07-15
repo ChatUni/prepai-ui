@@ -9,7 +9,6 @@ import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
 const membershipTypes = [
-  "all",
   "monthly",
   "annually",
   "lifetime",
@@ -46,12 +45,21 @@ class MembershipStore {
     };
   }
 
+  get validator() {
+    return {
+      name: 1,
+      type: 1,
+      price: 1,
+      desc: 1,
+    }
+  }
+
   get membershipTypes() {
-    return membershipTypes.map(x => ({ value: x, label: `membership.types.${x}` }));
+    return membershipTypes.map((x, i) => ({ value: i, label: t(`membership.types.${x}`) }));
   }
 
   get editingType() {
-    return membershipTypes[this.editingMembership.type];
+    return membershipTypes[this.editingItem.type];
   }
 
   setSelectedType = (type) => {
@@ -77,7 +85,7 @@ class MembershipStore {
   save = async function(item) {
     item.price = parseFloat(item.price) || 0;
     item.orig_price = parseFloat(item.orig_price) || 0;
-    await save('memberships', item);
+    return await save('memberships', item);
   };
 
   isGroupDanger = function(group) {

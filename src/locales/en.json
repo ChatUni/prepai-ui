@@ -510,8 +510,8 @@
     "name": "Membership Name",
     "type": "Type",
     "price": "Price",
-    "originalPrice": "Original Price",
-    "description": "Description",
+    "orig_price": "Original Price",
+    "desc": "Description",
     "types": {
       "all": "All Types",
       "monthly": "Monthly",
@@ -519,11 +519,14 @@
       "lifetime": "Lifetime",
       "trial": "Trial"
     },
+    "selectType": "Select Type",
     "search": {
       "placeholder": "Search memberships by name..."
     },
     "createNew": "Create New Membership",
-    "edit": "Edit Membership",
+    "edit": {
+      "title": "Edit Membership"
+    },
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
     "noMemberships": "No memberships configured",

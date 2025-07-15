@@ -510,8 +510,8 @@
     "name": "メンバーシップ名",
     "type": "タイプ",
     "price": "価格",
-    "originalPrice": "元価格",
-    "description": "説明",
+    "orig_price": "元価格",
+    "desc": "説明",
     "types": {
       "all": "全てのタイプ",
       "monthly": "月額",
@@ -519,11 +519,14 @@
       "lifetime": "ライフタイム",
       "trial": "トライアル"
     },
+    "selectType": "タイプを選択",
     "search": {
       "placeholder": "メンバーシップ名で検索..."
     },
     "createNew": "新しいメンバーシップを作成",
-    "edit": "メンバーシップを編集",
+    "edit": {
+      "title": "メンバーシップを編集"
+    },
     "delete": "削除",
     "confirmDelete": "「{name}」メンバーシップを削除してもよろしいですか？",
     "noMemberships": "メンバーシップが設定されていません",

@@ -509,8 +509,8 @@
     "name": "会员名称",
     "type": "类型",
     "price": "价格",
-    "originalPrice": "原价",
-    "description": "描述",
+    "orig_price": "原价",
+    "desc": "描述",
     "types": {
       "all": "全部类型",
       "monthly": "月卡",
@@ -518,11 +518,14 @@
       "lifetime": "终身会员",
       "trial": "试用"
     },
+    "selectType": "选择类型",
     "search": {
       "placeholder": "搜索会员名称..."
     },
     "createNew": "创建会员",
-    "edit": "编辑会员",
+    "edit": {
+      "title": "编辑会员"
+    },
     "delete": "删除",
     "confirmDelete": "确定要删除「{name}」会员吗？",
     "noMemberships": "暂无会员设置",
