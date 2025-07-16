@@ -80,7 +80,8 @@
       "admin_portal": "管理ポータル",
       "logout": "ログアウト",
       "valid_until": "有効期限",
-      "membership_expires": "メンバーシップ有効期限"
+      "membership_expires": "メンバーシップ有効期限",
+      "about": "について"
     },
     "admin_page": {
       "title": "管理ポータル",
@@ -114,6 +115,7 @@
       "myFavorites": "お気に入り",
       "playHistory": "再生履歴",
       "privateInstruction": "個人指導リアルタイム音声",
+      "about": "について",
       "video": "ビデオ",
       "document": "ドキュメント",
       "courses": "コース",
@@ -577,7 +579,10 @@
   "client": {
     "name": "クライアント名",
     "desc": "説明",
-    "logo": "ロゴ"
+    "logo": "ロゴ",
+    "phone": "電話番号",
+    "email": "メールアドレス",
+    "qrcode": "QRコード"
   },
   "generic": {
     "listPage": {
@@ -587,5 +592,17 @@
       "loading": "読み込み中...",
       "error": "データの読み込みエラー"
     }
+  },
+  "about": {
+    "title": "私たちについて",
+    "subtitle": "私たちの組織について詳しく知る",
+    "logoAlt": "組織ロゴ",
+    "defaultName": "私たちの組織",
+    "description": "私たちの組織について",
+    "noDescription": "説明がありません。",
+    "contact": "お問い合わせ情報",
+    "contactInfo": "サービスについて詳しくは、お気軽にお問い合わせください。",
+    "services": "私たちのサービス",
+    "servicesInfo": "包括的な教育・研修ソリューションを提供しています。"
   }
 }

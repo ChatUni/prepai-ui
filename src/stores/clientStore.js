@@ -29,18 +29,16 @@ class ClientStore {
       name: '',
       desc: '',
       logo: '',
-      settings: {
-        banners: [],
-        examGroups: [],
-        assistantGroups: [],
-        seriesGroups: [],
-      }
+      phone: '',
+      email: '',
+      qrcode: '',
     };
   }
 
   get mediaInfo() {
     return {
-      logo: x => `logo.jpg`
+      logo: x => `logo.jpg`,
+      qrcode: x => `qrcode.jpg`
     }
   }
 

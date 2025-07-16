@@ -80,7 +80,8 @@
       "admin_portal": "Admin Portal",
       "logout": "Logout",
       "valid_until": "Valid until",
-      "membership_expires": "Membership expires"
+      "membership_expires": "Membership expires",
+      "about": "About"
     },
     "admin_page": {
       "title": "Admin Portal",
@@ -114,6 +115,7 @@
       "myFavorites": "My Favorites",
       "playHistory": "Play History",
       "privateInstruction": "Private Real-time Voice Instruction",
+      "about": "About",
       "document": "Document",
       "courses": "Courses",
       "mostViewed": "Most Viewed",
@@ -577,7 +579,10 @@
   "client": {
     "name": "Client Name",
     "desc": "Description",
-    "logo": "Logo"
+    "logo": "Logo",
+    "phone": "Phone",
+    "email": "Email",
+    "qrcode": "QR Code"
   },
   "generic": {
     "listPage": {
@@ -587,5 +592,17 @@
       "loading": "Loading...",
       "error": "Error loading data"
     }
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Learn more about our organization",
+    "logoAlt": "Organization Logo",
+    "defaultName": "Our Organization",
+    "description": "About Our Organization",
+    "noDescription": "No description available.",
+    "contact": "Contact Information",
+    "contactInfo": "Get in touch with us for more information about our services.",
+    "services": "Our Services",
+    "servicesInfo": "We provide comprehensive educational and training solutions."
   }
 }

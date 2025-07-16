@@ -7,6 +7,7 @@ import PageTitle from '../../ui/PageTitle';
 import ConfirmButtons from '../../ui/ConfirmButtons';
 import { t } from '../../../stores/languageStore';
 import PageEditContainer from '../../ui/PageEditContainer';
+import FormRadio from '../../ui/FormRadio';
 
 const EditClientPage = observer(() => (
   <PageEditContainer store={store} item={store.client}>
@@ -14,6 +15,9 @@ const EditClientPage = observer(() => (
     <FormInput store={store} field="name" />
     <FormInput store={store} field="desc" rows={3} />
     <ImageUpload store={store} field="logo" />
+    <FormInput store={store} field="phone" />
+    <FormInput store={store} field="email" />
+    <ImageUpload store={store} field="qrcode" />
   </PageEditContainer>
 ));
 

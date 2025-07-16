@@ -43,7 +43,8 @@ class UserStore {
 
   get filteringFields() {
     return [
-      item => item.role === 'sub' || item.role === 'user'
+      item => !!this.searchQuery,
+      item => item.role === 'sub' || item.role === 'user',
     ];
   }
 

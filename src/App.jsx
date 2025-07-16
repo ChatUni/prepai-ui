@@ -52,6 +52,7 @@ import uiStore from './stores/uiStore';
 import db from './utils/db';
 import clientStore from './stores/clientStore';
 import EditClientPage from './components/pages/client/EditClientPage';
+import AboutPage from './components/pages/client/AboutPage';
 import UserListPage from './components/pages/account/UserListPage';
 
 // RouteHandler component to sync route store with current location
@@ -228,6 +229,11 @@ const MainLayout = observer(() => {
                 <Route path="/users/settings" element={
                   <AuthRoute>
                     <UserListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/about" element={
+                  <AuthRoute>
+                    <AboutPage />
                   </AuthRoute>
                 } />
               </Routes>

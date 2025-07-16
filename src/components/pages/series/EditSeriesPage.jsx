@@ -9,16 +9,16 @@ import ImageUpload from '../../ui/ImageUpload';
 import CourseListPage from './CourseListPage';
 
 const steps = [
-  () => <FormSelect store={store} field="group" options={clientStore.client.settings.seriesGroups} required />,
+  () => <FormSelect store={store} field="group" options={clientStore.client.settings.seriesGroups} />,
 
   () => (
     <div className="space-y-6">
-      <FormInput store={store} field="name" required />
-      <FormInput store={store} field="category" choices={store.uniqueCategories} required />
+      <FormInput store={store} field="name" />
+      <FormInput store={store} field="category" choices={store.uniqueCategories} />
     </div>
   ),
 
-  () => <ImageUpload store={store} field="image" required />,
+  () => <ImageUpload store={store} field="image" />,
 
   () => (
     <>
@@ -30,16 +30,16 @@ const steps = [
       />
 
       {store.editingItem.descType === 'text'
-        ? <FormInput store={store} field="desc" rows={10} required hasTitle={false} />
-        : <ImageUpload store={store} field="desc" required hasTitle={false} />
+        ? <FormInput store={store} field="desc" rows={10} hasTitle={false} />
+        : <ImageUpload store={store} field="desc" hasTitle={false} />
       }
     </>
   ),
 
   () => (
     <div className="space-y-6">
-      <FormInput store={store} field="price" type="number" required />
-      <FormSelect store={store} field="duration" options={store.durationOptions} required />
+      <FormInput store={store} field="price" type="number" />
+      <FormSelect store={store} field="duration" options={store.durationOptions} />
     </div>
   ),
 

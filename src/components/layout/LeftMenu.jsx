@@ -33,6 +33,7 @@ const LeftMenu = observer(({ onItemClick }) => {
       { id: 'document-collection', label: t('menu.categories.myFavorites'), category: 'documentFavorites', clickable: true, isVideo: false, parentCategory: 'documentCourses' },
       { id: 'document-history', label: t('menu.categories.playHistory'), category: 'documentPlayHistory', clickable: true, isVideo: false, parentCategory: 'documentCourses' },
       { id: 'private', label: t('menu.categories.privateInstruction'), category: 'private', highlight: true, clickable: true, isMainCategory: true },
+      { id: 'about', label: t('menu.categories.about'), category: 'about', highlight: true, clickable: true, isMainCategory: true },
     ];
   };
 
@@ -51,6 +52,10 @@ const LeftMenu = observer(({ onItemClick }) => {
         break;
       case 'private':
         navigate('/instructor');
+        setExpandedSection(null);
+        break;
+      case 'about':
+        navigate('/about');
         setExpandedSection(null);
         break;
       case 'video':
@@ -103,6 +108,7 @@ const LeftMenu = observer(({ onItemClick }) => {
           (item.id === 'exam' && path.startsWith('/exam')) ||
           (item.id === 'series' && path.startsWith('/series')) ||
           (item.id === 'private' && path.startsWith('/instructor')) ||
+          (item.id === 'about' && path.startsWith('/about')) ||
           (item.id === 'video' && path === '/' && uiStore.courseTypeFilter) ||
           (item.id === 'document' && path === '/' && !uiStore.courseTypeFilter) ||
           (item.id.includes('collection') && path === '/favorites') ||

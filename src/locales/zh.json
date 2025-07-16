@@ -80,7 +80,8 @@
       "admin_portal": "管理后台",
       "logout": "退出登录",
       "valid_until": "有效期至",
-      "membership_expires": "会员到期时间"
+      "membership_expires": "会员到期时间",
+      "about": "关于"
     },
     "admin_page": {
       "title": "管理后台",
@@ -576,7 +577,10 @@
   "client": {
     "name": "客户名称",
     "desc": "描述",
-    "logo": "标志"
+    "logo": "标志",
+    "phone": "电话",
+    "email": "邮箱",
+    "qrcode": "二维码"
   },
   "generic": {
     "listPage": {
@@ -586,5 +590,17 @@
       "loading": "加载中...",
       "error": "数据加载错误"
     }
+  },
+  "about": {
+    "title": "关于我们",
+    "subtitle": "了解更多关于我们组织的信息",
+    "logoAlt": "组织标志",
+    "defaultName": "我们的组织",
+    "description": "关于我们的组织",
+    "noDescription": "暂无描述信息。",
+    "contact": "联系信息",
+    "contactInfo": "如需了解更多关于我们服务的信息，请随时与我们联系。",
+    "services": "我们的服务",
+    "servicesInfo": "我们提供全面的教育和培训解决方案。"
   }
 }

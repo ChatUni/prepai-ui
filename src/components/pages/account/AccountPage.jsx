@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import userStore from '../../../stores/userStore';
-import languageStore, { t } from '../../../stores/languageStore';
+import { t } from '../../../stores/languageStore';
 import DEFAULT_AVATAR from '../../../assets/avatar.png';
 import MenuListItem from '../../ui/MenuListItem';
 import UserCard from './UserCard';
@@ -10,7 +10,6 @@ import UserListPage from './UserListPage';
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
-  const t = languageStore.t;
   
   const handleMenuItemClick = (action) => {
     console.log(`Menu item clicked: ${action}`);
@@ -38,6 +37,9 @@ const AccountPage = observer(() => {
       case 'coupons':
         // Fetch and display coupons
         userStore.fetchCoupons();
+        break;
+      case 'about':
+        navigate('/about');
         break;
       case 'logout':
         // Perform logout and redirect to login page
@@ -87,6 +89,10 @@ const AccountPage = observer(() => {
             onClick={() => handleMenuItemClick('admin')}
           />
         }
+        <MenuListItem
+          label={t('menu.account_page.about')}
+          onClick={() => handleMenuItemClick('about')}
+        />
         <MenuListItem
           label={t('menu.account_page.logout')}
           onClick={() => handleMenuItemClick('logout')}

@@ -7,6 +7,7 @@ import routeStore from '../../stores/routeStore';
 import LanguageSelector from '../ui/LanguageSelector';
 import BackButton from '../ui/BackButton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import clientStore from '../../stores/clientStore';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();
@@ -66,9 +67,9 @@ const TopNavBar = observer(({ onMenuToggle }) => {
           <div className="flex-none">
             <Logo />
           </div>
-          
+
           {/* Login/User info */}
-          <div className="ml-4 hidden md:block">
+          {/* <div className="ml-4 hidden md:block">
             {isLoggedIn ? (
               <div className="text-sm text-gray-600">
                 {userStore.user.name}
@@ -81,16 +82,20 @@ const TopNavBar = observer(({ onMenuToggle }) => {
                 {t('auth.login')}
               </button>
             )}
-          </div>
+          </div> */}
+        </div>
+
+        <div className="flex-grow text-3xl font-bold ml-4 text-center">
+          {clientStore.client.name}
         </div>
 
         {/* Language selector */}
-        <div className="absolute right-16 md:right-4 top-4">
+        {/* <div className="absolute right-16 md:right-4 top-4">
           <LanguageSelector />
-        </div>
+        </div> */}
         
         {/* Flexible middle section with desktop navigation items */}
-        <div className="flex-grow flex justify-center">
+        <div className="flex justify-center mr-2">
           <div className="hidden md:flex gap-4 lg:gap-12">
             {navItems.map(item => {
               const isActive = uiStore.activeNavItem === item.label;
@@ -111,7 +116,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         </div>
         
         {/* Right side - hamburger menu */}
-        <div className="md:hidden">
+        {/* <div className="md:hidden">
           <button
             className="text-gray-600 focus:outline-none"
             onClick={onMenuToggle}
@@ -132,7 +137,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
         
         {/* No duplicate desktop navigation needed */}
       </div>
