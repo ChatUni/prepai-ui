@@ -13,7 +13,7 @@ const CHATGPT_MODEL = 'gpt-4o-mini';
 const chat = async (apiType, body, serverless = true) => {
   const useOpenRouter = apiType === 'openrouter';
   const headers = getResponseHeaders();
-
+console.log('OpenRouter: ', useOpenRouter)
   // Initialize appropriate client based on API choice
   if (useOpenRouter) {
     if (!process.env.OPENROUTER_API_KEY) {

@@ -55,24 +55,17 @@ class AssistantChatStore {
       
       // Call OpenAI API with the assistant's prompt as system message
       try {
-        const response = await post('chat', useOpenRouter ? { api: 'openrouter' } : {}, {
+        const data = await post('chat', useOpenRouter ? { api: 'openrouter' } : {}, {
           model: this.selectedAssistant.model,
           messages: [
-            { role: 'system', content: this.selectedAssistant.prompt },
+            { role: 'system', content: this.selectedAssistant.prompt || '' },
             ...this.messages.map(msg => ({
               role: msg.sender === 'user' ? 'user' : 'assistant',
-              content: msg.text
+              content: msg.text || ''
             }))
           ]
         });
         
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error response from API:", errorText);
-          throw new Error(`${useOpenRouter ? 'OpenRouter' : 'OpenAI'} API request failed with status ${response.status}: ${errorText}`);
-        }
-        
-        const data = await response.json();
         console.log("Received response from API:", data);
         
         // Add assistant response to messages

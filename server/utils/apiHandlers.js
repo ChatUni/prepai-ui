@@ -1,5 +1,5 @@
 const { get, save, remove, flat } = require('./db.js');
-const { handleUrlSigning, handleFileUpload, handleFileServing } = require('./volcHelper.js');
+const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete } = require('./volcHelper.js');
 const { WeChatPay, utils } = require('./wechat.js');
 const { sendSms } = require('./sms.js');
 const { chat } = require('../openai.js');
@@ -34,6 +34,7 @@ module.exports = {
       chat: (q, b) => chat(q.api, b, false),
       tos_sign: (q, b) => handleUrlSigning(b.url),
       tos_upload: (q, b) => handleFileUpload(b.file, b.key),
+      tos_delete: (q, b) => handleFileDelete(b.key),
       wechat_pay: async (q, b) => {
         try {
           // Initialize WeChat Pay with configuration

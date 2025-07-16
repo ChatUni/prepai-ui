@@ -98,7 +98,14 @@ class UserStore {
   
   save = async function(item) {
     const user = await save('users', omit(item, ['orders', 'isLoggedIn']));
-    if (item.id == this.user.id) this.user = { ...item, ...user[0] };
+    if (item.id == this.user.id) {
+      Object.keys(item).forEach(key => {
+        this.user[key] = item[key];
+      });
+      Object.keys(user[0]).forEach(key => {
+        this.user[key] = user[0][key];
+      });
+    }
     return user[0];
   }
   
@@ -108,7 +115,10 @@ class UserStore {
       const saveduser = localStorage.getItem('user');
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
-        const user = { ...this.user, ...parseduser };
+        Object.keys(parseduser).forEach(key => {
+          this.user[key] = parseduser[key];
+        });
+        const user = this.user;
         console.log('Restored login state:', user.isLoggedIn);
         await this.loginWithPhone(user.phone, '', parseduser);
       }
@@ -126,7 +136,9 @@ class UserStore {
   }
 
   setUser = function(info) {
-    this.user = { ...this.user, ...info };
+    Object.keys(info).forEach(key => {
+      this.user[key] = info[key];
+    });
     this.saveLoginState();
   }
 
@@ -162,12 +174,11 @@ class UserStore {
       }
       
       runInAction(() => {
-        this.user = {
-          ...this.user,
-          ...user,
-          isLoggedIn: true,
-          phone: phone
-        };
+        Object.keys(user).forEach(key => {
+          this.user[key] = user[key];
+        });
+        this.user.isLoggedIn = true;
+        this.user.phone = phone;
         !savedUser && this.saveLoginState();
       });
 

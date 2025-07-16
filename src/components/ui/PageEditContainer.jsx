@@ -2,13 +2,13 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import ConfirmButtons from './ConfirmButtons';
 
-const PageEditContainer = observer(({ store, children }) => {
+const PageEditContainer = observer(({ store, item, children }) => {
   useEffect(() => {
-    store.initPageEditing && store.initPageEditing();
+    store.initPageEditing && store.initPageEditing(item);
     return () => {
       store.exitPageEditing && store.exitPageEditing();
     };
-  }, [store]);
+  }, [store, item]);
 
   return (
     <div className="space-y-4">

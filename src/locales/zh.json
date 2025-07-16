@@ -524,7 +524,8 @@
     },
     "createNew": "创建会员",
     "edit": {
-      "title": "编辑会员"
+      "title": "编辑会员",
+      "delete": "删除会员"
     },
     "delete": "删除",
     "confirmDelete": "确定要删除「{name}」会员吗？",

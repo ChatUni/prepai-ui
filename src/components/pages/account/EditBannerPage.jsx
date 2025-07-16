@@ -64,6 +64,14 @@ const EditBannerPage = observer(() => {
         </div>
       </div>
 
+      <button
+        onClick={handleAdd}
+        className="mt-4 mb-4 flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        <FiPlus size={20} />
+        {t('series.banners.add')}
+      </button>
+
       <div className="grid gap-8">
         {clientStore.client.settings.banners.map((banner, index) => (
           <div key={index}>
@@ -86,14 +94,6 @@ const EditBannerPage = observer(() => {
           </div>
         ))}
       </div>
-
-      <button
-        onClick={handleAdd}
-        className="mt-4 flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        <FiPlus size={20} />
-        {t('series.banners.add')}
-      </button>
 
       <div className="flex justify-end gap-4 mt-8">
         <button

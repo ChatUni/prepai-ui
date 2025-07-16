@@ -178,6 +178,24 @@ const handleFileUpload = async (file, key) => {
   return { url };
 };
 
+// High-level function to handle file deletion
+const handleFileDelete = async (key) => {
+  try {
+    // Check if object exists before attempting to delete
+    await checkObjectExists({ Key: key });
+    
+    // Delete the object
+    await deleteObject({ Key: key });
+    
+    return { success: true, message: 'File deleted successfully' };
+  } catch (error) {
+    if (error.message.includes('Object not found')) {
+      return { success: true, message: 'File already deleted or does not exist' };
+    }
+    throw new Error(`Delete failed: ${error.message}`);
+  }
+};
+
 // Delete object from TOS
 const deleteObject = async (params) => {
   const tos = getTosClient();
@@ -241,5 +259,6 @@ module.exports = {
   parseBase64File,
   generateTosUrl,
   handleUrlSigning,
-  handleFileUpload
+  handleFileUpload,
+  handleFileDelete
 };

@@ -525,7 +525,8 @@
     },
     "createNew": "Create New Membership",
     "edit": {
-      "title": "Edit Membership"
+      "title": "Edit Membership",
+      "delete": "Delete Membership"
     },
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",

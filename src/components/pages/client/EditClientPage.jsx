@@ -9,9 +9,9 @@ import { t } from '../../../stores/languageStore';
 import PageEditContainer from '../../ui/PageEditContainer';
 
 const EditClientPage = observer(() => (
-  <PageEditContainer store={store}>
+  <PageEditContainer store={store} item={store.client}>
     <PageTitle title={t('menu.admin_page.basic_settings')} />
-    <FormInput store={store} field="name" required />
+    <FormInput store={store} field="name" />
     <FormInput store={store} field="desc" rows={3} />
     <ImageUpload store={store} field="logo" />
   </PageEditContainer>

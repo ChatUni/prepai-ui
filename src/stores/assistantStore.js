@@ -41,6 +41,12 @@ class AssistantStore {
     };
   }
 
+  get mediaInfo() {
+    return {
+      image: x => `assistants/${x.id}/image.jpg`
+    }
+  }
+
   get validator() {
     return {
       name: 1,
@@ -68,7 +74,7 @@ class AssistantStore {
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  initData = async function() {
+  init = async function() {
     await this.fetchOpenRouterModels();
   }
 
@@ -88,7 +94,7 @@ class AssistantStore {
     try {
       const response = await fetch('https://openrouter.ai/api/v1/models', {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+          'Authorization': `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`
         }
       });
       
@@ -110,7 +116,7 @@ class AssistantStore {
     this.loadingModels = true;
     
     try {      
-      await updateOpenRouterModels();
+      // await this.updateOpenRouterModels();
       const models = await get('models');
 
       runInAction(() => {

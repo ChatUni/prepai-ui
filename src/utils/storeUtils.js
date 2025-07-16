@@ -37,7 +37,7 @@ export const combineStores = (...storeClasses) => {
 
   console.log(combined);
 
-  // combined.initData && combined.initData();
+  combined.init && combined.init();
 
   return combined;
 };
