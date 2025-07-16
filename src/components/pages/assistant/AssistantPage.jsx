@@ -10,6 +10,7 @@ const AssistantPage = observer(() => (
     <div className="bg-white p-4">
       <ListPage
         store={store}
+        isGrouped={true}
         renderEdit={() => <EditAssistantPage />}
         renderItem={(assistant, index, group, { moveItem, isEditMode }, isFirstCard) => (
           <AssistantCard

@@ -482,15 +482,20 @@
       "delete": "删除分组",
       "confirmDelete": "确定要删除此分组吗？"
     },
-    "edit": "编辑考试",
+    "edit": {
+      "title": "编辑考试"
+    },
     "name": "考试名称",
+    "image": "图片",
     "cover": "封面图片",
     "desc": "描述",
     "upload_file": "上传文件",
     "delete": "删除考试",
     "hide": "隐藏考试",
+    "show": "显示考试",
     "confirmDelete": "确定要删除「{name}」考试吗？",
     "confirmHide": "确定要隐藏「{name}」考试吗？",
+    "confirmShow": "确定要显示「{name}」考试吗？",
     "noItems": "暂无可用考试"
   },
   "tools": {

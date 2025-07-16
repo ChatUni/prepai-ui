@@ -9,7 +9,6 @@ import languageStore from './stores/languageStore';
 import TopNavBar from './components/layout/TopNavBar';
 import LeftMenu from './components/layout/LeftMenu';
 import MainContent from './components/layout/MainContent';
-import InstructorPage from './components/pages/instructor/InstructorPage';
 import InstructorChatPage from './components/pages/instructor/InstructorChatPage';
 import FavoritesPage from './components/FavoritesPage';
 import VideoPlayerPage from './components/pages/course/VideoPlayerPage';
@@ -155,21 +154,6 @@ const MainLayout = observer(() => {
                 <Route path="/series/paid" element={
                   <AuthRoute>
                     <SeriesListPage showPaidOnly={true} />
-                  </AuthRoute>
-                } />
-                <Route path="/instructors" element={
-                  <AuthRoute>
-                    <InstructorPage />
-                  </AuthRoute>
-                } />
-                <Route path="/instructors/new" element={
-                  <AuthRoute>
-                    <EditInstructorPage />
-                  </AuthRoute>
-                } />
-                <Route path="/instructors/:id/edit" element={
-                  <AuthRoute>
-                    <EditInstructorPage />
                   </AuthRoute>
                 } />
                 <Route path="/instructor/:id/chat" element={

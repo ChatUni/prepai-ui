@@ -483,15 +483,20 @@
       "delete": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？"
     },
-    "edit": "試験を編集",
+    "edit": {
+      "title": "試験を編集"
+    },
     "name": "試験名",
+    "image": "画像",
     "cover": "カバー画像",
     "desc": "説明",
     "upload_file": "ファイルをアップロード",
     "delete": "試験を削除",
     "hide": "試験を非表示",
+    "show": "試験を表示",
     "confirmDelete": "「{name}」試験を削除してもよろしいですか？",
     "confirmHide": "「{name}」試験を非表示にしてもよろしいですか？",
+    "confirmShow": "「{name}」試験を表示してもよろしいですか？",
     "noItems": "利用可能な試験がありません"
   },
   "tools": {

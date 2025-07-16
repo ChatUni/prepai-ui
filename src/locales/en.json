@@ -483,15 +483,20 @@
       "delete": "Delete Group",
       "confirmDelete": "Are you sure you want to delete this group?"
     },
-    "edit": "Edit Exam",
+    "edit": {
+      "title": "Edit Exam"
+    },
     "name": "Exam Name",
+    "image": "Image",
     "cover": "Cover Image",
     "desc": "Description",
     "upload_file": "Upload File",
     "delete": "Delete Exam",
     "hide": "Hide Exam",
+    "show": "Show Exam",
     "confirmDelete": "Are you sure you want to delete \"{name}\" exam?",
     "confirmHide": "Are you sure you want to hide \"{name}\" exam?",
+    "confirmShow": "Are you sure you want to show \"{name}\" exam?",
     "noItems": "No exams available"
   },
   "tools": {

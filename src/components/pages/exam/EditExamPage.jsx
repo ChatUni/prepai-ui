@@ -5,8 +5,8 @@ import ImageUpload from '../../ui/ImageUpload';
 
 const EditExamPage = observer(() => (
   <div className="space-y-4">
-    <FormInput store={store} field="name" required />
-    <ImageUpload store={store} field="cover" />
+    <FormInput store={store} field="name" />
+    <ImageUpload store={store} field="image" />
     <FormInput store={store} field="desc" rows={4} />
     <ImageUpload
       store={store}

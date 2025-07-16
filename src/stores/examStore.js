@@ -29,9 +29,23 @@ class ExamStore {
       client_id: clientStore.client.id,
       name: '',
       desc: '',
-      cover: '',
+      image: '',
       group: ''
     };
+  }
+
+  get mediaInfo() {
+    return {
+      image: x => `exams/${x.id}/image.jpg`
+    }
+  }
+
+  get validator() {
+    return {
+      name: 1,
+      desc: 1,
+      group: 1,
+    }
   }
 
   get requireMembership() {
@@ -43,7 +57,7 @@ class ExamStore {
   };
   
   save = async function(item) {
-    await save('exams', item);
+    return await save('exams', item);
   }
 
   getExamQuestions = function(id) {

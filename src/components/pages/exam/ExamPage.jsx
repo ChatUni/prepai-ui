@@ -10,7 +10,8 @@ const ExamPage = observer(() => (
     <div className="bg-white p-4">
       <ListPage
         store={store}
-        editDialogChildren={<EditExamPage />}
+        isGrouped={true}
+        renderEdit={() => <EditExamPage />}
         renderItem={(exam, index, group, { moveItem, isEditMode }, isFirstCard) => (
           <ExamCard
             key={exam.id}

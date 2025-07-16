@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import CourseListPage from '../pages/series/CourseListPage';
 import courseStore from '../../stores/courseStore';
 import uiStore from '../../stores/uiStore';
-import InstructorPage from '../pages/instructor/InstructorPage';
 import SeriesListPage from '../pages/series/SeriesListPage';
 import languageStore from '../../stores/languageStore';
 import LoadingState from '../ui/LoadingState';
@@ -15,8 +14,6 @@ const MainContent = observer(() => {
   // Show appropriate content based on route
   if (location === '/exam') {
     return null;
-  } else if (location === '/instructor') {
-    return <InstructorPage />;
   } else if (location === '/series' || location.startsWith('/series/')) {
     return <SeriesListPage />;
   } else if (location === '/') {
