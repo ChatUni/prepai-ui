@@ -10,6 +10,7 @@ const EditExamPage = observer(() => (
     <FormInput store={store} field="desc" rows={4} />
     <ImageUpload
       store={store}
+      type="file"
       field="upload_file"
       selectedFile={store.editingItem?.upload_file}
     />

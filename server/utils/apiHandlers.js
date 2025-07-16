@@ -123,7 +123,7 @@ module.exports = {
 
           // Update order status in database
           if (result.trade_state === 'SUCCESS') {
-            const orderData = await get('orders', `m_id=${b.orderId}`);
+            const orderData = await flat('orders', `m_id=${b.orderId}`);
             if (orderData && orderData.length > 0) {
               const updatedOrder = {
                 ...orderData[0],

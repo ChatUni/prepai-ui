@@ -21,6 +21,7 @@ export const createWeChatPayOrder = async (orderData) => {
       body: JSON.stringify({
         amount: orderData.amount,
         body: orderData.body || 'Course Purchase',
+        clientId: orderData.clientId,
         userId: orderData.userId,
         productId: orderData.productId,
         detail: orderData.detail || '',

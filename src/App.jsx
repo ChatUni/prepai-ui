@@ -111,14 +111,13 @@ const MainLayout = observer(() => {
               />
             )}
             
-            {/* Mobile menu - slides in from right on mobile, static on desktop */}
+            {/* Mobile menu - slides in from right on mobile only, hidden on desktop */}
             <div
               className={`
                 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-                fixed top-0 right-0 z-30 h-full w-64 md:w-56 md:static md:translate-x-0
+                fixed top-0 right-0 z-30 h-full w-64 md:hidden
                 transition-transform duration-300 ease-in-out
-                md:flex-shrink-0 md:block md:left-0 md:right-auto
-                pt-16 md:pt-0
+                pt-16
               `}
             >
               <LeftMenu onItemClick={() => setMobileMenuOpen(false)} />

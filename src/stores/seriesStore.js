@@ -22,7 +22,7 @@ class SeriesStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('menu.admin_page.course_settings') : t('menu.series.title');
+    return this.isAdminMode ? t('menu.admin_page.course_settings') : '';
   }
 
   get detailRoute() {
