@@ -22,8 +22,8 @@ app.use(express.json({ limit: '50mb' })); // Increased limit for file uploads
 app.use(express.static('dist'));
 
 const handleEndpoint = async (req, res) => {
+  const q = req.query;
   try {
-    const q = req.query;
     const method = req.method.toLowerCase();
 
     let t = apiHandlers.db_handlers[method]?.[q.type]
@@ -34,7 +34,7 @@ const handleEndpoint = async (req, res) => {
     const response = await t(q, req.body);
     res.status(200).json(response);
   } catch (error) {
-    console.error(`Error in ${q.type}:`, error);
+    console.error(`Error in ${q?.type || 'unknown'}:`, error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

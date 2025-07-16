@@ -2,6 +2,7 @@ const { get, save, remove, flat } = require('./db.js');
 const { handleUrlSigning, handleFileUpload, handleFileServing } = require('./volcHelper.js');
 const { WeChatPay, utils } = require('./wechat.js');
 const { sendSms } = require('./sms.js');
+const { chat } = require('../openai.js');
 
 module.exports = {
   db_handlers: {
@@ -30,6 +31,7 @@ module.exports = {
       tos_file: (q) => handleFileServing(q.key),
     },
     post: {
+      chat: (q, b) => chat(q.api, b, false),
       tos_sign: (q, b) => handleUrlSigning(b.url),
       tos_upload: (q, b) => handleFileUpload(b.file, b.key),
       wechat_pay: async (q, b) => {

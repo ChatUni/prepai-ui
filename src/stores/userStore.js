@@ -108,9 +108,9 @@ class UserStore {
       const saveduser = localStorage.getItem('user');
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
-        this.user = { ...this.user, ...parseduser };
-        console.log('Restored login state:', this.user.isLoggedIn);
-        this.initData();
+        const user = { ...this.user, ...parseduser };
+        console.log('Restored login state:', user.isLoggedIn);
+        await this.loginWithPhone(user.phone, '', parseduser);
       }
     } catch (error) {
       console.error('Error restoring login state:', error);
@@ -130,15 +130,16 @@ class UserStore {
     this.saveLoginState();
   }
 
-  loginWithPhone = async function(phone, verificationCode) {
+  loginWithPhone = async function(phone, verificationCode, savedUser) {
     try {
-      // Get user info from API using phone and client ID
-      const users = await get('user', {
-        phone: phone,
-        clientId: clientStore.client.id
-      });
-
       let user;
+
+      const users = savedUser
+        ? [savedUser]
+        : await get('user', {
+            phone: phone,
+            clientId: clientStore.client.id
+          });
 
       if (!users || users.length === 0) {
         // User doesn't exist, create a new one
@@ -167,7 +168,7 @@ class UserStore {
           isLoggedIn: true,
           phone: phone
         };
-        this.saveLoginState();
+        !savedUser && this.saveLoginState();
       });
 
       this.initData();

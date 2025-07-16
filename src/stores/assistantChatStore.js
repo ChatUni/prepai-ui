@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { getOpenAIBaseUrl } from '../config.js';
+import { post } from '../utils/db.js';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -50,32 +50,20 @@ class AssistantChatStore {
     });
     
     try {
-      // Get API base URL
-      const apiBaseUrl = getOpenAIBaseUrl();
-      
-      console.log("Sending message to assistant:", text);
-      console.log("Using assistant prompt:", this.selectedAssistant.prompt);
-      
       // Determine if we should use OpenRouter based on whether a model is selected
       const useOpenRouter = !!this.selectedAssistant.model;
       
       // Call OpenAI API with the assistant's prompt as system message
       try {
-        const response = await fetch(`${apiBaseUrl}/chat${useOpenRouter ? '?api=openrouter' : ''}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: this.selectedAssistant.model,
-            messages: [
-              { role: 'system', content: this.selectedAssistant.prompt },
-              ...this.messages.map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'assistant',
-                content: msg.text
-              }))
-            ]
-          }),
+        const response = await post('chat', useOpenRouter ? { api: 'openrouter' } : {}, {
+          model: this.selectedAssistant.model,
+          messages: [
+            { role: 'system', content: this.selectedAssistant.prompt },
+            ...this.messages.map(msg => ({
+              role: msg.sender === 'user' ? 'user' : 'assistant',
+              content: msg.text
+            }))
+          ]
         });
         
         if (!response.ok) {

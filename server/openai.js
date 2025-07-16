@@ -9,6 +9,119 @@ const { toFile } = require('openai');
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
 const CHATGPT_MODEL = 'gpt-4o-mini';
 
+// Chat function that can be called from other modules
+const chat = async (apiType, body, serverless = true) => {
+  const useOpenRouter = apiType === 'openrouter';
+  const headers = getResponseHeaders();
+
+  // Initialize appropriate client based on API choice
+  if (useOpenRouter) {
+    if (!process.env.OPENROUTER_API_KEY) {
+      const error = new Error('OpenRouter API key not configured');
+      if (!serverless) throw error;
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+  } else {
+    if (!process.env.OPENAI_API_KEY) {
+      const error = new Error('OpenAI API key not configured');
+      if (!serverless) throw error;
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+  }
+
+  const openai = useOpenRouter ? null : new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  try {
+    const { messages, model } = body;
+    
+    if (!messages || !Array.isArray(messages)) {
+      const error = new Error('Messages array is required');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    if (useOpenRouter) {
+      if (!model) {
+        const error = new Error('Model is required for OpenRouter');
+        if (!serverless) throw error;
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: error.message })
+        };
+      }
+
+      const response = await fetch(`${OPENROUTER_API_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.7,
+          max_tokens: 1000
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenRouter API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (!serverless) {
+        return data;
+      }
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(data)
+      };
+    } else {
+      const response = await openai.chat.completions.create({
+        model: model || CHATGPT_MODEL,
+        messages,
+        temperature: 0.7,
+        max_tokens: 1000
+      });
+
+      if (!serverless) {
+        return response;
+      }
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(response)
+      };
+    }
+  } catch (error) {
+    console.error(useOpenRouter ? 'OpenRouter API error:' : 'OpenAI API error:', error);
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: `Failed to get response from ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}`
+      })
+    };
+  }
+};
+
 // Main handler function
 const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
@@ -45,82 +158,15 @@ const handler = async (event, context) => {
       }
     }
 
-    const openai = new OpenAI({
+    const openai = useOpenRouter ? null : new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
     // Route handlers
     switch (`${event.httpMethod} /${resource}${id ? '/:id' : ''}`) {
       case 'POST /chat':
-        try {
-          const body = JSON.parse(event.body);
-          const { messages, model } = body;
-          
-          if (!messages || !Array.isArray(messages)) {
-            return {
-              statusCode: 400,
-              headers,
-              body: JSON.stringify({ error: 'Messages array is required' })
-            };
-          }
-
-          if (useOpenRouter) {
-            if (!model) {
-              return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: 'Model is required for OpenRouter' })
-              };
-            }
-
-            const response = await fetch(`${OPENROUTER_API_URL}/chat/completions`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model,
-                messages,
-                temperature: 0.7,
-                max_tokens: 1000
-              })
-            });
-
-            if (!response.ok) {
-              throw new Error(`OpenRouter API error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            return {
-              statusCode: 200,
-              headers,
-              body: JSON.stringify(data)
-            };
-          } else {
-            const response = await openai.chat.completions.create({
-              model: model || CHATGPT_MODEL,
-              messages,
-              temperature: 0.7,
-              max_tokens: 1000
-            });
-
-            return {
-              statusCode: 200,
-              headers,
-              body: JSON.stringify(response)
-            };
-          }
-        } catch (error) {
-          console.error(useOpenRouter ? 'OpenRouter API error:' : 'OpenAI API error:', error);
-          return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({
-              error: `Failed to get response from ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}`
-            })
-          };
-        }
+        const body = JSON.parse(event.body);
+        return await chat(useOpenRouter ? 'openrouter' : 'openai', body, true);
 
       case 'GET /files':
         try {
@@ -465,4 +511,4 @@ const handler = async (event, context) => {
   }
 };
 
-module.exports = { handler };
+module.exports = { handler, chat };

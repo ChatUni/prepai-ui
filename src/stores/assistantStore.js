@@ -82,15 +82,6 @@ class AssistantStore {
     await save('assistants', item);
   }
 
-  uploadAssistantIcon = async function(file, assistantId) {
-    try {
-      return await uploadToCloudinary(file, `${clientStore.client.id}/assistants/${assistantId}`);
-    } catch (error) {
-      console.error('Error uploading assistant icon:', error);
-      throw error;
-    }
-  };
-
   updateOpenRouterModels = async function() {
     this.loadingModels = true;
     
@@ -119,6 +110,7 @@ class AssistantStore {
     this.loadingModels = true;
     
     try {      
+      await updateOpenRouterModels();
       const models = await get('models');
 
       runInAction(() => {

@@ -9,6 +9,7 @@ const AuthWrapper = observer(({ children }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
+    console.log('logged in: ', userStore.isLoggedIn)
     // If on login page but already logged in, redirect to original page or home
     if (location.pathname === '/login' && userStore.isLoggedIn) {
       const destination = location.state?.from?.pathname || '/';
