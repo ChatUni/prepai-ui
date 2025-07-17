@@ -31,7 +31,7 @@ const handleEndpoint = async (req, res) => {
     else t = apiHandlers.handlers[method]?.[q.type]
     if (!t) return res.status(404).json({ error: `Handler for ${q.type} not found` });
 
-    const response = await t(q, req.body);
+    const response = await t(q, req.body, req);
     res.status(200).json(response);
   } catch (error) {
     console.error(`Error in ${q?.type || 'unknown'}:`, error);

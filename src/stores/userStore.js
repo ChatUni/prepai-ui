@@ -16,7 +16,7 @@ import { omit } from '../utils/utils';
 import GroupedListStore from './groupedListStore';
 
 class UserStore {
-  user = {};
+  user = null;
   examRecords = [];
   coupons = [];
 
@@ -55,19 +55,19 @@ class UserStore {
   }
 
   get isLoggedIn() {
-    return this.user.isLoggedIn;
+    return this.user?.isLoggedIn;
   }
 
   get isClientAdmin() {
-    return this.user.role === 'admin';
+    return this.user?.role === 'admin';
   }
 
   get isSubAdmin() {
-    return this.user.role === 'sub';
+    return this.user?.role === 'sub';
   }
 
   get isSuperAdmin() {
-    return this.user.role === 'super';
+    return this.user?.role === 'super';
   }
 
   get isAdmin() {
@@ -99,13 +99,8 @@ class UserStore {
   
   save = async function(item) {
     const user = await save('users', omit(item, ['orders', 'isLoggedIn']));
-    if (item.id == this.user.id) {
-      Object.keys(item).forEach(key => {
-        this.user[key] = item[key];
-      });
-      Object.keys(user[0]).forEach(key => {
-        this.user[key] = user[0][key];
-      });
+    if (item.id == this.user?.id) {
+      this.user = {...item, ...user[0]};
     }
     return user[0];
   }
@@ -116,9 +111,7 @@ class UserStore {
       const saveduser = localStorage.getItem('user');
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
-        Object.keys(parseduser).forEach(key => {
-          this.user[key] = parseduser[key];
-        });
+        this.user = {...(this.user || {}), ...parseduser};
         const user = this.user;
         console.log('Restored login state:', user.isLoggedIn);
         await this.loginWithPhone(user.phone, '', parseduser);
@@ -130,7 +123,7 @@ class UserStore {
 
   saveLoginState = function() {
     try {
-      localStorage.setItem('user', JSON.stringify(this.user));
+      localStorage.setItem('user', JSON.stringify(omit(this.user, ['orders'])));
     } catch (error) {
       console.error('Error saving login state:', error);
     }
@@ -143,18 +136,20 @@ class UserStore {
     this.saveLoginState();
   }
 
+  loadUser = async function(phone) {
+    if (!phone && this.user.phone) phone = this.user.phone;
+    const users = await get('user', { phone, clientId: clientStore.client.id });
+    const user = users && users.length > 0 ? users[0] : null;
+    this.user = user;
+    return user;
+  }
+
   loginWithPhone = async function(phone, verificationCode, savedUser) {
     try {
-      let user;
+      let user = savedUser;
+      if (!user) user = await this.loadUser(phone);
 
-      const users = savedUser
-        ? [savedUser]
-        : await get('user', {
-            phone: phone,
-            clientId: clientStore.client.id
-          });
-
-      if (!users || users.length === 0) {
+      if (!user) {
         // User doesn't exist, create a new one
         const newUser = {
           id: `${clientStore.client.id}_${phone}`,
@@ -169,20 +164,10 @@ class UserStore {
 
         // Save the new user to database
         await save('users', newUser);
-        user = newUser;
-      } else {
-        user = users[0];
+        this.user = newUser;
       }
       
-      runInAction(() => {
-        Object.keys(user).forEach(key => {
-          this.user[key] = user[key];
-        });
-        this.user.isLoggedIn = true;
-        this.user.phone = phone;
-        !savedUser && this.saveLoginState();
-      });
-
+      this.user.isLoggedIn = true;
       this.initData();
       return this.user;
     } catch (error) {
@@ -229,18 +214,44 @@ class UserStore {
     return this.isPaid('series', id);
   }
 
-  getExpireDate = function(type, id) {
-    if (!this.user.orders) return null;
+  getRemainingDays = function(type, id) {
+    if (!this.user?.orders) return null;
     
-    const matchingOrder = this.user.orders.find(order =>
+    const matchingOrders = this.user.orders.filter(order =>
       order.client_id == clientStore.client.id &&
       order.product_id.startsWith(type) &&
       (!id || order.product_id.endsWith(`_${id}`)) &&
       order.status === 'PAID' &&
-      order.expires
+      order.expireDate
     );
     
-    return matchingOrder ? new Date(matchingOrder.expires) : null;
+    if (matchingOrders.length === 0) return null;
+    
+    const now = new Date();
+    let totalRemainingDays = 0;
+    
+    // Sum up all remaining days from all matching orders
+    matchingOrders.forEach(order => {
+      const expireDate = new Date(order.expireDate);
+      const timeDiff = expireDate.getTime() - now.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      if (daysDiff > 0) {
+        totalRemainingDays += daysDiff;
+      }
+    });
+    
+    return totalRemainingDays > 0 ? totalRemainingDays : 0;
+  }
+
+  getExpireDate = function(type, id) {
+    const remainingDays = this.getRemainingDays(type, id);
+    if (!remainingDays) return null;
+    
+    // Return a date that is today + total remaining days
+    const combinedExpireDate = new Date();
+    combinedExpireDate.setDate(combinedExpireDate.getDate() + remainingDays);
+    
+    return combinedExpireDate;
   }
 
   isPaid = function(type, id) {

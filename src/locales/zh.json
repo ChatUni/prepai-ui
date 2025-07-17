@@ -89,6 +89,7 @@
       "logout": "退出登录",
       "valid_until": "有效期至",
       "membership_expires": "会员到期时间",
+      "membership_remaining": "剩余天数",
       "about": "关于"
     },
     "admin_page": {

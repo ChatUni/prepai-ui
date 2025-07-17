@@ -1,10 +1,14 @@
 import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router-dom';
 import CardEditActions from '../../ui/CardEditActions';
 import Toggle from '../../ui/Toggle';
 import store from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
 
-const UserCard = observer(({ user, isProfile }) => (
+const UserCard = observer(({ user, isProfile }) => {
+  const navigate = useNavigate();
+
+  return (
   <div className="relative w-full">
     {/* Role Toggle - Top Right */}
     {!isProfile && store.isAdminMode && (
@@ -35,9 +39,20 @@ const UserCard = observer(({ user, isProfile }) => (
         <p className="text-gray-600 text-sm">{`${t('user.phone')}: ${user.phone}`}</p>
         <p className="text-gray-600 text-sm">ID: {user.id}</p>
         {isProfile && store.isMember && (
-          <p className="text-green-600 text-sm">
-            {t('menu.account_page.membership_expires')}: {store.getExpireDate('membership')?.toLocaleDateString()}
-          </p>
+          <>
+            <p className="text-green-600 text-sm">
+              {t('menu.account_page.membership_expires')}: {store.getExpireDate('membership')?.toLocaleDateString()}
+            </p>
+            <p className={`text-sm ${store.getRemainingDays('membership') < 5 ? 'text-red-600' : 'text-blue-600'}`}>
+              {t('menu.account_page.membership_remaining')}: {store.getRemainingDays('membership')}
+            </p>
+            <button
+              onClick={() => navigate('/memberships')}
+              className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+            >
+              {t('membership.title')}
+            </button>
+          </>
         )}
       </div>
     </div>
@@ -52,6 +67,7 @@ const UserCard = observer(({ user, isProfile }) => (
       />
     )}
   </div>
-));
+  );
+});
 
 export default UserCard;

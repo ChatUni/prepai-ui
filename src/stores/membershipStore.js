@@ -9,10 +9,10 @@ import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
 const membershipTypes = [
-  "monthly",
-  "annually",
-  "lifetime",
-  "trial"
+  { type: "monthly", duration: 30 },
+  { type: "annually", duration: 365 },
+  { type: "lifetime", duration: -1 },
+  { type: "trial", duration: 3 },
 ]
 
 class MembershipStore {
@@ -55,11 +55,15 @@ class MembershipStore {
   }
 
   get membershipTypes() {
-    return membershipTypes.map((x, i) => ({ value: i, label: t(`membership.types.${x}`) }));
+    return membershipTypes.map((x, i) => ({ value: i, label: t(`membership.types.${x.type}`) }));
+  }
+
+  get selectedMembershipType() {
+    return membershipTypes[this.selectedMembership.type] || membershipTypes[0];
   }
 
   get editingType() {
-    return membershipTypes[this.editingItem.type];
+    return membershipTypes[this.editingItem.type].type;
   }
 
   setSelectedType = (type) => {
@@ -71,7 +75,7 @@ class MembershipStore {
   };
 
   getTypeLabel = function(type) {
-    return `membership.types.${membershipTypes[type]}`
+    return `membership.types.${membershipTypes[type].type}`
   };
 
   fetchItemList = async function() {
@@ -129,15 +133,15 @@ class MembershipStore {
       // Prepare order data for WeChat Pay
       const orderData = {
         amount: this.selectedMembership.price,
-        expireDate: this.calculateMembershipExpiry(this.selectedMembership.type),
-        body: `${this.selectedMembership.name} - ${t(`membership.types.${membershipTypes[this.selectedMembership.type] || 'monthly'}`)}`,
+        duration: this.selectedMembershipType.duration,
+        body: `${this.selectedMembership.name} - ${t(`membership.types.${this.selectedMembershipType.type}`)}`,
         clientId: clientStore.client.id,
         userId: userStore.user?.id || userStore.user?.phone || 'guest',
         productId: `membership_${this.selectedMembership.id}`,
         detail: this.selectedMembership.desc || '',
         attach: JSON.stringify({
           membershipId: this.selectedMembership.id,
-          membershipType: membershipTypes[this.selectedMembership.type] || 'monthly',
+          membershipType: this.selectedMembershipType.type,
           clientId: clientStore.client.id,
           userId: userStore.user?.id || userStore.user?.phone
         })
@@ -154,14 +158,16 @@ class MembershipStore {
     }
   };
 
-  handlePaymentSuccess = function(paymentData) {
+  handlePaymentSuccess = async function(paymentData) {
     console.log('Payment successful:', paymentData);
     
     // Close WeChat Pay dialog
     this.showWeChatPayDialog = false;
     this.paymentOrderData = null;
     this.selectedMembership = null;
-    
+
+    await userStore.loadUser();
+
     // Here you would typically:
     // 1. Update user's membership status
     // 2. Grant access to purchased content
@@ -201,24 +207,6 @@ class MembershipStore {
     // Keep WeChat Pay dialog open so user can retry
     // Or close it based on your UX preference
     // this.showWeChatPayDialog = false;
-  };
-
-  calculateMembershipExpiry = function(membershipType) {
-    const now = new Date();
-    const type = membershipTypes[membershipType] || 'monthly';
-    
-    switch (type) {
-      case 'monthly':
-        return new Date(now.setMonth(now.getMonth() + 1)).toISOString();
-      case 'annually':
-        return new Date(now.setFullYear(now.getFullYear() + 1)).toISOString();
-      case 'lifetime':
-        return new Date(now.setFullYear(now.getFullYear() + 100)).toISOString(); // 100 years from now
-      case 'trial':
-        return new Date(now.setDate(now.getDate() + 3)).toISOString(); // 3 days trial
-      default:
-        return new Date(now.setMonth(now.getMonth() + 1)).toISOString();
-    }
   };
 
   closeWeChatPayDialog = function() {

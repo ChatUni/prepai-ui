@@ -89,6 +89,7 @@
       "logout": "ログアウト",
       "valid_until": "有効期限",
       "membership_expires": "メンバーシップ有効期限",
+      "membership_remaining": "残り日数",
       "about": "について"
     },
     "admin_page": {

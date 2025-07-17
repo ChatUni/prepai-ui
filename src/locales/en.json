@@ -89,6 +89,7 @@
       "logout": "Logout",
       "valid_until": "Valid until",
       "membership_expires": "Membership expires",
+      "membership_remaining": "Remaining days",
       "about": "About"
     },
     "admin_page": {

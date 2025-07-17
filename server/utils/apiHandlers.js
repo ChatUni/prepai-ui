@@ -35,7 +35,7 @@ module.exports = {
       tos_sign: (q, b) => handleUrlSigning(b.url),
       tos_upload: (q, b) => handleFileUpload(b.file, b.key),
       tos_delete: (q, b) => handleFileDelete(b.key),
-      wechat_pay: async (q, b) => {
+      wechat_pay: async (q, b, req) => {
         try {
           // Initialize WeChat Pay with configuration
           const wechatPay = new WeChatPay({
@@ -48,13 +48,22 @@ module.exports = {
           // Generate unique order number
           const outTradeNo = utils.generateOrderNo('ORDER');
           
+          // Get client IP from request
+          const clientIp = req.ip ||
+                          req.connection.remoteAddress ||
+                          req.socket.remoteAddress ||
+                          (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
+                          req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+                          req.headers['x-real-ip'] ||
+                          '127.0.0.1';
+          
           // Prepare order parameters
           const orderParams = {
             body: b.body || 'Course Purchase',
             outTradeNo: outTradeNo,
             totalFee: utils.formatAmount(b.amount), // Convert yuan to fen
             productId: b.productId || outTradeNo,
-            spbillCreateIp: b.clientIp || '127.0.0.1',
+            spbillCreateIp: clientIp,
             attach: b.attach || '',
             detail: b.detail || ''
           };
@@ -81,6 +90,8 @@ module.exports = {
             prepay_id: result.prepayId,
             code_url: result.codeUrl,
             amount: b.amount,
+            duration: b.duration,
+            expireDate: b.duration ? new Date(Date.now() + (b.duration * 24 * 60 * 60 * 1000)).toISOString() : null,
             status: 'PENDING',
             user_id: b.userId,
             client_id: b.clientId,
