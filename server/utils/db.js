@@ -2,14 +2,34 @@ const { MongoClient } = require('mongodb');
 const { tap } = require('./util.js');
 
 let db = null;
+let client = null;
 
-const connectDB = async conn =>
-  (!conn && db) ||
-  (db = await MongoClient.connect(conn).then(x => x.db()));
+const connectDB = async conn => {
+  if (db) return db;
+  
+  try {
+    console.log(`Connect MongoDB ${process.env.DBCS}`);
+    client = await MongoClient.connect(conn);
+    db = client.db();
+    
+    // Handle connection events
+    client.on('close', () => {
+      console.log('MongoDB connection closed');
+      db = null;
+      client = null;
+    });
+    
+    return db;
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
+  }
+}
 
 const connect = async dbName => {
-  console.log(`Connect MongoDB ${process.env.DBCS}`);
+  if (db) return db;
   await connectDB(process.env.DBCS.replace('{db}', dbName));
+  return db;
 };
 
 const count = doc => db.collection(doc).count();
@@ -177,9 +197,19 @@ const removeAll = doc => db.collection(doc).deleteMany({});
 
 const makeArray = x => (Array.isArray(x) ? x : [x]);
 
+const closeDB = async () => {
+  if (client) {
+    await client.close();
+    console.log('MongoDB connection closed');
+    db = null;
+    client = null;
+  }
+};
+
 module.exports = {
   connectDB,
   connect,
+  closeDB,
   count,
   get,
   getById,
