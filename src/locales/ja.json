@@ -28,7 +28,15 @@
     "changeImage": "画像を変更",
     "changeVideo": "動画を変更",
     "changeFile": "ファイルを変更",
-    "required": "{name}フィールドは必須です"
+    "required": "{name}フィールドは必須です",
+    "groups": {
+      "addGroup": "グループを追加",
+      "enterName": "グループ名を入力",
+      "delete": "グループを削除",
+      "confirmDelete": "このグループを削除してもよろしいですか？",
+      "editGroup": "グループを編集",
+      "deleteGroup": "グループを削除"
+    }
   },
   "auth": {
     "login": "ログイン",
@@ -242,13 +250,7 @@
       "title": "アシスタントグループ",
       "noGroup": "グループなし",
       "noItems": "このグループにはアシスタントがありません",
-      "addGroup": "グループを追加",
       "newGroup": "新しいグループ",
-      "enterName": "グループ名を入力",
-      "editGroup": "グループを編集",
-      "delete": "グループを削除",
-      "deleteGroup": "グループを削除",
-      "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "アシスタントが含まれているグループは削除できません"
     },
     "membershipRequired": {
@@ -313,15 +315,7 @@
     "confirmShow": "「{name}」コースを表示してもよろしいですか？",
     "confirmDelete": "「{name}」コースを削除してもよろしいですか？",
     "confirmRestore": "「{name}」コースを復元してもよろしいですか？",
-    "confirmHide": "「{name}」コースを非表示にしてもよろしいですか？",
-    "groups": {
-      "addGroup": "グループを追加",
-      "enterName": "グループ名を入力",
-      "delete": "グループを削除",
-      "confirmDelete": "このグループを削除してもよろしいですか？",
-      "editGroup": "グループを編集",
-      "deleteGroup": "グループを削除"
-    }
+    "confirmHide": "「{name}」コースを非表示にしてもよろしいですか？"
   },
   "series": {
     "createNew": "新しいシリーズを作成",
@@ -429,16 +423,10 @@
       "title": "シリーズグループ",
       "noGroup": "グループなし",
       "noSeries": "このグループにシリーズがありません",
-      "addGroup": "グループを追加",
       "newGroup": "新規グループ",
-      "enterName": "グループ名を入力",
-      "editGroup": "グループを編集",
-      "deleteGroup": "グループを削除",
-      "confirmDelete": "このグループを削除してもよろしいですか？",
       "cannotDelete": "シリーズが含まれているグループは削除できません",
       "addSeries": "シリーズを追加",
-      "recycle": "リサイクル",
-      "delete": "グループを削除"
+      "recycle": "リサイクル"
     },
     "seriesPurchaseRequired": {
       "title": "シリーズの購入が必要です",

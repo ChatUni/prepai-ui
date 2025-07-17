@@ -9,7 +9,7 @@ import { t } from '../../stores/languageStore';
 
 const shortcusts = store => [
   {
-    label: t(`${store.name}.groups.addGroup`),
+    label: t(`common.groups.addGroup`),
     icon: 'FiPlus',
     color: 'green',
     onClick: () => store.openAddGroupDialog(),
@@ -61,7 +61,6 @@ const ListPage = observer(({
                             ? store.groupedItems.length > 0
                             : Object.keys(store.groupedItems).length > 0);
   shortcutButtons = [...shortcutButtons, ...shortcusts(store)].filter(b => !b.isVisible || b.isVisible(store, isGrouped));
-tap(store?.groupedItems)
 
   return (
     <div className={containerClassName}>
@@ -92,7 +91,7 @@ tap(store?.groupedItems)
         {showShortcutButtons && shortcutButtons.length > 0 && (
           <div className={shortcutButtonsClassName}>
             {shortcutButtons.map((button, index) => (
-              <div className="grow-1">
+              <div className="grow-1" key={index}>
                 <Button
                   key={button.key || index}
                   onClick={button.onClick}
@@ -117,8 +116,8 @@ tap(store?.groupedItems)
             itemsContainerClassName={itemsContainerClassName}
             onItemMove={(group, fromIndex, toIndex) => store?.moveItemInGroup(group, fromIndex, toIndex)}
             onGroupDrop={onGroupDrop}
-            editGroupTitle={t(`${store.name}.groups.editGroup`)}
-            deleteGroupTitle={t(`${store.name}.groups.deleteGroup`)}
+            editGroupTitle={t(`common.groups.editGroup`)}
+            deleteGroupTitle={t(`common.groups.deleteGroup`)}
             itemType={store.name}
             renderItem={renderItem}
           />

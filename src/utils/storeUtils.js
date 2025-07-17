@@ -35,7 +35,7 @@ export const combineStores = (...storeClasses) => {
   
   makeAutoObservable(combined);
 
-  console.log(combined);
+  //console.log(combined);
 
   combined.init && combined.init();
 

@@ -99,7 +99,7 @@ const GroupedList = observer(({
         ) : (
           // Render flat list without groups
           <div className={itemsContainerClassName}>
-            {tap(store.filteredItems).map((item, itemIndex) =>
+            {store.filteredItems.map((item, itemIndex) =>
               renderItem(item, itemIndex, item.originalGroup, {
                 moveItem: onItemMove ? (fromIndex, toIndex) => {
                   if (isEditMode) {

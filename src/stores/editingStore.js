@@ -153,8 +153,10 @@ class EditingStore {
   confirmDelete = async function() {
     if (!this.editingItem) return;
     try {
-      await this.remove(this.editingItem);
+      await this.remove(this.editingItem.id);
+      if (this.fetchItems) await this.fetchItems(true);
     } catch (e) {
+      console.log(e)
       this.openErrorDialog('Error deleting item');
     } finally {
       this.closeDeleteDialog();

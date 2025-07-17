@@ -85,6 +85,7 @@ class MembershipStore {
   save = async function(item) {
     item.price = parseFloat(item.price) || 0;
     item.orig_price = parseFloat(item.orig_price) || 0;
+    item.type = parseInt(item.type) || 0;
     return await save('memberships', item);
   };
 

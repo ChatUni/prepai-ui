@@ -67,17 +67,17 @@ export const GroupNameDialog = observer(({ store, isEdit }) => store && (
     isOpen={isEdit ? store.isEditGroupDialogOpen : store.isAddGroupDialogOpen}
     onClose={() => isEdit ? store.closeEditGroupDialog() : store.closeAddGroupDialog()}
     onConfirm={() => isEdit ? store.handleEditGroup(store) : store.handleAddGroup(store)}
-    title={t(`${store.name}.groups.${isEdit ? 'edit' : 'add'}Group`)}
+    title={t(`common.groups.${isEdit ? 'edit' : 'add'}Group`)}
     value={store.newGroupName}
     onChange={(value) => store.setNewGroupName(value)}
-    placeholder={t(`${store.name}.groups.enterName`)}
+    placeholder={t(`common.groups.enterName`)}
     isConfirm={true}
   >
     <input
       type="text"
       value={store.newGroupName}
       onChange={(e) => store.setNewGroupName(e.target.value)}
-      placeholder={t(`${store.name}.groups.enterName`)}
+      placeholder={t(`common.groups.enterName`)}
       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       autoFocus
     />
@@ -89,11 +89,11 @@ export const GroupDeleteDialog = observer(({ store }) => store && (
     isOpen={store.isDeleteGroupDialogOpen}
     onClose={() => store.closeDeleteGroupDialog()}
     onConfirm={() => store.handleDeleteGroup()}
-    title={t(`${store.name}.groups.delete`)}
+    title={t(`common.groups.delete`)}
     isConfirm={true}
   >
     <p>
-      {t(`${store.name}.groups.confirmDelete`)}
+      {t(`common.groups.confirmDelete`)}
     </p>
   </Dialog>
 ));
@@ -118,8 +118,8 @@ export const ErrorDialog = observer(({ store }) => store && (
     onClose={() => store.closeErrorDialog()}
     title={t('common.error')}
   >
-    {(Array.isArray(store.error) ? store.error : [store.error]).map(e =>
-      <div className="text-gray-700">{e}</div>
+    {(Array.isArray(store.error) ? store.error : [store.error]).map((e, i) =>
+      <div className="text-gray-700" key={i}>{e}</div>
     )}
   </Dialog>
 ));

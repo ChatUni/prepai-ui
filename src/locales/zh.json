@@ -28,7 +28,15 @@
     "changeImage": "更改图片",
     "changeVideo": "更改视频",
     "changeFile": "更改文件",
-    "required": "{name}不能为空"
+    "required": "{name}不能为空",
+    "groups": {
+      "addGroup": "添加分组",
+      "enterName": "输入分组名称",
+      "delete": "删除分组",
+      "confirmDelete": "确定要删除此分组吗？",
+      "editGroup": "编辑分组",
+      "deleteGroup": "删除分组"
+    }
   },
   "auth": {
     "login": "登录",
@@ -242,13 +250,7 @@
       "title": "助手分组",
       "noGroup": "无分组",
       "noItems": "此分组中没有助手",
-      "addGroup": "添加分组",
       "newGroup": "新分组",
-      "enterName": "输入分组名称",
-      "editGroup": "编辑分组",
-      "delete": "删除分组",
-      "deleteGroup": "删除分组",
-      "confirmDelete": "您确定要删除此分组吗？",
       "cannotDelete": "无法删除包含助手的分组"
     },
     "membershipRequired": {
@@ -313,15 +315,7 @@
     "confirmShow": "确定要显示「{name}」章节吗？",
     "confirmDelete": "确定要删除「{name}」章节吗？",
     "confirmRestore": "确定要恢复「{name}」章节吗？",
-    "confirmHide": "确定要隐藏「{name}」章节吗？",
-    "groups": {
-      "addGroup": "添加分组",
-      "enterName": "输入分组名称",
-      "delete": "删除分组",
-      "confirmDelete": "确定要删除此分组吗？",
-      "editGroup": "编辑分组",
-      "deleteGroup": "删除分组"
-    }
+    "confirmHide": "确定要隐藏「{name}」章节吗？"
   },
   "series": {
     "createNew": "创建新课程",
@@ -427,17 +421,11 @@
       "title": "课程分组",
       "noGroup": "无分组",
       "noSeries": "该分组暂无课程",
-      "addGroup": "添加分组",
       "addInstructor": "创建老师",
       "newGroup": "新建分组",
-      "enterName": "输入分组名称",
-      "editGroup": "编辑分组",
-      "deleteGroup": "删除分组",
-      "confirmDelete": "确定要删除此分组吗？",
       "cannotDelete": "无法删除包含课程的分组",
       "addSeries": "添加课程",
-      "recycle": "回收站",
-      "delete": "删除分组"
+      "recycle": "回收站"
     },
     "seriesPurchaseRequired": {
       "title": "需要购买系列课程",

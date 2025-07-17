@@ -28,7 +28,15 @@
     "changeImage": "Change Image",
     "changeVideo": "Change Video",
     "changeFile": "Change File",
-    "required": "The {name} field is required"
+    "required": "The {name} field is required",
+    "groups": {
+      "addGroup": "Add Group",
+      "enterName": "Enter group name",
+      "delete": "Delete Group",
+      "confirmDelete": "Are you sure you want to delete this group?",
+      "editGroup": "Edit Group",
+      "deleteGroup": "Delete Group"
+    }
   },
   "auth": {
     "login": "Login",
@@ -242,13 +250,7 @@
       "title": "Assistant Groups",
       "noGroup": "No Group",
       "noItems": "No assistants in this group",
-      "addGroup": "Add Group",
       "newGroup": "New Group",
-      "enterName": "Enter group name",
-      "editGroup": "Edit Group",
-      "delete": "Delete Group",
-      "deleteGroup": "Delete Group",
-      "confirmDelete": "Are you sure you want to delete this group?",
       "cannotDelete": "Cannot delete group that contains assistants"
     },
     "membershipRequired": {
@@ -313,15 +315,7 @@
     "confirmShow": "Are you sure you want to show \"{name}\" course?",
     "confirmDelete": "Are you sure you want to delete \"{name}\" course?",
     "confirmRestore": "Are you sure you want to restore \"{name}\" course?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" course?",
-    "groups": {
-      "addGroup": "Add Group",
-      "enterName": "Enter group name",
-      "delete": "Delete Group",
-      "confirmDelete": "Are you sure you want to delete this group?",
-      "editGroup": "Edit Group",
-      "deleteGroup": "Delete Group"
-    }
+    "confirmHide": "Are you sure you want to hide \"{name}\" course?"
   },
   "series": {
     "createNew": "Create New Series",
@@ -428,17 +422,11 @@
       "title": "Series Groups",
       "noGroup": "No Group",
       "noSeries": "No series in this group",
-      "addGroup": "Add Group",
       "addInstructor": "Create Instructor",
       "addSeries": "Create Series",
       "newGroup": "New Group",
-      "enterName": "Enter group name",
-      "editGroup": "Edit Group",
-      "deleteGroup": "Delete Group",
-      "confirmDelete": "Are you sure you want to delete this group?",
       "cannotDelete": "Cannot delete group that contains series",
-      "recycle": "Recycle Bin",
-      "delete": "Delete Group"
+      "recycle": "Recycle Bin"
     },
     "seriesPurchaseRequired": {
       "title": "Series Purchase Required",
