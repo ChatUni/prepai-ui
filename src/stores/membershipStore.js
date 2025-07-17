@@ -128,6 +128,7 @@ class MembershipStore {
       // Prepare order data for WeChat Pay
       const orderData = {
         amount: this.selectedMembership.price,
+        expireDate: this.calculateMembershipExpiry(this.selectedMembership.type),
         body: `${this.selectedMembership.name} - ${t(`membership.types.${membershipTypes[this.selectedMembership.type] || 'monthly'}`)}`,
         clientId: clientStore.client.id,
         userId: userStore.user?.id || userStore.user?.phone || 'guest',
@@ -213,7 +214,7 @@ class MembershipStore {
       case 'lifetime':
         return new Date(now.setFullYear(now.getFullYear() + 100)).toISOString(); // 100 years from now
       case 'trial':
-        return new Date(now.setDate(now.getDate() + 7)).toISOString(); // 7 days trial
+        return new Date(now.setDate(now.getDate() + 3)).toISOString(); // 3 days trial
       default:
         return new Date(now.setMonth(now.getMonth() + 1)).toISOString();
     }

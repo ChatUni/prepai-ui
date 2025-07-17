@@ -533,10 +533,15 @@
     "createNew": "Create New Membership",
     "edit": {
       "title": "Edit Membership",
-      "delete": "Delete Membership"
+      "editTitle": "Edit Membership",
+      "delete": "Delete Membership",
+      "restore": "Restore Membership"
     },
     "delete": "Delete",
+    "hide": "Hide Membership",
     "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
+    "confirmHide": "Are you sure you want to hide \"{name}\" membership?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" membership?",
     "noMemberships": "No memberships configured",
     "addMembership": "Add Membership",
     "managePlans": "Manage Plans",

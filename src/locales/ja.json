@@ -533,10 +533,15 @@
     "createNew": "新しいメンバーシップを作成",
     "edit": {
       "title": "メンバーシップを編集",
-      "delete": "メンバーシップを削除"
+      "editTitle": "メンバーシップを編集",
+      "delete": "メンバーシップを削除",
+      "restore": "メンバーシップを復元"
     },
     "delete": "削除",
+    "hide": "メンバーシップを非表示",
     "confirmDelete": "「{name}」メンバーシップを削除してもよろしいですか？",
+    "confirmHide": "「{name}」メンバーシップを非表示にしてもよろしいですか？",
+    "confirmRestore": "「{name}」メンバーシップを復元してもよろしいですか？",
     "noMemberships": "メンバーシップが設定されていません",
     "addMembership": "メンバーシップを追加",
     "managePlans": "プランを管理",

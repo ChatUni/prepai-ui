@@ -115,6 +115,7 @@
       "myFavorites": "我的收藏",
       "playHistory": "播放历史",
       "privateInstruction": "私教实时语音辅导",
+      "about": "关于",
       "document": "文档",
       "courses": "课程",
       "mostViewed": "最多人看",
@@ -531,10 +532,15 @@
     "createNew": "创建会员",
     "edit": {
       "title": "编辑会员",
-      "delete": "删除会员"
+      "editTitle": "编辑会员",
+      "delete": "删除会员",
+      "restore": "恢复会员"
     },
     "delete": "删除",
+    "hide": "隐藏会员",
     "confirmDelete": "确定要删除「{name}」会员吗？",
+    "confirmHide": "确定要隐藏「{name}」会员吗？",
+    "confirmRestore": "确定要恢复「{name}」会员吗？",
     "noMemberships": "暂无会员设置",
     "addMembership": "添加会员",
     "managePlans": "管理方案",

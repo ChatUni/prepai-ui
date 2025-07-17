@@ -20,13 +20,13 @@ export const createWeChatPayOrder = async (orderData) => {
       },
       body: JSON.stringify({
         amount: orderData.amount,
+        duration: orderData.duration,
         body: orderData.body || 'Course Purchase',
         clientId: orderData.clientId,
         userId: orderData.userId,
         productId: orderData.productId,
         detail: orderData.detail || '',
         attach: orderData.attach || '',
-        clientIp: '127.0.0.1' // In production, this should be the actual client IP
       })
     });
 
