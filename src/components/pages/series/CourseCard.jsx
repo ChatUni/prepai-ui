@@ -5,13 +5,14 @@ import paymentManagerStore from '../../../stores/paymentManagerStore';
 import DndOrderContainer from '../../ui/DndOrderContainer';
 import CardEditActions from '../../ui/CardEditActions';
 import courseStore from '../../../stores/courseStore';
+import { t } from '../../../stores/languageStore';
 
 const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) => {
   const navigate = useNavigate();
   const instructor = seriesStore.getInstructorById(course.instructor_id);
 
   const handleCardClick = () => {
-    if (!series.isPaid) {
+    if (!course.isFree && !series.isPaid) {
       paymentManagerStore.setShowSeriesDialog(true, series);
       return;
     }
@@ -35,7 +36,14 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
     >
       <div className="w-full h-full">
         <div className="p-3 relative">
-          <h3 className="font-medium text-sm sm:text-base line-clamp-2">{course.title}</h3>
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-medium text-sm sm:text-base line-clamp-2 flex-1">{course.title}</h3>
+            {course.isFree && (
+              <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
+                {t('course.isFree')}
+              </span>
+            )}
+          </div>
           
           <div className="flex items-center mt-1">
             {instructor?.image ? (
