@@ -7,6 +7,7 @@ class GroupedListStore {
   expandedGroups = observable.set();
   groupOrder = [];
   pendingGroups = null;
+  pendingItems = [];
   isAddGroupDialogOpen = false;
   isEditGroupDialogOpen = false;
   isDeleteGroupDialogOpen = false;
@@ -246,10 +247,16 @@ class GroupedListStore {
   };
 
   saveItemGroupOrder = async function() {
+    if (!this.pendingItems || this.pendingItems.length === 0) return;
+    
     try {
-      const itemType = this.constructor.name.replace('Store', '').toLowerCase();
-      // Save the current state of items with their updated positions
-      await save(itemType, this.items);
+      // Save each item that has changed order
+      const savePromises = this.pendingItems.map(item => this.save(item));
+      await Promise.all(savePromises);
+      
+      // Clear pending items after successful save
+      this.pendingItems = [];
+      
       await this.fetchItems();
     } catch (error) {
       console.error('Error saving item group order:', error);
@@ -264,9 +271,20 @@ class GroupedListStore {
     const [movedItem] = currentGroupItems.splice(fromIndex, 1);
     currentGroupItems.splice(toIndex, 0, movedItem);
 
+    // Determine the range of items that were affected by the move
+    const minIndex = Math.min(fromIndex, toIndex);
+    const maxIndex = Math.max(fromIndex, toIndex);
+
     // Update order property for each item in the group
     currentGroupItems.forEach((item, index) => {
       item.order = index;
+      
+      // Only track items that were affected by the move (between minIndex and maxIndex)
+      if (index >= minIndex && index <= maxIndex) {
+        if (!this.pendingItems.find(pendingItem => pendingItem.id === item.id)) {
+          this.pendingItems.push(item);
+        }
+      }
     });
 
     // Update the main items array
@@ -291,6 +309,7 @@ class GroupedListStore {
     this.expandedGroups.clear();
     this.groupOrder = [];
     this.pendingGroups = null;
+    this.pendingItems = [];
     this.isAddGroupDialogOpen = false;
     this.isEditGroupDialogOpen = false;
     this.isDeleteGroupDialogOpen = false;

@@ -29,7 +29,7 @@ const ExamCard = observer(({
       type={`item-${group}`}
       index={index}
       moveItem={moveItem}
-      onDrop={store.saveItemGroupOrder}
+      onDrop={() => store.saveItemGroupOrder()}
       onClick={handleCardClick}
       isClickable={!isEditMode}
     >
