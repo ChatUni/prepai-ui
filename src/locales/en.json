@@ -49,9 +49,16 @@
     "loginError": "Invalid email or password"
   },
   "user": {
+    "createNew": "Create New User",
+    "hide": "Hide User",
+    "confirmHide": "Are you sure you want to hide \"{name}\" user?",
+    "confirmDelete": "Are you sure you want to delete \"{name}\" user?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" user?",
     "edit": {
       "title": "Edit User",
-      "editTitle": "Edit User"
+      "editTitle": "Edit User",
+      "delete": "Delete User",
+      "restore": "Restore User"
     },
     "name": "Name",
     "avatar": "Avatar",
@@ -205,6 +212,10 @@
     "retry": "Retry",
     "notFound": "No instructors found",
     "chat": "Real-time Chat",
+    "hide": "Hide Instructor",
+    "confirmHide": "Are you sure you want to hide \"{name}\" instructor?",
+    "confirmDelete": "Are you sure you want to delete \"{name}\" instructor?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" instructor?",
     "add": {
       "button": "Add Instructor",
       "title": "Add New Instructor",
@@ -220,7 +231,9 @@
       "iconPreview": "Instructor photo preview",
       "saving": "Saving...",
       "save": "Save Instructor",
-      "uploadError": "Failed to upload image"
+      "uploadError": "Failed to upload image",
+      "delete": "Delete Instructor",
+      "restore": "Restore Instructor"
     }
   },
   "assistant": {
@@ -480,8 +493,12 @@
       "confirmDelete": "Are you sure you want to delete this group?"
     },
     "edit": {
-      "title": "Edit Exam"
+      "title": "Edit Exam",
+      "delete": "Delete Exam",
+      "restore": "Restore Exam",
+      "editTitle": "Edit Exam"
     },
+    "confirmRestore": "Are you sure you want to restore \"{name}\" exam?",
     "name": "Exam Name",
     "group": "Group",
     "selectGroup": "Select Group",

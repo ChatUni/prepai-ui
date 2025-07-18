@@ -49,9 +49,16 @@
     "loginError": "邮箱或密码无效"
   },
   "user": {
+    "createNew": "创建新用户",
+    "hide": "隐藏用户",
+    "confirmHide": "确定要隐藏「{name}」用户吗？",
+    "confirmDelete": "确定要删除「{name}」用户吗？",
+    "confirmRestore": "确定要恢复「{name}」用户吗？",
     "edit": {
       "title": "编辑用户",
-      "editTitle": "编辑用户"
+      "editTitle": "编辑用户",
+      "delete": "删除用户",
+      "restore": "恢复用户"
     },
     "name": "姓名",
     "avatar": "头像",
@@ -205,6 +212,10 @@
     "retry": "重试",
     "notFound": "未找到讲师",
     "chat": "实时聊天",
+    "hide": "隐藏讲师",
+    "confirmHide": "确定要隐藏「{name}」讲师吗？",
+    "confirmDelete": "确定要删除「{name}」讲师吗？",
+    "confirmRestore": "确定要恢复「{name}」讲师吗？",
     "add": {
       "button": "添加讲师",
       "title": "添加新讲师",
@@ -220,7 +231,9 @@
       "iconPreview": "讲师头像预览",
       "saving": "保存中...",
       "save": "保存讲师",
-      "uploadError": "上传图片失败"
+      "uploadError": "上传图片失败",
+      "delete": "删除讲师",
+      "restore": "恢复讲师"
     }
   },
   "assistant": {
@@ -354,6 +367,7 @@
     "confirmDelete": "确定要将「{name}」放入回收站吗？",
     "confirmRestore": "确定要恢复「{name}」课程吗？",
     "edit": {
+      "title": "编辑课程",
       "delete": "删除课程",
       "restore": "恢复课程",
       "loading": "加载中...",
@@ -479,8 +493,12 @@
       "confirmDelete": "确定要删除此分组吗？"
     },
     "edit": {
-      "title": "编辑考试"
+      "title": "编辑考试",
+      "delete": "删除考试",
+      "restore": "恢复考试",
+      "editTitle": "编辑考试"
     },
+    "confirmRestore": "确定要恢复「{name}」考试吗？",
     "name": "考试名称",
     "group": "分组",
     "selectGroup": "选择分组",

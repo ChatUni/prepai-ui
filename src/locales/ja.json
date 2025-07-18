@@ -49,9 +49,16 @@
     "loginError": "メールアドレスまたはパスワードが無効です"
   },
   "user": {
+    "createNew": "新しいユーザーを作成",
+    "hide": "ユーザーを非表示",
+    "confirmHide": "「{name}」ユーザーを非表示にしてもよろしいですか？",
+    "confirmDelete": "「{name}」ユーザーを削除してもよろしいですか？",
+    "confirmRestore": "「{name}」ユーザーを復元してもよろしいですか？",
     "edit": {
       "title": "ユーザーを編集",
-      "editTitle": "ユーザーを編集"
+      "editTitle": "ユーザーを編集",
+      "delete": "ユーザーを削除",
+      "restore": "ユーザーを復元"
     },
     "name": "名前",
     "avatar": "アバター",
@@ -205,6 +212,10 @@
     "retry": "再試行",
     "notFound": "講師が見つかりません",
     "chat": "リアルタイムチャット",
+    "hide": "講師を非表示",
+    "confirmHide": "「{name}」講師を非表示にしてもよろしいですか？",
+    "confirmDelete": "「{name}」講師を削除してもよろしいですか？",
+    "confirmRestore": "「{name}」講師を復元してもよろしいですか？",
     "add": {
       "button": "講師を追加",
       "title": "新規講師を追加",
@@ -220,7 +231,9 @@
       "iconPreview": "講師のプロフィール画像プレビュー",
       "saving": "保存中...",
       "save": "講師を保存",
-      "uploadError": "画像のアップロードに失敗しました"
+      "uploadError": "画像のアップロードに失敗しました",
+      "delete": "講師を削除",
+      "restore": "講師を復元"
     }
   },
   "assistant": {
@@ -354,6 +367,7 @@
     "confirmDelete": "「{name}」シリーズを削除してもよろしいですか？",
     "confirmRestore": "「{name}」シリーズを復元してもよろしいですか？",
     "edit": {
+      "title": "シリーズを編集",
       "delete": "シリーズを削除",
       "restore": "シリーズを復元"
     },
@@ -480,8 +494,12 @@
       "confirmDelete": "このグループを削除してもよろしいですか？"
     },
     "edit": {
-      "title": "試験を編集"
+      "title": "試験を編集",
+      "delete": "試験を削除",
+      "restore": "試験を復元",
+      "editTitle": "試験を編集"
     },
+    "confirmRestore": "「{name}」試験を復元してもよろしいですか？",
     "name": "試験名",
     "group": "グループ",
     "selectGroup": "グループを選択",

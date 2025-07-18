@@ -24,7 +24,7 @@ const useDialogSteps = ({ store }) => {
   };
 
   const handleNext = async () => {
-    if (!step.isValid(store.editingItem)) {
+    if (step.isValid && !step.isValid(store.editingItem)) {
       setError(t(`${store.name}.edit.errors.${step.error}`));
       return;
     }
