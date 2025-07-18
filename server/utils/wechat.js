@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const https = require('https');
 const xml2js = require('xml2js');
 const qrcode = require('qrcode');
+const { get, save, flat } = require('./db.js');
 
 class WeChatPay {
   constructor(config) {
@@ -774,8 +775,139 @@ const nativeExamples = {
   }
 };
 
+// WeChat Pay handlers
+const wechat_pay = async (q, b, req) => {
+  try {
+    // Initialize WeChat Pay with configuration
+    const wechatPay = new WeChatPay({
+      appId: process.env.WECHAT_APP_ID,
+      mchId: process.env.WECHAT_MCH_ID,
+      apiKey: process.env.WECHAT_API_KEY,
+      notifyUrl: process.env.WECHAT_NOTIFY_URL || 'https://your-domain.com/api/wechat/notify'
+    });
+
+    // Generate unique order number
+    const outTradeNo = utils.generateOrderNo('ORDER');
+    
+    // Get client IP from request
+    const clientIp = req.ip ||
+                    req.connection.remoteAddress ||
+                    req.socket.remoteAddress ||
+                    (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
+                    req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+                    req.headers['x-real-ip'] ||
+                    '127.0.0.1';
+    
+    // Prepare order parameters
+    const orderParams = {
+      body: b.body || 'Course Purchase',
+      outTradeNo: outTradeNo,
+      totalFee: utils.formatAmount(b.amount), // Convert yuan to fen
+      productId: b.productId || outTradeNo,
+      spbillCreateIp: clientIp,
+      attach: b.attach || '',
+      detail: b.detail || ''
+    };
+
+    // Validate required parameters
+    if (!b.amount || b.amount <= 0) {
+      throw new Error('Invalid amount');
+    }
+
+    // Create Native payment and generate QR code
+    const result = await wechatPay.completeNativePaymentFlow(orderParams, {
+      format: 'base64',
+      width: 256,
+      margin: 2
+    });
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    // Save order to database
+    const orderData = {
+      id: outTradeNo,
+      prepay_id: result.prepayId,
+      code_url: result.codeUrl,
+      amount: b.amount,
+      duration: b.duration,
+      expireDate: b.duration ? new Date(Date.now() + (b.duration * 24 * 60 * 60 * 1000)).toISOString() : null,
+      status: 'PENDING',
+      user_id: b.userId,
+      client_id: b.clientId,
+      product_id: b.productId,
+      body: b.body,
+      date_created: new Date().toISOString(),
+      expires: new Date(Date.now() + 7200000).toISOString() // 2 hours
+    };
+
+    await save('orders', orderData);
+
+    return {
+      success: true,
+      orderId: result.orderId,
+      qrCode: result.qrCode,
+      amount: b.amount,
+      expiresIn: result.expiresIn
+    };
+
+  } catch (error) {
+    console.error('WeChat Pay error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
+const wechat_query = async (q, b) => {
+  try {
+    const wechatPay = new WeChatPay({
+      appId: process.env.WECHAT_APP_ID,
+      mchId: process.env.WECHAT_MCH_ID,
+      apiKey: process.env.WECHAT_API_KEY,
+      notifyUrl: process.env.WECHAT_NOTIFY_URL || 'https://your-domain.com/api/wechat/notify'
+    });
+
+    const result = await wechatPay.orderQuery({
+      outTradeNo: b.orderId
+    });
+
+    // Update order status in database
+    if (result.trade_state === 'SUCCESS') {
+      const orderData = await flat('orders', `m_id=${b.orderId}`);
+      if (orderData && orderData.length > 0) {
+        const updatedOrder = {
+          ...orderData[0],
+          status: 'PAID',
+          paidAt: new Date().toISOString(),
+          transactionId: result.transaction_id
+        };
+        await save('orders', updatedOrder);
+      }
+    }
+
+    return {
+      success: true,
+      status: result.trade_state,
+      paid: result.trade_state === 'SUCCESS',
+      data: result
+    };
+
+  } catch (error) {
+    console.error('WeChat Pay query error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
 module.exports = {
   WeChatPay,
   utils,
-  nativeExamples
+  nativeExamples,
+  wechat_pay,
+  wechat_query
 };
