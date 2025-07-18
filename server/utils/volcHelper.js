@@ -156,10 +156,45 @@ const handleUrlSigning = async (url) => {
 const handleFileUpload = async (file, key) => {
   const { contentType, fileBuffer } = parseBase64File(file);
 
-  // Upload the file
+  // Extract file extension and base path
+  const lastDotIndex = key.lastIndexOf('.');
+  const basePath = lastDotIndex !== -1 ? key.substring(0, lastDotIndex) : key;
+  const extension = lastDotIndex !== -1 ? key.substring(lastDotIndex) : '';
+  
+  // Generate timestamp and create new key
+  const timestamp = Date.now();
+  const timestampedKey = `${basePath}-${timestamp}${extension}`;
+
+  // Find and delete existing files with same base path but different timestamps
+  try {
+    const listResult = await listObjects({
+      Prefix: basePath + '-'
+    });
+    
+    if (listResult.contents && listResult.contents.length > 0) {
+      // Filter files that match the pattern: basePath-{timestamp}.extension
+      const pattern = new RegExp(`^${basePath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-\\d+${extension.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+      const filesToDelete = listResult.contents.filter(obj => pattern.test(obj.key));
+      
+      // Delete existing files
+      for (const fileObj of filesToDelete) {
+        try {
+          await deleteObject({ Key: fileObj.key });
+        } catch (deleteError) {
+          console.warn(`Failed to delete existing file ${fileObj.key}:`, deleteError.message);
+          // Continue with upload even if deletion fails
+        }
+      }
+    }
+  } catch (listError) {
+    console.warn('Failed to list existing files:', listError.message);
+    // Continue with upload even if listing fails
+  }
+
+  // Upload the file with timestamped key
   try {
     await uploadObject({
-      Key: key,
+      Key: timestampedKey,
       Body: fileBuffer,
       ContentType: contentType
     });
@@ -169,12 +204,12 @@ const handleFileUpload = async (file, key) => {
 
   // Verify the upload was successful
   try {
-    await checkObjectExists({ Key: key });
+    await checkObjectExists({ Key: timestampedKey });
   } catch (error) {
     throw new Error('Upload verification failed');
   }
 
-  const url = generateTosUrl(key);
+  const url = generateTosUrl(timestampedKey);
   return { url };
 };
 
