@@ -25,9 +25,12 @@
     "selectImage": "Select Image",
     "selectVideo": "Select Video",
     "selectFile": "Select File",
+    "selectDocument": "Select Document",
     "changeImage": "Change Image",
     "changeVideo": "Change Video",
     "changeFile": "Change File",
+    "changeDocument": "Change Document",
+    "template": "Template",
     "required": "The {name} field is required",
     "groups": {
       "addGroup": "Add Group",

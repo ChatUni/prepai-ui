@@ -92,7 +92,8 @@ const ImageUpload = observer(({
   type = 'image',
   label,
   onMediaSelect,
-  required = false
+  required = false,
+  template
 }) => {
   if (!id) id = `${store.name}-${field}`;
   
@@ -146,6 +147,8 @@ const ImageUpload = observer(({
         return t('common.changeImage');
       } else if (isVideoFile(currentFile)) {
         return t('common.changeVideo');
+      } else if (isDocumentFile(currentFile)) {
+        return t('common.changeDocument');
       } else {
         return t('common.changeFile');
       }
@@ -155,6 +158,8 @@ const ImageUpload = observer(({
       return t('common.selectVideo');
     } else if (type === 'image') {
       return t('common.selectImage');
+    } else if (type === 'document') {
+      return t('common.selectDocument');
     }
     
     return t('common.selectFile');
@@ -185,6 +190,8 @@ const ImageUpload = observer(({
       return 'video/*';
     } else if (type === 'image') {
       return 'image/*';
+    } else if (type === 'document') {
+      return '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     } else {
       return 'image/*,video/*,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
@@ -193,6 +200,12 @@ const ImageUpload = observer(({
   const renderIcon = () => {
     if (currentFile && isDocumentFile(currentFile)) {
       return null;
+    } else if (type === 'document') {
+      return (
+        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      );
     } else if (type === 'video') {
       return (
         <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,9 +317,21 @@ const ImageUpload = observer(({
   return (
     <div className={className}>
       {hasTitle && (
-        <label className="block text-sm font-medium mb-1">
-          {label || (store ? t(`${store.name}.${field}`) : '')}
-        </label>
+        <div className="flex items-baseline justify-between mb-2">
+          <label className="text-sm font-medium leading-none">
+            {label || (store ? t(`${store.name}.${field}`) : '')}
+          </label>
+          {template && (
+            <a
+              href={template}
+              download
+              className="text-sm text-blue-600 hover:text-blue-800 leading-none"
+              style={{ minHeight: 'auto' }}
+            >
+              {t('common.template')}
+            </a>
+          )}
+        </div>
       )}
       <div className="relative">
         <input

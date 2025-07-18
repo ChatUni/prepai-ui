@@ -10,9 +10,9 @@ const EditExamPage = observer(() => (
     <FormInput store={store} field="desc" rows={4} />
     <ImageUpload
       store={store}
-      type="file"
+      type="document"
       field="upload_file"
-      selectedFile={store.editingItem?.upload_file}
+      template="https://prepai-files.tos-cn-beijing.volces.com/common/question_template.docx"
     />
   </div>
 ));
