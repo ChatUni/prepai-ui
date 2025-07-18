@@ -79,18 +79,18 @@ class UserStore {
   }
 
   constructor() {
-    this.checkSavedLoginState();  
+    this.checkSavedLoginState();
   }
 
   initData = async function() {
-    if (clientStore.client?.id) {
-      await this.fetchItems?.();
-      await instructorStore.fetchItems();
-      await seriesStore.fetchItems();
-      await assistantStore.fetchItems();
-      await membershipStore.fetchItems();
-      await examStore.fetchItems();
-    }
+    await clientStore.loadClient();
+    await this.loadUser();
+    await this.fetchItems?.();
+    await instructorStore.fetchItems();
+    await seriesStore.fetchItems();
+    await assistantStore.fetchItems();
+    await membershipStore.fetchItems();
+    await examStore.fetchItems();
   }
 
   fetchItemList = async function() {
@@ -107,14 +107,14 @@ class UserStore {
   
   checkSavedLoginState = async function() {
     try {
-      await clientStore.loadClient();
       const saveduser = localStorage.getItem('user');
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
         this.user = {...(this.user || {}), ...parseduser};
-        const user = this.user;
-        console.log('Restored login state:', user.isLoggedIn);
-        await this.loginWithPhone(user.phone, '', parseduser);
+        
+        if (this.user.isLoggedIn) {
+          this.initData();
+        }
       }
     } catch (error) {
       console.error('Error restoring login state:', error);
@@ -140,7 +140,7 @@ class UserStore {
     if (!phone && this.user.phone) phone = this.user.phone;
     const users = await get('user', { phone, clientId: clientStore.client.id });
     const user = users && users.length > 0 ? users[0] : null;
-    this.user = user;
+    this.user = {...(this.user || {}), ...user};
     return user;
   }
 
@@ -168,10 +168,11 @@ class UserStore {
       }
       
       this.user.isLoggedIn = true;
+      this.saveLoginState();
       this.initData();
       return this.user;
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Error during login:', error);
       throw error;
     }
   }

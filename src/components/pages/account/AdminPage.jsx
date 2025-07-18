@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { t } from '../../../stores/languageStore';
 import MenuListItem from '../../ui/MenuListItem';
+import userStore from '../../../stores/userStore';
 
 const routeMap = {
   'new-instructor': '/instructors/new',
@@ -25,6 +26,8 @@ const routeMap = {
 const AdminPage = observer(() => {
   const navigate = useNavigate();
   const [currentMenu, setCurrentMenu] = useState('main');
+
+  if (!userStore.isAdmin) return null;
 
   const handleSystemSettingsClick = () => {
     setCurrentMenu('system-settings');
