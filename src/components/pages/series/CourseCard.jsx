@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import seriesStore from '../../../stores/seriesStore';
 import paymentManagerStore from '../../../stores/paymentManagerStore';
+import userStore from '../../../stores/userStore';
 import DndOrderContainer from '../../ui/DndOrderContainer';
 import CardEditActions from '../../ui/CardEditActions';
 import courseStore from '../../../stores/courseStore';
@@ -38,11 +39,16 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
         <div className="p-3 relative">
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-medium text-sm sm:text-base line-clamp-2 flex-1">{course.title}</h3>
-            {course.isFree && (
+            {!series.isPaid && (course.isFree ? (
               <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
                 {t('course.isFree')}
               </span>
-            )}
+            ) :
+            !seriesStore.isAdminMode && (
+              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
+                {t('course.purchaseToLearn')}
+              </span>
+            ))}
           </div>
           
           <div className="flex items-center mt-1">
@@ -60,6 +66,12 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
               </div>
             )}
             <p className="text-gray-600 text-xs sm:text-sm">{instructor?.name}</p>
+            {course.duration && (
+              <>
+                <span className="text-gray-400 mx-1.5">•</span>
+                <p className="text-gray-600 text-xs sm:text-sm">{course.duration} {t('course.minutes')}</p>
+              </>
+            )}
           </div>
 
           {isEditMode && (

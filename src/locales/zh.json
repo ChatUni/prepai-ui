@@ -266,8 +266,10 @@
     "selectInstructor_id": "选择讲师",
     "title": "课程标题",
     "duration": "时长(分钟)",
+    "minutes": "分钟",
     "url": "视频",
     "isFree": "免费",
+    "purchaseToLearn": "购买后学习",
     "createNew": "添加章节",
     "edit": {
       "title": "编辑章节",

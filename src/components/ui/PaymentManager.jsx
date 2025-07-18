@@ -90,7 +90,7 @@ const PaymentManager = observer(() => {
                 })()}
                 
                 <p className="text-sm text-gray-600 mt-1">
-                  {t('series.duration')}: {currentSeries.duration?.replace('days', ' Days') || 'N/A'}
+                  {t('series.duration')}: {currentSeries.duration} {t('series.edit.days')}
                 </p>
               </div>
             </div>

@@ -40,7 +40,7 @@ class PaymentManagerStore {
         userId: userStore.user.id,
         clientId: clientStore.client.id,
         productType: 'series',
-        productId: `series-${this.currentSeries.id}`,
+        productId: `series_${this.currentSeries.id}`,
         productName: this.currentSeries.name,
         amount: this.currentSeries.price,
         duration: this.currentSeries.duration

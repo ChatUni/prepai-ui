@@ -266,8 +266,10 @@
     "selectInstructor_id": "講師IDを選択",
     "title": "コースタイトル",
     "duration": "時間",
+    "minutes": "分",
     "url": "コースURL",
     "isFree": "無料",
+    "purchaseToLearn": "購入後学習",
     "createNew": "新しいコースを作成",
     "edit": {
       "title": "コースを編集",

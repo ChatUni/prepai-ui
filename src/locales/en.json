@@ -266,8 +266,10 @@
     "selectInstructor_id": "Select Instructor ID",
     "title": "Course Title",
     "duration": "Duration",
+    "minutes": "minutes",
     "url": "Course URL",
     "isFree": "Free",
+    "purchaseToLearn": "Purchase to Learn",
     "createNew": "Create New Course",
     "edit": {
       "title": "Edit Course",

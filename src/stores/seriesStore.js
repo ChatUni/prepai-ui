@@ -47,8 +47,8 @@ class SeriesStore {
       name: '',
       category: '',
       group: '',
-      price: '',
-      duration: '30days',
+      price: 0,
+      duration: 0,
       descType: 'text',
       desc: '',
       image: '',
@@ -71,7 +71,7 @@ class SeriesStore {
   }
 
   get durationOptions() {
-    return [30, 60, 90, 180, 365].map(x => ({ value: `${x}days`, text: `${x} ${t('series.edit.days')}` }))
+    return [30, 60, 90, 180, 365].map(x => ({ value: x, text: `${x} ${t('series.edit.days')}` }))
   }
 
   get stepData() {
@@ -127,6 +127,8 @@ class SeriesStore {
   save = async function(item) {
     return await save('series', omit({
       ...item,
+      price: +item.price,
+      duration: +item.duration,
       date_modified: new Date().toISOString()
     }, ['_id', 'courses', 'isPaid']));
   }
