@@ -33,7 +33,7 @@ const useDragAndDrop = ({ type, index, moveItem, onDrop }) => {
     drop: async (item) => {
       if (onDrop) {
         try {
-          await onDrop(item.index);
+          await onDrop(item);
         } catch (error) {
           console.error('Failed to process drop operation:', error);
         }

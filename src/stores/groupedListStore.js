@@ -156,7 +156,7 @@ class GroupedListStore {
   saveGroups = async function(groups) {
     clientStore.client.settings[`${this.name}Groups`] = groups;
     try {
-      await clientStore.save();
+      await clientStore.save(clientStore.client);
     } catch (error) {
       console.error('Error saving groups:', error);
       throw error;

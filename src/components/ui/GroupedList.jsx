@@ -61,7 +61,7 @@ const GroupedList = observer(({
       maxHeight="96"
       index={index}
       moveGroup={(fromIndex, toIndex) => {
-        store.moveGroup(fromIndex, toIndex, () => store.groupedItems);
+        store.moveGroup(fromIndex, toIndex);
       }}
       onDrop={() => store.saveGroupOrder()}
       isDraggable={isEditMode && store.isGroupEditable(group)}
