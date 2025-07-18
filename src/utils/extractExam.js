@@ -1,34 +1,39 @@
-import fs from 'fs';
-import path from 'path';
 import mammoth from 'mammoth';
-import WordExtractor from 'word-extractor';
-import { fileTypeFromBuffer } from 'file-type';
 
-async function extractExamToJson(filePath) {
-    const buffer = fs.readFileSync(filePath);
-    const ext = path.extname(filePath).toLowerCase();
-    const type = await fileTypeFromBuffer(buffer);
+// Function to handle File objects directly (for browser use)
+async function extractExamFromFile(file) {
+    if (!file) {
+        throw new Error("No file provided");
+    }
+
     let text = "";
+    const fileName = file.name.toLowerCase();
 
     try {
-        if ((type && type.ext === 'doc') || ext === '.doc') {
-            const extractor = new WordExtractor();
-            const doc = await extractor.extract(filePath);
-            text = doc.getBody();
-        } else if ((type && type.ext === 'docx') || ext === '.docx') {
-            const result = await mammoth.extractRawText({ buffer });
+        if (fileName.endsWith('.docx')) {
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
             text = result.value;
+        } else if (fileName.endsWith('.doc')) {
+            // For .doc files, we'll need to convert to arrayBuffer and use a different approach
+            // Note: WordExtractor doesn't work in browser, so we'll handle this differently
+            throw new Error("Legacy .doc files are not supported in browser. Please convert to .docx format.");
         } else {
-            throw new Error("Unsupported file format.");
+            throw new Error("Unsupported file format. Please use .docx files.");
         }
 
         const questions = parseQuestionsWithSections(text);
-        const jsonFilePath = filePath.replace(/\.(docx?|DOCX?)$/, ".json");
-        fs.writeFileSync(jsonFilePath, JSON.stringify(questions, null, 2), "utf-8");
-        console.log(`Output saved to ${jsonFilePath}`);
+        return questions;
     } catch (err) {
         console.error("Error extracting exam:", err.message);
+        throw err;
     }
+}
+
+// Legacy function for Node.js/CLI use (kept for backward compatibility)
+async function extractExamToJson(filePath) {
+    // This function is kept for CLI usage but won't work in browser
+    throw new Error("extractExamToJson is not available in browser environment. Use extractExamFromFile instead.");
 }
 
 function cleanOptionText(text) {
@@ -142,10 +147,13 @@ function extractShortAnswerAnswers(answerText = "") {
     return result;
 }
 
+// Export functions for use in other modules
+export { extractExamFromFile, extractExamToJson };
+
 // CLI usage
-const inputFile = process.argv[2];
-if (!inputFile) {
-    console.log("Usage: node extractExam.mjs yourfile.docx");
-} else {
-    extractExamToJson(inputFile);
-}
+// const inputFile = process.argv[2];
+// if (!inputFile) {
+//     console.log("Usage: node extractExam.mjs yourfile.docx");
+// } else {
+//     extractExamToJson(inputFile);
+// }

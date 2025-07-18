@@ -36,7 +36,21 @@ class ExamStore {
 
   get mediaInfo() {
     return {
-      image: x => `exams/${x.id}/image.jpg`
+      image: x => `exams/${x.id}/image.jpg`,
+      upload_file: async item => {
+        if (item.upload_file && item.upload_file instanceof File) {
+          try {
+            const { extractExamFromFile } = await import('../utils/extractExam.js');
+            const questions = await extractExamFromFile(item.upload_file);
+            if (questions && questions.length > 0) {
+              item.questions = questions;
+            }
+          } catch (error) {
+            console.error('Error extracting exam content:', error);
+          }
+        }
+        return `exams/${item.id}/questions.doc`
+      }
     }
   }
 

@@ -2,10 +2,13 @@ import { observer } from 'mobx-react-lite';
 import store from '../../../stores/examStore';
 import FormInput from '../../ui/FormInput';
 import ImageUpload from '../../ui/ImageUpload';
+import clientStore from '../../../stores/clientStore';
+import FormSelect from '../../ui/FormSelect';
 
 const EditExamPage = observer(() => (
   <div className="space-y-4">
     <FormInput store={store} field="name" />
+    <FormSelect store={store} field="group" options={clientStore.client.settings.examGroups} />
     <ImageUpload store={store} field="image" />
     <FormInput store={store} field="desc" rows={4} />
     <ImageUpload

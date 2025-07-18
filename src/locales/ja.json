@@ -483,6 +483,8 @@
       "title": "試験を編集"
     },
     "name": "試験名",
+    "group": "グループ",
+    "selectGroup": "グループを選択",
     "image": "画像",
     "cover": "カバー画像",
     "desc": "説明",

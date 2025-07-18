@@ -140,7 +140,8 @@ class EditingStore {
     if (this.mediaInfo) {
       for (const k of Object.keys(this.mediaInfo)) {
         if (item[k] instanceof File) {
-          const url = await uploadImage(item[k], this.mediaInfo[k](item));
+          const key = await this.mediaInfo[k](item);
+          const url = await uploadImage(item[k], key);
           item[k] = url;
           dirty = true;
         }

@@ -482,6 +482,8 @@
       "title": "编辑考试"
     },
     "name": "考试名称",
+    "group": "分组",
+    "selectGroup": "选择分组",
     "image": "图片",
     "cover": "封面图片",
     "desc": "描述",

@@ -14,6 +14,7 @@
     "update-youtube": "node --no-warnings update_courses_with_youtube.cjs"
   },
   "dependencies": {
+    "mammoth": "^1.9.1",
     "mobx": "^6.13.6",
     "mobx-react-lite": "^4.1.0",
     "react": "^19.0.0",

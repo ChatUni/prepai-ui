@@ -234,6 +234,18 @@ const ImageUpload = observer(({
           </div>
         </div>
       );
+    } else if (type === 'document' && displayPreviewUrl) {
+      // Handle existing document URLs - check if currentFile is not a File object
+      const fileName = displayPreviewUrl.split('/').pop() || 'Document';
+      return (
+        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
+          {getFileIcon()}
+          <div>
+            <p className="text-sm font-medium text-gray-900">{fileName}</p>
+            <p className="text-xs text-gray-500">Document file</p>
+          </div>
+        </div>
+      );
     } else if (currentFile && isVideoFile(currentFile)) {
       return (
         <video

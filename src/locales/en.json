@@ -483,6 +483,8 @@
       "title": "Edit Exam"
     },
     "name": "Exam Name",
+    "group": "Group",
+    "selectGroup": "Select Group",
     "image": "Image",
     "cover": "Cover Image",
     "desc": "Description",

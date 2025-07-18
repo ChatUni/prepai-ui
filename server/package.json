@@ -11,14 +11,12 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "file-type": "^21.0.0",
-    "mammoth": "^1.9.1",
     "mongodb": "^6.17.0",
     "multipart-formdata": "^1.1.0",
     "node-fetch": "^2.7.0",
     "openai": "^4.90.0",
     "qrcode": "^1.5.4",
     "tencentcloud-sdk-nodejs": "^4.1.72",
-    "word-extractor": "^1.0.4",
     "xml2js": "^0.6.2"
   }
 }
