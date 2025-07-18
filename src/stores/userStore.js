@@ -16,7 +16,7 @@ import { omit } from '../utils/utils';
 import GroupedListStore from './groupedListStore';
 
 class UserStore {
-  user = null;
+  user = {};
   examRecords = [];
   coupons = [];
 
@@ -78,8 +78,8 @@ class UserStore {
     return this.isPaid('membership');
   }
 
-  constructor() {
-    this.checkSavedLoginState();
+  init = async function() {
+    await this.checkSavedLoginState();
   }
 
   initData = async function() {
@@ -111,7 +111,6 @@ class UserStore {
       if (saveduser) {
         const parseduser = JSON.parse(saveduser);
         this.user = {...(this.user || {}), ...parseduser};
-        
         if (this.user.isLoggedIn) {
           this.initData();
         }

@@ -50,11 +50,13 @@ class PaymentManagerStore {
     }
   };
 
-  handlePaymentSuccess = (paymentData) => {
+  handlePaymentSuccess = async (paymentData) => {
     this.setShowWeChatDialog(false);
     this.currentSeries = null;
     this.orderData = null;
-    // Handle successful payment (e.g., refresh user data, show success message)
+
+    await userStore.loadUser();
+    alert(t('payment.success_message'));
   };
 
   handlePaymentError = (error) => {

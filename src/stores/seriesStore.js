@@ -37,7 +37,7 @@ class SeriesStore {
     return [
       'category',
       item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId),
-      item => this.isAdminMode || !this.showPaidOnly || item.isPaid
+      item => this.isAdminMode || !this.showPaidOnly || this.isPaid(item.id)
     ];
   }
 
@@ -110,13 +110,15 @@ class SeriesStore {
     ];
   }
 
+  isPaid = function(id) {
+    return userStore.isSeriesPaid(id);
+  }
+
   fetchItemList = async function() {
     const series = await get('series', { clientId: clientStore.client.id });
     return series.map((s, index) => ({
       ...s,
       order: typeof s.order === 'number' ? s.order : index,
-      descType: s.desc?.startsWith('https://') ? 'image' : 'text',
-      isPaid: userStore.isSeriesPaid(s.id),
       courses: s.courses.map(c => ({
         ...c,
         isFree: c.isFree == null ? false : c.isFree

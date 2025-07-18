@@ -2,9 +2,11 @@ import { makeAutoObservable } from "mobx";
 
 export const combineStores = (...storeClasses) => {
   const combined = {};
+  const storeInstances = [];
   
   storeClasses.forEach(storeClass => {
     const store = new storeClass();
+    storeInstances.push(store);
 
     // Copy own properties
     const ownDescriptors = Object.getOwnPropertyDescriptors(store);
@@ -35,9 +37,18 @@ export const combineStores = (...storeClasses) => {
   
   makeAutoObservable(combined);
 
+  // Create init method that calls init on each store instance sequentially
+  combined.init = async () => {
+    for (const store of storeInstances) {
+      if (store.init && typeof store.init === 'function') {
+        await store.init.call(combined);
+      }
+    }
+  };
+
   //console.log(combined);
 
-  combined.init && combined.init();
+  combined.init();
 
   return combined;
 };

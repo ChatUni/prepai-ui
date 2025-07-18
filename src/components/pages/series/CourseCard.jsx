@@ -13,7 +13,7 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
   const instructor = seriesStore.getInstructorById(course.instructor_id);
 
   const handleCardClick = () => {
-    if (!course.isFree && !series.isPaid) {
+    if (!course.isFree && !seriesStore.isPaid(series.id)) {
       paymentManagerStore.setShowSeriesDialog(true, series);
       return;
     }
@@ -39,7 +39,7 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
         <div className="p-3 relative">
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-medium text-sm sm:text-base line-clamp-2 flex-1">{course.title}</h3>
-            {!series.isPaid && (course.isFree ? (
+            {!seriesStore.isPaid(series.id) && (course.isFree ? (
               <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
                 {t('course.isFree')}
               </span>
