@@ -129,13 +129,6 @@ class UserStore {
     }
   }
 
-  setUser = function(info) {
-    Object.keys(info).forEach(key => {
-      this.user[key] = info[key];
-    });
-    this.saveLoginState();
-  }
-
   loadUser = async function(phone) {
     if (!phone && this.user.phone) phone = this.user.phone;
     const users = await get('user', { phone, clientId: clientStore.client.id });
