@@ -130,7 +130,8 @@ class UserStore {
 
   loadUser = async function(phone) {
     if (!phone && this.user.phone) phone = this.user.phone;
-    const users = await get('user', { phone, clientId: clientStore.client.id });
+    const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
+    const users = await get('user', { phone, clientId: cid });
     const user = users && users.length > 0 ? users[0] : null;
     this.user = {...(this.user || {}), ...user};
     return user;
@@ -142,11 +143,12 @@ class UserStore {
       if (!user) user = await this.loadUser(phone);
 
       if (!user) {
+        const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
         // User doesn't exist, create a new one
         const newUser = {
-          id: `${clientStore.client.id}_${phone}`,
+          id: `${cid}_${phone}`,
           phone: phone,
-          client_id: clientStore.client.id,
+          client_id: cid,
           name: `用户${phone.slice(-4)}`, // Default name using last 4 digits
           role: 'user',
           avatar: '',

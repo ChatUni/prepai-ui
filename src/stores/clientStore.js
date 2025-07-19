@@ -246,7 +246,7 @@ class ClientStore {
     this.error = null;
 
     try {
-      const data = await get('clients', { id: 1 });
+      const data = await get('clients', { id: import.meta.env.VITE_CLIENT_ID });
       
       runInAction(() => {
         if (data && data.length > 0) {
