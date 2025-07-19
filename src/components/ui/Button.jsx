@@ -26,7 +26,7 @@ const Button = ({
   >
     {icon && (
       <span className="mr-2">
-        <Icon name={icon} size={iconSize} />
+        <Icon icon={icon} size={iconSize} />
       </span>
     )}
     {children}

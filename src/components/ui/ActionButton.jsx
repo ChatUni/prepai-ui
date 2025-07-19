@@ -33,7 +33,7 @@ const ActionButton = ({
       className={`action-button p-2 ${colorClass} rounded-lg transition-colors`}
       title={title}
     >
-      <Icon name={icon} size={size} color={color} />
+      <Icon icon={icon} size={size} color={color} />
     </button>
   );
 };

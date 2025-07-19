@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { AccordionSection } from './AdminAccordion';
 import ActionButton from './ActionButton';
 import { t } from '../../stores/languageStore';
@@ -37,13 +38,13 @@ const GroupedList = observer(({
       <div className="flex items-center gap-2">
         <ActionButton
           onClick={() => store.openEditGroupDialog(group)}
-          icon="FiEdit"
+          icon={FiEdit}
           color="white"
           title={editGroupTitle || t(`${itemType}.groups.editGroup`)}
         />
         <ActionButton
           onClick={() => store.openDeleteGroupDialog(group)}
-          icon="FiTrash2"
+          icon={FiTrash2}
           color="white"
           title={deleteGroupTitle || t(`${itemType}.groups.deleteGroup`)}
         />

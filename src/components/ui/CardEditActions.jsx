@@ -1,6 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { MdDragIndicator } from 'react-icons/md';
+import { MdDragIndicator, MdRestoreFromTrash } from 'react-icons/md';
+import { FiEyeOff, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
 import ActionButton from './ActionButton';
 import { t } from '../../stores/languageStore';
 
@@ -23,7 +24,7 @@ const CardEditActions = observer(({
         <ActionButton
           onClick={handleClick('openRestoreDialog')}
           color="green"
-          icon="MdRestoreFromTrash"
+          icon={MdRestoreFromTrash}
           title={t(`${store.name}.edit.restore`)}
         />
       ) : (
@@ -32,21 +33,21 @@ const CardEditActions = observer(({
             <ActionButton
               onClick={handleClick('openVisibilityDialog')}
               color="blue"
-              icon={item.hidden ? 'FiEyeOff' : 'FiEye'}
+              icon={item.hidden ? FiEyeOff : FiEye}
               title={t(`${store.name}.${item.hidden ? 'show' : 'hide'}`)}
             />
           }
           <ActionButton
             onClick={handleClick('openEditDialog')}
             color="green"
-            icon="FiEdit"
+            icon={FiEdit}
             title={t(`${store.name}.edit.editTitle`)}
           />
           {(!hideDelete || !hideDelete(item)) && (
             <ActionButton
               onClick={handleClick('openDeleteDialog')}
               color="red"
-              icon="FiTrash2"
+              icon={FiTrash2}
               title={t(`${store.name}.edit.delete`)}
             />
           )}

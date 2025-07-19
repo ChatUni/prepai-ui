@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite';
+import { FiSearch } from 'react-icons/fi';
 import { t } from '../../stores/languageStore';
 import DropdownFilter from './DropdownFilter';
 import Icon from './Icon';
@@ -39,7 +40,7 @@ const SearchBar = observer(({
     {/* Search Input */}
     <div className="relative flex-1">
       <div className="absolute top-0 bottom-0 left-0 flex items-center pl-3 pointer-events-none">
-        <Icon name="FiSearch" className="w-5 h-5 text-blue-500" />
+        <Icon icon={FiSearch} className="w-5 h-5 text-blue-500" />
       </div>
       <input
         type="text"
