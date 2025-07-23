@@ -122,6 +122,127 @@ console.log('OpenRouter: ', useOpenRouter)
   }
 };
 
+// Draw function that can be called from other modules
+const draw = async (body, serverless = true) => {
+  const headers = getResponseHeaders();
+  
+  if (!process.env.OPENAI_API_KEY) {
+    const error = new Error('OpenAI API key not configured');
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  try {
+    const { prompt, size = '1024x1024', quality = 'standard', style = 'vivid' } = body;
+    
+    if (!prompt) {
+      const error = new Error('Prompt is required');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate size parameter and determine model
+    const validSizes = ['256x256', '512x512', '1024x1024', '1792x1024', '1024x1792'];
+    if (!validSizes.includes(size)) {
+      const error = new Error(`Invalid size. Must be one of: ${validSizes.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Determine model based on size
+    const isDallE2Size = ['256x256', '512x512'].includes(size);
+    const model = isDallE2Size ? 'dall-e-2' : 'dall-e-3';
+
+    // DALL-E 2 doesn't support quality and style parameters
+    if (isDallE2Size) {
+      const response = await openai.images.generate({
+        model,
+        prompt,
+        n: 1,
+        size
+      });
+
+      if (!serverless) {
+        return response;
+      }
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(response)
+      };
+    }
+
+    // DALL-E 3 validation and generation
+    // Validate quality parameter
+    const validQualities = ['standard', 'hd'];
+    if (!validQualities.includes(quality)) {
+      const error = new Error(`Invalid quality. Must be one of: ${validQualities.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate style parameter
+    const validStyles = ['vivid', 'natural'];
+    if (!validStyles.includes(style)) {
+      const error = new Error(`Invalid style. Must be one of: ${validStyles.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    const response = await openai.images.generate({
+      model,
+      prompt,
+      n: 1,
+      size,
+      quality,
+      style
+    });
+
+    if (!serverless) {
+      return response;
+    }
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(response)
+    };
+  } catch (error) {
+    console.error('OpenAI DALL-E API error:', error);
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: 'Failed to generate image with DALL-E'
+      })
+    };
+  }
+};
+
 // Main handler function
 const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
@@ -167,6 +288,18 @@ const handler = async (event, context) => {
       case 'POST /chat':
         const body = JSON.parse(event.body);
         return await chat(useOpenRouter ? 'openrouter' : 'openai', body, true);
+
+      case 'POST /draw':
+        // DALL-E 3 only works with OpenAI, not OpenRouter
+        if (useOpenRouter) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Image generation is only available with OpenAI API, not OpenRouter' })
+          };
+        }
+        const drawBody = JSON.parse(event.body);
+        return await draw(drawBody, true);
 
       case 'GET /files':
         try {
@@ -511,4 +644,4 @@ const handler = async (event, context) => {
   }
 };
 
-module.exports = { handler, chat };
+module.exports = { handler, chat, draw };

@@ -44,16 +44,30 @@ const AssistantChatMessages = observer(() => {
           className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
         >
           <div className="pl-4">
-            <div className={`inline-block px-4 py-3 rounded-lg max-w-[80%] ${
-              message.sender === 'user'
-                ? 'bg-blue-500 text-white rounded-br-none'
-                : 'bg-gray-200 text-gray-800 rounded-bl-none'
-            }`}>
-              <div className="text-sm whitespace-pre-wrap">{message.text}</div>
-              <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
-                {new Date(message.timestamp).toLocaleTimeString()}
+            {message.type === 'image' ? (
+              <div className="inline-block">
+                <img
+                  src={message.text}
+                  alt="Generated image"
+                  className="max-w-full h-auto rounded-lg"
+                  style={{ maxWidth: '300px', maxHeight: '300px' }}
+                />
+                <div className="text-xs mt-1 text-gray-500">
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={`inline-block px-4 py-3 rounded-lg max-w-[80%] ${
+                message.sender === 'user'
+                  ? 'bg-blue-500 text-white rounded-br-none'
+                  : 'bg-gray-200 text-gray-800 rounded-bl-none'
+              }`}>
+                <div className="text-sm whitespace-pre-wrap">{message.text}</div>
+                <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -72,6 +86,57 @@ const AssistantChatMessages = observer(() => {
     >
       {chatContent}
     </LoadingState>
+  );
+});
+
+// Resolution selector component
+const ResolutionSelector = observer(() => {
+  const resolutions = [
+    { size: '256x256', label: '1:1', dimensions: '256×256' },
+    { size: '512x512', label: '1:1', dimensions: '512×512' },
+    { size: '1024x1024', label: '1:1', dimensions: '1024×1024' },
+    { size: '1792x1024', label: '16:9', dimensions: '1792×1024' },
+    { size: '1024x1792', label: '9:16', dimensions: '1024×1792' }
+  ];
+
+  const getIconComponent = (size) => {
+    const [width, height] = size.split('x').map(Number);
+    if (width === height) {
+      // Square
+      return (
+        <div className="w-5 h-5 border-2 border-current"></div>
+      );
+    } else if (height > width) {
+      // Tall rectangle
+      return (
+        <div className="w-3 h-5 border-2 border-current"></div>
+      );
+    } else {
+      // Wide rectangle
+      return (
+        <div className="w-5 h-3 border-2 border-current"></div>
+      );
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-5 gap-2 mt-4">
+      {resolutions.map(({ size, label, dimensions }) => (
+        <button
+          key={size}
+          onClick={() => assistantChatStore.setSelectedImageSize(size)}
+          className={`flex flex-col items-center gap-1 px-1 py-2 rounded-lg border-2 transition-all ${
+            assistantChatStore.selectedImageSize === size
+              ? 'bg-blue-100 border-blue-500 text-blue-700'
+              : 'bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 hover:border-gray-400'
+          }`}
+        >
+          {getIconComponent(size)}
+          <div className="text-xs font-medium">{label}</div>
+          <div className="text-xs text-gray-500 leading-tight">{dimensions}</div>
+        </button>
+      ))}
+    </div>
   );
 });
 
@@ -118,7 +183,7 @@ const AssistantChatPage = observer(() => {
   );
 
   const mainContent = assistantChatStore.selectedAssistant && (
-    <div className="flex flex-col h-full pb-12">
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div
         className="flex items-center p-4 border-b cursor-pointer hover:bg-gray-50"
@@ -139,11 +204,14 @@ const AssistantChatPage = observer(() => {
       
       {/* Input area */}
       <div className="p-4 border-t">
-        <ChatInput 
-          onSendMessage={handleSendMessage} 
+        <ChatInput
+          onSendMessage={handleSendMessage}
           disabled={assistantChatStore.loading}
           placeholder={t('menu.categories.assistant.inputQuestion')}
         />
+        {assistantChatStore.selectedAssistant?.function === 'image' && (
+          <ResolutionSelector />
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ const { save, remove, flat } = require('./db.js');
 const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete } = require('./volcHelper.js');
 const { wechat_pay, wechat_query } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
-const { chat } = require('../openai.js');
+const { chat, draw } = require('../openai.js');
 
 module.exports = {
   db_handlers: {
@@ -32,6 +32,7 @@ module.exports = {
     },
     post: {
       chat: (q, b) => chat(q.api, b, false),
+      draw: (q, b) => draw(b, false),
       tos_sign: (q, b) => handleUrlSigning(b.url),
       tos_upload: (q, b) => handleFileUpload(b.file, b.key),
       tos_delete: (q, b) => handleFileDelete(b.key),
