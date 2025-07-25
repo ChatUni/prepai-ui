@@ -7,6 +7,7 @@ class AssistantChatStore {
   loading = false;
   error = null;
   selectedImageSize = '512x512';
+  selectedVideoResolution = '1280x720';
   
   constructor() {
     makeAutoObservable(this);
@@ -80,6 +81,47 @@ class AssistantChatStore {
             this.loading = false;
           });
         }
+      } else if (this.selectedAssistant.function === 'video') {
+        try {
+          // Convert resolution to aspect ratio for jimeng API
+          const aspectRatio = this.selectedVideoResolution === '1280x720' ? '16:9' :
+                             this.selectedVideoResolution === '1024x1024' ? '1:1' : '16:9';
+          
+          // Start video generation with jimeng API
+          const data = await post('jimeng', {}, {
+            prompt: text,
+            aspect_ratio: aspectRatio,
+            duration: 5, // jimeng default duration
+            model: 'jimeng-1.4'
+          });
+          
+          console.log("Received response from jimeng API:", data);
+          
+          if (data.task_id) {
+            // Add a loading message to show generation is in progress
+            const loadingMessageId = `assistant-${Date.now()}`;
+            runInAction(() => {
+              this.messages.push({
+                id: loadingMessageId,
+                sender: 'assistant',
+                text: '正在生成视频，请稍候...',
+                type: 'loading',
+                timestamp: new Date().toISOString()
+              });
+            });
+            
+            // Poll for completion
+            this.pollVideoCompletion(data.task_id, loadingMessageId);
+          } else {
+            throw new Error('No request key received from jimeng API');
+          }
+        } catch (error) {
+          console.error('Error generating video:', error);
+          runInAction(() => {
+            this.error = error.message;
+            this.loading = false;
+          });
+        }
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected
         const useOpenRouter = !!this.selectedAssistant.model;
@@ -126,6 +168,84 @@ class AssistantChatStore {
     }
   }
   
+  async pollVideoCompletion(task_id, loadingMessageId) {
+    const maxAttempts = 60; // Poll for up to 5 minutes (60 * 5 seconds)
+    let attempts = 0;
+    
+    const poll = async () => {
+      try {
+        attempts++;
+        const result = await post('jimeng_query', {}, { task_id });
+        
+        console.log(`Polling attempt ${attempts}:`, result);
+        
+        if (result.status === 'success' && result.video_url) {
+          // Video generation completed successfully
+          runInAction(() => {
+            // Find and update the loading message
+            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
+            if (messageIndex !== -1) {
+              this.messages[messageIndex] = {
+                ...this.messages[messageIndex],
+                text: result.video_url,
+                type: 'video'
+              };
+            }
+            this.loading = false;
+          });
+        } else if (result.status === 'failed') {
+          // Video generation failed
+          runInAction(() => {
+            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
+            if (messageIndex !== -1) {
+              this.messages[messageIndex] = {
+                ...this.messages[messageIndex],
+                text: `视频生成失败: ${result.error || '未知错误'}`,
+                type: 'error'
+              };
+            }
+            this.loading = false;
+            this.error = result.error || '视频生成失败';
+          });
+        } else if (attempts >= maxAttempts) {
+          // Timeout
+          runInAction(() => {
+            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
+            if (messageIndex !== -1) {
+              this.messages[messageIndex] = {
+                ...this.messages[messageIndex],
+                text: '视频生成超时，请稍后重试',
+                type: 'error'
+              };
+            }
+            this.loading = false;
+            this.error = '视频生成超时';
+          });
+        } else {
+          // Still processing, continue polling
+          setTimeout(poll, 5000); // Poll every 5 seconds
+        }
+      } catch (error) {
+        console.error('Error polling video completion:', error);
+        runInAction(() => {
+          const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
+          if (messageIndex !== -1) {
+            this.messages[messageIndex] = {
+              ...this.messages[messageIndex],
+              text: `查询视频状态失败: ${error.message}`,
+              type: 'error'
+            };
+          }
+          this.loading = false;
+          this.error = error.message;
+        });
+      }
+    };
+    
+    // Start polling after a short delay
+    setTimeout(poll, 2000);
+  }
+  
   clearMessages() {
     this.messages = [];
     this.error = null;
@@ -133,6 +253,10 @@ class AssistantChatStore {
   
   setSelectedImageSize(size) {
     this.selectedImageSize = size;
+  }
+  
+  setSelectedVideoResolution(resolution) {
+    this.selectedVideoResolution = resolution;
   }
 }
 

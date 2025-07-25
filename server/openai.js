@@ -243,6 +243,105 @@ const draw = async (body, serverless = true) => {
   }
 };
 
+// Video function that can be called from other modules
+const video = async (body, serverless = true) => {
+  const headers = getResponseHeaders();
+  
+  // For video generation, we need Azure OpenAI credentials
+  if (!process.env.AZURE_OPENAI_ENDPOINT || !process.env.AZURE_OPENAI_API_KEY) {
+    const error = new Error('Azure OpenAI endpoint and API key are required for video generation');
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+
+  // Using Azure OpenAI API directly with fetch, no SDK client needed
+
+  try {
+    const { prompt, duration = 5, resolution = '1280x720' } = body;
+    
+    if (!prompt) {
+      const error = new Error('Prompt is required');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate duration parameter (Sora typically supports 5-60 seconds)
+    if (typeof duration !== 'number' || duration < 5 || duration > 60) {
+      const error = new Error('Duration must be a number between 5 and 60 seconds');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate resolution parameter
+    const validResolutions = ['1280x720', '1920x1080', '720x1280', '1080x1920'];
+    if (!validResolutions.includes(resolution)) {
+      const error = new Error(`Invalid resolution. Must be one of: ${validResolutions.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Use Azure OpenAI API for Sora video generation
+    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const apiVersion = '2024-12-01-preview'; // Latest API version for Sora
+    const deploymentName = process.env.AZURE_OPENAI_SORA_DEPLOYMENT || 'sora';
+
+    const response = await fetch(`${azureEndpoint}/openai/deployments/${deploymentName}/videos/generations?api-version=${apiVersion}`, {
+      method: 'POST',
+      headers: {
+        'api-key': process.env.AZURE_OPENAI_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt,
+        duration,
+        resolution
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Azure OpenAI Sora API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    if (!serverless) {
+      return data;
+    }
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(data)
+    };
+  } catch (error) {
+    console.error('OpenAI Sora API error:', error);
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: 'Failed to generate video with Sora'
+      })
+    };
+  }
+};
+
 // Main handler function
 const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
@@ -300,6 +399,18 @@ const handler = async (event, context) => {
         }
         const drawBody = JSON.parse(event.body);
         return await draw(drawBody, true);
+
+      case 'POST /video':
+        // Sora video generation only works with OpenAI, not OpenRouter
+        if (useOpenRouter) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Video generation is only available with OpenAI API, not OpenRouter' })
+          };
+        }
+        const videoBody = JSON.parse(event.body);
+        return await video(videoBody, true);
 
       case 'GET /files':
         try {
@@ -644,4 +755,4 @@ const handler = async (event, context) => {
   }
 };
 
-module.exports = { handler, chat, draw };
+module.exports = { handler, chat, draw, video };

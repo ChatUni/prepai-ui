@@ -1,4 +1,5 @@
 const { TosClient } = require('@volcengine/tos-sdk');
+const crypto = require('crypto');
 
 let tosInstance = null;
 
@@ -283,6 +284,202 @@ const copyObject = async (params) => {
   }
 };
 
+// Generate signature for Volcano Engine API requests
+const generateSignature = (method, uri, query, headers, body, timestamp) => {
+  const accessKeySecret = process.env.VOLC_SECRETKEY;
+  if (!accessKeySecret) {
+    throw new Error('Missing VOLC_SECRETKEY for API signature');
+  }
+
+  // Create canonical request
+  const canonicalHeaders = Object.keys(headers)
+    .sort()
+    .map(key => `${key.toLowerCase()}:${headers[key]}`)
+    .join('\n');
+  
+  const signedHeaders = Object.keys(headers)
+    .sort()
+    .map(key => key.toLowerCase())
+    .join(';');
+
+  const hashedPayload = crypto.createHash('sha256').update(body || '').digest('hex');
+  
+  const canonicalRequest = [
+    method,
+    uri,
+    query || '',
+    canonicalHeaders,
+    '',
+    signedHeaders,
+    hashedPayload
+  ].join('\n');
+
+  // Create string to sign
+  const algorithm = 'HMAC-SHA256';
+  const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+  const hashedCanonicalRequest = crypto.createHash('sha256').update(canonicalRequest).digest('hex');
+  
+  const stringToSign = [
+    algorithm,
+    timestamp,
+    credentialScope,
+    hashedCanonicalRequest
+  ].join('\n');
+
+  // Calculate signature
+  const kDate = crypto.createHmac('sha256', accessKeySecret).update(timestamp.slice(0, 8)).digest();
+  const kRegion = crypto.createHmac('sha256', kDate).update('cn-north-1').digest();
+  const kService = crypto.createHmac('sha256', kRegion).update('visual').digest();
+  const kSigning = crypto.createHmac('sha256', kService).update('request').digest();
+  const signature = crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
+
+  return signature;
+};
+
+// Call JiMeng API for video generation
+const jimeng = async (params) => {
+  if (!process.env.VOLC_ACCESSKEY || !process.env.VOLC_SECRETKEY) {
+    throw new Error('Missing required Volcano Engine credentials for JiMeng API');
+  }
+
+  const {
+    prompt,
+    model = 'jimeng-1.4',
+    aspect_ratio = '16:9',
+    duration = 5,
+    seed,
+    callback_url
+  } = params;
+
+  if (!prompt) {
+    throw new Error('Prompt is required for video generation');
+  }
+
+  const endpoint = 'https://visual.volcengineapi.com';
+  const uri = '/';
+  const method = 'POST';
+  const timestamp = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
+  
+  // Query parameters for Action and Version
+  const queryParams = new URLSearchParams({
+    Action: 'CVSync2AsyncSubmitTask',
+    Version: '2022-08-31'
+  });
+  
+  const requestBody = {
+    req_key: `jimeng_vgfm_t2v_l20`,
+    prompt,
+    model,
+    aspect_ratio,
+    duration,
+    ...(seed && { seed }),
+    ...(callback_url && { callback_url })
+  };
+
+  const body = JSON.stringify(requestBody);
+  const query = queryParams.toString();
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Host': 'visual.volcengineapi.com',
+    'Region': 'cn-north-1',
+    'Service': 'cv',
+    'X-Date': timestamp,
+    'X-Content-Sha256': crypto.createHash('sha256').update(body).digest('hex')
+  };
+
+  try {
+    const signature = generateSignature(method, uri, query, headers, body, timestamp);
+    
+    const accessKeyId = process.env.VOLC_ACCESSKEY;
+    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+    const signedHeaders = Object.keys(headers).sort().map(key => key.toLowerCase()).join(';');
+    
+    headers['Authorization'] = `HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const response = await fetch(`${endpoint}${uri}?${query}`, {
+      method,
+      headers,
+      body
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`JiMeng API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    throw new Error(`Failed to call JiMeng API: ${error.message}`);
+  }
+};
+
+// Query JiMeng task status
+const queryJimengTask = async (task_id) => {
+  if (!process.env.VOLC_ACCESSKEY || !process.env.VOLC_SECRETKEY) {
+    throw new Error('Missing required Volcano Engine credentials for JiMeng API');
+  }
+
+  if (!task_id) {
+    throw new Error('Task ID is required to query task status');
+  }
+
+  const endpoint = 'https://visual.volcengineapi.com';
+  const uri = '/';
+  const method = 'POST';
+  const timestamp = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
+  
+  // Query parameters for Action and Version
+  const queryParams = new URLSearchParams({
+    Action: 'CVSync2AsyncGetResult',
+    Version: '2022-08-31'
+  });
+  
+  const requestBody = {
+    req_key: 'jimeng_vgfm_t2v_l20',
+    task_id
+  };
+
+  const body = JSON.stringify(requestBody);
+  const query = queryParams.toString();
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Host': 'visual.volcengineapi.com',
+    'Region': 'cn-north-1',
+    'Service': 'cv',
+    'X-Date': timestamp,
+    'X-Content-Sha256': crypto.createHash('sha256').update(body).digest('hex')
+  };
+
+  try {
+    const signature = generateSignature(method, uri, query, headers, body, timestamp);
+    
+    const accessKeyId = process.env.VOLC_ACCESSKEY;
+    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+    const signedHeaders = Object.keys(headers).sort().map(key => key.toLowerCase()).join(';');
+    
+    headers['Authorization'] = `HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const response = await fetch(`${endpoint}${uri}?${query}`, {
+      method,
+      headers,
+      body
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`JiMeng query request failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    throw new Error(`Failed to query JiMeng task: ${error.message}`);
+  }
+};
+
 module.exports = {
   getSignedUrl,
   checkObjectExists,
@@ -295,5 +492,7 @@ module.exports = {
   generateTosUrl,
   handleUrlSigning,
   handleFileUpload,
-  handleFileDelete
+  handleFileDelete,
+  jimeng,
+  queryJimengTask
 };
