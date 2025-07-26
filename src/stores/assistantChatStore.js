@@ -122,6 +122,50 @@ class AssistantChatStore {
             this.loading = false;
           });
         }
+      } else if (this.selectedAssistant.function === 'tts') {
+        try {
+          const data = await post('tts', {}, {
+            input: text,
+            voice: this.selectedAssistant.voice || 'alloy',
+            model: this.selectedAssistant.model || 'tts-1',
+            response_format: 'mp3',
+            speed: 1.0
+          });
+          
+          console.log("Received response from TTS API:", data);
+          
+          // Create a blob URL from the base64 audio data
+          const audioBlob = new Blob([Uint8Array.from(atob(data.body), c => c.charCodeAt(0))], { type: data.contentType || 'audio/mpeg' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          
+          // Add assistant response with audio to messages
+          const audioMessage = {
+            id: `assistant-${Date.now()}`,
+            sender: 'assistant',
+            text: text, // Keep the original text
+            audioUrl: audioUrl,
+            type: 'audio',
+            timestamp: new Date().toISOString()
+          };
+          
+          runInAction(() => {
+            this.messages.push(audioMessage);
+            this.loading = false;
+          });
+          
+          // Auto-play the audio
+          const audio = new Audio(audioUrl);
+          audio.play().catch(error => {
+            console.warn('Could not auto-play audio:', error);
+          });
+          
+        } catch (error) {
+          console.error('Error generating speech:', error);
+          runInAction(() => {
+            this.error = error.message;
+            this.loading = false;
+          });
+        }
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected
         const useOpenRouter = !!this.selectedAssistant.model;
@@ -248,6 +292,12 @@ class AssistantChatStore {
   }
   
   clearMessages() {
+    // Clean up any blob URLs to prevent memory leaks
+    this.messages.forEach(message => {
+      if (message.audioUrl && message.audioUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(message.audioUrl);
+      }
+    });
     this.messages = [];
     this.error = null;
   }

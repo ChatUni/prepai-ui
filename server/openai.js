@@ -342,6 +342,129 @@ const video = async (body, serverless = true) => {
   }
 };
 
+// TTS function that can be called from other modules
+const tts = async (body, serverless = true) => {
+  const headers = getResponseHeaders();
+  
+  if (!process.env.OPENAI_API_KEY) {
+    const error = new Error('OpenAI API key not configured');
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  try {
+    const { input, voice = 'alloy', model = 'tts-1', response_format = 'mp3', speed = 1.0 } = body;
+    
+    if (!input) {
+      const error = new Error('Input text is required');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate voice parameter
+    const validVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
+    if (!validVoices.includes(voice)) {
+      const error = new Error(`Invalid voice. Must be one of: ${validVoices.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate model parameter
+    const validModels = ['tts-1', 'tts-1-hd'];
+    if (!validModels.includes(model)) {
+      const error = new Error(`Invalid model. Must be one of: ${validModels.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate response format parameter
+    const validFormats = ['mp3', 'opus', 'aac', 'flac'];
+    if (!validFormats.includes(response_format)) {
+      const error = new Error(`Invalid response format. Must be one of: ${validFormats.join(', ')}`);
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    // Validate speed parameter
+    if (typeof speed !== 'number' || speed < 0.25 || speed > 4.0) {
+      const error = new Error('Speed must be a number between 0.25 and 4.0');
+      if (!serverless) throw error;
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
+
+    const response = await openai.audio.speech.create({
+      model,
+      voice,
+      input,
+      response_format,
+      speed
+    });
+
+    // Convert response to buffer for both serverless and non-serverless
+    const buffer = Buffer.from(await response.arrayBuffer());
+    
+    if (serverless) {
+      const audioHeaders = {
+        ...headers,
+        'Content-Type': `audio/${response_format}`,
+        'Content-Length': buffer.length.toString()
+      };
+      
+      return {
+        statusCode: 200,
+        headers: audioHeaders,
+        body: buffer.toString('base64'),
+        isBase64Encoded: true
+      };
+    } else {
+      // For non-serverless (API handlers), return the buffer as base64 string
+      return {
+        body: buffer.toString('base64'),
+        contentType: `audio/${response_format}`,
+        size: buffer.length
+      };
+    }
+  } catch (error) {
+    console.error('OpenAI TTS API error:', error);
+    if (!serverless) throw error;
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: 'Failed to generate speech with OpenAI TTS'
+      })
+    };
+  }
+};
+
 // Main handler function
 const handler = async (event, context) => {
   // Handle OPTIONS requests for CORS preflight
@@ -411,6 +534,18 @@ const handler = async (event, context) => {
         }
         const videoBody = JSON.parse(event.body);
         return await video(videoBody, true);
+
+      case 'POST /tts':
+        // TTS only works with OpenAI, not OpenRouter
+        if (useOpenRouter) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Text-to-speech is only available with OpenAI API, not OpenRouter' })
+          };
+        }
+        const ttsBody = JSON.parse(event.body);
+        return await tts(ttsBody, true);
 
       case 'GET /files':
         try {
@@ -755,4 +890,4 @@ const handler = async (event, context) => {
   }
 };
 
-module.exports = { handler, chat, draw, video };
+module.exports = { handler, chat, draw, video, tts };

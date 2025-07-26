@@ -2,7 +2,7 @@ const { save, remove, flat } = require('./db.js');
 const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete, jimeng, queryJimengTask } = require('./volcHelper.js');
 const { wechat_pay, wechat_query } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
-const { chat, draw, video } = require('../openai.js');
+const { chat, draw, video, tts } = require('../openai.js');
 
 module.exports = {
   db_handlers: {
@@ -34,6 +34,7 @@ module.exports = {
       chat: (q, b) => chat(q.api, b, false),
       draw: (q, b) => draw(b, false),
       video: (q, b) => video(b, false),
+      tts: (q, b) => tts(b, false),
       jimeng: (q, b) => jimeng(b),
       jimeng_query: (q, b) => queryJimengTask(b.taskId),
       tos_sign: (q, b) => handleUrlSigning(b.url),

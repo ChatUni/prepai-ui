@@ -98,6 +98,23 @@ const AssistantChatMessages = observer(() => {
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </div>
               </div>
+            ) : message.type === 'audio' ? (
+              <div className="inline-block">
+                <div className="bg-gray-200 text-gray-800 rounded-lg p-4 max-w-sm">
+                  <div className="text-sm mb-3 whitespace-pre-wrap">{message.text}</div>
+                  <audio
+                    src={message.audioUrl}
+                    controls
+                    className="w-full"
+                    preload="metadata"
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <div className="text-xs mt-1 text-gray-500">
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </div>
+              </div>
             ) : (
               <div className={`inline-block px-4 py-3 rounded-lg max-w-[80%] ${
                 message.sender === 'user'
