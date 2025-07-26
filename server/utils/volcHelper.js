@@ -316,7 +316,7 @@ const generateSignature = (method, uri, query, headers, body, timestamp) => {
 
   // Create string to sign
   const algorithm = 'HMAC-SHA256';
-  const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+  const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/cv/request`;
   const hashedCanonicalRequest = crypto.createHash('sha256').update(canonicalRequest).digest('hex');
   
   const stringToSign = [
@@ -329,7 +329,7 @@ const generateSignature = (method, uri, query, headers, body, timestamp) => {
   // Calculate signature
   const kDate = crypto.createHmac('sha256', accessKeySecret).update(timestamp.slice(0, 8)).digest();
   const kRegion = crypto.createHmac('sha256', kDate).update('cn-north-1').digest();
-  const kService = crypto.createHmac('sha256', kRegion).update('visual').digest();
+  const kService = crypto.createHmac('sha256', kRegion).update('cv').digest();
   const kSigning = crypto.createHmac('sha256', kService).update('request').digest();
   const signature = crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
 
@@ -382,8 +382,6 @@ const jimeng = async (params) => {
   const headers = {
     'Content-Type': 'application/json',
     'Host': 'visual.volcengineapi.com',
-    'Region': 'cn-north-1',
-    'Service': 'cv',
     'X-Date': timestamp,
     'X-Content-Sha256': crypto.createHash('sha256').update(body).digest('hex')
   };
@@ -392,7 +390,7 @@ const jimeng = async (params) => {
     const signature = generateSignature(method, uri, query, headers, body, timestamp);
     
     const accessKeyId = process.env.VOLC_ACCESSKEY;
-    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/cv/request`;
     const signedHeaders = Object.keys(headers).sort().map(key => key.toLowerCase()).join(';');
     
     headers['Authorization'] = `HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
@@ -447,8 +445,6 @@ const queryJimengTask = async (task_id) => {
   const headers = {
     'Content-Type': 'application/json',
     'Host': 'visual.volcengineapi.com',
-    'Region': 'cn-north-1',
-    'Service': 'cv',
     'X-Date': timestamp,
     'X-Content-Sha256': crypto.createHash('sha256').update(body).digest('hex')
   };
@@ -457,7 +453,7 @@ const queryJimengTask = async (task_id) => {
     const signature = generateSignature(method, uri, query, headers, body, timestamp);
     
     const accessKeyId = process.env.VOLC_ACCESSKEY;
-    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/visual/request`;
+    const credentialScope = `${timestamp.slice(0, 8)}/cn-north-1/cv/request`;
     const signedHeaders = Object.keys(headers).sort().map(key => key.toLowerCase()).join(';');
     
     headers['Authorization'] = `HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;

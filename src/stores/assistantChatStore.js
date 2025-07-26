@@ -97,7 +97,7 @@ class AssistantChatStore {
           
           console.log("Received response from jimeng API:", data);
           
-          if (data.task_id) {
+          if (data.data?.task_id) {
             // Add a loading message to show generation is in progress
             const loadingMessageId = `assistant-${Date.now()}`;
             runInAction(() => {
@@ -111,9 +111,9 @@ class AssistantChatStore {
             });
             
             // Poll for completion
-            this.pollVideoCompletion(data.task_id, loadingMessageId);
+            this.pollVideoCompletion(data.data.task_id, loadingMessageId);
           } else {
-            throw new Error('No request key received from jimeng API');
+            throw new Error('No task ID received from jimeng API');
           }
         } catch (error) {
           console.error('Error generating video:', error);
@@ -175,37 +175,38 @@ class AssistantChatStore {
     const poll = async () => {
       try {
         attempts++;
-        const result = await post('jimeng_query', {}, { task_id });
+        const result = await post('jimeng_query', {}, { taskId: task_id });
         
         console.log(`Polling attempt ${attempts}:`, result);
         
-        if (result.status === 'success' && result.video_url) {
-          // Video generation completed successfully
+        if (result.data?.status === 'done' && result.data?.video_url) {
+          // Video generation completed successfully - use the URL directly
+          // External URLs (like from JiMeng API) are already signed and accessible
           runInAction(() => {
             // Find and update the loading message
             const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
             if (messageIndex !== -1) {
               this.messages[messageIndex] = {
                 ...this.messages[messageIndex],
-                text: result.video_url,
+                text: result.data.video_url,
                 type: 'video'
               };
             }
             this.loading = false;
           });
-        } else if (result.status === 'failed') {
+        } else if (result.data?.status === 'failed') {
           // Video generation failed
           runInAction(() => {
             const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
             if (messageIndex !== -1) {
               this.messages[messageIndex] = {
                 ...this.messages[messageIndex],
-                text: `视频生成失败: ${result.error || '未知错误'}`,
+                text: `视频生成失败: ${result.message || '未知错误'}`,
                 type: 'error'
               };
             }
             this.loading = false;
-            this.error = result.error || '视频生成失败';
+            this.error = result.message || '视频生成失败';
           });
         } else if (attempts >= maxAttempts) {
           // Timeout
