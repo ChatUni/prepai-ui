@@ -244,6 +244,31 @@ const VideoResolutionSelector = observer(() => {
   );
 });
 
+// Voice selector component for TTS
+const VoiceSelector = observer(() => {
+  return (
+    <div className="grid grid-cols-5 gap-2 mt-4">
+      {assistantChatStore.voices.map(({ id, name, description }) => (
+        <button
+          key={id}
+          onClick={() => assistantChatStore.setSelectedVoice(id)}
+          className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg border-2 transition-all ${
+            assistantChatStore.selectedVoice === id
+              ? 'bg-blue-100 border-blue-500 text-blue-700'
+              : 'bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 hover:border-gray-400'
+          }`}
+        >
+          <div className="w-6 h-6 rounded-full border-2 border-current flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-current"></div>
+          </div>
+          <div className="text-xs font-medium">{name}</div>
+          <div className="text-xs text-gray-500 leading-tight">{description}</div>
+        </button>
+      ))}
+    </div>
+  );
+});
+
 const AssistantChatPage = observer(() => {
   const { assistantId } = useParams();
   const navigate = useNavigate();
@@ -318,6 +343,9 @@ const AssistantChatPage = observer(() => {
         )}
         {assistantChatStore.selectedAssistant?.function === 'video' && (
           <VideoResolutionSelector />
+        )}
+        {assistantChatStore.selectedAssistant?.function === 'tts' && (
+          <VoiceSelector />
         )}
       </div>
     </div>

@@ -8,6 +8,20 @@ class AssistantChatStore {
   error = null;
   selectedImageSize = '512x512';
   selectedVideoResolution = '1280x720';
+  selectedVoice = 'alloy';
+  
+  voices = [
+    { id: 'alloy', name: 'Alloy', description: 'Neutral' },
+    { id: 'ash', name: 'Ash', description: 'Warm' },
+    { id: 'ballad', name: 'Ballad', description: 'Melodic' },
+    { id: 'coral', name: 'Coral', description: 'Bright' },
+    { id: 'echo', name: 'Echo', description: 'Deep' },
+    { id: 'fable', name: 'Fable', description: 'Storytelling' },
+    { id: 'nova', name: 'Nova', description: 'Clear' },
+    { id: 'onyx', name: 'Onyx', description: 'Rich' },
+    { id: 'sage', name: 'Sage', description: 'Wise' },
+    { id: 'shimmer', name: 'Shimmer', description: 'Gentle' }
+  ];
   
   constructor() {
     makeAutoObservable(this);
@@ -126,7 +140,7 @@ class AssistantChatStore {
         try {
           const data = await post('tts', {}, {
             input: text,
-            voice: this.selectedAssistant.voice || 'alloy',
+            voice: this.selectedVoice,
             model: this.selectedAssistant.model || 'tts-1',
             response_format: 'mp3',
             speed: 1.0
@@ -308,6 +322,10 @@ class AssistantChatStore {
   
   setSelectedVideoResolution(resolution) {
     this.selectedVideoResolution = resolution;
+  }
+  
+  setSelectedVoice(voice) {
+    this.selectedVoice = voice;
   }
 }
 
