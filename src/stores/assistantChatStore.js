@@ -13,7 +13,7 @@ class AssistantChatStore {
   voices = [
     { id: 'alloy', name: 'Alloy', description: 'Neutral' },
     { id: 'ash', name: 'Ash', description: 'Warm' },
-    { id: 'ballad', name: 'Ballad', description: 'Melodic' },
+    //{ id: 'ballad', name: 'Ballad', description: 'Melodic' },
     { id: 'coral', name: 'Coral', description: 'Bright' },
     { id: 'echo', name: 'Echo', description: 'Deep' },
     { id: 'fable', name: 'Fable', description: 'Storytelling' },
@@ -175,6 +175,48 @@ class AssistantChatStore {
           
         } catch (error) {
           console.error('Error generating speech:', error);
+          runInAction(() => {
+            this.error = error.message;
+            this.loading = false;
+          });
+        }
+      } else if (this.selectedAssistant.function === 'workflow') {
+        try {
+          const data = await post('run_workflow', {}, {
+            workflow_id: this.selectedAssistant.workflow_id,
+            parameters: {
+              [this.selectedAssistant.param]: text
+            }
+          });
+          
+          console.log("Received response from workflow API:", data);
+          
+          let messageText = data.result || data.output || JSON.stringify(data);
+          
+          // If assistant.html is not null, eval it as a function and run it with data
+          if (this.selectedAssistant.html) {
+            try {
+              // Create a function from the html string and execute it with data
+              const htmlFunction = new Function('x', `return \`${this.selectedAssistant.html}\``);
+              messageText = htmlFunction(JSON.parse(data.data));
+            } catch (htmlError) {
+              console.error('Error executing HTML function:', htmlError);
+              // Fall back to original message text if HTML function fails
+            }
+          }
+          
+          // Add assistant response to messages
+          runInAction(() => {
+            this.messages.push({
+              id: `assistant-${Date.now()}`,
+              sender: 'assistant',
+              text: messageText,
+              timestamp: new Date().toISOString()
+            });
+            this.loading = false;
+          });
+        } catch (error) {
+          console.error('Error running workflow:', error);
           runInAction(() => {
             this.error = error.message;
             this.loading = false;

@@ -51,9 +51,9 @@ class AssistantStore {
     return {
       name: 1,
       greeting: 1,
-      prompt: 1,
+      //prompt: 1,
       image: 1,
-      model: 1,
+      //model: 1,
     }
   }
 

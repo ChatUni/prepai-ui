@@ -1,6 +1,7 @@
 {
   "name": "api",
   "dependencies": {
+    "@coze/api": "^1.3.5",
     "@volcengine/tos-sdk": "^2.6.2",
     "@web-std/file": "^3.0.3",
     "@web-std/form-data": "^3.1.0",

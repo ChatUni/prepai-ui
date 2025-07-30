@@ -476,6 +476,47 @@ const queryJimengTask = async (task_id) => {
   }
 };
 
+// Run Coze workflow
+const run_workflow = async (params) => {
+  if (!process.env.COZE_API_TOKEN) {
+    throw new Error('Missing required COZE_API_TOKEN environment variable');
+  }
+
+  const {
+    workflow_id,
+    parameters = {},
+    baseURL = 'https://api.coze.cn'
+  } = params;
+
+  if (!workflow_id) {
+    throw new Error('workflow_id is required to run Coze workflow');
+  }
+
+  try {
+    const response = await fetch(`${baseURL}/v1/workflow/run`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.COZE_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        workflow_id,
+        parameters
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Coze API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    throw new Error(`Failed to run Coze workflow: ${error.message}`);
+  }
+};
+
 module.exports = {
   getSignedUrl,
   checkObjectExists,
@@ -490,5 +531,6 @@ module.exports = {
   handleFileUpload,
   handleFileDelete,
   jimeng,
-  queryJimengTask
+  queryJimengTask,
+  run_workflow
 };

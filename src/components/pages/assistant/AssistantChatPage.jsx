@@ -11,7 +11,7 @@ import LoadingState from '../../ui/LoadingState';
 // Loading indicator with animated dots
 const TypingIndicator = () => {
   return (
-    <div className="flex justify-start mb-4 pl-4">
+    <div className="flex justify-start mb-4">
       <div className="px-4 py-3 rounded-lg bg-gray-200 text-gray-800 rounded-bl-none">
         <div className="flex space-x-1">
           <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
@@ -37,13 +37,13 @@ const AssistantChatMessages = observer(() => {
   }, [messages.length, isLoading]);
 
   const chatContent = (
-    <div className="space-y-4 pt-4">
+    <div className="space-y-4 pt-4 px-4">
       {messages.map((message, index) => (
         <div
           key={message.id || index}
           className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
         >
-          <div className="pl-4">
+          <div className={message.sender === 'user' ? 'pr-0' : 'pl-0'}>
             {message.type === 'image' ? (
               <div className="inline-block">
                 <img
@@ -116,12 +116,15 @@ const AssistantChatMessages = observer(() => {
                 </div>
               </div>
             ) : (
-              <div className={`inline-block px-4 py-3 rounded-lg max-w-[80%] ${
+              <div className={`inline-block px-4 py-3 rounded-lg max-w-[75%] ${
                 message.sender === 'user'
                   ? 'bg-blue-500 text-white rounded-br-none'
                   : 'bg-gray-200 text-gray-800 rounded-bl-none'
               }`}>
-                <div className="text-sm whitespace-pre-wrap">{message.text}</div>
+                <div
+                  className="text-sm whitespace-pre-wrap"
+                  dangerouslySetInnerHTML={{ __html: message.text }}
+                />
                 <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </div>
