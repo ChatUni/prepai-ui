@@ -11,16 +11,16 @@ class AssistantChatStore {
   selectedVoice = 'alloy';
   
   voices = [
-    { id: 'alloy', name: 'Alloy', description: 'Neutral' },
-    { id: 'ash', name: 'Ash', description: 'Warm' },
+    { id: 'alloy', name: 'Alloy', description: '中性' },
+    { id: 'ash', name: 'Ash', description: '温暖' },
     //{ id: 'ballad', name: 'Ballad', description: 'Melodic' },
-    { id: 'coral', name: 'Coral', description: 'Bright' },
-    { id: 'echo', name: 'Echo', description: 'Deep' },
-    { id: 'fable', name: 'Fable', description: 'Storytelling' },
-    { id: 'nova', name: 'Nova', description: 'Clear' },
-    { id: 'onyx', name: 'Onyx', description: 'Rich' },
-    { id: 'sage', name: 'Sage', description: 'Wise' },
-    { id: 'shimmer', name: 'Shimmer', description: 'Gentle' }
+    { id: 'coral', name: 'Coral', description: '明亮' },
+    { id: 'echo', name: 'Echo', description: '深沉' },
+    { id: 'fable', name: 'Fable', description: '叙事' },
+    { id: 'nova', name: 'Nova', description: '清晰' },
+    { id: 'onyx', name: 'Onyx', description: '丰富' },
+    { id: 'sage', name: 'Sage', description: '智慧' },
+    { id: 'shimmer', name: 'Shimmer', description: '温和' }
   ];
   
   constructor() {

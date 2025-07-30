@@ -43,7 +43,7 @@ const AssistantChatMessages = observer(() => {
           key={message.id || index}
           className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
         >
-          <div className={message.sender === 'user' ? 'pr-0' : 'pl-0'}>
+          <div className={`max-w-[75%] ${message.sender === 'user' ? 'ml-auto' : 'mr-auto'}`}>
             {message.type === 'image' ? (
               <div className="inline-block">
                 <img
@@ -116,7 +116,7 @@ const AssistantChatMessages = observer(() => {
                 </div>
               </div>
             ) : (
-              <div className={`inline-block px-4 py-3 rounded-lg max-w-[75%] ${
+              <div className={`inline-block px-4 py-3 rounded-lg ${
                 message.sender === 'user'
                   ? 'bg-blue-500 text-white rounded-br-none'
                   : 'bg-gray-200 text-gray-800 rounded-bl-none'
@@ -339,7 +339,7 @@ const AssistantChatPage = observer(() => {
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={assistantChatStore.loading}
-          placeholder={t('menu.categories.assistant.inputQuestion')}
+          placeholder={assistantChatStore.selectedAssistant?.placeholder || t('menu.categories.assistant.inputQuestion')}
         />
         {assistantChatStore.selectedAssistant?.function === 'image' && (
           <ResolutionSelector />
