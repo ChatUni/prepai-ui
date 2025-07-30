@@ -30,14 +30,22 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "@volcengine/tos-sdk": "^2.7.5",
     "autoprefixer": "^10.4.20",
+    "busboy": "^1.6.0",
     "concurrently": "^9.1.2",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "mongodb": "^6.18.0",
+    "multipart-formdata": "^1.1.0",
+    "openai": "^5.10.2",
     "postcss": "^8.5.3",
+    "qrcode": "^1.5.4",
     "tailwindcss": "^4.0.9",
-    "vite": "^6.2.0"
+    "tencentcloud-sdk-nodejs": "^4.1.89",
+    "vite": "^6.2.0",
+    "xml2js": "^0.6.2"
   }
 }
