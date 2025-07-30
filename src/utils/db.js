@@ -1,8 +1,10 @@
-import { getApiBaseUrl } from '../config.js';
+import { getApiBaseUrl, isProd } from '../config.js';
 
+const proxyEndpoints = ['chat', 'draw', 'tts']
 const api = (type, ps = {}) => {
+  const base = isProd && proxyEndpoints.includes(type) ? 'https://prepai-ui.netlify.app/api' : getApiBaseUrl();
   const p = Object.keys(ps).map(x => `${x}=${encodeURIComponent(ps[x])}`).join('&')
-  return `${getApiBaseUrl()}?type=${type}${p ? `&${p}` : ''}`
+  return `${base}?type=${type}${p ? `&${p}` : ''}`
 }
 
 export const get = (type, ps) => fetch(api(type, ps)).then(r => r.json())
