@@ -538,11 +538,33 @@ const getVoiceOptions = async () => {
     // Extract and return the voice options list
     if (result?.data?.volc_bigtts) {
       const opts = JSON.parse(result.data.volc_bigtts).voice_options
-      return opts.map(x => ({
-        text: `${x.name} (${x.gender} - ${x.age})`,
-        value: x.voice_config[0].params.voice_type,
-        url: x.trial_url
-      }));
+      return [
+        { text: '选择音色', value: '' },
+        ...opts
+          .sort((a, b) => {
+            // First sort by avatar presence (those with avatars first)
+            const aHasAvatar = !!a.avatar;
+            const bHasAvatar = !!b.avatar;
+            return bHasAvatar - aHasAvatar;
+            // if (aHasAvatar !== bHasAvatar) {
+            //   return bHasAvatar - aHasAvatar;
+            // }
+            // // Then sort by Chinese names first, then alphabetically
+            // const aIsChinese = /[\u4e00-\u9fff]/.test(a.name);
+            // const bIsChinese = /[\u4e00-\u9fff]/.test(b.name);
+            // if (aIsChinese !== bIsChinese) {
+            //   return bIsChinese - aIsChinese;
+            // }
+            // // Finally sort alphabetically within each group
+            // return a.name.localeCompare(b.name);
+          })
+          .map(x => ({
+            text: `${x.name} (${x.gender} - ${x.age})`,
+            value: x.voice_config[0].params.voice_type,
+            icon: x.avatar,
+            url: x.trial_url
+          }))
+      ];
     } else {
       throw new Error('Voice options not found in response data structure');
     }

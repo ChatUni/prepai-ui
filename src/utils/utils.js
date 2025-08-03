@@ -28,7 +28,13 @@ export const buildOptions = (options) => options.map(option => {
   return {
     value,
     label: option.label || option.text || option.name,
-    icon: option.icon,
+    icon: buildUrl(option.icon),
     url: option.url
   };
 })
+
+const buildUrl = (url) => {
+  if (!url) return undefined
+  if (url.startsWith('http')) return url
+  return `${window.location.origin}/${url}`
+}

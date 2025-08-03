@@ -94,6 +94,7 @@ const AudioMessage = ({ message }) => (
     <audio
       src={message.url}
       controls
+      autoPlay
       className="w-full"
       preload="metadata"
     >
@@ -323,12 +324,9 @@ const WorkflowParamSelector = observer(({ paramName, paramConfig }) => {
 
   return (
     <FormSelect
-      className="mt-2"
       value={paramConfig.value || ''}
       onChange={handleChange}
       options={paramConfig.options}
-      label={paramName}
-      placeholder={`Select ${paramName}`}
       showSelectedIcon={false}
     />
   );
