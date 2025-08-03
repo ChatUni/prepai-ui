@@ -25,7 +25,7 @@ const FormSelect = observer(({
   label,
   placeholder,
   // New prop to control display mode
-  displayMode = 'dropdown' // 'dropdown' or 'cards'
+  displayMode = 'dropdown' // 'dropdown', 'card', or 'row'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState({});
@@ -144,7 +144,7 @@ const FormSelect = observer(({
       }
       
       // Render based on display mode
-      if (displayMode === 'cards') {
+      if (displayMode === 'card') {
         return (
           <div className="flex flex-col items-center">
             {/* Audio control icon (clickable) */}
@@ -293,8 +293,90 @@ const FormSelect = observer(({
     }
   }, [displayMode, isOpen, opts.length]);
 
-  // Render cards mode
-  if (displayMode === 'cards') {
+  // Render row mode
+  if (displayMode === 'row') {
+    return (
+      <div className={className}>
+        <div className="flex justify-between items-center mb-4">
+          {label || (store && field) && (
+            <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+              {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
+            </label>
+          )}
+          {canAdd && (
+            <button
+              type="button"
+              onClick={() => uiStore.openFormSelectDialog({ onAdd })}
+              className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              <FaPlus size={16} />
+            </button>
+          )}
+        </div>
+        
+        {/* Row-based selection interface */}
+        <div className="border border-gray-300 rounded-lg p-4 bg-white max-h-[492px] overflow-y-auto">
+          {/* Placeholder/Clear option */}
+          {(placeholder || (store && field)) && (
+            <div
+              className={`mb-2 p-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                !selectedValue ? 'bg-blue-50 border-blue-300' : ''
+              }`}
+              onClick={() => handleSelect('')}
+            >
+              <div className="text-gray-500 text-sm">
+                {placeholder ||
+                (store && field ? t(`${store.name}.select${field[0].toUpperCase() + field.slice(1)}`) : 'Select an option')}
+              </div>
+            </div>
+          )}
+          
+          {/* Options list */}
+          <div className="space-y-2">
+            {opts.map((option, i) => (
+              <div
+                key={`${i}-${option.value}`}
+                className={`flex items-center p-3 border rounded cursor-pointer transition-all ${
+                  selectedValue === option.value
+                    ? 'border-blue-500 bg-blue-50 shadow-md'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                }`}
+                onClick={() => handleSelect(option.value)}
+              >
+                {renderIcon(option, 'small')}
+                <span className="text-gray-900">{option.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {uiStore.formSelectDialogOpen && AddDialogPage && (
+          <Dialog
+            isOpen={true}
+            onClose={() => uiStore.closeFormSelectDialog()}
+            onConfirm={async () => {
+              if (uiStore.formSelectDialogData?.onAdd) {
+                const newItem = await uiStore.formSelectDialogData.onAdd();
+                if (newItem && onOptionsChange) {
+                  const newOptions = [...opts, { value: newItem.value, label: newItem.label }];
+                  onOptionsChange(newOptions);
+                  handleSelect(newItem.value);
+                }
+              }
+              uiStore.closeFormSelectDialog();
+            }}
+            title={addDialogTitle}
+            isConfirm={true}
+          >
+            <AddDialogPage />
+          </Dialog>
+        )}
+      </div>
+    );
+  }
+
+  // Render card mode
+  if (displayMode === 'card') {
     return (
       <div className={className}>
         <div className="flex justify-between items-center mb-4">
