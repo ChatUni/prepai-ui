@@ -517,6 +517,40 @@ const run_workflow = async (params) => {
   }
 };
 
+// Get voice options from TTS configuration
+const getVoiceOptions = async () => {
+  const url = 'https://lf3-config.bytetcc.com/obj/tcc-config-web/tcc-v2-data-lab.speech.tts_middle_layer-default';
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch voice options: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    // Extract and return the voice options list
+    if (result?.data?.volc_bigtts) {
+      const opts = JSON.parse(result.data.volc_bigtts).voice_options
+      return opts.map(x => ({
+        text: `${x.name} (${x.gender} - ${x.age})`,
+        value: x.voice_config[0].params.voice_type,
+        url: x.trial_url
+      }));
+    } else {
+      throw new Error('Voice options not found in response data structure');
+    }
+  } catch (error) {
+    throw new Error(`Failed to get voice options: ${error.message}`);
+  }
+};
+
 module.exports = {
   getSignedUrl,
   checkObjectExists,
@@ -532,5 +566,6 @@ module.exports = {
   handleFileDelete,
   jimeng,
   queryJimengTask,
-  run_workflow
+  run_workflow,
+  getVoiceOptions
 };

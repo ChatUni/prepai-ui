@@ -7,6 +7,7 @@ import assistantChatStore from '../../../stores/assistantChatStore';
 import Button from '../../ui/Button';
 import { t } from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
+import FormSelect from '../../ui/FormSelect';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -297,6 +298,42 @@ const VoiceSelector = observer(() => {
   );
 });
 
+// Workflow parameter selector component using FormSelect
+const WorkflowParamSelector = observer(({ paramName, paramConfig }) => {
+  if (!paramConfig || paramConfig.type !== 'select') {
+    return null;
+  }
+
+  const handleChange = (value) => {
+    assistantChatStore.setWorkflowParam(paramName, value);
+  };
+
+  if (paramConfig.loading) {
+    return (
+      <div className="mt-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {paramName}
+        </label>
+        <div className="w-full p-2 border rounded bg-gray-100 text-gray-500">
+          Loading options...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <FormSelect
+      className="mt-2"
+      value={paramConfig.value || ''}
+      onChange={handleChange}
+      options={paramConfig.options}
+      label={paramName}
+      placeholder={`Select ${paramName}`}
+      showSelectedIcon={false}
+    />
+  );
+});
+
 const AssistantChatPage = observer(() => {
   const { assistantId } = useParams();
   const navigate = useNavigate();
@@ -374,6 +411,17 @@ const AssistantChatPage = observer(() => {
         )}
         {assistantChatStore.selectedAssistant?.function === 'tts' && (
           <VoiceSelector />
+        )}
+        {assistantChatStore.selectedAssistant?.function === 'workflow' && (
+          <div className="mt-4">
+            {Object.entries(assistantChatStore.wf_params).map(([paramName, paramConfig]) => (
+              <WorkflowParamSelector
+                key={paramName}
+                paramName={paramName}
+                paramConfig={paramConfig}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

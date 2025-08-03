@@ -25,5 +25,10 @@ export const buildOptions = (options) => options.map(option => {
   let value = option.value;
   if (value === undefined) value = option.id;
 
-  return { value, label: option.label || option.text || option.name };
+  return {
+    value,
+    label: option.label || option.text || option.name,
+    icon: option.icon,
+    url: option.url
+  };
 })

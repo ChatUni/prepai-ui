@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { post } from '../utils/db.js';
+import { post, get } from '../utils/db.js';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -9,6 +9,7 @@ class AssistantChatStore {
   selectedImageSize = '512x512';
   selectedVideoResolution = '1280x720';
   selectedVoice = 'alloy';
+  wf_params = {};
   
   voices = [
     { id: 'alloy', name: 'Alloy', description: '中性' },
@@ -76,6 +77,11 @@ class AssistantChatStore {
     // Clear previous messages
     this.clearMessages();
     
+    // Initialize workflow parameters if this is a workflow assistant
+    if (assistant && assistant.function === 'workflow') {
+      this.initializeWorkflowParams();
+    }
+    
     // Add greeting message from assistant if available
     if (assistant && assistant.greeting) {
       this.addMessage({
@@ -84,6 +90,77 @@ class AssistantChatStore {
         text: assistant.greeting
       });
     }
+  }
+  
+  // Initialize workflow parameters based on assistant configuration
+  initializeWorkflowParams = async () => {
+    if (!this.selectedAssistant || !this.selectedAssistant.param) {
+      this.wf_params = {};
+      return;
+    }
+    
+    const params = {};
+    
+    // Process each parameter in the assistant's param object
+    for (const [paramName, paramConfig] of Object.entries(this.selectedAssistant.param)) {
+      if (typeof paramConfig === 'number') {
+        // If it's a number (always 1 for now), it will be filled by ChatInput
+        params[paramName] = null;
+      } else if (typeof paramConfig === 'object' && paramConfig.type === 'select') {
+        // Handle select type parameters
+        params[paramName] = {
+          type: 'select',
+          value: null,
+          options: [],
+          loading: true
+        };
+        
+        // Load options
+        try {
+          let options = [];
+          if (paramConfig.options.startsWith('[')) {
+            // Parse JSON array
+            options = JSON.parse(paramConfig.options);
+          } else {
+            // Call API
+            const response = await get(paramConfig.options);
+            options = response || [];
+          }
+          
+          runInAction(() => {
+            params[paramName].options = options;
+            params[paramName].loading = false;
+            // Set default value to first option if available
+            if (options.length > 0) {
+              params[paramName].value = options[0];
+            }
+          });
+        } catch (error) {
+          console.error(`Error loading options for parameter ${paramName}:`, error);
+          runInAction(() => {
+            params[paramName].loading = false;
+            params[paramName].options = [];
+          });
+        }
+      }
+    }
+    
+    runInAction(() => {
+      this.wf_params = params;
+    });
+  }
+  
+  // Update workflow parameter value
+  setWorkflowParam = (paramName, value) => {
+    runInAction(() => {
+      if (this.wf_params[paramName]) {
+        if (typeof this.wf_params[paramName] === 'object') {
+          this.wf_params[paramName].value = value;
+        } else {
+          this.wf_params[paramName] = value;
+        }
+      }
+    });
   }
   
   async sendMessage(text) {
@@ -198,11 +275,23 @@ class AssistantChatStore {
         }
       } else if (this.selectedAssistant.function === 'workflow') {
         try {
+          // Build parameters object from wf_params and text input
+          const parameters = {};
+          
+          // Process each parameter
+          for (const [paramName, paramConfig] of Object.entries(this.selectedAssistant.param)) {
+            if (typeof paramConfig === 'number') {
+              // Use ChatInput text for number parameters
+              parameters[paramName] = text;
+            } else if (typeof paramConfig === 'object' && this.wf_params[paramName]) {
+              // Use selected value for object parameters
+              parameters[paramName] = this.wf_params[paramName].value;
+            }
+          }
+          
           const r = await post('run_workflow', {}, {
             workflow_id: this.selectedAssistant.workflow_id,
-            parameters: {
-              [this.selectedAssistant.param]: text
-            }
+            parameters
           });
           
           console.log("Received response from workflow API:", r);
