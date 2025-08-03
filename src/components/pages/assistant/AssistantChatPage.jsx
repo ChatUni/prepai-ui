@@ -324,10 +324,11 @@ const WorkflowParamSelector = observer(({ paramName, paramConfig }) => {
 
   return (
     <FormSelect
-      value={paramConfig.value || ''}
+      value={paramConfig.value}
       onChange={handleChange}
       options={paramConfig.options}
       showSelectedIcon={false}
+      displayMode={paramConfig.mode}
     />
   );
 });
@@ -411,7 +412,7 @@ const AssistantChatPage = observer(() => {
           <VoiceSelector />
         )}
         {assistantChatStore.selectedAssistant?.function === 'workflow' && (
-          <div className="mt-4">
+          <div>
             {Object.entries(assistantChatStore.wf_params).map(([paramName, paramConfig]) => (
               <WorkflowParamSelector
                 key={paramName}

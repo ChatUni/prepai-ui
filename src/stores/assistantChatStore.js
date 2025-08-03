@@ -109,7 +109,7 @@ class AssistantChatStore {
       } else if (typeof paramConfig === 'object' && paramConfig.type === 'select') {
         // Handle select type parameters
         params[paramName] = {
-          type: 'select',
+          ...paramConfig,
           value: null,
           options: [],
           loading: true
@@ -130,10 +130,7 @@ class AssistantChatStore {
           runInAction(() => {
             params[paramName].options = options;
             params[paramName].loading = false;
-            // Set default value to first option if available
-            if (options.length > 0) {
-              params[paramName].value = options[0];
-            }
+            params[paramName].value = params[paramName].default || (options.length > 0 ? options[0].value : '');
           });
         } catch (error) {
           console.error(`Error loading options for parameter ${paramName}:`, error);

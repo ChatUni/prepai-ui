@@ -23,12 +23,15 @@ const FormSelect = observer(({
   value,
   onChange,
   label,
-  placeholder
+  placeholder,
+  // New prop to control display mode
+  displayMode = 'dropdown' // 'dropdown' or 'cards'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState({});
   const [loadingAudioUrl, setLoadingAudioUrl] = useState(null);
   const [playingAudioUrl, setPlayingAudioUrl] = useState(null);
+  const [hoveredAudioUrl, setHoveredAudioUrl] = useState(null);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const currentAudioRef = useRef(null);
@@ -46,7 +49,9 @@ const FormSelect = observer(({
     } else if (store && field) {
       store.setEditingField(field, newValue);
     }
-    setIsOpen(false);
+    if (displayMode === 'dropdown') {
+      setIsOpen(false);
+    }
   };
 
   const handleIconClick = (e, url) => {
@@ -113,50 +118,86 @@ const FormSelect = observer(({
     }
   };
 
-  const renderIcon = (option) => {
+  const renderIcon = (option, size = 'small') => {
     if (!option.icon && !option.url) return null;
     
     // Check if URL is an audio file
     const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'];
     const isAudioFile = option.url && audioExtensions.some(ext => option.url.toLowerCase().includes(ext));
     
+    // Size configurations
+    const sizeConfig = {
+      small: { icon: 16, audio: 16, img: 'w-4 h-4' },
+      large: { icon: 24, audio: 16, img: 'w-6 h-6' }
+    };
+    const config = sizeConfig[size];
+    
     if (isAudioFile) {
       // Show audio control icons based on state
       let audioIcon;
       if (loadingAudioUrl === option.url) {
-        audioIcon = <FaSpinner className="animate-spin" size={16} />;
+        audioIcon = <FaSpinner className="animate-spin" size={config.audio} />;
       } else if (playingAudioUrl === option.url) {
-        audioIcon = <FaStop size={16} color='red' />;
+        audioIcon = <FaStop size={config.audio} color='red' />;
       } else {
-        audioIcon = <FaPlay size={16} color='green' />;
+        audioIcon = <FaPlay size={config.audio} color='green' />;
       }
       
-      // Render audio control icon (clickable) + original icon (non-clickable)
-      return (
-        <div className="flex items-center mr-2">
-          {/* Audio control icon (clickable) */}
-          <div
-            className="cursor-pointer hover:opacity-80"
-            onClick={(e) => handleIconClick(e, option.url)}
-          >
-            {audioIcon}
-          </div>
-          {/* Original icon (non-clickable) */}
-          {option.icon && (
-            <div className="ml-1">
-              {typeof option.icon === 'string' ? (
-                <img
-                  src={option.icon}
-                  alt=""
-                  className="w-4 h-4"
-                />
-              ) : (
-                <Icon icon={option.icon} size={16} />
-              )}
+      // Render based on display mode
+      if (displayMode === 'cards') {
+        return (
+          <div className="flex flex-col items-center">
+            {/* Audio control icon (clickable) */}
+            <div
+              className="cursor-pointer hover:opacity-80 mb-1"
+              onClick={(e) => handleIconClick(e, option.url)}
+            >
+              {audioIcon}
             </div>
-          )}
-        </div>
-      );
+            {/* Original icon (non-clickable) */}
+            {option.icon && (
+              <div>
+                {typeof option.icon === 'string' ? (
+                  <img
+                    src={option.icon}
+                    alt=""
+                    className="w-4 h-4"
+                  />
+                ) : (
+                  <Icon icon={option.icon} size={16} />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      } else {
+        // Dropdown mode - horizontal layout
+        return (
+          <div className="flex items-center mr-2">
+            {/* Audio control icon (clickable) */}
+            <div
+              className="cursor-pointer hover:opacity-80"
+              onClick={(e) => handleIconClick(e, option.url)}
+            >
+              {audioIcon}
+            </div>
+            {/* Original icon (non-clickable) */}
+            {option.icon && (
+              <div className="ml-1">
+                {typeof option.icon === 'string' ? (
+                  <img
+                    src={option.icon}
+                    alt=""
+                    className={config.img}
+                  />
+                ) : (
+                  <Icon icon={option.icon} size={config.icon} />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      }
     }
     
     // Non-audio files: show original icon if available
@@ -167,7 +208,7 @@ const FormSelect = observer(({
         <img
           src={option.icon}
           alt=""
-          className="w-4 h-4 mr-2 cursor-pointer hover:opacity-80"
+          className={`${config.img} cursor-pointer hover:opacity-80 ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
           onClick={(e) => handleIconClick(e, option.url)}
         />
       );
@@ -175,27 +216,29 @@ const FormSelect = observer(({
     
     return (
       <div
-        className="mr-2 cursor-pointer hover:opacity-80"
+        className={`cursor-pointer hover:opacity-80 ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
         onClick={(e) => handleIconClick(e, option.url)}
       >
-        <Icon icon={option.icon} size={16} />
+        <Icon icon={option.icon} size={config.icon} />
       </div>
     );
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
+    if (displayMode === 'dropdown') {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [displayMode]);
 
   useEffect(() => {
-    if (isOpen && buttonRef.current) {
+    if (displayMode === 'dropdown' && isOpen && buttonRef.current) {
       const calculateDropdownPosition = () => {
         const buttonRect = buttonRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
@@ -248,8 +291,150 @@ const FormSelect = observer(({
         window.removeEventListener('scroll', calculateDropdownPosition);
       };
     }
-  }, [isOpen, opts.length]);
+  }, [displayMode, isOpen, opts.length]);
 
+  // Render cards mode
+  if (displayMode === 'cards') {
+    return (
+      <div className={className}>
+        <div className="flex justify-between items-center mb-4">
+          {label || (store && field) && (
+            <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+              {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
+            </label>
+          )}
+          {canAdd && (
+            <button
+              type="button"
+              onClick={() => uiStore.openFormSelectDialog({ onAdd })}
+              className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              <FaPlus size={16} />
+            </button>
+          )}
+        </div>
+        
+        {/* Card-based selection interface */}
+        <div className="border border-gray-300 rounded-lg p-4 bg-white max-h-[492px] overflow-y-auto">
+          {/* Placeholder/Clear option */}
+          {(placeholder || (store && field)) && (
+            <div
+              className={`mb-4 p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer text-center transition-colors hover:bg-gray-50 ${
+                !selectedValue ? 'bg-blue-50 border-blue-300' : ''
+              }`}
+              onClick={() => handleSelect('')}
+            >
+              <div className="text-gray-500 text-sm">
+                {placeholder ||
+                (store && field ? t(`${store.name}.select${field[0].toUpperCase() + field.slice(1)}`) : 'Select an option')}
+              </div>
+            </div>
+          )}
+          
+          {/* Options grid */}
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+            {opts.map((option, i) => {
+              // Check if this option has an audio URL
+              const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'];
+              const isAudioFile = option.url && audioExtensions.some(ext => option.url.toLowerCase().includes(ext));
+              
+              return (
+                <div
+                  key={`${i}-${option.value}`}
+                  className={`flex flex-col items-center justify-center p-2 border rounded cursor-pointer transition-all aspect-square ${
+                    selectedValue === option.value
+                      ? 'border-blue-500 bg-blue-50 shadow-md'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleSelect(option.value)}
+                >
+                  {isAudioFile ? (
+                    // Audio file layout: icon that transforms to play button on hover
+                    <div
+                      onMouseEnter={() => setHoveredAudioUrl(option.url)}
+                      onMouseLeave={() => setHoveredAudioUrl(null)}
+                    >
+                      {/* Main icon/play button on top - fixed height container */}
+                      <div
+                        className="flex justify-center items-center flex-shrink-0 cursor-pointer hover:opacity-80 h-8 w-8 mx-auto"
+                        onClick={(e) => handleIconClick(e, option.url)}
+                      >
+                        {/* Show play controls if hovered, loading, playing, or no icon available */}
+                        {(hoveredAudioUrl === option.url || loadingAudioUrl === option.url || playingAudioUrl === option.url || !option.icon) ? (
+                          loadingAudioUrl === option.url ? (
+                            <FaSpinner className="animate-spin" size={24} />
+                          ) : playingAudioUrl === option.url ? (
+                            <FaStop size={24} color='red' />
+                          ) : (
+                            <FaPlay size={24} color='green' />
+                          )
+                        ) : (
+                          /* Show original icon when not hovered/playing and icon exists */
+                          option.icon && (
+                            typeof option.icon === 'string' ? (
+                              <img
+                                src={option.icon}
+                                alt=""
+                                className="w-8 h-8"
+                              />
+                            ) : (
+                              <Icon icon={option.icon} size={32} />
+                            )
+                          )
+                        )}
+                      </div>
+                      
+                      {/* Text at bottom */}
+                      <div className="text-xs text-center leading-tight break-words text-gray-700 overflow-hidden w-full">
+                        {option.label}
+                      </div>
+                    </div>
+                  ) : (
+                    // Non-audio file layout: icon above, text below
+                    <>
+                      {/* Icon on top */}
+                      <div className="mb-1 flex justify-center flex-shrink-0">
+                        {renderIcon(option, 'large')}
+                      </div>
+                      
+                      {/* Text at bottom */}
+                      <div className="text-xs text-center leading-tight break-words text-gray-700 overflow-hidden w-full">
+                        {option.label}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {uiStore.formSelectDialogOpen && AddDialogPage && (
+          <Dialog
+            isOpen={true}
+            onClose={() => uiStore.closeFormSelectDialog()}
+            onConfirm={async () => {
+              if (uiStore.formSelectDialogData?.onAdd) {
+                const newItem = await uiStore.formSelectDialogData.onAdd();
+                if (newItem && onOptionsChange) {
+                  const newOptions = [...opts, { value: newItem.value, label: newItem.label }];
+                  onOptionsChange(newOptions);
+                  handleSelect(newItem.value);
+                }
+              }
+              uiStore.closeFormSelectDialog();
+            }}
+            title={addDialogTitle}
+            isConfirm={true}
+          >
+            <AddDialogPage />
+          </Dialog>
+        )}
+      </div>
+    );
+  }
+
+  // Render dropdown mode (original)
   return (
     <div className={className}>
       <div className="flex justify-between items-center mb-2">
@@ -278,7 +463,7 @@ const FormSelect = observer(({
           required={required}
         >
           <div className="flex items-center">
-            {selectedOption && showSelectedIcon && renderIcon(selectedOption)}
+            {selectedOption && showSelectedIcon && renderIcon(selectedOption, 'small')}
             <span className={selectedValue ? 'text-gray-900' : 'text-gray-500'}>
               {selectedOption ? selectedOption.label : (
                 placeholder ||
@@ -309,7 +494,7 @@ const FormSelect = observer(({
                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
                 onClick={() => handleSelect(option.value)}
               >
-                {renderIcon(option)}
+                {renderIcon(option, 'small')}
                 <span>{option.label}</span>
               </div>
             ))}
