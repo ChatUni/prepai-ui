@@ -27,6 +27,49 @@ class AssistantChatStore {
     makeAutoObservable(this);
   }
   
+  // Helper function to add a message to the chat
+  addMessage = (messageData) => {
+    runInAction(() => {
+      this.messages.push({
+        id: messageData.id || `${messageData.sender}-${Date.now()}`,
+        sender: messageData.sender,
+        text: messageData.text,
+        type: messageData.type,
+        audioUrl: messageData.audioUrl,
+        timestamp: messageData.timestamp || new Date().toISOString(),
+        ...messageData
+      });
+    });
+  }
+  
+  // Helper function to update an existing message by ID
+  updateMessage = (messageId, updates) => {
+    runInAction(() => {
+      const messageIndex = this.messages.findIndex(msg => msg.id === messageId);
+      if (messageIndex !== -1) {
+        this.messages[messageIndex] = {
+          ...this.messages[messageIndex],
+          ...updates
+        };
+      }
+    });
+  }
+  
+  // Helper function to set error state and stop loading
+  setError = (errorMessage) => {
+    runInAction(() => {
+      this.error = errorMessage;
+      this.loading = false;
+    });
+  }
+  
+  // Helper function to set loading state
+  setLoading = (loading) => {
+    runInAction(() => {
+      this.loading = loading;
+    });
+  }
+  
   setSelectedAssistant(assistant) {
     this.selectedAssistant = assistant;
     
@@ -35,13 +78,10 @@ class AssistantChatStore {
     
     // Add greeting message from assistant if available
     if (assistant && assistant.greeting) {
-      runInAction(() => {
-        this.messages.push({
-          id: 'greeting',
-          sender: 'assistant',
-          text: assistant.greeting,
-          timestamp: new Date().toISOString()
-        });
+      this.addMessage({
+        id: 'greeting',
+        sender: 'assistant',
+        text: assistant.greeting
       });
     }
   }
@@ -53,17 +93,11 @@ class AssistantChatStore {
     }
     
     // Add user message to the chat
-    const userMessage = {
-      id: `user-${Date.now()}`,
+    this.addMessage({
       sender: 'user',
-      text,
-      timestamp: new Date().toISOString()
-    };
-    
-    runInAction(() => {
-      this.messages.push(userMessage);
-      this.loading = true;
+      text
     });
+    this.setLoading(true);
     
     try {
       // Check if this is an image generation assistant
@@ -78,22 +112,15 @@ class AssistantChatStore {
           console.log("Received response from draw API:", data);
           
           // Add assistant response with image to messages
-          runInAction(() => {
-            this.messages.push({
-              id: `assistant-${Date.now()}`,
-              sender: 'assistant',
-              text: data.url || data.image_url || data.data?.[0]?.url,
-              type: 'image',
-              timestamp: new Date().toISOString()
-            });
-            this.loading = false;
+          this.addMessage({
+            sender: 'assistant',
+            url: data.url || data.image_url || data.data?.[0]?.url,
+            type: 'image'
           });
+          this.setLoading(false);
         } catch (error) {
           console.error('Error generating image:', error);
-          runInAction(() => {
-            this.error = error.message;
-            this.loading = false;
-          });
+          this.setError(error.message);
         }
       } else if (this.selectedAssistant.function === 'video') {
         try {
@@ -114,14 +141,11 @@ class AssistantChatStore {
           if (data.data?.task_id) {
             // Add a loading message to show generation is in progress
             const loadingMessageId = `assistant-${Date.now()}`;
-            runInAction(() => {
-              this.messages.push({
-                id: loadingMessageId,
-                sender: 'assistant',
-                text: '正在生成视频，请稍候...',
-                type: 'loading',
-                timestamp: new Date().toISOString()
-              });
+            this.addMessage({
+              id: loadingMessageId,
+              sender: 'assistant',
+              text: '正在生成视频，请稍候...',
+              type: 'loading'
             });
             
             // Poll for completion
@@ -131,10 +155,7 @@ class AssistantChatStore {
           }
         } catch (error) {
           console.error('Error generating video:', error);
-          runInAction(() => {
-            this.error = error.message;
-            this.loading = false;
-          });
+          this.setError(error.message);
         }
       } else if (this.selectedAssistant.function === 'tts') {
         try {
@@ -157,15 +178,13 @@ class AssistantChatStore {
             id: `assistant-${Date.now()}`,
             sender: 'assistant',
             text: text, // Keep the original text
-            audioUrl: audioUrl,
+            url: audioUrl,
             type: 'audio',
             timestamp: new Date().toISOString()
           };
           
-          runInAction(() => {
-            this.messages.push(audioMessage);
-            this.loading = false;
-          });
+          this.addMessage(audioMessage);
+          this.setLoading(false);
           
           // Auto-play the audio
           const audio = new Audio(audioUrl);
@@ -175,30 +194,29 @@ class AssistantChatStore {
           
         } catch (error) {
           console.error('Error generating speech:', error);
-          runInAction(() => {
-            this.error = error.message;
-            this.loading = false;
-          });
+          this.setError(error.message);
         }
       } else if (this.selectedAssistant.function === 'workflow') {
         try {
-          const data = await post('run_workflow', {}, {
+          const r = await post('run_workflow', {}, {
             workflow_id: this.selectedAssistant.workflow_id,
             parameters: {
               [this.selectedAssistant.param]: text
             }
           });
           
-          console.log("Received response from workflow API:", data);
+          console.log("Received response from workflow API:", r);
           
-          let messageText = data.result || data.output || JSON.stringify(data);
+          const result = this.selectedAssistant.result
+          const isHtml = result.startsWith('<')
+          const data = JSON.parse(r.data)
+          let messageText = data.result || data.output;
           
-          // If assistant.html is not null, eval it as a function and run it with data
-          if (this.selectedAssistant.html) {
+          if (isHtml) {
             try {
               // Create a function from the html string and execute it with data
-              const htmlFunction = new Function('x', `return \`${this.selectedAssistant.html}\``);
-              messageText = htmlFunction(JSON.parse(data.data));
+              const htmlFunction = new Function('x', `return \`${result}\``);
+              messageText = htmlFunction(data);
             } catch (htmlError) {
               console.error('Error executing HTML function:', htmlError);
               // Fall back to original message text if HTML function fails
@@ -206,21 +224,16 @@ class AssistantChatStore {
           }
           
           // Add assistant response to messages
-          runInAction(() => {
-            this.messages.push({
-              id: `assistant-${Date.now()}`,
-              sender: 'assistant',
-              text: messageText,
-              timestamp: new Date().toISOString()
-            });
-            this.loading = false;
+          this.addMessage({
+            sender: 'assistant',
+            url: !isHtml ? messageText : undefined,
+            text: isHtml ? messageText : undefined,
+            type: isHtml ? 'html' : result
           });
+          this.setLoading(false);
         } catch (error) {
           console.error('Error running workflow:', error);
-          runInAction(() => {
-            this.error = error.message;
-            this.loading = false;
-          });
+          this.setError(error.message);
         }
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected
@@ -242,29 +255,19 @@ class AssistantChatStore {
           console.log("Received response from API:", data);
           
           // Add assistant response to messages
-          runInAction(() => {
-            this.messages.push({
-              id: `assistant-${Date.now()}`,
-              sender: 'assistant',
-              text: data.choices[0].message.content,
-              timestamp: new Date().toISOString()
-            });
-            this.loading = false;
+          this.addMessage({
+            sender: 'assistant',
+            text: data.choices[0].message.content
           });
+          this.setLoading(false);
         } catch (error) {
           console.error(`Error sending message to ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}:`, error);
-          runInAction(() => {
-            this.error = error.message;
-            this.loading = false;
-          });
+          this.setError(error.message);
         }
       }
     } catch (error) {
-      runInAction(() => {
-        this.error = error.message;
-        this.loading = false;
-        console.error('Error in sendMessage:', error);
-      });
+      console.error('Error in sendMessage:', error);
+      this.setError(error.message);
     }
   }
   
@@ -282,64 +285,36 @@ class AssistantChatStore {
         if (result.data?.status === 'done' && result.data?.video_url) {
           // Video generation completed successfully - use the URL directly
           // External URLs (like from JiMeng API) are already signed and accessible
-          runInAction(() => {
-            // Find and update the loading message
-            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
-            if (messageIndex !== -1) {
-              this.messages[messageIndex] = {
-                ...this.messages[messageIndex],
-                text: result.data.video_url,
-                type: 'video'
-              };
-            }
-            this.loading = false;
+          this.updateMessage(loadingMessageId, {
+            text: result.data.video_url,
+            type: 'video'
           });
+          this.setLoading(false);
         } else if (result.data?.status === 'failed') {
           // Video generation failed
-          runInAction(() => {
-            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
-            if (messageIndex !== -1) {
-              this.messages[messageIndex] = {
-                ...this.messages[messageIndex],
-                text: `视频生成失败: ${result.message || '未知错误'}`,
-                type: 'error'
-              };
-            }
-            this.loading = false;
-            this.error = result.message || '视频生成失败';
+          this.updateMessage(loadingMessageId, {
+            text: `视频生成失败: ${result.message || '未知错误'}`,
+            type: 'error'
           });
+          this.setError(result.message || '视频生成失败');
         } else if (attempts >= maxAttempts) {
           // Timeout
-          runInAction(() => {
-            const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
-            if (messageIndex !== -1) {
-              this.messages[messageIndex] = {
-                ...this.messages[messageIndex],
-                text: '视频生成超时，请稍后重试',
-                type: 'error'
-              };
-            }
-            this.loading = false;
-            this.error = '视频生成超时';
+          this.updateMessage(loadingMessageId, {
+            text: '视频生成超时，请稍后重试',
+            type: 'error'
           });
+          this.setError('视频生成超时');
         } else {
           // Still processing, continue polling
           setTimeout(poll, 5000); // Poll every 5 seconds
         }
       } catch (error) {
         console.error('Error polling video completion:', error);
-        runInAction(() => {
-          const messageIndex = this.messages.findIndex(msg => msg.id === loadingMessageId);
-          if (messageIndex !== -1) {
-            this.messages[messageIndex] = {
-              ...this.messages[messageIndex],
-              text: `查询视频状态失败: ${error.message}`,
-              type: 'error'
-            };
-          }
-          this.loading = false;
-          this.error = error.message;
+        this.updateMessage(loadingMessageId, {
+          text: `查询视频状态失败: ${error.message}`,
+          type: 'error'
         });
+        this.setError(error.message);
       }
     };
     
