@@ -106,6 +106,12 @@ class AssistantChatStore {
       if (typeof paramConfig === 'number') {
         // If it's a number (always 1 for now), it will be filled by ChatInput
         params[paramName] = null;
+      } else if (typeof paramConfig === 'object' && paramConfig.type === 'number') {
+        // Handle number type parameters
+        params[paramName] = {
+          ...paramConfig,
+          value: paramConfig.default || paramConfig.min || 0
+        };
       } else if (typeof paramConfig === 'object' && paramConfig.type === 'select') {
         // Handle select type parameters
         params[paramName] = {
@@ -281,7 +287,7 @@ class AssistantChatStore {
               // Use ChatInput text for number parameters
               parameters[paramName] = text;
             } else if (typeof paramConfig === 'object' && this.wf_params[paramName]) {
-              // Use selected value for object parameters
+              // Use selected value for object parameters (both select and number types)
               parameters[paramName] = this.wf_params[paramName].value;
             }
           }

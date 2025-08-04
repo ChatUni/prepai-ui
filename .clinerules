@@ -125,6 +125,12 @@
       "description": "In components, if a handler only has one line (e.g., calls a method on the store), do not define separate handler functions. Instead, use inline arrow functions directly in the JSX. If a handler contains more than one line of code, then the handler should be created in the store, not in the component. This keeps components pure and moves complex logic to stores where it belongs.",
       "severity": "error",
       "category": "component-architecture"
+    },
+    {
+      "name": "no-test-execution",
+      "description": "Do not run tests after finishing a task. Tests should be executed separately by the user when needed. This prevents unnecessary test execution and allows the user to control when tests are run.",
+      "severity": "error",
+      "category": "workflow"
     }
   ]
 }

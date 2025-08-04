@@ -8,6 +8,7 @@ import Button from '../../ui/Button';
 import { t } from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import FormSelect from '../../ui/FormSelect';
+import FormInput from '../../ui/FormInput';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -47,7 +48,7 @@ const VideoMessage = ({ message }) => (
     <div className="inline-block">
       <div className="relative rounded-lg overflow-hidden" style={{ maxWidth: '400px', maxHeight: '300px' }}>
         <video
-          src={message.text}
+          src={message.url}
           controls
           className="w-full h-auto"
           crossOrigin="anonymous"
@@ -299,15 +300,27 @@ const VoiceSelector = observer(() => {
   );
 });
 
-// Workflow parameter selector component using FormSelect
-const WorkflowParamSelector = observer(({ paramName, paramConfig }) => {
-  if (!paramConfig || paramConfig.type !== 'select') {
-    return null;
-  }
-
+const WorkflowParam = observer(({ paramName, paramConfig }) => {
+  if (!paramConfig) return null;
   const handleChange = (value) => {
     assistantChatStore.setWorkflowParam(paramName, value);
   };
+
+  if (paramConfig.type === 'number') {
+    return (
+      <div className="mt-2">
+        <FormInput
+          value={paramConfig.value || paramConfig.default || ''}
+          onChange={handleChange}
+          label={t(`params.${paramName}`)}
+          type="number"
+          min={paramConfig.min}
+          max={paramConfig.max}
+          defaultValue={paramConfig.default}
+        />
+      </div>
+    );
+  }
 
   if (paramConfig.loading) {
     return (
@@ -414,7 +427,7 @@ const AssistantChatPage = observer(() => {
         {assistantChatStore.selectedAssistant?.function === 'workflow' && (
           <div>
             {Object.entries(assistantChatStore.wf_params).map(([paramName, paramConfig]) => (
-              <WorkflowParamSelector
+              <WorkflowParam
                 key={paramName}
                 paramName={paramName}
                 paramConfig={paramConfig}

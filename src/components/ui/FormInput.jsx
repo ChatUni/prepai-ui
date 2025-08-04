@@ -7,24 +7,82 @@ const FormInput = observer(({
   type = 'text',
   required = false,
   min,
+  max,
   rows,
   choices,
   className = '',
-  hasTitle = true
+  hasTitle = true,
+  // New props for custom handling
+  value,
+  onChange,
+  label,
+  placeholder,
+  defaultValue
 }) => {
+  const id = store && field ? `${store.name}-${field}` : `custom-input-${Math.random()}`;
+  
+  // Use custom value/onChange if provided, otherwise use store pattern
+  const inputValue = value !== undefined ? value : (store?.editingItem?.[field] || '');
+  
+  const handleChange = (e) => {
+    if (onChange) {
+      onChange(e.target.value);
+    } else if (store && field) {
+      store.setEditingField(field, e.target.value);
+    }
+  };
+
+  const handleBlur = (e) => {
+    if (type === 'number') {
+      const numValue = parseFloat(e.target.value);
+      let correctedValue = e.target.value;
+      
+      // Check if value is a valid number
+      if (isNaN(numValue)) {
+        correctedValue = defaultValue || '';
+      } else {
+        // Check min/max constraints
+        if (min !== undefined && numValue < min) {
+          correctedValue = defaultValue || min.toString();
+        } else if (max !== undefined && numValue > max) {
+          correctedValue = defaultValue || max.toString();
+        }
+      }
+      
+      // Update value if correction is needed
+      if (correctedValue !== e.target.value) {
+        if (onChange) {
+          onChange(correctedValue);
+        } else if (store && field) {
+          store.setEditingField(field, correctedValue);
+        }
+      }
+    }
+  };
+
+  const handleChoiceClick = (choice) => {
+    if (onChange) {
+      onChange(choice);
+    } else if (store && field) {
+      store.setEditingField(field, choice);
+    }
+  };
+
   const inputProps = {
-    id: `${store.name}-${field}`,
-    value: store.editingItem[field] || '',
-    onChange: (e) => store.setEditingField(field, e.target.value),
+    id,
+    value: inputValue,
+    onChange: handleChange,
+    onBlur: handleBlur,
     className: "w-full p-3 border rounded",
     required,
+    placeholder,
   };
 
   return (
     <div className={className}>
       {hasTitle && (
         <label htmlFor={inputProps.id} className="block text-sm font-medium text-gray-700 mb-1">
-          {t(`${store.name}.${field}`)}
+          {label || (store && field ? t(`${store.name}.${field}`) : 'Input')}
         </label>
       )}
       {rows ? (
@@ -37,6 +95,7 @@ const FormInput = observer(({
           {...inputProps}
           type={type}
           min={min}
+          max={max}
         />
       )}
       {choices && (
@@ -46,10 +105,10 @@ const FormInput = observer(({
               key={choice}
               type="button"
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors
-                ${choice === inputProps.value
+                ${choice === inputValue
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-              onClick={() => store.setEditingField(field, choice)}
+              onClick={() => handleChoiceClick(choice)}
             >
               {choice}
             </button>

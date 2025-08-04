@@ -622,5 +622,9 @@
     "contactInfo": "如需了解更多关于我们服务的信息，请随时与我们联系。",
     "services": "我们的服务",
     "servicesInfo": "我们提供全面的教育和培训解决方案。"
+  },
+  "params": {
+    "width": "宽度",
+    "height": "高度"
   }
 }

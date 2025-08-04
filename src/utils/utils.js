@@ -27,7 +27,7 @@ export const buildOptions = (options) => options.map(option => {
 
   return {
     value,
-    label: option.label || option.text || option.name,
+    label: option.label || option.text || option.name || value,
     icon: buildUrl(option.icon),
     url: option.url
   };

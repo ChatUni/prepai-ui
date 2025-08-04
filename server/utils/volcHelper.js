@@ -1,5 +1,6 @@
 const { TosClient } = require('@volcengine/tos-sdk');
 const crypto = require('crypto');
+const { voices } = require('./volcVoices.js');
 
 let tosInstance = null;
 
@@ -519,6 +520,8 @@ const run_workflow = async (params) => {
 
 // Get voice options from TTS configuration
 const getVoiceOptions = async () => {
+  return voices;
+
   const url = 'https://lf3-config.bytetcc.com/obj/tcc-config-web/tcc-v2-data-lab.speech.tts_middle_layer-default';
   
   try {
