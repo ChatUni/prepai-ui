@@ -191,7 +191,8 @@
         "retry": "Retry",
         "notFound": "AI Assistant not found",
         "back": "Back",
-        "inputQuestion": "Enter your question..."
+        "inputQuestion": "Enter your question...",
+        "downloadVideo": "Download Video"
       }
     }
   },

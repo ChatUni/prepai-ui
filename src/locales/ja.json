@@ -191,7 +191,8 @@
         "retry": "再試行",
         "notFound": "AIアシスタントが見つかりません",
         "back": "戻る",
-        "inputQuestion": "質問を入力してください..."
+        "inputQuestion": "質問を入力してください...",
+        "downloadVideo": "動画をダウンロード"
       }
     }
   },

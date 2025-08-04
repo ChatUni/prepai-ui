@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaDownload } from 'react-icons/fa';
 import ChatInput from '../../ui/ChatInput';
 import assistantStore from '../../../stores/assistantStore';
 import assistantChatStore from '../../../stores/assistantChatStore';
@@ -51,7 +52,11 @@ const VideoMessage = ({ message }) => (
           src={message.url}
           controls
           className="w-full h-auto"
+          style={{ display: 'none' }}
           crossOrigin="anonymous"
+          onLoad={(e) => {
+            e.target.style.display = 'block';
+          }}
           onError={(e) => {
             console.warn('Video failed to load, likely due to CORS:', e);
             // Fallback: show a link to open in new tab
@@ -64,20 +69,15 @@ const VideoMessage = ({ message }) => (
         </video>
         <div
           className="hidden bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center"
-          style={{ minHeight: '200px' }}
         >
           <div className="flex flex-col items-center justify-center h-full">
-            <div className="text-gray-600 mb-2">Video cannot be embedded due to CORS restrictions</div>
             <a
               href={message.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              download
               className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Open Video in New Tab
+              <FaDownload className="w-4 h-4 mr-2" />
+              {t('menu.categories.assistant.downloadVideo')}
             </a>
           </div>
         </div>

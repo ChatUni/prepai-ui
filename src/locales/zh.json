@@ -191,7 +191,8 @@
         "retry": "重试",
         "notFound": "未找到AI助理",
         "back": "返回",
-        "inputQuestion": "输入您的问题..."
+        "inputQuestion": "输入您的问题...",
+        "downloadVideo": "下载视频"
       }
     }
   },
