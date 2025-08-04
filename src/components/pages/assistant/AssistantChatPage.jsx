@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaDownload } from 'react-icons/fa';
+import ReactMarkdown from 'react-markdown';
 import ChatInput from '../../ui/ChatInput';
 import assistantStore from '../../../stores/assistantStore';
 import assistantChatStore from '../../../stores/assistantChatStore';
@@ -115,10 +116,13 @@ const TextMessage = ({ message }) => (
         ? 'bg-blue-500 text-white rounded-br-none'
         : 'bg-gray-200 text-gray-800 rounded-bl-none'
     }`}>
-      <div
-        className="text-sm whitespace-pre-wrap"
-        dangerouslySetInnerHTML={{ __html: message.text }}
-      />
+      <div className="text-sm whitespace-pre-wrap">
+        {message.isHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: message.text }} />
+        ) : (
+          <ReactMarkdown>{message.text}</ReactMarkdown>
+        )}
+      </div>
       <div className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
         {new Date(message.timestamp).toLocaleTimeString()}
       </div>

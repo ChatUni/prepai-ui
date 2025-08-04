@@ -318,8 +318,9 @@ class AssistantChatStore {
           // Add assistant response to messages
           this.addMessage({
             sender: 'assistant',
+            isHtml,
             url: !isHtml ? messageText : undefined,
-            text: isHtml ? messageText : undefined,
+            text: messageText,
             type: isHtml ? 'html' : result
           });
           this.setLoading(false);
