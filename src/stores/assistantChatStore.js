@@ -112,7 +112,7 @@ class AssistantChatStore {
           ...paramConfig,
           value: paramConfig.default || paramConfig.min || 0
         };
-      } else if (typeof paramConfig === 'object' && paramConfig.type === 'select') {
+      } else if (typeof paramConfig === 'object' && (paramConfig.type === 'select' || paramConfig.type === 'radio')) {
         // Handle select type parameters
         params[paramName] = {
           ...paramConfig,

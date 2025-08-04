@@ -626,6 +626,7 @@
   },
   "params": {
     "width": "宽度",
-    "height": "高度"
+    "height": "高度",
+    "duration": "时长"
   }
 }

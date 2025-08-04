@@ -626,6 +626,7 @@
   },
   "params": {
     "width": "Width",
-    "height": "Height"
+    "height": "Height",
+    "duration": "Duration"
   }
 }

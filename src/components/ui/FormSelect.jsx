@@ -420,10 +420,15 @@ const FormSelect = observer(({
               const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'];
               const isAudioFile = option.url && audioExtensions.some(ext => option.url.toLowerCase().includes(ext));
               
+              // Determine if this option has an icon to display
+              const hasIcon = isAudioFile || option.icon;
+              
               return (
                 <div
                   key={`${i}-${option.value}`}
-                  className={`flex flex-col items-center justify-center p-2 border rounded cursor-pointer transition-all aspect-square ${
+                  className={`flex flex-col items-center justify-center p-2 border rounded cursor-pointer transition-all ${
+                    hasIcon ? 'aspect-square' : 'min-h-[2.5rem]'
+                  } ${
                     selectedValue === option.value
                       ? 'border-blue-500 bg-blue-50 shadow-md'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'

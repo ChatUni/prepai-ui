@@ -11,6 +11,7 @@ import { t } from '../../../stores/languageStore';
 import LoadingState from '../../ui/LoadingState';
 import FormSelect from '../../ui/FormSelect';
 import FormInput from '../../ui/FormInput';
+import FormRadio from '../../ui/FormRadio';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -321,6 +322,19 @@ const WorkflowParam = observer(({ paramName, paramConfig }) => {
           min={paramConfig.min}
           max={paramConfig.max}
           defaultValue={paramConfig.default}
+        />
+      </div>
+    );
+  }
+
+  if (paramConfig.type === 'radio') {
+    return (
+      <div className="mt-2">
+        <FormRadio
+          value={paramConfig.value || paramConfig.default}
+          onChange={handleChange}
+          options={paramConfig.options}
+          label={t(`params.${paramName}`)}
         />
       </div>
     );
