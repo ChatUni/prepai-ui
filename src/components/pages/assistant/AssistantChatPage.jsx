@@ -12,6 +12,7 @@ import LoadingState from '../../ui/LoadingState';
 import FormSelect from '../../ui/FormSelect';
 import FormInput from '../../ui/FormInput';
 import FormRadio from '../../ui/FormRadio';
+import ImageUpload from '../../ui/ImageUpload';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -184,57 +185,6 @@ const AssistantChatMessages = observer(() => {
   );
 });
 
-// Resolution selector component
-const ResolutionSelector = observer(() => {
-  const resolutions = [
-    { size: '256x256', label: '1:1', dimensions: '256×256' },
-    { size: '512x512', label: '1:1', dimensions: '512×512' },
-    { size: '1024x1024', label: '1:1', dimensions: '1024×1024' },
-    { size: '1792x1024', label: '16:9', dimensions: '1792×1024' },
-    { size: '1024x1792', label: '9:16', dimensions: '1024×1792' }
-  ];
-
-  const getIconComponent = (size) => {
-    const [width, height] = size.split('x').map(Number);
-    if (width === height) {
-      // Square
-      return (
-        <div className="w-5 h-5 border-2 border-current"></div>
-      );
-    } else if (height > width) {
-      // Tall rectangle
-      return (
-        <div className="w-3 h-5 border-2 border-current"></div>
-      );
-    } else {
-      // Wide rectangle
-      return (
-        <div className="w-5 h-3 border-2 border-current"></div>
-      );
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-5 gap-2 mt-4">
-      {resolutions.map(({ size, label, dimensions }) => (
-        <button
-          key={size}
-          onClick={() => assistantChatStore.setSelectedImageSize(size)}
-          className={`flex flex-col items-center gap-1 px-1 py-2 rounded-lg border-2 transition-all ${
-            assistantChatStore.selectedImageSize === size
-              ? 'bg-blue-100 border-blue-500 text-blue-700'
-              : 'bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 hover:border-gray-400'
-          }`}
-        >
-          {getIconComponent(size)}
-          <div className="text-xs font-medium">{label}</div>
-          <div className="text-xs text-gray-500 leading-tight">{dimensions}</div>
-        </button>
-      ))}
-    </div>
-  );
-});
-
 // Video resolution selector component
 const VideoResolutionSelector = observer(() => {
   const resolutions = [
@@ -280,35 +230,17 @@ const VideoResolutionSelector = observer(() => {
   );
 });
 
-// Voice selector component for TTS
-const VoiceSelector = observer(() => {
-  return (
-    <div className="grid grid-cols-5 gap-2 mt-4">
-      {assistantChatStore.voices.map(({ id, name, description }) => (
-        <button
-          key={id}
-          onClick={() => assistantChatStore.setSelectedVoice(id)}
-          className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg border-2 transition-all ${
-            assistantChatStore.selectedVoice === id
-              ? 'bg-blue-100 border-blue-500 text-blue-700'
-              : 'bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 hover:border-gray-400'
-          }`}
-        >
-          <div className="w-6 h-6 rounded-full border-2 border-current flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-current"></div>
-          </div>
-          <div className="text-xs font-medium">{name}</div>
-          <div className="text-xs text-gray-500 leading-tight">{description}</div>
-        </button>
-      ))}
-    </div>
-  );
-});
-
 const WorkflowParam = observer(({ paramName, paramConfig }) => {
   if (!paramConfig) return null;
   const handleChange = (value) => {
     assistantChatStore.setWorkflowParam(paramName, value);
+  };
+
+  const handleImageSelect = (data) => {
+    // Store the file object for the workflow param
+    if (data && data.file) {
+      handleChange(data.file);
+    }
   };
 
   if (paramConfig.type === 'number') {
@@ -340,6 +272,20 @@ const WorkflowParam = observer(({ paramName, paramConfig }) => {
     );
   }
 
+  if (paramConfig.type === 'image') {
+    return (
+      <ImageUpload
+        id={`workflow-param-${paramName}`}
+        selectedFile={paramConfig.value}
+        previewUrl={paramConfig.value && typeof paramConfig.value === 'string' ? paramConfig.value : null}
+        onMediaSelect={handleImageSelect}
+        label={paramConfig.title}
+        type="image"
+        hasTitle={!!paramConfig.title}
+      />
+    );
+  }
+
   if (paramConfig.loading) {
     return (
       <div className="mt-2">
@@ -360,6 +306,7 @@ const WorkflowParam = observer(({ paramName, paramConfig }) => {
       options={paramConfig.options}
       showSelectedIcon={false}
       displayMode={paramConfig.mode}
+      cols={paramConfig.cols}
     />
   );
 });
@@ -433,14 +380,8 @@ const AssistantChatPage = observer(() => {
           disabled={assistantChatStore.loading}
           placeholder={assistantChatStore.selectedAssistant?.placeholder || t('menu.categories.assistant.inputQuestion')}
         />
-        {assistantChatStore.selectedAssistant?.function === 'image' && (
-          <ResolutionSelector />
-        )}
         {assistantChatStore.selectedAssistant?.function === 'video' && (
           <VideoResolutionSelector />
-        )}
-        {assistantChatStore.selectedAssistant?.function === 'tts' && (
-          <VoiceSelector />
         )}
         {assistantChatStore.selectedAssistant?.function === 'workflow' && (
           <div>

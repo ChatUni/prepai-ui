@@ -478,23 +478,29 @@ const queryJimengTask = async (task_id) => {
 };
 
 // Run Coze workflow
-const run_workflow = async (params) => {
+const run_workflow = async (workflow_id, parameters) => {
   if (!process.env.COZE_API_TOKEN) {
     throw new Error('Missing required COZE_API_TOKEN environment variable');
   }
-
-  const {
-    workflow_id,
-    parameters = {},
-    baseURL = 'https://api.coze.cn'
-  } = params;
 
   if (!workflow_id) {
     throw new Error('workflow_id is required to run Coze workflow');
   }
 
+  let uploadedFileKeys = [];
+console.log(parameters)  
   try {
-    const response = await fetch(`${baseURL}/v1/workflow/run`, {
+    // Process file parameters first - upload files to TOS and replace with URLs
+    const processedParameters = await processFileParameters(parameters, 'workflow-temp');
+    
+    // Track uploaded files for cleanup
+    uploadedFileKeys = extractUploadedFileKeys(parameters, processedParameters);
+    
+    if (uploadedFileKeys.length > 0) {
+      console.log(`Uploaded ${uploadedFileKeys.length} temporary files for workflow ${workflow_id}`);
+    }
+
+    const response = await fetch(`https://api.coze.cn/v1/workflow/run`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.COZE_API_TOKEN}`,
@@ -502,7 +508,7 @@ const run_workflow = async (params) => {
       },
       body: JSON.stringify({
         workflow_id,
-        parameters
+        parameters: processedParameters
       })
     });
 
@@ -515,6 +521,13 @@ const run_workflow = async (params) => {
     return result;
   } catch (error) {
     throw new Error(`Failed to run Coze workflow: ${error.message}`);
+  } finally {
+    // Clean up temporary files regardless of success or failure
+    if (uploadedFileKeys.length > 0) {
+      cleanupTempFiles(uploadedFileKeys).catch(error => {
+        console.error('Failed to cleanup temporary files:', error.message);
+      });
+    }
   }
 };
 
@@ -573,6 +586,176 @@ const getVoiceOptions = async () => {
   }
 };
 
+// Check if an object is a File object
+const isFileObject = (obj) => {
+  if (!obj || typeof obj !== 'object') return false;
+  
+  // Check for browser File object properties
+  if (obj instanceof File) return true;
+  
+  // Check for base64 data URL pattern
+  if (typeof obj === 'string' && obj.startsWith('data:') && obj.includes('base64,')) return true;
+  
+  // Check for object with file-like properties
+  if (obj.name && obj.type && (obj.size !== undefined || obj.data)) return true;
+  
+  // Check for Buffer
+  if (Buffer.isBuffer(obj)) return true;
+  
+  return false;
+};
+
+// Generate a unique key for file upload
+const generateFileKey = (originalName, prefix = 'uploads') => {
+  const timestamp = Date.now();
+  const randomSuffix = Math.random().toString(36).substring(2, 8);
+  
+  if (originalName) {
+    const extension = originalName.split('.').pop();
+    const baseName = originalName.replace(/\.[^/.]+$/, '');
+    return `${prefix}/${baseName}-${timestamp}-${randomSuffix}.${extension}`;
+  }
+  
+  return `${prefix}/file-${timestamp}-${randomSuffix}`;
+};
+
+// Process File objects in parameters and upload to TOS
+const processFileParameters = async (params, keyPrefix = 'uploads') => {
+  if (!params || typeof params !== 'object') {
+    return params;
+  }
+
+  // Handle arrays
+  if (Array.isArray(params)) {
+    const processedArray = [];
+    for (let i = 0; i < params.length; i++) {
+      processedArray[i] = await processFileParameters(params[i], keyPrefix);
+    }
+    return processedArray;
+  }
+
+  // Handle objects
+  const processedParams = {};
+  
+  for (const [key, value] of Object.entries(params)) {
+    if (isFileObject(value)) {
+      try {
+        let fileData, fileName;
+        
+        // Handle different file object types
+        if (typeof value === 'string' && value.startsWith('data:')) {
+          // Base64 data URL
+          fileData = value;
+          fileName = `${key}.${value.split(';')[0].split('/')[1] || 'bin'}`;
+        } else if (Buffer.isBuffer(value)) {
+          // Buffer object - convert to base64 data URL
+          const mimeType = 'application/octet-stream'; // Default MIME type
+          const base64Data = value.toString('base64');
+          fileData = `data:${mimeType};base64,${base64Data}`;
+          fileName = `${key}.bin`;
+        } else if (value.name && value.type) {
+          // File-like object with name and type
+          fileName = value.name;
+          if (value.data) {
+            // Object with data property
+            if (typeof value.data === 'string' && value.data.startsWith('data:')) {
+              fileData = value.data;
+            } else {
+              // Assume it's base64 or binary data
+              const base64Data = Buffer.isBuffer(value.data) ?
+                value.data.toString('base64') :
+                Buffer.from(value.data).toString('base64');
+              fileData = `data:${value.type};base64,${base64Data}`;
+            }
+          } else {
+            throw new Error(`File object for key "${key}" is missing data`);
+          }
+        } else {
+          throw new Error(`Unsupported file object format for key "${key}"`);
+        }
+        
+        // Generate unique key for upload
+        const uploadKey = generateFileKey(fileName, keyPrefix);
+        
+        // Upload file to TOS
+        const uploadResult = await handleFileUpload(fileData, uploadKey);
+        
+        // Replace file object with URL
+        processedParams[key] = uploadResult.url;
+        
+        console.log(`Uploaded file for parameter "${key}" to: ${uploadResult.url}`);
+        
+      } catch (error) {
+        console.error(`Failed to upload file for parameter "${key}":`, error.message);
+        throw new Error(`File upload failed for parameter "${key}": ${error.message}`);
+      }
+    } else if (value && typeof value === 'object') {
+      // Recursively process nested objects
+      processedParams[key] = await processFileParameters(value, keyPrefix);
+    } else {
+      // Keep non-file values as-is
+      processedParams[key] = value;
+    }
+  }
+  
+  return processedParams;
+};
+
+// Track uploaded files and extract their keys for cleanup
+const extractUploadedFileKeys = (originalParams, processedParams) => {
+  const uploadedKeys = [];
+  
+  const extractKeys = (original, processed) => {
+    if (!original || !processed || typeof original !== 'object' || typeof processed !== 'object') {
+      return;
+    }
+    
+    if (Array.isArray(original) && Array.isArray(processed)) {
+      for (let i = 0; i < original.length && i < processed.length; i++) {
+        extractKeys(original[i], processed[i]);
+      }
+      return;
+    }
+    
+    for (const [key, originalValue] of Object.entries(original)) {
+      const processedValue = processed[key];
+      
+      if (isFileObject(originalValue) && typeof processedValue === 'string' && processedValue.includes('tos-')) {
+        try {
+          const fileKey = extractKeyFromUrl(processedValue);
+          uploadedKeys.push(fileKey);
+        } catch (error) {
+          console.warn(`Failed to extract key from URL ${processedValue}:`, error.message);
+        }
+      } else if (originalValue && typeof originalValue === 'object' && processedValue && typeof processedValue === 'object') {
+        extractKeys(originalValue, processedValue);
+      }
+    }
+  };
+  
+  extractKeys(originalParams, processedParams);
+  return uploadedKeys;
+};
+
+// Clean up uploaded temporary files
+const cleanupTempFiles = async (fileKeys) => {
+  if (!fileKeys || fileKeys.length === 0) {
+    return;
+  }
+  
+  console.log(`Cleaning up ${fileKeys.length} temporary files from TOS`);
+  
+  for (const key of fileKeys) {
+    try {
+      await deleteObject({ Key: key });
+      console.log(`Deleted temporary file: ${key}`);
+    } catch (error) {
+      console.warn(`Failed to delete temporary file ${key}:`, error.message);
+      // Continue cleanup even if individual deletions fail
+    }
+  }
+};
+
 module.exports = {
   getSignedUrl,
   checkObjectExists,
@@ -589,5 +772,10 @@ module.exports = {
   jimeng,
   queryJimengTask,
   run_workflow,
-  getVoiceOptions
+  getVoiceOptions,
+  processFileParameters,
+  isFileObject,
+  generateFileKey,
+  extractUploadedFileKeys,
+  cleanupTempFiles
 };

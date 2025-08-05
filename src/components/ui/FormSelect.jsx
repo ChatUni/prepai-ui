@@ -19,13 +19,12 @@ const FormSelect = observer(({
   addDialogPage: AddDialogPage,
   addDialogTitle,
   showSelectedIcon = true,
-  // New props for custom handling
   value,
   onChange,
   label,
   placeholder,
-  // New prop to control display mode
-  displayMode = 'dropdown' // 'dropdown', 'card', or 'row'
+  displayMode = 'dropdown',
+  cols = 5
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState({});
@@ -414,7 +413,7 @@ const FormSelect = observer(({
           )}
           
           {/* Options grid */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+          <div className={`grid grid-cols-${cols} sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 items-stretch`}>
             {opts.map((option, i) => {
               // Check if this option has an audio URL
               const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'];
@@ -426,9 +425,7 @@ const FormSelect = observer(({
               return (
                 <div
                   key={`${i}-${option.value}`}
-                  className={`flex flex-col items-center justify-center p-2 border rounded cursor-pointer transition-all ${
-                    hasIcon ? 'aspect-square' : 'min-h-[2.5rem]'
-                  } ${
+                  className={`flex flex-col items-center justify-center p-2 border rounded cursor-pointer transition-all w-full h-full min-h-[4rem] ${
                     selectedValue === option.value
                       ? 'border-blue-500 bg-blue-50 shadow-md'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'

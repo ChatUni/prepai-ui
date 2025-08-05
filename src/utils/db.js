@@ -8,13 +8,36 @@ const api = (type, ps = {}) => {
 }
 
 export const get = (type, ps) => fetch(api(type, ps)).then(r => r.json())
-export const post = (type, ps, data) => fetch(api(type, ps), {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-}).then(r => r.json())
+export const post = (type, ps, data) => {
+  // Check if data contains File objects
+  const hasFiles = data && typeof data === 'object' && Object.values(data).some(value => value instanceof File);
+  
+  if (hasFiles) {
+    // Use FormData for file uploads
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
+      }
+    });
+    
+    return fetch(api(type, ps), {
+      method: 'POST',
+      body: formData
+    }).then(r => r.json());
+  } else {
+    // Use JSON for regular data
+    return fetch(api(type, ps), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(r => r.json());
+  }
+}
 export const save = (doc, data) => post('save', { doc }, data)
 export const remove = (doc, id) => post('remove', { doc }, { id })
 

@@ -6,23 +6,8 @@ class AssistantChatStore {
   messages = [];
   loading = false;
   error = null;
-  selectedImageSize = '512x512';
   selectedVideoResolution = '1280x720';
-  selectedVoice = 'alloy';
   wf_params = {};
-  
-  voices = [
-    { id: 'alloy', name: 'Alloy', description: '中性' },
-    { id: 'ash', name: 'Ash', description: '温暖' },
-    //{ id: 'ballad', name: 'Ballad', description: 'Melodic' },
-    { id: 'coral', name: 'Coral', description: '明亮' },
-    { id: 'echo', name: 'Echo', description: '深沉' },
-    { id: 'fable', name: 'Fable', description: '叙事' },
-    { id: 'nova', name: 'Nova', description: '清晰' },
-    { id: 'onyx', name: 'Onyx', description: '丰富' },
-    { id: 'sage', name: 'Sage', description: '智慧' },
-    { id: 'shimmer', name: 'Shimmer', description: '温和' }
-  ];
   
   constructor() {
     makeAutoObservable(this);
@@ -112,38 +97,42 @@ class AssistantChatStore {
           ...paramConfig,
           value: paramConfig.default || paramConfig.min || 0
         };
-      } else if (typeof paramConfig === 'object' && (paramConfig.type === 'select' || paramConfig.type === 'radio')) {
-        // Handle select type parameters
-        params[paramName] = {
-          ...paramConfig,
-          value: null,
-          options: [],
-          loading: true
-        };
-        
-        // Load options
-        try {
-          let options = [];
-          if (paramConfig.options.startsWith('[')) {
-            // Parse JSON array
-            options = JSON.parse(paramConfig.options);
-          } else {
-            // Call API
-            const response = await get(paramConfig.options);
-            options = response || [];
-          }
+      } else if (typeof paramConfig === 'object') {
+        if (paramConfig.type === 'select' || paramConfig.type === 'radio') {
+          // Handle select type parameters
+          params[paramName] = {
+            ...paramConfig,
+            value: null,
+            options: [],
+            loading: true
+          };
           
-          runInAction(() => {
-            params[paramName].options = options;
-            params[paramName].loading = false;
-            params[paramName].value = params[paramName].default || (options.length > 0 ? options[0].value : '');
-          });
-        } catch (error) {
-          console.error(`Error loading options for parameter ${paramName}:`, error);
-          runInAction(() => {
-            params[paramName].loading = false;
-            params[paramName].options = [];
-          });
+          // Load options
+          try {
+            let options = [];
+            if (paramConfig.options.startsWith('[')) {
+              // Parse JSON array
+              options = JSON.parse(paramConfig.options);
+            } else {
+              // Call API
+              const response = await get(paramConfig.options);
+              options = response || [];
+            }
+            
+            runInAction(() => {
+              params[paramName].options = options;
+              params[paramName].loading = false;
+              params[paramName].value = params[paramName].default || (options.length > 0 ? options[0].value : '');
+            });
+          } catch (error) {
+            console.error(`Error loading options for parameter ${paramName}:`, error);
+            runInAction(() => {
+              params[paramName].loading = false;
+              params[paramName].options = [];
+            });
+          }
+        } else {
+          params[paramName] = paramConfig
         }
       }
     }
@@ -180,29 +169,7 @@ class AssistantChatStore {
     this.setLoading(true);
     
     try {
-      // Check if this is an image generation assistant
-      if (this.selectedAssistant.function === 'image') {
-        try {
-          const data = await post('draw', {}, {
-            prompt: text,
-            size: this.selectedImageSize,
-            model: this.selectedAssistant.model || 'dall-e-3'
-          });
-          
-          console.log("Received response from draw API:", data);
-          
-          // Add assistant response with image to messages
-          this.addMessage({
-            sender: 'assistant',
-            url: data.url || data.image_url || data.data?.[0]?.url,
-            type: 'image'
-          });
-          this.setLoading(false);
-        } catch (error) {
-          console.error('Error generating image:', error);
-          this.setError(error.message);
-        }
-      } else if (this.selectedAssistant.function === 'video') {
+      if (this.selectedAssistant.function === 'video') {
         try {
           // Convert resolution to aspect ratio for jimeng API
           const aspectRatio = this.selectedVideoResolution === '1280x720' ? '16:9' :
@@ -237,45 +204,6 @@ class AssistantChatStore {
           console.error('Error generating video:', error);
           this.setError(error.message);
         }
-      } else if (this.selectedAssistant.function === 'tts') {
-        try {
-          const data = await post('tts', {}, {
-            input: text,
-            voice: this.selectedVoice,
-            model: this.selectedAssistant.model || 'tts-1',
-            response_format: 'mp3',
-            speed: 1.0
-          });
-          
-          console.log("Received response from TTS API:", data);
-          
-          // Create a blob URL from the base64 audio data
-          const audioBlob = new Blob([Uint8Array.from(atob(data.body), c => c.charCodeAt(0))], { type: data.contentType || 'audio/mpeg' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          
-          // Add assistant response with audio to messages
-          const audioMessage = {
-            id: `assistant-${Date.now()}`,
-            sender: 'assistant',
-            text: text, // Keep the original text
-            url: audioUrl,
-            type: 'audio',
-            timestamp: new Date().toISOString()
-          };
-          
-          this.addMessage(audioMessage);
-          this.setLoading(false);
-          
-          // Auto-play the audio
-          const audio = new Audio(audioUrl);
-          audio.play().catch(error => {
-            console.warn('Could not auto-play audio:', error);
-          });
-          
-        } catch (error) {
-          console.error('Error generating speech:', error);
-          this.setError(error.message);
-        }
       } else if (this.selectedAssistant.function === 'workflow') {
         try {
           // Build parameters object from wf_params and text input
@@ -287,15 +215,15 @@ class AssistantChatStore {
               // Use ChatInput text for number parameters
               parameters[paramName] = text;
             } else if (typeof paramConfig === 'object' && this.wf_params[paramName]) {
-              // Use selected value for object parameters (both select and number types)
               parameters[paramName] = this.wf_params[paramName].value;
             }
           }
           
-          const r = await post('run_workflow', {}, {
-            workflow_id: this.selectedAssistant.workflow_id,
+          const r = await post(
+            'run_workflow',
+            { workflow_id: this.selectedAssistant.workflow_id },
             parameters
-          });
+          );
           
           console.log("Received response from workflow API:", r);
           
@@ -426,17 +354,9 @@ class AssistantChatStore {
     this.error = null;
   }
   
-  setSelectedImageSize(size) {
-    this.selectedImageSize = size;
-  }
-  
   setSelectedVideoResolution(resolution) {
     this.selectedVideoResolution = resolution;
-  }
-  
-  setSelectedVoice(voice) {
-    this.selectedVoice = voice;
-  }
+  }  
 }
 
 // Create and export a singleton instance
