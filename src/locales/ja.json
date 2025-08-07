@@ -31,6 +31,7 @@
     "changeFile": "ファイルを変更",
     "changeDocument": "ドキュメントを変更",
     "template": "テンプレート",
+    "remove": "削除",
     "required": "{name}フィールドは必須です",
     "groups": {
       "addGroup": "グループを追加",

@@ -31,6 +31,7 @@
     "changeFile": "Change File",
     "changeDocument": "Change Document",
     "template": "Template",
+    "remove": "Remove",
     "required": "The {name} field is required",
     "groups": {
       "addGroup": "Add Group",

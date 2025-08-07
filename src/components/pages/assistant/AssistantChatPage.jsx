@@ -185,9 +185,9 @@ const AssistantChatMessages = observer(() => {
 const VideoResolutionSelector = observer(() => {
   const resolutions = [
     { size: '1280x720', label: '16:9', dimensions: '1280×720' },
-    { size: '1920x1080', label: '16:9', dimensions: '1920×1080' },
+    // { size: '1920x1080', label: '16:9', dimensions: '1920×1080' },
     { size: '720x1280', label: '9:16', dimensions: '720×1280' },
-    { size: '1080x1920', label: '9:16', dimensions: '1080×1920' }
+    // { size: '1080x1920', label: '9:16', dimensions: '1080×1920' }
   ];
 
   const getIconComponent = (size) => {
@@ -219,7 +219,7 @@ const VideoResolutionSelector = observer(() => {
         >
           {getIconComponent(size)}
           <div className="text-xs font-medium">{label}</div>
-          <div className="text-xs text-gray-500 leading-tight">{dimensions}</div>
+          {/* <div className="text-xs text-gray-500 leading-tight">{dimensions}</div> */}
         </button>
       ))}
     </div>
@@ -228,13 +228,19 @@ const VideoResolutionSelector = observer(() => {
 
 const WorkflowParam = observer(({ paramName, paramConfig }) => {
   if (!paramConfig) return null;
+  
+  if (paramConfig.hide) {
+    const hide = new Function('x', `return ${paramConfig.hide}`);
+    if (hide(assistantChatStore.wf_params)) return null;
+  }
+
   const handleChange = (value) => {
     assistantChatStore.setWorkflowParam(paramName, value);
   };
 
   const handleImageSelect = (data) => {
     // Store the file object for the workflow param
-    if (data && data.file) {
+    if (data) {
       handleChange(data.file);
     }
   };
@@ -257,14 +263,12 @@ const WorkflowParam = observer(({ paramName, paramConfig }) => {
 
   if (paramConfig.type === 'radio') {
     return (
-      <div className="mt-2">
-        <FormRadio
-          value={paramConfig.value || paramConfig.default}
-          onChange={handleChange}
-          options={paramConfig.options}
-          label={t(`params.${paramName}`)}
-        />
-      </div>
+      <FormRadio
+        value={paramConfig.value || paramConfig.default}
+        onChange={handleChange}
+        options={paramConfig.options}
+        label={t(`params.${paramName}`)}
+      />
     );
   }
 
@@ -296,14 +300,16 @@ const WorkflowParam = observer(({ paramName, paramConfig }) => {
   }
 
   return (
-    <FormSelect
-      value={paramConfig.value}
-      onChange={handleChange}
-      options={paramConfig.options}
-      showSelectedIcon={false}
-      displayMode={paramConfig.mode}
-      cols={paramConfig.cols}
-    />
+    <div className="mt-2 mb-2">
+      <FormSelect
+        value={paramConfig.value}
+        onChange={handleChange}
+        options={paramConfig.options}
+        showSelectedIcon={false}
+        displayMode={paramConfig.mode}
+        cols={paramConfig.cols}
+      />
+    </div>
   );
 });
 

@@ -296,22 +296,22 @@ const FormSelect = observer(({
   if (displayMode === 'row') {
     return (
       <div className={className}>
-        <div className="flex justify-between items-center mb-4">
-          {label || (store && field) && (
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-              {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
-            </label>
-          )}
-          {canAdd && (
-            <button
-              type="button"
-              onClick={() => uiStore.openFormSelectDialog({ onAdd })}
-              className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              <FaPlus size={16} />
-            </button>
-          )}
-        </div>
+        {label || (store && field) && (
+          <div className="flex justify-between items-center mb-4">
+              <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+                {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
+              </label>
+            {canAdd && (
+              <button
+                type="button"
+                onClick={() => uiStore.openFormSelectDialog({ onAdd })}
+                className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <FaPlus size={16} />
+              </button>
+            )}
+          </div>
+        )}
         
         {/* Row-based selection interface */}
         <div className="border border-gray-300 rounded-lg p-4 bg-white max-h-[492px] overflow-y-auto">
@@ -378,22 +378,22 @@ const FormSelect = observer(({
   if (displayMode === 'card') {
     return (
       <div className={className}>
-        <div className="flex justify-between items-center mb-4">
-          {label || (store && field) && (
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-              {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
-            </label>
-          )}
-          {canAdd && (
-            <button
-              type="button"
-              onClick={() => uiStore.openFormSelectDialog({ onAdd })}
-              className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              <FaPlus size={16} />
-            </button>
-          )}
-        </div>
+        {label || (store && field) && (
+          <div className="flex justify-between items-center mb-4">
+              <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+                {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
+              </label>
+            {canAdd && (
+              <button
+                type="button"
+                onClick={() => uiStore.openFormSelectDialog({ onAdd })}
+                className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <FaPlus size={16} />
+              </button>
+            )}
+          </div>
+        )}
         
         {/* Card-based selection interface */}
         <div className="border border-gray-300 rounded-lg p-4 bg-white max-h-[492px] overflow-y-auto">
@@ -521,22 +521,22 @@ const FormSelect = observer(({
   // Render dropdown mode (original)
   return (
     <div className={className}>
-      <div className="flex justify-between items-center mb-2">
-        {label || (store && field) && (
-          <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-            {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
-          </label>
-        )}
-        {canAdd && (
-          <button
-            type="button"
-            onClick={() => uiStore.openFormSelectDialog({ onAdd })}
-            className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
-          >
-            <FaPlus size={16} />
-          </button>
-        )}
-      </div>
+      {label || (store && field) && (
+        <div className="flex justify-between items-center mb-2">
+            <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+              {label || (store && field ? t(`${store.name}.${field}`) : 'Select')}
+            </label>
+          {canAdd && (
+            <button
+              type="button"
+              onClick={() => uiStore.openFormSelectDialog({ onAdd })}
+              className="p-0 min-h-0 text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              <FaPlus size={16} />
+            </button>
+          )}
+        </div>
+      )}
       
       <div className="relative" ref={dropdownRef}>
         <button

@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'react';
+import { FiTrash2 } from 'react-icons/fi';
 import { t } from '../../stores/languageStore';
 import { getSignedUrl } from '../../utils/tosHelper';
+import ActionButton from './ActionButton';
 
 const getYouTubeEmbedUrl = (url) => {
   const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
@@ -182,6 +184,20 @@ const ImageUpload = observer(({
     }
   };
 
+  const handleRemoveImage = () => {
+    if (onMediaSelect) {
+      onMediaSelect({
+        file: null,
+        isFile: false,
+        preview: null
+      });
+    } else if (onImageSelect) {
+      onImageSelect(null);
+    } else {
+      store.setEditingField(field, null, index);
+    }
+  };
+
   const finalButtonText = buttonText || getDefaultButtonText();
   const displayPreviewUrl = filePreviewUrl || previewUrl || getImage(store, field, index);
 
@@ -355,15 +371,25 @@ const ImageUpload = observer(({
           className="hidden"
           required={required}
         />
-        <label
-          htmlFor={id}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
-        >
-          {renderIcon()}
-          <span className="text-gray-600">
-            {finalButtonText}
-          </span>
-        </label>
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor={id}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50"
+          >
+            {renderIcon()}
+            <span className="text-gray-600">
+              {finalButtonText}
+            </span>
+          </label>
+          {(displayPreviewUrl || currentFile) && (
+            <ActionButton
+              onClick={handleRemoveImage}
+              icon={FiTrash2}
+              color="red"
+              title={t('common.remove')}
+            />
+          )}
+        </div>
       </div>
       {(displayPreviewUrl || currentFile) && (
         <div className="mt-2">

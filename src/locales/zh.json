@@ -31,6 +31,7 @@
     "changeFile": "更改文件",
     "changeDocument": "更改文档",
     "template": "模板",
+    "remove": "移除",
     "required": "{name}不能为空",
     "groups": {
       "addGroup": "添加分组",

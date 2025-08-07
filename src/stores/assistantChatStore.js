@@ -215,7 +215,9 @@ class AssistantChatStore {
               // Use ChatInput text for number parameters
               parameters[paramName] = text;
             } else if (typeof paramConfig === 'object' && this.wf_params[paramName]) {
-              parameters[paramName] = this.wf_params[paramName].value;
+              if (this.wf_params[paramName].value !== null) {
+                parameters[paramName] = this.wf_params[paramName].value;
+              }
             }
           }
           
