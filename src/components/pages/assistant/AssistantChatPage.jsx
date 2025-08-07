@@ -50,16 +50,12 @@ const ImageMessage = ({ message }) => (
 const VideoMessage = ({ message }) => (
   <div className={`max-w-[75%] w-full ${message.sender === 'user' ? 'ml-auto' : 'mr-auto'}`}>
     <div className="inline-block">
-      <div className="relative rounded-lg overflow-hidden" style={{ maxWidth: '400px', maxHeight: '300px' }}>
+      <div className="relative rounded-lg overflow-hidden">
         <video
           src={message.url}
           controls
           className="w-full h-auto"
-          style={{ display: 'none' }}
           crossOrigin="anonymous"
-          onLoad={(e) => {
-            e.target.style.display = 'block';
-          }}
           onError={(e) => {
             console.warn('Video failed to load, likely due to CORS:', e);
             // Fallback: show a link to open in new tab
