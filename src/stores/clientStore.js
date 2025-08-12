@@ -159,7 +159,7 @@ class ClientStore {
     }
   }
 
-  save = async function(item) {
+  save = async function(item = this.client) {
     const r = await save('clients', omit(item, ['memberships']));
     this.loadClient();
     return r;

@@ -1,6 +1,7 @@
 import { runInAction } from 'mobx';
 import userStore from './userStore';
 import paymentManagerStore from './paymentManagerStore';
+import { t } from './languageStore';
 
 class ListStore {
   searchQuery = '';
@@ -71,7 +72,11 @@ class ListStore {
       
       // Check if this is a membership - show purchase dialog
       if (this.name === 'membership') {
-        this.showMembershipPurchaseDialog(item);
+        if (item.name.includes('试用') && userStore.isTrialUsed) {
+          this.openErrorDialog(t('membership.trialMembershipOnlyOnce'));
+          return;
+        } else
+          this.showMembershipPurchaseDialog(item);
         return;
       }
       

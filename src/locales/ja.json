@@ -101,7 +101,8 @@
       "valid_until": "有効期限",
       "membership_expires": "メンバーシップ有効期限",
       "membership_remaining": "残り日数",
-      "about": "について"
+      "about": "について",
+      "my_assistants": "マイアシスタント"
     },
     "admin_page": {
       "title": "管理ポータル",
@@ -239,11 +240,15 @@
     }
   },
   "assistant": {
+    "desc": "説明",
     "description": "様々なタスクをサポートするAIアシスタントからお選びください。各アシスタントは異なる種類の質問や会話に特化しています。",
     "noItems": "利用可能なアシスタントがありません",
     "delete": "アシスタントを削除",
     "edit": {
-      "title": "アシスタントを編集"
+      "title": "アシスタントを編集",
+      "editTitle": "アシスタントを編集",
+      "delete": "アシスタントを削除",
+      "restore": "アシスタントを復元"
     },
     "createNew": "新しいアシスタントを作成",
     "name": "名前",
@@ -263,6 +268,7 @@
       "title": "新規アシスタントを追加"
     },
     "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？",
+    "confirmRestore": "「{name}」アシスタントを復元してもよろしいですか？",
     "confirmShow": "「{name}」アシスタントを表示してもよろしいですか？",
     "confirmHide": "「{name}」アシスタントを非表示にしてもよろしいですか？",
     "groups": {
@@ -578,7 +584,8 @@
       "price": "価格",
       "purchase": "購入",
       "cancel": "キャンセル"
-    }
+    },
+    "trialMembershipOnlyOnce": "トライアルメンバーシップは一度のみ購入可能です"
   },
   "payment": {
     "wechat_pay": "WeChat Pay",

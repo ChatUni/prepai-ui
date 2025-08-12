@@ -80,12 +80,14 @@ const strNum = v => {
   if (v === 'true') return true
   if (v === 'false') return false
   if (!v) return ''
+  if (Array.isArray(v)) return v.map(strNum)
+  if (v.startsWith('$')) return v
   if (v.length > 2 && v[0] === "'" && v[v.length - 1] === "'") return v.slice(1, -1)
   return isNaN(+v) ? v : +v
 }
 
 const flat = async (doc, agg) => {
-  // agg = 'm_id=1,code='123',firstName=in$Nan;Fiona,name=regex$fan&u_songs&p_id,name=0,img=movies.img&s_type,date=-1&r_size=20'
+  // agg = 'm_id=1,code='123',firstName=in$Nan;Fiona|name=regex$fan&u_songs&p_id,name=0,img=movies.img&s_type,date=-1&r_size=20'
   console.log(agg)
   const liftUps = []
   const stages = !agg
@@ -101,17 +103,21 @@ const flat = async (doc, agg) => {
         if (type === 1) return [{ [$stage]: +props }]
         if (type === 2) {
           const ps = props.split(',').map(p => {
-            let [k, v] = p.split('=')
-            if (v.includes('$')) {
-              // prop value contains operator
-              const [op, opv] = v.split('$')
-              return [k, { [`$${op}`]: strNum(Ops[op] ? Ops[op](opv, k) : opv) }]
-            }
-            if (v.includes('.')) {
-              if (stage === 'a') liftUps.push(k)
-              v = '$' + v
-            }
-            return [k, strNum(v)]
+            const ors = p.split('|').map(o => { // 'or' separated by '|', a=1,b=2|c=3,d=4, a=1 && (b=2 || c=3) && d=4
+              let [k, v] = o.split('=')
+              if (v.includes('$')) {
+                // prop value contains operator
+                const [op, opv] = v.split('$')
+                return [k, { [`$${op}`]: strNum(Ops[op] ? Ops[op](opv, k) : opv) }]
+              }
+              if (v.includes('.')) {
+                if (stage === 'a') liftUps.push(k)
+                v = '$' + v
+              }
+              return [k, strNum(v)]
+            })
+            if (ors.length > 1) return ['$or', ors.map(([k1, v1]) => ({ [k1]: v1 }))]
+            else return ors[0]
           }).filter(x => x)
           return ps.length > 0 ? [{ [$stage]: Object.fromEntries(ps) }] : []
         }

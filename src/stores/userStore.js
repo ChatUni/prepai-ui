@@ -74,8 +74,16 @@ class UserStore {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
   }
 
+  get isNoPayAdmin() {
+    return this.isClientAdmin || this.isSuperAdmin;
+  }
+
   get isMember() {
     return this.isPaid('membership');
+  }
+
+  get isTrialUsed() {
+    return this.getMembershipOrders().some(order => order.body.includes('试用'));
   }
 
   init = async function() {
@@ -209,15 +217,29 @@ class UserStore {
     return this.isPaid('series', id);
   }
 
+  getOrdersByType = function(type) {
+    if (!this.user?.orders) return [];
+    return this.user.orders.filter(order =>
+      order.client_id == clientStore.client.id &&
+      order.product_id.startsWith(type) &&
+      order.status === 'PAID' &&
+      order.expireDate
+    );
+  }
+
+  getMembershipOrders = function() {
+    return this.getOrdersByType('membership');
+  }
+
+  getSeriesOrders = function() {
+    return this.getOrdersByType('series');
+  }
+
   getRemainingDays = function(type, id) {
     if (!this.user?.orders) return null;
     
-    const matchingOrders = this.user.orders.filter(order =>
-      order.client_id == clientStore.client.id &&
-      order.product_id.startsWith(type) &&
-      (!id || order.product_id.endsWith(`_${id}`)) &&
-      order.status === 'PAID' &&
-      order.expireDate
+    const matchingOrders = this.getOrdersByType(type).filter(order =>
+      !id || order.product_id.endsWith(`_${id}`)
     );
     
     if (matchingOrders.length === 0) return null;
@@ -250,7 +272,7 @@ class UserStore {
   }
 
   isPaid = function(type, id) {
-    if (this.isAdmin) return true;
+    if (this.isNoPayAdmin) return true;
     
     const expireDate = this.getExpireDate(type, id);
     if (!expireDate) return false;

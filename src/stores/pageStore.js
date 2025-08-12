@@ -6,7 +6,20 @@ class PageStore {
   isErrorDialogOpen = false;
 
   get isAdminMode() {
-    return routeStore.currentPath.endsWith('/settings');
+    const isSetting = routeStore.currentPath.endsWith('/settings');
+    return isSetting || this.isUserAssistantMode;
+  }
+
+  get isUserMode() {
+    return routeStore.currentPath.endsWith('/user');
+  }
+
+  get isPaidMode() {
+    return routeStore.currentPath.endsWith('/paid');
+  }
+
+  get isUserAssistantMode() {
+    return routeStore.currentPath.endsWith('/assistants/user');
   }
 
   reset = function() {

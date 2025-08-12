@@ -153,7 +153,7 @@ const MainLayout = observer(() => {
                 } />
                 <Route path="/series/paid" element={
                   <AuthRoute>
-                    <SeriesListPage showPaidOnly={true} />
+                    <SeriesListPage />
                   </AuthRoute>
                 } />
                 <Route path="/instructor/:id/chat" element={
@@ -192,6 +192,11 @@ const MainLayout = observer(() => {
                   </AuthRoute>
                 } />
                 <Route path="/assistants" element={
+                  <AuthRoute>
+                    <AssistantPage />
+                  </AuthRoute>
+                } />
+                <Route path="/assistants/user" element={
                   <AuthRoute>
                     <AssistantPage />
                   </AuthRoute>

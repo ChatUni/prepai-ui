@@ -101,7 +101,8 @@
       "valid_until": "Valid until",
       "membership_expires": "Membership expires",
       "membership_remaining": "Remaining days",
-      "about": "About"
+      "about": "About",
+      "my_assistants": "My Assistants"
     },
     "admin_page": {
       "title": "Admin Portal",
@@ -239,11 +240,15 @@
     }
   },
   "assistant": {
+    "desc": "description",
     "description": "Choose from our AI assistants to help you with various tasks. Each assistant is specialized for different types of questions and conversations.",
     "noItems": "No assistants available",
     "delete": "Delete Assistant",
     "edit": {
-      "title": "Edit Assistant"
+      "title": "Edit Assistant",
+      "editTitle": "Edit Assistant",
+      "delete": "Delete Assistant",
+      "restore": "Restore Assistant"
     },
     "createNew": "Create New Assistant",
     "name": "Name",
@@ -263,6 +268,7 @@
       "title": "Add New Assistant"
     },
     "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?",
+    "confirmRestore": "Are you sure you want to restore \"{name}\" assistant?",
     "confirmShow": "Are you sure you want to show \"{name}\" assistant?",
     "confirmHide": "Are you sure you want to hide \"{name}\" assistant?",
     "groups": {
@@ -577,7 +583,8 @@
       "price": "Price",
       "purchase": "Purchase",
       "cancel": "Cancel"
-    }
+    },
+    "trialMembershipOnlyOnce": "Trial membership can only be purchased once"
   },
   "payment": {
     "wechat_pay": "WeChat Pay",

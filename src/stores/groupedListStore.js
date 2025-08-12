@@ -15,12 +15,16 @@ class GroupedListStore {
   groupToEdit = null;
   groupToDelete = null;
 
+  get groupField() {
+    return this.isUserAssistantMode ? 'userAssistantGroups' : `${this.name}Groups`;
+  }
+
   get groupedItems() {
     return this.getGroupedItems();
   }
 
   get groupOptions() {
-    return (clientStore.client.settings[`${this.name}Groups`] || []).map(group => ({
+    return (clientStore.client.settings[this.groupField] || []).map(group => ({
       value: group,
       label: group
     }));
@@ -145,7 +149,7 @@ class GroupedListStore {
   };
 
   getGroups = function(isFiltered) {
-    const groupsInSettings = clientStore.client?.settings?.[`${this.name}Groups`] || [];
+    const groupsInSettings = clientStore.client?.settings?.[this.groupField] || [];
     const hasGroupsInSettings = groupsInSettings || groupsInSettings.length > 0;
     if (!isFiltered && hasGroupsInSettings)
       return groupsInSettings;
@@ -154,7 +158,7 @@ class GroupedListStore {
   }
 
   saveGroups = async function(groups) {
-    clientStore.client.settings[`${this.name}Groups`] = groups;
+    clientStore.client.settings[this.groupField] = groups;
     try {
       await clientStore.save(clientStore.client);
     } catch (error) {

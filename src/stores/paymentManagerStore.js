@@ -41,7 +41,7 @@ class PaymentManagerStore {
         clientId: clientStore.client.id,
         productType: 'series',
         productId: `series_${this.currentSeries.id}`,
-        productName: this.currentSeries.name,
+        body: this.currentSeries.name,
         amount: this.currentSeries.price,
         duration: this.currentSeries.duration
       };

@@ -14,7 +14,6 @@ import { uploadImage } from '../utils/uploadHelper';
 class SeriesStore {
   selectedCategory;
   selectedInstructorId;
-  showPaidOnly = false;
   pendingSeriesUpdates = new Map();
   
   get name() {
@@ -37,7 +36,7 @@ class SeriesStore {
     return [
       'category',
       item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId),
-      item => this.isAdminMode || !this.showPaidOnly || this.isPaid(item.id)
+      item => this.isAdminMode || !this.isPaidMode || this.isPaid(item.id)
     ];
   }
 

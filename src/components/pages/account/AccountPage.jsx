@@ -22,6 +22,9 @@ const AccountPage = observer(() => {
       case 'my_series':
         navigate('/series/paid');
         break;
+      case 'my_assistants':
+        navigate('/assistants/user');
+        break;
       case 'vip':
         // Navigate to VIP details page
         // navigate('/vip-details');
@@ -79,11 +82,17 @@ const AccountPage = observer(() => {
           label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
         /> */}
-        {!userStore.isAdmin &&
-          <MenuListItem
-            label={t('menu.account_page.my_series')}
-            onClick={() => handleMenuItemClick('my_series')}
-          />
+        {!userStore.isNoPayAdmin &&
+          <>
+            <MenuListItem
+              label={t('menu.account_page.my_series')}
+              onClick={() => handleMenuItemClick('my_series')}
+            />
+            <MenuListItem
+              label={t('menu.account_page.my_assistants')}
+              onClick={() => handleMenuItemClick('my_assistants')}
+            />
+          </>
         }
         {userStore.isAdmin &&
           <MenuListItem

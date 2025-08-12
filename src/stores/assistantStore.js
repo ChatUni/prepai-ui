@@ -8,6 +8,9 @@ import EditingStore from './editingStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
+import userStore from './userStore';
+
+const models = ['DeepSeek', '豆包', '通义千问', 'Kimi', '百川', '智谱']
 
 class AssistantStore {
   models = [];
@@ -29,9 +32,14 @@ class AssistantStore {
     return ['name', 'greeting', 'prompt'];
   }
 
+  get filteringFields() {
+    return [
+      item => this.isUserMode ? this.isUserAssistant(item) : !this.isUserAssistant(item)
+    ];
+  }
+
   get newItem() {
-    return {
-      client_id: clientStore.client.id,
+    const item = {
       name: '',
       greeting: '',
       prompt: '',
@@ -39,6 +47,14 @@ class AssistantStore {
       model: '',
       group: ''
     };
+    if (this.isUserAssistantMode) {
+      item.user_id = userStore.user.id;
+      item.type = 'user';
+    } else {
+      item.client_id = clientStore.client.id;
+      item.type = 'client';
+    }
+    return item;
   }
 
   get mediaInfo() {
@@ -61,77 +77,95 @@ class AssistantStore {
     return true;
   }
 
-  get isPlatformAssistant() {
-    return this.editingItem.type === 1;
-  }
-  
   get modelOptions() {
-    return this.models
-      .map(model => ({
-        value: model.id,
-        label: model.name.replace(/\s*\(free\)$/, '')
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
+    return models;
   }
 
   init = async function() {
-    await this.fetchOpenRouterModels();
+    // await this.fetchOpenRouterModels();
   }
 
   fetchItemList = async function() {
-    const platform_assistants = [] // await get('platform_assistants');
-    const client_assistants = await get('client_assistants', { clientId: clientStore.client.id });
-    return [...(platform_assistants || []), ...(client_assistants || [])];
+    const assistants = await get('assistants', { clientId: clientStore.client.id, userId: userStore.user.id })
+    return assistants.map(a => this.isPlatformAssistant(a) ? { ...a, ...this.getOverrideItem(a) } : a)
   };
   
+  getOverrideItem = function(item) {
+    return clientStore.client.settings.assistants.find(x => x.id === item.id)
+  }
+
   save = async function(item) {
-    await save('assistants', item);
-  }
-
-  updateOpenRouterModels = async function() {
-    this.loadingModels = true;
-    
-    try {
-      const response = await fetch('https://openrouter.ai/api/v1/models', {
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch models: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      const models = result.data;
-      await save('models', models);
-    } catch (error) {
-      console.error('Error updating OpenRouter models:', error);
-    } finally {
-      this.loadingModels = false;
+    if (this.isPlatformAssistant(item)) {
+      const pa = { id: item.id, type: item.type, name: item.name, desc: item.desc, greeting: item.greeting, group: item.group, image: item.image }
+      const o = this.getOverrideItem(pa)
+      if (o) clientStore.client.settings.assistants.remove(o)
+      clientStore.client.settings.assistants.push(pa)
+      await clientStore.save()
+      return item
+    } else {
+      return await save('assistants', item);
     }
   }
 
-  fetchOpenRouterModels = async function() {
-    this.loadingModels = true;
-    
-    try {      
-      // await this.updateOpenRouterModels();
-      const models = await get('models');
-
-      runInAction(() => {
-        // Filter for free models only
-        this.models = models.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
-        this.loadingModels = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.loadingModels = false;
-      });
-      console.error('Error fetching OpenRouter models:', error);
-    }
+  remove = async function(id) {
+    await remove('assistants', id);
   }
 
+  isPlatformAssistant = function(item) {
+    return (item || this.editingItem).type === 'platform';
+  }
+
+  isClientAssistant = function(item) {
+    return (item || this.editingItem).type === 'client';
+  }
+
+  isUserAssistant = function(item) {
+    return (item || this.editingItem).type === 'user';
+  }
  }
 
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, AssistantStore);
+
+  // updateOpenRouterModels = async function() {
+  //   this.loadingModels = true;
+    
+  //   try {
+  //     const response = await fetch('https://openrouter.ai/api/v1/models', {
+  //       headers: {
+  //         'Authorization': `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`
+  //       }
+  //     });
+      
+  //     if (!response.ok) {
+  //       throw new Error(`Failed to fetch models: ${response.statusText}`);
+  //     }
+      
+  //     const result = await response.json();
+  //     const models = result.data;
+  //     await save('models', models);
+  //   } catch (error) {
+  //     console.error('Error updating OpenRouter models:', error);
+  //   } finally {
+  //     this.loadingModels = false;
+  //   }
+  // }
+
+  // fetchOpenRouterModels = async function() {
+  //   this.loadingModels = true;
+    
+  //   try {      
+  //     // await this.updateOpenRouterModels();
+  //     const models = await get('models');
+
+  //     runInAction(() => {
+  //       // Filter for free models only
+  //       this.models = models.filter(model => (model.name || '').endsWith('(free)') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'));
+  //       this.loadingModels = false;
+  //     });
+  //   } catch (error) {
+  //     runInAction(() => {
+  //       this.loadingModels = false;
+  //     });
+  //     console.error('Error fetching OpenRouter models:', error);
+  //   }
+  // }
