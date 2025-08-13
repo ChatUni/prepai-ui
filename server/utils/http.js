@@ -22,7 +22,7 @@ const headers = (nocache, returnType = 'json') => ({
 const res = (body, code, nocache, returnType) => ({
   statusCode: code || 200,
   headers: headers(nocache, returnType),
-  body: JSON.stringify(body),
+  body: typeof body === 'string' ? body : JSON.stringify(body),
 });
 
 const makeApi =
