@@ -6,6 +6,7 @@ import Button from './Button';
 import PageTitle from './PageTitle';
 import { DeleteConfirmDialog, RestoreConfirmDialog, VisibilityConfirmDialog, EditDialog, ErrorDialog } from './Dialogs';
 import { t } from '../../stores/languageStore';
+import FormRadio from './FormRadio';
 
 const shortcusts = store => [
   {
@@ -74,6 +75,17 @@ const ListPage = observer(({
       <PageTitle title={store.pageTitle} />
       
       {showSearchBar && <SearchBar store={store} filters={filters} />}
+
+      {store.name == "membership" ?
+        <FormRadio
+          store={store}
+          field="allowFree1Day"
+          options={['是', '否']}
+          label="新用户1天免费试用"
+          defaultValue="否"
+        /> :
+        <div className="mb-6"></div>
+      }
       
       {/* {!hasItems && (
         <div className="text-center py-12">

@@ -74,10 +74,6 @@ class UserStore {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
   }
 
-  get isNoPayAdmin() {
-    return this.isClientAdmin || this.isSuperAdmin;
-  }
-
   get isMember() {
     return this.isPaid('membership');
   }
@@ -271,9 +267,7 @@ class UserStore {
     return combinedExpireDate;
   }
 
-  isPaid = function(type, id) {
-    if (this.isNoPayAdmin) return true;
-    
+  isPaid = function(type, id) {    
     const expireDate = this.getExpireDate(type, id);
     if (!expireDate) return false;
     

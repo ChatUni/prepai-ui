@@ -54,6 +54,7 @@ import clientStore from './stores/clientStore';
 import EditClientPage from './components/pages/client/EditClientPage';
 import AboutPage from './components/pages/client/AboutPage';
 import UserListPage from './components/pages/account/UserListPage';
+import Upgrade from './components/pages/membership/Upgrade';
 
 // RouteHandler component to sync route store with current location
 const RouteHandler = observer(() => {
@@ -219,6 +220,11 @@ const MainLayout = observer(() => {
                 <Route path="/memberships/settings" element={
                   <AuthRoute>
                     <MembershipListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/memberships/upgrade" element={
+                  <AuthRoute>
+                    <Upgrade />
                   </AuthRoute>
                 } />
                 <Route path="/settings/banners" element={

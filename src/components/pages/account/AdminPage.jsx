@@ -19,6 +19,7 @@ const routeMap = {
   'sub-admin-settings': '/users/settings',
   'exam-settings': '/exams/settings',
   'price-settings': '/memberships/settings',
+  'upgrade': '/memberships/upgrade',
   'basic-settings': '/client/settings',
   'banner-settings': '/settings/banners'
 };
@@ -62,6 +63,10 @@ const AdminPage = observer(() => {
       <MenuListItem
         label={t('menu.admin_page.price_settings')}
         onClick={() => navigate(routeMap['price-settings'])}
+      />
+      <MenuListItem
+        label={t('menu.admin_page.upgrade')}
+        onClick={() => navigate(routeMap['upgrade'])}
       />
     </>
   );

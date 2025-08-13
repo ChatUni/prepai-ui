@@ -123,6 +123,7 @@
       "sub_admin_settings": "子管理员设置",
       "basic_settings": "基础设置",
       "banner_settings": "横幅设置",
+      "upgrade": "指定升级",
       "back": "返回"
     },
     "categories": {
@@ -584,7 +585,44 @@
       "purchase": "购买",
       "cancel": "取消"
     },
-    "trialMembershipOnlyOnce": "试用会员只能购买一次"
+    "trialMembershipOnlyOnce": "试用会员只能购买一次",
+    "upgrade": {
+      "title": "会员升级",
+      "step1": {
+        "title": "步骤一：输入用户信息",
+        "memberIdOrPhone": "会员ID或手机号（多个账号可用逗号或换行符分隔）",
+        "importExcel": "导入Excel表格",
+        "searchUsers": "查询用户"
+      },
+      "step2": {
+        "title": "步骤二：选择用户",
+        "selectedCount": "已选择：{count}个用户",
+        "selectAll": "取消全选",
+        "userInfo": "用户信息",
+        "registrationStatus": "注册状态",
+        "registrationTime": "注册时间",
+        "registered": "已注册"
+      },
+      "step3": {
+        "title": "步骤三：选择产品",
+        "membershipProducts": "会员产品",
+        "courseProducts": "课程产品",
+        "examProducts": "考试产品",
+        "agentProducts": "代理商产品",
+        "validityPeriod": "有效期：{period}",
+        "days": "{count}天",
+        "forever": "永久",
+        "unlimited": "不限",
+        "features": {
+          "aiUnlimited": "AI问答不限次",
+          "allCourses": "全部课程",
+          "allExams": "全部考试",
+          "premiumService": "优先服务",
+          "basicCourses": "基础课程",
+          "ai100Times": "AI问答100次"
+        }
+      }
+    }
   },
   "payment": {
     "wechat_pay": "微信支付",

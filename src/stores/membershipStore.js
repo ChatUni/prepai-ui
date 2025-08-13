@@ -25,6 +25,14 @@ class MembershipStore {
   paymentLoading = false;
   paymentError = null;
 
+  // Upgrade functionality
+  upgradeSearchInput = '';
+  searchedUsers = [];
+  selectedUsers = [];
+  isSearchingUsers = false;
+  searchError = null;
+  selectedProductCategory = 'membership'; // 'membership', 'course', 'exam', 'agent'
+
   get name() {
     return 'membership';
   }
@@ -214,6 +222,135 @@ class MembershipStore {
     this.paymentOrderData = null;
     this.selectedMembership = null;
     this.setPaymentError(null);
+  };
+
+  // Upgrade functionality methods
+  setUpgradeSearchInput = function(input) {
+    this.upgradeSearchInput = input;
+  };
+
+  setSearchedUsers = function(users) {
+    this.searchedUsers = users;
+  };
+
+  setSelectedUsers = function(users) {
+    this.selectedUsers = users;
+  };
+
+  setIsSearchingUsers = function(searching) {
+    this.isSearchingUsers = searching;
+  };
+
+  setSearchError = function(error) {
+    this.searchError = error;
+  };
+
+  setSelectedProductCategory = function(category) {
+    this.selectedProductCategory = category;
+  };
+
+  toggleUserSelection = function(user) {
+    const index = this.selectedUsers.findIndex(u => u.id === user.id);
+    if (index >= 0) {
+      this.selectedUsers.splice(index, 1);
+    } else {
+      this.selectedUsers.push(user);
+    }
+  };
+
+  selectAllUsers = function() {
+    this.selectedUsers = [...this.searchedUsers];
+  };
+
+  deselectAllUsers = function() {
+    this.selectedUsers = [];
+  };
+
+  get selectedUsersCount() {
+    return this.selectedUsers.length;
+  };
+
+  get isAllUsersSelected() {
+    return this.searchedUsers.length > 0 && this.selectedUsers.length === this.searchedUsers.length;
+  };
+
+  searchUsers = async function() {
+    if (!this.upgradeSearchInput.trim()) {
+      this.setSearchError('Please enter user ID or phone number');
+      return;
+    }
+
+    try {
+      this.setIsSearchingUsers(true);
+      this.setSearchError(null);
+
+      // Parse input - split by comma or newline
+      const inputs = this.upgradeSearchInput
+        .split(/[,\n]/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      // Search for users by ID or phone
+      const users = await get('users', {
+        clientId: clientStore.client.id,
+        searchTerms: inputs
+      });
+
+      this.setSearchedUsers(users || []);
+      
+      if (!users || users.length === 0) {
+        this.setSearchError('No users found matching the search criteria');
+      } else {
+        // Auto-select all found users by default
+        this.setSelectedUsers([...users]);
+      }
+
+    } catch (error) {
+      console.error('Failed to search users:', error);
+      this.setSearchError(error.message || 'Failed to search users');
+    } finally {
+      this.setIsSearchingUsers(false);
+    }
+  };
+
+  upgradeUsers = async function(membershipId) {
+    if (this.selectedUsers.length === 0) {
+      throw new Error('No users selected for upgrade');
+    }
+
+    if (!membershipId) {
+      throw new Error('No membership selected');
+    }
+
+    try {
+      const upgradeData = {
+        userIds: this.selectedUsers.map(u => u.id),
+        membershipId: membershipId,
+        clientId: clientStore.client.id
+      };
+
+      const result = await save('user-upgrades', upgradeData);
+      
+      // Clear selections after successful upgrade
+      this.selectedUsers = [];
+      this.searchedUsers = [];
+      this.upgradeSearchInput = '';
+      
+      return result;
+
+    } catch (error) {
+      console.error('Failed to upgrade users:', error);
+      throw error;
+    }
+  };
+
+  get productCategories() {
+    return [
+      { value: 'membership', label: t('membership.upgrade.step3.membershipProducts') },
+      { value: 'course', label: t('membership.upgrade.step3.courseProducts') },
+      { value: 'exam', label: t('membership.upgrade.step3.examProducts') },
+      { value: 'agent', label: t('membership.upgrade.step3.agentProducts') }
+    ];
   };
 }
 

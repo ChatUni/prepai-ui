@@ -7,7 +7,8 @@ const path = require('path');
 const { toFile } = require('openai');
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
-const CHATGPT_MODEL = 'gpt-4o-mini';
+const CHATGPT_MODEL = 'gpt-5-mini';
+const isGPT5 = CHATGPT_MODEL.includes('gpt-5');
 
 // Chat function that can be called from other modules
 const chat = async (apiType, body, serverless = true) => {
@@ -96,8 +97,8 @@ console.log('OpenRouter: ', useOpenRouter)
       const response = await openai.chat.completions.create({
         model: model || CHATGPT_MODEL,
         messages,
-        temperature: 0.7,
-        max_tokens: 1000
+        temperature: isGPT5 ? 1 : 0.7,
+        [isGPT5 ? 'max_completion_tokens' : 'max_tokens']: 1000
       });
 
       if (!serverless) {
@@ -177,14 +178,15 @@ const draw = async (body, serverless = true) => {
         n: 1,
         size
       });
+      const url = response.data[0].url;
 
       if (!serverless) {
-        return response;
+        return url;
       }
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(response)
+        body: url
       };
     }
 
@@ -221,14 +223,15 @@ const draw = async (body, serverless = true) => {
       quality,
       style
     });
+    const url = response.data[0].url;
 
     if (!serverless) {
-      return response;
+      return url;
     }
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify(response)
+      body: JSON.stringify(url)
     };
   } catch (error) {
     console.error('OpenAI DALL-E API error:', error);

@@ -82,18 +82,14 @@ const AccountPage = observer(() => {
           label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
         /> */}
-        {!userStore.isNoPayAdmin &&
-          <>
-            <MenuListItem
-              label={t('menu.account_page.my_series')}
-              onClick={() => handleMenuItemClick('my_series')}
-            />
-            <MenuListItem
-              label={t('menu.account_page.my_assistants')}
-              onClick={() => handleMenuItemClick('my_assistants')}
-            />
-          </>
-        }
+        <MenuListItem
+          label={t('menu.account_page.my_series')}
+          onClick={() => handleMenuItemClick('my_series')}
+        />
+        <MenuListItem
+          label={t('menu.account_page.my_assistants')}
+          onClick={() => handleMenuItemClick('my_assistants')}
+        />
         {userStore.isAdmin &&
           <MenuListItem
             label={t('menu.account_page.admin_portal')}

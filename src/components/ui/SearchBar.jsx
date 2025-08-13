@@ -36,7 +36,7 @@ const SearchBar = observer(({
   filters = [],
   className = ''
 }) => (
-  <div className={`flex items-center gap-3 mb-6 ${className}`}>
+  <div className={`flex items-center gap-3 ${className}`}>
     {/* Search Input */}
     <div className="relative flex-1">
       <div className="absolute top-0 bottom-0 left-0 flex items-center pl-3 pointer-events-none">

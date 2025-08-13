@@ -83,7 +83,7 @@ const SeriesCard = observer(({
             ))}
           </div>
           {price > 0 && (
-            !userStore.isNoPayAdmin && userStore.isSeriesPaid(seriesId) ? (
+            userStore.isSeriesPaid(seriesId) ? (
               <span className="text-green-600 dark:text-green-400 font-bold">{t('series.paid')}</span>
             ) : (
               <span className="text-red-600 dark:text-red-300 font-bold">${price}</span>

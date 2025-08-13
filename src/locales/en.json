@@ -123,6 +123,7 @@
       "sub_admin_settings": "Sub Admin Settings",
       "basic_settings": "Basic Settings",
       "banner_settings": "Banner Settings",
+      "upgrade": "Membership Upgrade",
       "back": "Back"
     },
     "categories": {
@@ -584,7 +585,44 @@
       "purchase": "Purchase",
       "cancel": "Cancel"
     },
-    "trialMembershipOnlyOnce": "Trial membership can only be purchased once"
+    "trialMembershipOnlyOnce": "Trial membership can only be purchased once",
+    "upgrade": {
+      "title": "Membership Upgrade",
+      "step1": {
+        "title": "Step 1: Enter User Information",
+        "memberIdOrPhone": "Member ID or Phone Number (multiple accounts can be separated by commas or line breaks)",
+        "importExcel": "Import Excel",
+        "searchUsers": "Search Users"
+      },
+      "step2": {
+        "title": "Step 2: Select Users",
+        "selectedCount": "Selected: {count} users",
+        "selectAll": "Deselect All",
+        "userInfo": "User Information",
+        "registrationStatus": "Registration Status",
+        "registrationTime": "Registration Time",
+        "registered": "Registered"
+      },
+      "step3": {
+        "title": "Step 3: Select Products",
+        "membershipProducts": "Membership Products",
+        "courseProducts": "Course Products",
+        "examProducts": "Exam Products",
+        "agentProducts": "Agent Products",
+        "validityPeriod": "Validity: {period}",
+        "days": "{count} days",
+        "forever": "Forever",
+        "unlimited": "Unlimited",
+        "features": {
+          "aiUnlimited": "AI Q&A Unlimited",
+          "allCourses": "All Courses",
+          "allExams": "All Exams",
+          "premiumService": "Premium Service",
+          "basicCourses": "Basic Courses",
+          "ai100Times": "AI Q&A 100x"
+        }
+      }
+    }
   },
   "payment": {
     "wechat_pay": "WeChat Pay",

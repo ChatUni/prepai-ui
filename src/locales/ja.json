@@ -123,6 +123,7 @@
       "sub_admin_settings": "サブ管理者設定",
       "basic_settings": "基本設定",
       "banner_settings": "バナー設定",
+      "upgrade": "メンバーシップアップグレード",
       "back": "戻る"
     },
     "categories": {
@@ -585,7 +586,44 @@
       "purchase": "購入",
       "cancel": "キャンセル"
     },
-    "trialMembershipOnlyOnce": "トライアルメンバーシップは一度のみ購入可能です"
+    "trialMembershipOnlyOnce": "トライアルメンバーシップは一度のみ購入可能です",
+    "upgrade": {
+      "title": "メンバーシップアップグレード",
+      "step1": {
+        "title": "ステップ1：ユーザー情報を入力",
+        "memberIdOrPhone": "メンバーIDまたは電話番号（複数のアカウントはカンマまたは改行で区切ることができます）",
+        "importExcel": "Excelをインポート",
+        "searchUsers": "ユーザーを検索"
+      },
+      "step2": {
+        "title": "ステップ2：ユーザーを選択",
+        "selectedCount": "選択済み：{count}人のユーザー",
+        "selectAll": "全選択を解除",
+        "userInfo": "ユーザー情報",
+        "registrationStatus": "登録状況",
+        "registrationTime": "登録時間",
+        "registered": "登録済み"
+      },
+      "step3": {
+        "title": "ステップ3：製品を選択",
+        "membershipProducts": "メンバーシップ製品",
+        "courseProducts": "コース製品",
+        "examProducts": "試験製品",
+        "agentProducts": "代理店製品",
+        "validityPeriod": "有効期間：{period}",
+        "days": "{count}日",
+        "forever": "永続",
+        "unlimited": "無制限",
+        "features": {
+          "aiUnlimited": "AI質問無制限",
+          "allCourses": "全コース",
+          "allExams": "全試験",
+          "premiumService": "プレミアムサービス",
+          "basicCourses": "基本コース",
+          "ai100Times": "AI質問100回"
+        }
+      }
+    }
   },
   "payment": {
     "wechat_pay": "WeChat Pay",
