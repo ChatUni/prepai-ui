@@ -231,7 +231,7 @@ const draw = async (body, serverless = true) => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify(url)
+      body: url
     };
   } catch (error) {
     console.error('OpenAI DALL-E API error:', error);
