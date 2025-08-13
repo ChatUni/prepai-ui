@@ -96,7 +96,7 @@ console.log('OpenRouter: ', useOpenRouter)
     } else {
       const response = await openai.chat.completions.create({
         model: model || CHATGPT_MODEL,
-        messages,
+        messages: typeof messages === 'string' ? [{ role: 'user', content: messages }] : messages,
         temperature: isGPT5 ? 1 : 0.7,
         [isGPT5 ? 'max_completion_tokens' : 'max_tokens']: 1000
       });
