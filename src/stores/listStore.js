@@ -64,7 +64,7 @@ class ListStore {
   }
 
   gotoDetail = function(item, navigate) {
-    if (!this.isAdminMode) {
+    if (this.isUserAssistantMode || !this.isAdminMode) {
       if (this.requireMembership && !userStore.isMember) {
         paymentManagerStore.setShowMembershipDialog(true);
         return;

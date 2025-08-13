@@ -34,7 +34,7 @@ const AssistantCard = observer(({
       moveItem={moveItem}
       onDrop={() => store.saveItemGroupOrder()}
       onClick={handleCardClick}
-      isClickable={!isEditMode}
+      isClickable={true}
     >
       <div className="p-4">
         <div className="flex items-start gap-4">
