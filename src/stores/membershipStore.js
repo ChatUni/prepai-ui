@@ -32,6 +32,7 @@ class MembershipStore {
   isSearchingUsers = false;
   searchError = null;
   selectedProductCategory = 'membership'; // 'membership', 'course', 'exam', 'agent'
+  selectedMembershipForUpgrade = null; // Single selected membership for upgrade
 
   get name() {
     return 'membership';
@@ -342,6 +343,10 @@ class MembershipStore {
       console.error('Failed to upgrade users:', error);
       throw error;
     }
+  };
+
+  setSelectedMembershipForUpgrade = function(membership) {
+    this.selectedMembershipForUpgrade = membership;
   };
 
   get productCategories() {

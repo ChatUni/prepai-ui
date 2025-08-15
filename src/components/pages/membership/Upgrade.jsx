@@ -14,15 +14,20 @@ const Upgrade = observer(() => {
     await membershipStore.searchUsers();
   };
 
-  const handleUpgradeUsers = async (membershipId) => {
+  const handleUpgradeUsers = async () => {
     if (membershipStore.selectedUsers.length === 0) {
       alert('Please select users to upgrade');
       return;
     }
 
+    if (!membershipStore.selectedMembershipForUpgrade) {
+      alert('Please select a membership plan');
+      return;
+    }
+
     try {
       setUpgradeLoading(true);
-      await membershipStore.upgradeUsers(membershipId);
+      await membershipStore.upgradeUsers(membershipStore.selectedMembershipForUpgrade.id);
       alert('Users upgraded successfully!');
     } catch (error) {
       alert(`Failed to upgrade users: ${error.message}`);
@@ -31,10 +36,14 @@ const Upgrade = observer(() => {
     }
   };
 
+  const handleMembershipSelect = (membership) => {
+    membershipStore.setSelectedMembershipForUpgrade(membership);
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8 mb-8">
         
         {/* Step 1: Input User Information */}
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
@@ -74,7 +83,7 @@ const Upgrade = observer(() => {
         </div>
 
         {/* Step 2: Select Users */}
-        {membershipStore.searchedUsers.length > 0 && (
+        {/* {membershipStore.searchedUsers.length > 0 && ( */}
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold flex items-center gap-2 text-gray-900">
@@ -139,7 +148,7 @@ const Upgrade = observer(() => {
               })}
             </div>
           </div>
-        )}
+        {/* )} */}
 
         {/* Step 3: Select Products */}
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
@@ -168,25 +177,30 @@ const Upgrade = observer(() => {
           {/* Membership Products */}
           {membershipStore.selectedProductCategory === 'membership' && (
             <div className="grid grid-cols-1 gap-6">
-              {membershipStore.items.map((membership) => (
-                <div key={membership.id} className="relative">
-                  <MembershipCard
-                    membership={membership}
-                    onClick={() => handleUpgradeUsers(membership.id)}
-                  />
-                  {membershipStore.selectedUsers.length > 0 && (
-                    <div className="absolute bottom-4 right-4">
-                      <Button
-                        onClick={() => handleUpgradeUsers(membership.id)}
-                        disabled={upgradeLoading}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white"
-                      >
-                        {upgradeLoading ? t('common.loading') : t('common.confirm')}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {membershipStore.items.map((membership) => {
+                const isSelected = membershipStore.selectedMembershipForUpgrade?.id === membership.id;
+                return (
+                  <div
+                    key={membership.id}
+                    className={`relative cursor-pointer transition-all duration-200 rounded-lg ${
+                      isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'
+                    }`}
+                    onClick={() => handleMembershipSelect(membership)}
+                  >
+                    <MembershipCard
+                      membership={membership}
+                      onClick={() => handleMembershipSelect(membership)}
+                    />
+                    {isSelected && (
+                      <div className="absolute top-4 right-4">
+                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                          <FiCheck className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -196,6 +210,26 @@ const Upgrade = observer(() => {
               <p>Products for {membershipStore.productCategories.find(c => c.value === membershipStore.selectedProductCategory)?.label} coming soon...</p>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="pb-18"></div>
+
+      {/* Sticky Bottom Confirm Button */}
+      <div className="fixed bottom-12 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+        <div className="max-w-6xl mx-auto">
+          <Button
+            onClick={handleUpgradeUsers}
+            disabled={upgradeLoading || !(membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembershipForUpgrade)}
+            className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-medium transition-colors"
+          >
+            {upgradeLoading
+              ? t('common.loading')
+              : (membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembershipForUpgrade)
+                ? `为${membershipStore.selectedUsers.length}位用户开通${membershipStore.selectedMembershipForUpgrade.name}`
+                : '请选择用户和产品'
+            }
+          </Button>
         </div>
       </div>
     </div>

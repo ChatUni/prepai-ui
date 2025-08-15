@@ -589,13 +589,13 @@
     "upgrade": {
       "title": "会员升级",
       "step1": {
-        "title": "步骤一：输入用户信息",
+        "title": "输入用户信息",
         "memberIdOrPhone": "会员ID或手机号（多个账号可用逗号或换行符分隔）",
         "importExcel": "导入Excel表格",
         "searchUsers": "查询用户"
       },
       "step2": {
-        "title": "步骤二：选择用户",
+        "title": "选择用户",
         "selectedCount": "已选择：{count}个用户",
         "selectAll": "取消全选",
         "userInfo": "用户信息",
@@ -604,7 +604,7 @@
         "registered": "已注册"
       },
       "step3": {
-        "title": "步骤三：选择产品",
+        "title": "选择产品",
         "membershipProducts": "会员产品",
         "courseProducts": "课程产品",
         "examProducts": "考试产品",

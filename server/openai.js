@@ -43,8 +43,9 @@ console.log('OpenRouter: ', useOpenRouter)
   });
 
   try {
-    const { messages, model } = body;
-    
+    let { messages, model } = body;
+    if (typeof messages === 'string') messages = [{ role: 'user', content: messages }];
+
     if (!messages || !Array.isArray(messages)) {
       const error = new Error('Messages array is required');
       if (!serverless) throw error;
