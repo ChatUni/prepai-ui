@@ -124,6 +124,7 @@
       "basic_settings": "基本設定",
       "banner_settings": "バナー設定",
       "upgrade": "メンバーシップアップグレード",
+      "advanced_settings": "高度な設定",
       "back": "戻る"
     },
     "categories": {
@@ -622,6 +623,17 @@
           "basicCourses": "基本コース",
           "ai100Times": "AI質問100回"
         }
+      },
+      "errors": {
+        "emptyInput": "ユーザーIDまたは電話番号を入力してください",
+        "noUsersFound": "検索条件に一致するユーザーが見つかりません",
+        "searchFailed": "ユーザーの検索に失敗しました",
+        "noUsersSelected": "アップグレードするユーザーを選択してください",
+        "noMembershipSelected": "メンバーシッププランを選択してください",
+        "upgradeFailed": "ユーザーのアップグレードに失敗しました"
+      },
+      "success": {
+        "usersUpgraded": "ユーザーのアップグレードが完了しました！"
       }
     }
   },
@@ -648,7 +660,8 @@
     "logo": "ロゴ",
     "phone": "電話番号",
     "email": "メールアドレス",
-    "qrcode": "QRコード"
+    "qrcode": "QRコード",
+    "allowFree1Day": "1日無料を許可"
   },
   "generic": {
     "listPage": {

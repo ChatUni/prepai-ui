@@ -124,6 +124,7 @@
       "basic_settings": "Basic Settings",
       "banner_settings": "Banner Settings",
       "upgrade": "Membership Upgrade",
+      "advanced_settings": "Advanced Settings",
       "back": "Back"
     },
     "categories": {
@@ -621,6 +622,17 @@
           "basicCourses": "Basic Courses",
           "ai100Times": "AI Q&A 100x"
         }
+      },
+      "errors": {
+        "emptyInput": "Please enter user ID or phone number",
+        "noUsersFound": "No users found matching the search criteria",
+        "searchFailed": "Failed to search users",
+        "noUsersSelected": "Please select users to upgrade",
+        "noMembershipSelected": "Please select a membership plan",
+        "upgradeFailed": "Failed to upgrade users"
+      },
+      "success": {
+        "usersUpgraded": "Users upgraded successfully!"
       }
     }
   },
@@ -647,7 +659,8 @@
     "logo": "Logo",
     "phone": "Phone",
     "email": "Email",
-    "qrcode": "QR Code"
+    "qrcode": "QR Code",
+    "allowFree1Day": "Allow Free 1 Day"
   },
   "generic": {
     "listPage": {

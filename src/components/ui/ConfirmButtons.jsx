@@ -9,7 +9,7 @@ const ConfirmButtons = observer(({
   isDialog = false,
   onClose,
   onConfirm,
-  className = "px-6 py-4 flex justify-end gap-4"
+  className = "py-2 flex justify-end gap-4"
 }) => {
   const navigate = useNavigate();
 

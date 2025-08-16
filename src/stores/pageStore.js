@@ -6,7 +6,7 @@ class PageStore {
   isErrorDialogOpen = false;
 
   get isAdminMode() {
-    const isSetting = routeStore.currentPath.endsWith('/settings');
+    const isSetting = /\/settings$|\/.*-setting$/.test(routeStore.currentPath);
     return isSetting || this.isUserAssistantMode;
   }
 

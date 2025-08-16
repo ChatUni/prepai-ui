@@ -5,18 +5,14 @@ import EditUserPage from './EditUserPage';
 import UserCard from './UserCard';
 
 const UserListPage = observer(({ showSearchBar, hideList }) => (
-  <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
-    <div className="bg-white p-4" style={{ display: hideList ? 'none' : 'block' }}>
-      <ListPage
-        isGrouped={false}
-        showSearchBar={showSearchBar}
-        showShortcutButtons={false}
-        store={store}
-        renderEdit={() => <EditUserPage />}
-        renderItem={(user) => <UserCard user={user} />}
-      />
-    </div>
-  </div>
+  <ListPage
+    isGrouped={false}
+    showSearchBar={showSearchBar}
+    showShortcutButtons={false}
+    store={store}
+    renderEdit={() => <EditUserPage />}
+    renderItem={(user) => <UserCard user={user} />}
+  />
 ));
 
 export default UserListPage;

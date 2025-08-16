@@ -12,6 +12,13 @@ class EditingStore {
   showRestoreDialog = false;
   showVisibilityDialog = false;
 
+  get yesNoOptions() {
+    return [
+      { value: true, text: t('common.yes') },
+      { value: false, text: t('common.no') },
+    ];
+  }
+
   setEditingItem = function(item) {
     this.editingItem = { ...(item || this.newItem) };
   };

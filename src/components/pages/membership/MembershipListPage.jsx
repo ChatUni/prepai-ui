@@ -39,16 +39,14 @@ const MembershipListPage = observer(() => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-100 w-full max-w-6xl mx-auto">
-      <div className="bg-white p-4">
-        <ListPage
-          isGrouped={false}
-          store={store}
-          renderItem={renderMembershipCard}
-          itemsContainerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          renderEdit={() => <EditMembershipPage />}
-        />
-      </div>
+    <>
+      <ListPage
+        isGrouped={false}
+        store={store}
+        renderItem={renderMembershipCard}
+        itemsContainerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        renderEdit={() => <EditMembershipPage />}
+      />
 
       {/* Purchase Confirmation Dialog */}
       {store.showPurchaseDialog && store.selectedMembership && (
@@ -112,7 +110,7 @@ const MembershipListPage = observer(() => {
         onPaymentSuccess={(data) => store.handlePaymentSuccess(data)}
         onPaymentError={(error) => store.handlePaymentError(error)}
       />
-    </div>
+    </>
   );
 });
 

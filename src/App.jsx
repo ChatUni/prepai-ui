@@ -237,6 +237,11 @@ const MainLayout = observer(() => {
                     <EditClientPage />
                   </AuthRoute>
                 } />
+                <Route path="/client/advanced-settings" element={
+                  <AuthRoute>
+                    <EditClientPage mode="advanced" />
+                  </AuthRoute>
+                } />
                 <Route path="/users/settings" element={
                   <AuthRoute>
                     <UserListPage />

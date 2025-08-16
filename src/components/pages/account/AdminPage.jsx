@@ -21,6 +21,7 @@ const routeMap = {
   'price-settings': '/memberships/settings',
   'upgrade': '/memberships/upgrade',
   'basic-settings': '/client/settings',
+  'advanced-settings': '/client/advanced-settings',
   'banner-settings': '/settings/banners'
 };
 
@@ -76,6 +77,10 @@ const AdminPage = observer(() => {
       <MenuListItem
         label={t('menu.admin_page.basic_settings')}
         onClick={() => navigate(routeMap['basic-settings'])}
+      />
+      <MenuListItem
+        label={t('menu.admin_page.advanced_settings')}
+        onClick={() => navigate(routeMap['advanced-settings'])}
       />
       <MenuListItem
         label={t('menu.admin_page.banner_settings')}

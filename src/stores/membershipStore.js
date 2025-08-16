@@ -30,7 +30,6 @@ class MembershipStore {
   searchedUsers = [];
   selectedUsers = [];
   isSearchingUsers = false;
-  searchError = null;
   selectedProductCategory = 'membership'; // 'membership', 'course', 'exam', 'agent'
   selectedMembershipForUpgrade = null; // Single selected membership for upgrade
 
@@ -242,9 +241,6 @@ class MembershipStore {
     this.isSearchingUsers = searching;
   };
 
-  setSearchError = function(error) {
-    this.searchError = error;
-  };
 
   setSelectedProductCategory = function(category) {
     this.selectedProductCategory = category;
@@ -277,30 +273,26 @@ class MembershipStore {
 
   searchUsers = async function() {
     if (!this.upgradeSearchInput.trim()) {
-      this.setSearchError('Please enter user ID or phone number');
+      this.openErrorDialog(t('membership.upgrade.errors.emptyInput'));
       return;
     }
 
     try {
       this.setIsSearchingUsers(true);
-      this.setSearchError(null);
 
       // Parse input - split by comma or newline
       const inputs = this.upgradeSearchInput
         .split(/[,\n]/)
-        .map(s => s.trim())
+        .map(s => s.trim().toLowerCase())
         .filter(s => s.length > 0);
 
       // Search for users by ID or phone
-      const users = await get('users', {
-        clientId: clientStore.client.id,
-        searchTerms: inputs
-      });
+      const users = userStore.items.filter(user => inputs.includes(user.id.toLowerCase()) || inputs.includes(user.phone.toLowerCase()));
 
-      this.setSearchedUsers(users || []);
+      this.setSearchedUsers(users);
       
       if (!users || users.length === 0) {
-        this.setSearchError('No users found matching the search criteria');
+        this.openErrorDialog(t('membership.upgrade.errors.noUsersFound'));
       } else {
         // Auto-select all found users by default
         this.setSelectedUsers([...users]);
@@ -308,7 +300,7 @@ class MembershipStore {
 
     } catch (error) {
       console.error('Failed to search users:', error);
-      this.setSearchError(error.message || 'Failed to search users');
+      this.openErrorDialog(t('membership.upgrade.errors.searchFailed'));
     } finally {
       this.setIsSearchingUsers(false);
     }

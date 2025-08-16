@@ -124,6 +124,7 @@
       "basic_settings": "基础设置",
       "banner_settings": "横幅设置",
       "upgrade": "指定升级",
+      "advanced_settings": "高级设置",
       "back": "返回"
     },
     "categories": {
@@ -587,7 +588,7 @@
     },
     "trialMembershipOnlyOnce": "试用会员只能购买一次",
     "upgrade": {
-      "title": "会员升级",
+      "title": "指定升级",
       "step1": {
         "title": "输入用户信息",
         "memberIdOrPhone": "会员ID或手机号（多个账号可用逗号或换行符分隔）",
@@ -621,6 +622,17 @@
           "basicCourses": "基础课程",
           "ai100Times": "AI问答100次"
         }
+      },
+      "errors": {
+        "emptyInput": "请输入用户ID或手机号",
+        "noUsersFound": "未找到符合搜索条件的用户",
+        "searchFailed": "搜索用户失败",
+        "noUsersSelected": "请选择要升级的用户",
+        "noMembershipSelected": "请选择会员套餐",
+        "upgradeFailed": "用户升级失败"
+      },
+      "success": {
+        "usersUpgraded": "用户升级成功！"
       }
     }
   },
@@ -647,7 +659,8 @@
     "logo": "标志",
     "phone": "电话",
     "email": "邮箱",
-    "qrcode": "二维码"
+    "qrcode": "二维码",
+    "allowFree1Day": "新用户1天免费试用"
   },
   "generic": {
     "listPage": {

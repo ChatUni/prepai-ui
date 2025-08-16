@@ -38,8 +38,8 @@ const Dialog = observer(({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="fixed inset-0 bg-black opacity-50" onClick={isSteps ? null : onClose} />
-        <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
-          <div className="px-6 py-4">
+        <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 px-6 pb-4">
+          <div className="py-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 {isSteps ? StepTitle(store, currentStep, totalSteps) : Title(title)}
@@ -86,7 +86,7 @@ const StepTitle = (store, currentStep, totalSteps) => (
 )
 
 const StepButtons = (store, currentStep, totalSteps, prevStep, handleNext, onClose, clearStep, isSaving) => (
-  <div className="flex justify-between items-center px-6 py-4">
+  <div className="flex justify-between items-center">
     <Button
       onClick={() => {
         clearStep();

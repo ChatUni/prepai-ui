@@ -108,9 +108,7 @@ const SeriesDetailPage = observer(() => {
         </TabPanel.Tab>
 
         <TabPanel.Tab label={t('series.courseList')}>
-          <div className="p-2">
-            <CourseListPage series={selectedSeries} />
-          </div>
+          <CourseListPage series={selectedSeries} />
         </TabPanel.Tab>
       </TabPanel>
       <PaymentManager />
