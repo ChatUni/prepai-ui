@@ -97,7 +97,8 @@ const ImageUpload = observer(({
   onMediaSelect,
   required = false,
   template,
-  collections
+  collections,
+  round = false
 }) => {
   if (!id) id = `${store.name}-${field}`;
   
@@ -349,11 +350,13 @@ const ImageUpload = observer(({
         );
       }
     } else if (displayPreviewUrl && isValidPreviewUrl(displayPreviewUrl)) {
+      const previewStyle = round ? 'w-24 h-24 object-cover rounded-full' : getMediaStyle(imageStyle, 'image');
+      
       return (
         <img
           src={displayPreviewUrl}
           alt={finalButtonText}
-          className={getMediaStyle(imageStyle, 'image')}
+          className={previewStyle}
         />
       );
     }
@@ -439,13 +442,8 @@ const ImageUpload = observer(({
                 <img
                   src={imageUrl}
                   alt={`Collection image ${idx + 1}`}
-                  className="w-full h-24 object-cover rounded-lg border-2 border-transparent group-hover:border-blue-500 transition-colors"
+                  className="w-full object-cover rounded-full border-2 border-transparent group-hover:border-blue-500 transition-colors"
                 />
-                <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-opacity flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 text-white text-sm font-medium">
-                    {t('common.select')}
-                  </div>
-                </div>
               </div>
             ))}
           </div>

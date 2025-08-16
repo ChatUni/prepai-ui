@@ -18,7 +18,7 @@ const EditAssistantPage = observer(() => (
     )}
 
     <FormSelect store={store} field="group" options={store.groupOptions} />
-    <ImageUpload store={store} field="image" collections={store.imageCollections} />
+    <ImageUpload store={store} field="image" collections={store.imageCollections} round={true} />
   </div>
 ));
 
