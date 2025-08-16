@@ -32,6 +32,8 @@
     "changeDocument": "Change Document",
     "template": "Template",
     "remove": "Remove",
+    "select": "Select",
+    "selectFromCollection": "Select from Collection",
     "required": "The {name} field is required",
     "groups": {
       "addGroup": "Add Group",

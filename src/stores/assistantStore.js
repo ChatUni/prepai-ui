@@ -81,6 +81,25 @@ class AssistantStore {
     return models;
   }
 
+  get imageCollections() {
+    return [
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/01.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/02.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/03.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/04.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/05.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/06.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/07.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/08.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/09.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/10.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/11.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/12.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/13.jpg',
+      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/14.jpg',
+    ];
+  }
+
   init = async function() {
     // await this.fetchOpenRouterModels();
   }

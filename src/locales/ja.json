@@ -32,6 +32,8 @@
     "changeDocument": "ドキュメントを変更",
     "template": "テンプレート",
     "remove": "削除",
+    "select": "選択",
+    "selectFromCollection": "コレクションから選択",
     "required": "{name}フィールドは必須です",
     "groups": {
       "addGroup": "グループを追加",

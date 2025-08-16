@@ -32,6 +32,8 @@
     "changeDocument": "更改文档",
     "template": "模板",
     "remove": "移除",
+    "select": "选择",
+    "selectFromCollection": "从集合中选择",
     "required": "{name}不能为空",
     "groups": {
       "addGroup": "添加分组",

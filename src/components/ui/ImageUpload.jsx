@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiTrash2, FiImage } from 'react-icons/fi';
 import { t } from '../../stores/languageStore';
 import { getSignedUrl } from '../../utils/tosHelper';
 import ActionButton from './ActionButton';
+import Dialog from './Dialog';
 
 const getYouTubeEmbedUrl = (url) => {
   const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
@@ -95,13 +96,15 @@ const ImageUpload = observer(({
   label,
   onMediaSelect,
   required = false,
-  template
+  template,
+  collections
 }) => {
   if (!id) id = `${store.name}-${field}`;
   
   const [filePreviewUrl, setFilePreviewUrl] = useState('');
   const [signedVideoUrl, setSignedVideoUrl] = useState('');
   const [loadingSignedUrl, setLoadingSignedUrl] = useState(false);
+  const [showCollectionDialog, setShowCollectionDialog] = useState(false);
   
   // Get the current file from store if not provided as prop
   const currentFile = selectedFile || getImage(store, field, index);
@@ -196,6 +199,21 @@ const ImageUpload = observer(({
     } else {
       store.setEditingField(field, null, index);
     }
+  };
+
+  const handleCollectionSelect = (imageUrl) => {
+    if (onMediaSelect) {
+      onMediaSelect({
+        file: imageUrl,
+        isFile: false,
+        preview: imageUrl
+      });
+    } else if (onImageSelect) {
+      onImageSelect(imageUrl);
+    } else {
+      store.setEditingField(field, imageUrl, index);
+    }
+    setShowCollectionDialog(false);
   };
 
   const finalButtonText = buttonText || getDefaultButtonText();
@@ -381,6 +399,14 @@ const ImageUpload = observer(({
               {finalButtonText}
             </span>
           </label>
+          {collections && collections.length > 0 && (
+            <ActionButton
+              onClick={() => setShowCollectionDialog(true)}
+              icon={FiImage}
+              color="blue"
+              title={t('common.selectFromCollection')}
+            />
+          )}
           {(displayPreviewUrl || currentFile) && (
             <ActionButton
               onClick={handleRemoveImage}
@@ -395,6 +421,35 @@ const ImageUpload = observer(({
         <div className="mt-2">
           {renderPreview()}
         </div>
+      )}
+      
+      {collections && collections.length > 0 && (
+        <Dialog
+          isOpen={showCollectionDialog}
+          onClose={() => setShowCollectionDialog(false)}
+          title={t('common.selectFromCollection')}
+        >
+          <div className="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto">
+            {collections.map((imageUrl, idx) => (
+              <div
+                key={idx}
+                className="relative cursor-pointer group"
+                onClick={() => handleCollectionSelect(imageUrl)}
+              >
+                <img
+                  src={imageUrl}
+                  alt={`Collection image ${idx + 1}`}
+                  className="w-full h-24 object-cover rounded-lg border-2 border-transparent group-hover:border-blue-500 transition-colors"
+                />
+                <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-opacity flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 text-white text-sm font-medium">
+                    {t('common.select')}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Dialog>
       )}
     </div>
   );
