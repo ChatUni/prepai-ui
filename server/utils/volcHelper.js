@@ -267,6 +267,55 @@ const listObjects = async (params = {}) => {
   }
 };
 
+// Get all files in a specified folder on TOS
+const getAllFilesInFolder = async (folder = '') => {
+  const tos = getTosClient();
+  const defaultParams = getDefaultParams();
+  
+  // Ensure folder path ends with '/' if it's not empty and doesn't already end with '/'
+  const normalizedFolderPath = folder && !folder.endsWith('/') ? `${folder}/` : folder;
+  
+  let allFiles = [];
+  let marker = '';
+  let hasMore = true;
+  
+  try {
+    while (hasMore) {
+      const result = await tos.listObjects({
+        bucket: defaultParams.bucket,
+        prefix: normalizedFolderPath,
+        maxKeys: 1000,
+        marker: marker
+      });
+
+      if (result.data.Contents && result.data.Contents.length > 0) {
+        // Filter out folder entries (keys ending with '/') to return only files
+        const files = result.data.Contents
+          .filter(item => !item.Key.endsWith('/'))
+          .map(item => ({
+            size: item.Size,
+            lastModified: item.LastModified,
+            fileName: item.Key.split('/').pop(),
+          }));
+        
+        allFiles = allFiles.concat(files);
+      }
+      
+      // Check if there are more objects to fetch
+      hasMore = result.isTruncated;
+      if (hasMore && result.nextMarker) {
+        marker = result.nextMarker;
+      } else {
+        hasMore = false;
+      }
+    }
+    
+    return allFiles;
+  } catch (error) {
+    throw new Error(`Failed to list files in folder '${folder}': ${error.message}`);
+  }
+};
+
 // Copy object within TOS
 const copyObject = async (params) => {
   const tos = getTosClient();
@@ -762,6 +811,7 @@ module.exports = {
   uploadObject,
   deleteObject,
   listObjects,
+  getAllFilesInFolder,
   copyObject,
   extractKeyFromUrl,
   parseBase64File,

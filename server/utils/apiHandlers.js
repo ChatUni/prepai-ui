@@ -1,5 +1,5 @@
 const { save, remove, flat } = require('./db.js');
-const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete, jimeng, queryJimengTask, run_workflow, getVoiceOptions } = require('./volcHelper.js');
+const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete, getAllFilesInFolder, jimeng, queryJimengTask, run_workflow, getVoiceOptions } = require('./volcHelper.js');
 const { wechat_pay, wechat_query } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
 const { chat, draw, video, tts } = require('../openai.js');
@@ -28,6 +28,7 @@ module.exports = {
   handlers: {
     get: {
       tos_file: (q) => handleFileServing(q.key),
+      tos_folder: (q) => getAllFilesInFolder(q.folder),
       voice_options: () => getVoiceOptions(),
     },
     post: {

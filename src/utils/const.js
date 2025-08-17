@@ -1,0 +1,1 @@
+export const TOS = 'https://prepai-files.tos-cn-beijing.volces.com/';

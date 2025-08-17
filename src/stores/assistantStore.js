@@ -1,6 +1,5 @@
 import { runInAction } from 'mobx';
 import { get, save, remove } from '../utils/db';
-import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { combineStores } from '../utils/storeUtils';
 import clientStore from './clientStore';
 import { t } from './languageStore';
@@ -9,11 +8,12 @@ import PageStore from './pageStore';
 import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
 import userStore from './userStore';
+import { TOS } from '../utils/const';
 
 const models = ['DeepSeek', '豆包', '通义千问', 'Kimi', '百川', '智谱']
 
 class AssistantStore {
-  models = [];
+  avatars = [];
   loadingModels = false;
 
   get name() {
@@ -82,26 +82,16 @@ class AssistantStore {
   }
 
   get imageCollections() {
-    return [
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/01.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/02.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/03.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/04.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/05.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/06.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/07.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/08.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/09.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/10.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/11.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/12.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/13.jpg',
-      'https://prepai-files.tos-cn-beijing.volces.com/assistants/avatars/14.jpg',
-    ];
+    return this.avatars;
   }
 
   init = async function() {
-    // await this.fetchOpenRouterModels();
+    await this.fetchAvatars();
+  }
+
+  fetchAvatars = async function() {
+    const files = await get('tos_folder', { folder: 'assistants/avatars' });
+    this.avatars = files.map(file => `${TOS}assistants/avatars/${file.fileName}`);
   }
 
   fetchItemList = async function() {
