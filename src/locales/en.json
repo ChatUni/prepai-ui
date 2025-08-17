@@ -53,15 +53,18 @@
   },
   "user": {
     "createNew": "Create New User",
-    "hide": "Hide User",
-    "confirmHide": "Are you sure you want to hide \"{name}\" user?",
-    "confirmDelete": "Are you sure you want to delete \"{name}\" user?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" user?",
+    "hidden": "Hide User",
+    "not_hidden": "Show User",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" user?",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" user?",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" user?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" user?",
+    "deleted": "Delete User",
+    "not_deleted": "Restore User",
     "edit": {
       "title": "Edit User",
       "editTitle": "Edit User",
-      "delete": "Delete User",
-      "restore": "Restore User"
+      "delete": "Delete User"
     },
     "name": "Name",
     "avatar": "Avatar",
@@ -219,16 +222,20 @@
     "retry": "Retry",
     "notFound": "No instructors found",
     "chat": "Real-time Chat",
-    "hide": "Hide Instructor",
-    "confirmHide": "Are you sure you want to hide \"{name}\" instructor?",
-    "confirmDelete": "Are you sure you want to delete \"{name}\" instructor?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" instructor?",
+    "hidden": "Hide Instructor",
+    "not_hidden": "Show Instructor",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" instructor?",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" instructor?",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" instructor?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" instructor?",
     "add": {
       "button": "Add Instructor",
       "title": "Add New Instructor",
       "creating": "Creating...",
       "create": "Create Instructor"
     },
+    "deleted": "Delete Instructor",
+    "not_deleted": "Restore Instructor",
     "edit": {
       "button": "Edit",
       "title": "Edit Instructor",
@@ -239,20 +246,19 @@
       "saving": "Saving...",
       "save": "Save Instructor",
       "uploadError": "Failed to upload image",
-      "delete": "Delete Instructor",
-      "restore": "Restore Instructor"
+      "delete": "Delete Instructor"
     }
   },
   "assistant": {
     "desc": "description",
     "description": "Choose from our AI assistants to help you with various tasks. Each assistant is specialized for different types of questions and conversations.",
     "noItems": "No assistants available",
-    "delete": "Delete Assistant",
+    "deleted": "Delete Assistant",
+    "not_deleted": "Restore Assistant",
     "edit": {
       "title": "Edit Assistant",
       "editTitle": "Edit Assistant",
-      "delete": "Delete Assistant",
-      "restore": "Restore Assistant"
+      "delete": "Delete Assistant"
     },
     "createNew": "Create New Assistant",
     "name": "Name",
@@ -263,18 +269,18 @@
     "group": "Group",
     "selectGroup": "Select a group",
     "image": "Image",
-    "show": "Show Assistant",
-    "hide": "Hide Assistant",
+    "not_hidden": "Show Assistant",
+    "hidden": "Hide Assistant",
     "search": {
       "placeholder": "Search assistants by name or description..."
     },
     "add": {
       "title": "Add New Assistant"
     },
-    "confirmDelete": "Are you sure you want to delete \"{name}\" assistant?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" assistant?",
-    "confirmShow": "Are you sure you want to show \"{name}\" assistant?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" assistant?",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" assistant?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" assistant?",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" assistant?",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" assistant?",
     "groups": {
       "title": "Assistant Groups",
       "noGroup": "No Group",
@@ -287,7 +293,11 @@
       "message": "You need a membership to access this assistant. Would you like to purchase a membership?",
       "purchase": "Purchase",
       "cancel": "Cancel"
-    }
+    },
+    "shelf": "Shelf Assistant",
+    "confirm_shelf": "Are you sure you want to shelf this assistant?",
+    "not_shelf": "Unshelf Assistant",
+    "confirm_not_shelf": "Are you sure you want to unshelf this assistant?"
   },
   "course": {
     "instructor_id": "Instructor ID",
@@ -299,11 +309,12 @@
     "isFree": "Free",
     "purchaseToLearn": "Purchase to Learn",
     "createNew": "Create New Course",
+    "deleted": "Delete Course",
+    "not_deleted": "Restore Course",
     "edit": {
       "title": "Edit Course",
       "editTitle": "Edit Course",
-      "delete": "Delete Course",
-      "restore": "Restore Course"
+      "delete": "Delete Course"
     },
     "settings": "Course Settings",
     "management": "Course Management",
@@ -341,12 +352,12 @@
     "pptFormat": "PPT",
     "moreKeywords": "+{count}",
     "noItems": "No courses available",
-    "show": "Show Course",
-    "hide": "Hide Course",
-    "confirmShow": "Are you sure you want to show \"{name}\" course?",
-    "confirmDelete": "Are you sure you want to delete \"{name}\" course?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" course?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" course?"
+    "not_hidden": "Show Course",
+    "hidden": "Hide Course",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" course?",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" course?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" course?",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" course?"
   },
   "series": {
     "createNew": "Create New Series",
@@ -372,12 +383,14 @@
       "allCategories": "All Categories",
       "placeholder": "Search series..."
     },
-    "show": "Show series",
-    "hide": "Hide series",
-    "confirmShow": "Are you sure you want to show \"{name}\" series?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" series?",
-    "confirmDelete": "Are you sure you want to move \"{name}\" series to the recycle bin?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" series?",
+    "not_hidden": "Show series",
+    "hidden": "Hide series",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" series?",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" series?",
+    "confirm_deleted": "Are you sure you want to move \"{name}\" series to the recycle bin?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" series?",
+    "deleted": "Delete series",
+    "not_deleted": "Restore series",
     "edit": {
       "title": "Edit Series",
       "loading": "Loading...",
@@ -402,8 +415,7 @@
       "saving": "Saving...",
       "saveSeries": "Save Series",
       "saveError": "Failed to save series",
-      "delete": "Delete series",
-      "restore": "Restore series",
+      "delete": "Delete Series",
       "steps": {
         "selectGroup": "Select Group",
         "nameAndCategory": "Name and Category",
@@ -504,13 +516,13 @@
       "delete": "Delete Group",
       "confirmDelete": "Are you sure you want to delete this group?"
     },
+    "not_deleted": "Restore Exam",
     "edit": {
       "title": "Edit Exam",
-      "delete": "Delete Exam",
-      "restore": "Restore Exam",
-      "editTitle": "Edit Exam"
+      "editTitle": "Edit Exam",
+      "delete": "Delete Exam"
     },
-    "confirmRestore": "Are you sure you want to restore \"{name}\" exam?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" exam?",
     "name": "Exam Name",
     "group": "Group",
     "selectGroup": "Select Group",
@@ -518,12 +530,12 @@
     "cover": "Cover Image",
     "desc": "Description",
     "upload_file": "Upload File",
-    "delete": "Delete Exam",
-    "hide": "Hide Exam",
-    "show": "Show Exam",
-    "confirmDelete": "Are you sure you want to delete \"{name}\" exam?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" exam?",
-    "confirmShow": "Are you sure you want to show \"{name}\" exam?",
+    "deleted": "Delete Exam",
+    "hidden": "Hide Exam",
+    "not_hidden": "Show Exam",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" exam?",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" exam?",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" exam?",
     "noItems": "No exams available"
   },
   "tools": {
@@ -556,17 +568,19 @@
       "placeholder": "Search memberships by name..."
     },
     "createNew": "Create New Membership",
+    "not_deleted": "Restore Membership",
     "edit": {
       "title": "Edit Membership",
       "editTitle": "Edit Membership",
-      "delete": "Delete Membership",
-      "restore": "Restore Membership"
+      "delete": "Delete Membership"
     },
-    "delete": "Delete",
-    "hide": "Hide Membership",
-    "confirmDelete": "Are you sure you want to delete \"{name}\" membership?",
-    "confirmHide": "Are you sure you want to hide \"{name}\" membership?",
-    "confirmRestore": "Are you sure you want to restore \"{name}\" membership?",
+    "deleted": "Delete",
+    "hidden": "Hide Membership",
+    "not_hidden": "Show Membership",
+    "confirm_deleted": "Are you sure you want to delete \"{name}\" membership?",
+    "confirm_hidden": "Are you sure you want to hide \"{name}\" membership?",
+    "confirm_not_hidden": "Are you sure you want to show \"{name}\" membership?",
+    "confirm_not_deleted": "Are you sure you want to restore \"{name}\" membership?",
     "noMemberships": "No memberships configured",
     "addMembership": "Add Membership",
     "managePlans": "Manage Plans",

@@ -20,7 +20,7 @@ const AssistantCard = observer(({
   }, []);
 
   const handleCardClick = (e) => {
-    // if (!store.isUserAssistantMode && isEditMode && e.target.closest('.action-button')) {
+    // if (!store.isUserAssistantRoute && isEditMode && e.target.closest('.action-button')) {
     //   return;
     // }
     store.gotoDetail(assistant, navigate);
@@ -64,7 +64,9 @@ const AssistantCard = observer(({
         <CardEditActions
           item={assistant}
           store={store}
-          hideDelete={item => item.type === 'platform'}
+          hideDelete={item => store.isPlatformAssistant(item)}
+          hideShelf={item => store.isPlatformAssistant(item)}
+          hideVisibility={item => store.isUserAssistantRoute}
         />
       )}
     </DndOrderContainer>

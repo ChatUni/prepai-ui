@@ -4,7 +4,7 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { AccordionSection } from './AdminAccordion';
 import ActionButton from './ActionButton';
 import { t } from '../../stores/languageStore';
-import { DeleteConfirmDialog, GroupNameDialog, ErrorDialog, GroupDeleteDialog } from './Dialogs';
+import { GroupNameDialog, ErrorDialog, GroupDeleteDialog } from './Dialogs';
 
 const GroupedList = observer(({
   store,
@@ -59,7 +59,6 @@ const GroupedList = observer(({
       actions={renderActions(group)}
       isExpanded={store.isGroupExpanded(group)}
       onToggle={() => store.toggleGroup(group)}
-      maxHeight="96"
       index={index}
       moveGroup={(fromIndex, toIndex) => {
         store.moveGroup(fromIndex, toIndex);

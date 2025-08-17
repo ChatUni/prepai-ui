@@ -2,48 +2,59 @@ import { observer } from 'mobx-react-lite';
 import Dialog from './Dialog';
 import { t } from '../../stores/languageStore';
 
-export const DeleteConfirmDialog = observer(({ store }) => store && (
+export const ErrorDialog = observer(({ store }) => store && (
   <Dialog
-    isOpen={store.showDeleteDialog}
-    onClose={() => store.closeDeleteDialog()}
-    onConfirm={() => store.confirmDelete()}
-    title={t(`${store.name}.edit.delete`)}
-    isConfirm={true}
+    isOpen={store.error}
+    onClose={() => store.closeErrorDialog()}
+    title={t('common.error')}
   >
-    <p>
-      {store.editingItem && t(`${store.name}.confirmDelete`, { name: store.editingItem.name || '' })}
-    </p>
+    {(Array.isArray(store.error) ? store.error : [store.error]).map((e, i) =>
+      <div className="text-gray-700" key={i}>{e}</div>
+    )}
   </Dialog>
 ));
 
-export const RestoreConfirmDialog = observer(({ store }) => store && (
+export const ConfirmDialog = observer(({ store }) => store && (
   <Dialog
-    isOpen={store.showRestoreDialog}
-    onClose={() => store.closeRestoreDialog()}
-    onConfirm={() => store.confirmRestore()}
-    title={t(`${store.name}.edit.restore`)}
+    isOpen={!!store.confirmType}
+    onClose={() => store.closeConfirmDialog()}
+    onConfirm={() => store.confirm(store.confirmType)}
+    title={t(`${store.name}.${store.confirmType}`)}
     isConfirm={true}
   >
-    <p>
-      {store.editingItem && t(`${store.name}.confirmRestore`, { name: store.editingItem.name || '' })}
-    </p>
+    {store.confirmType && t(
+      `${store.name}.confirm_${store.confirmType}`,
+      { name: store.editingItem?.name || '' }
+    )}
   </Dialog>
 ));
 
-export const VisibilityConfirmDialog = observer(({ store }) => store && (
-  <Dialog
-    isOpen={store.showVisibilityDialog}
-    onClose={() => store.closeVisibilityDialog()}
-    onConfirm={() => store.confirmToggleVisibility()}
-    title={store.editingItem?.hidden ? t(`${store.name}.show`) : t(`${store.name}.hide`)}
-    isConfirm={true}
-  >
-    <p>
-      {store.editingItem && t(
-        `${store.name}.confirm${(store.editingItem.hidden ? 'Show' : 'Hide')}`,
+export const ToggleConfirmDialog = observer(({ store }) => {
+  if (!store?.editingItem) return null;
+  const val = store.editingItem[store.toggleConfirmField];
+  const key = `${val ? 'not_' : ''}${store.toggleConfirmField}`;
+  return (
+    <Dialog
+      isOpen={!!store.toggleConfirmField}
+      onClose={() => store.closeToggleConfirmDialog()}
+      onConfirm={() => store.confirmToggle(store.toggleConfirmField)}
+      title={t(`${store.name}.${key}`)}
+      isConfirm={true}
+    >
+      {t(
+        `${store.name}.confirm_${key}`,
         { name: store.editingItem.name || store.editingItem.title || '' }
       )}
-    </p>
+    </Dialog>
+  );
+});
+
+export const InfoDialog = observer(({ store }) => store && (
+  <Dialog
+    isOpen={!!store.info}
+    onClose={() => store.closeInfoDialog()}
+  >
+    {store.info && t(`${store.name}.${store.info}`)}
   </Dialog>
 ));
 
@@ -95,31 +106,5 @@ export const GroupDeleteDialog = observer(({ store }) => store && (
     <p>
       {t(`common.groups.confirmDelete`)}
     </p>
-  </Dialog>
-));
-
-export const ConfirmCancelEditDialog = observer(({ store }) => store && (
-  <Dialog
-    isOpen={store.showCancelEditDialog}
-    onClose={() => store.closeCancelEditDialog()}
-    onConfirm={() => store.confirmCancelEdit()}
-    title={t(`${store.name}.cancelEdit`)}
-    isConfirm={true}
-  >
-    <p>
-      {t(`${store.name}.confirmCancelEdit`)}
-    </p>
-  </Dialog>
-));
-
-export const ErrorDialog = observer(({ store }) => store && (
-  <Dialog
-    isOpen={store.isErrorDialogOpen}
-    onClose={() => store.closeErrorDialog()}
-    title={t('common.error')}
-  >
-    {(Array.isArray(store.error) ? store.error : [store.error]).map((e, i) =>
-      <div className="text-gray-700" key={i}>{e}</div>
-    )}
   </Dialog>
 ));

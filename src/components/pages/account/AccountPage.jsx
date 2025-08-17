@@ -105,7 +105,7 @@ const AccountPage = observer(() => {
           onClick={() => handleMenuItemClick('logout')}
         />
       </div>
-      <UserListPage showSearchBar={false} hideList={true} />
+      {/* <UserListPage showSearchBar={false} hideList={true} /> */}
     </div>
   );
 });

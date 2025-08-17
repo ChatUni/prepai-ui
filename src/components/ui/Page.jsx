@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import ConfirmButtons from './ConfirmButtons';
 import PageTitle from './PageTitle';
-import { ErrorDialog } from './Dialogs';
+import { ConfirmDialog, ErrorDialog, InfoDialog, ToggleConfirmDialog } from './Dialogs';
 
 const Page = observer(({ store, editItem, title, children }) => {
   useEffect(() => {
@@ -27,6 +27,9 @@ const Page = observer(({ store, editItem, title, children }) => {
       )}
 
       <ErrorDialog store={store} />
+      <ConfirmDialog store={store} />
+      <ToggleConfirmDialog store={store} />
+      <InfoDialog store={store} />
 
     </div>
   );

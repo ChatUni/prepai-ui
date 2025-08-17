@@ -38,7 +38,7 @@ class MembershipStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('membership.priceSettings.title') : t('membership.title');
+    return this.isSettingRoute ? t('membership.priceSettings.title') : t('membership.title');
   }
 
   get searchableFields() {

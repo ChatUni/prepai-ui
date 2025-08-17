@@ -2,6 +2,7 @@ import { observable } from 'mobx';
 import { save } from '../utils/db';
 import clientStore from './clientStore';
 import { t } from './languageStore';
+import userStore from './userStore';
 
 class GroupedListStore {
   expandedGroups = observable.set();
@@ -16,18 +17,11 @@ class GroupedListStore {
   groupToDelete = null;
 
   get groupField() {
-    return this.isUserAssistantMode ? 'userAssistantGroups' : `${this.name}Groups`;
+    return `${this.name}Groups`;
   }
 
   get groupedItems() {
     return this.getGroupedItems();
-  }
-
-  get groupOptions() {
-    return (clientStore.client.settings[this.groupField] || []).map(group => ({
-      value: group,
-      label: group
-    }));
   }
 
   // Group expansion methods
@@ -148,19 +142,21 @@ class GroupedListStore {
     return groupItems.length === 0;
   };
 
-  getGroups = function(isFiltered) {
-    const groupsInSettings = clientStore.client?.settings?.[this.groupField] || [];
-    const hasGroupsInSettings = groupsInSettings || groupsInSettings.length > 0;
-    if (!isFiltered && hasGroupsInSettings)
-      return groupsInSettings;
-    else
-      return [...new Set(this[isFiltered ? 'filteredItems' : 'items'].map(item => item.group || 'Default'))];
+  getGroups = function() {
+    const groups = (this.isUserGroups ? userStore.user?.[this.groupField] : clientStore.client?.settings?.[this.groupField]) || [];
+    const itemGroups = [...new Set(this.filteredItems.map(item => item.group || 'Default'))];
+    return [...new Set([...groups, ...itemGroups])];
   }
 
   saveGroups = async function(groups) {
-    clientStore.client.settings[this.groupField] = groups;
     try {
-      await clientStore.save(clientStore.client);
+      if (this.isUserGroups) {
+        userStore.user[this.groupField] = groups;
+        await userStore.save(userStore.user);
+      } else {
+        clientStore.client.settings[this.groupField] = groups;
+        await clientStore.save(clientStore.client);
+      }
     } catch (error) {
       console.error('Error saving groups:', error);
       throw error;
@@ -195,18 +191,17 @@ class GroupedListStore {
     groups.forEach(group => {
       const groupItems = items.filter(item => !item.deleted && (item.group || 'Default') === group);
       
-      // Ensure each item has an order property
       groupItems.forEach((item, index) => {
         if (typeof item.order !== 'number') {
           item.order = index;
         }
       });
-      
-      // Sort by order property
-      grouped[group] = groupItems.sort((a, b) => a.order - b.order);
+
+      if (groupItems.length > 0 || this.isSettingRoute)
+        grouped[group] = groupItems.sort((a, b) => a.order - b.order);
     });
 
-    if (this.isAdminMode) {
+    if (this.isSettingRoute) {
       const deletedItems = items.filter(item => item.deleted);
       if (deletedItems.length > 0)
         grouped[t('series.groups.recycle')] = deletedItems;
@@ -305,7 +300,7 @@ class GroupedListStore {
   };
 
   isGroupEditable = function(group) {
-    return this.isAdminMode && (!this.isGroupDanger || !this.isGroupDanger(group));
+    return this.isSettingRoute && (!this.isGroupDanger || !this.isGroupDanger(group));
   }
 
   // Reset all state

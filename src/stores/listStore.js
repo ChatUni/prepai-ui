@@ -10,7 +10,7 @@ class ListStore {
   get filteredItems() {
     let filtered = this.items;
 
-    if (!this.isAdminMode) {
+    if (!this.isSettingRoute) {
       filtered = filtered.filter(item => !item.hidden && !item.deleted);
     }
 
@@ -64,7 +64,7 @@ class ListStore {
   }
 
   gotoDetail = function(item, navigate) {
-    if (this.isUserAssistantMode || !this.isAdminMode) {
+    if (this.isUserAssistantRoute || !this.isSettingRoute) {
       if (this.requireMembership && !userStore.isMember) {
         paymentManagerStore.setShowMembershipDialog(true);
         return;

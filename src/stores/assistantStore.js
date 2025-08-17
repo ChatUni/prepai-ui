@@ -21,7 +21,11 @@ class AssistantStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('menu.admin_page.manage_assistant') : t('menu.ai');
+    return this.isUserAssistantRoute
+      ? t('menu.account_page.my_assistants')
+      : this.isSettingRoute
+        ? t('menu.admin_page.manage_assistant')
+        : t('menu.ai');
   }
 
   get detailRoute() {
@@ -34,7 +38,7 @@ class AssistantStore {
 
   get filteringFields() {
     return [
-      item => this.isUserMode ? this.isUserAssistant(item) : !this.isUserAssistant(item)
+      item => this.isUserRoute ? this.isUserAssistant(item) : !this.isUserAssistant(item)
     ];
   }
 
@@ -47,7 +51,7 @@ class AssistantStore {
       model: '',
       group: ''
     };
-    if (this.isUserAssistantMode) {
+    if (this.isUserAssistantRoute) {
       item.user_id = userStore.user.id;
       item.type = 'user';
     } else {
@@ -67,9 +71,10 @@ class AssistantStore {
     return {
       name: 1,
       greeting: 1,
-      //prompt: 1,
+      prompt: 1,
       image: 1,
-      //model: 1,
+      model: 1,
+      group: 1,
     }
   }
 
@@ -85,6 +90,10 @@ class AssistantStore {
     return this.avatars;
   }
 
+  get isUserGroups() {
+    return this.isUserAssistantRoute;
+  }
+
   init = async function() {
     await this.fetchAvatars();
   }
@@ -96,7 +105,10 @@ class AssistantStore {
 
   fetchItemList = async function() {
     const assistants = await get('assistants', { clientId: clientStore.client.id, userId: userStore.user.id })
-    return assistants.map(a => this.isPlatformAssistant(a) ? { ...a, ...this.getOverrideItem(a) } : a)
+    return assistants.map(a => this.isPlatformAssistant(a)
+      ? { ...a, ...this.getOverrideItem(a) }
+      : { ...a, shelf: !this.isUserAssistant(a) }
+    )
   };
   
   getOverrideItem = function(item) {
@@ -105,13 +117,26 @@ class AssistantStore {
 
   save = async function(item) {
     if (this.isPlatformAssistant(item)) {
-      const pa = { id: item.id, type: item.type, name: item.name, desc: item.desc, greeting: item.greeting, group: item.group, image: item.image }
+      const pa = {
+        id: item.id,
+        type: item.type,
+        name: item.name,
+        desc: item.desc,
+        greeting: item.greeting,
+        group: item.group,
+        image: item.image,
+        hidden: item.hidden,
+      }
       const o = this.getOverrideItem(pa)
       if (o) clientStore.client.settings.assistants.remove(o)
       clientStore.client.settings.assistants.push(pa)
       await clientStore.save()
       return item
     } else {
+      item.client_id = clientStore.client.id;
+      if (item.shelf) delete item.user_id;
+      else item.user_id = userStore.user.id;
+      item.type = item.shelf ? 'client' : 'user';
       return await save('assistants', item);
     }
   }

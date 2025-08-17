@@ -108,10 +108,14 @@ const SeriesCard = observer(({
         <CardEditActions
           item={series}
           store={store}
-          hideDelete={item => item.deleted}
+          hideEdit={x => x.deleted}
+          hideVisibility={x => x.deleted}
+          hideDrag={x => x.deleted}
+          hideDelete={() => true}
+          hideRecycle={() => false}
         />
       )}
-    </DndOrderContainer>      
+    </DndOrderContainer>
   );
 });
 

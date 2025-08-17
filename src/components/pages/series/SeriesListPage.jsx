@@ -14,8 +14,8 @@ const SeriesListPage = observer(() => (
     {/* {routeStore.isSeriesHomeMode && <ToolsNav />} */}
     <ListPage
       store={store}
-      bannerImages={store.isPaidMode ? [] : clientStore.client.settings?.banners}
-      isGrouped={!store.isPaidMode}
+      bannerImages={store.isPaidRoute ? [] : clientStore.client.settings?.banners}
+      isGrouped={!store.isPaidRoute}
       renderEdit={(step) => <EditSeriesPage step={step} />}
       renderItem={(series, index, group, { moveItem, isEditMode }, isFirstCard) => (
         <SeriesCard
@@ -45,13 +45,13 @@ const SeriesListPage = observer(() => (
           label: t('instructor.createNew'),
           icon: 'FiPlus',
           color: 'amber',
-          isVisible: x => x.isAdminMode,
+          isVisible: x => x.isSettingRoute,
           onClick: () => instructorStore.openAddDialog(),
         },
       ]}
     />
     <PaymentManager />
-    <InstructorListPage />
+    {store.isSettingRoute && <InstructorListPage showDialogsOnly={true} />}
   </>
 ));
 

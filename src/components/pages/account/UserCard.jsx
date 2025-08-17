@@ -11,7 +11,7 @@ const UserCard = observer(({ user, isProfile }) => {
   return (
   <div className="relative w-full">
     {/* Role Toggle - Top Right */}
-    {!isProfile && store.isAdminMode && (
+    {!isProfile && store.isSettingRoute && (
       <div className="absolute top-0 right-0 flex items-center gap-2">
         <span className="text-xs text-gray-600">
           {t('user.subAdmin')}
@@ -62,8 +62,8 @@ const UserCard = observer(({ user, isProfile }) => {
         store={store}
         item={user}
         hideDelete={() => true}
-        hideDrag={true}
-        hideVisibility={true}
+        hideDrag={() => true}
+        hideVisibility={() => true}
       />
     )}
   </div>

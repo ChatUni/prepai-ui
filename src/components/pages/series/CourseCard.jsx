@@ -44,7 +44,7 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
                 {t('course.isFree')}
               </span>
             ) :
-            !seriesStore.isAdminMode && (
+            !seriesStore.isSettingRoute && (
               <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
                 {t('course.purchaseToLearn')}
               </span>

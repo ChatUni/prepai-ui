@@ -29,21 +29,18 @@ const EditBannerPage = observer(() => {
 
   const handleSave = async () => {
     if (clientStore.hasEmptyBanners) {
-      clientStore.error = t('series.banners.emptyBannersError');
-      clientStore.showErrorDialog();
+      clientStore.openErrorDialog(t('series.banners.emptyBannersError'));
       return;
     }
     await clientStore.saveChanges();
     if (!clientStore.error) {
       navigate(-1);
-    } else {
-      clientStore.showErrorDialog();
     }
   };
 
   const handleCancel = useCallback(() => {
     if (clientStore.hasUnsavedChanges) {
-      clientStore.showConfirmDialog();
+      clientStore.openConfirmDialog('cancelEdit');
     } else {
       clientStore.cancelEditing();
       navigate(-1);
@@ -110,24 +107,6 @@ const EditBannerPage = observer(() => {
           {t('common.save')}
         </button>
       </div>
-
-      <Dialog
-        isOpen={clientStore.isErrorDialogOpen}
-        onClose={() => clientStore.hideErrorDialog()}
-        title={t('common.error')}
-      >
-        <div className="text-red-600">{clientStore.formattedError}</div>
-      </Dialog>
-
-      <Dialog
-        isOpen={clientStore.isConfirmDialogOpen}
-        onClose={() => clientStore.hideConfirmDialog()}
-        onConfirm={handleConfirmCancel}
-        title={t('common.confirm')}
-        isConfirm={true}
-      >
-        <div>{t('series.banners.confirmCancel')}</div>
-      </Dialog>
     </div>
   );
 });

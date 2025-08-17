@@ -53,15 +53,18 @@
   },
   "user": {
     "createNew": "创建新用户",
-    "hide": "隐藏用户",
-    "confirmHide": "确定要隐藏「{name}」用户吗？",
-    "confirmDelete": "确定要删除「{name}」用户吗？",
-    "confirmRestore": "确定要恢复「{name}」用户吗？",
+    "hidden": "隐藏用户",
+    "not_hidden": "显示用户",
+    "confirm_hidden": "确定要隐藏「{name}」用户吗？",
+    "confirm_not_hidden": "确定要显示「{name}」用户吗？",
+    "confirm_deleted": "确定要删除「{name}」用户吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」用户吗？",
+    "deleted": "删除用户",
+    "not_deleted": "恢复用户",
     "edit": {
       "title": "编辑用户",
       "editTitle": "编辑用户",
-      "delete": "删除用户",
-      "restore": "恢复用户"
+      "delete": "删除用户"
     },
     "name": "姓名",
     "avatar": "头像",
@@ -219,16 +222,20 @@
     "retry": "重试",
     "notFound": "未找到讲师",
     "chat": "实时聊天",
-    "hide": "隐藏讲师",
-    "confirmHide": "确定要隐藏「{name}」讲师吗？",
-    "confirmDelete": "确定要删除「{name}」讲师吗？",
-    "confirmRestore": "确定要恢复「{name}」讲师吗？",
+    "hidden": "隐藏讲师",
+    "not_hidden": "显示讲师",
+    "confirm_hidden": "确定要隐藏「{name}」讲师吗？",
+    "confirm_not_hidden": "确定要显示「{name}」讲师吗？",
+    "confirm_deleted": "确定要删除「{name}」讲师吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」讲师吗？",
     "add": {
       "button": "添加讲师",
       "title": "添加新讲师",
       "creating": "创建中...",
       "create": "创建讲师"
     },
+    "deleted": "删除讲师",
+    "not_deleted": "恢复讲师",
     "edit": {
       "button": "编辑",
       "title": "编辑讲师",
@@ -239,20 +246,19 @@
       "saving": "保存中...",
       "save": "保存讲师",
       "uploadError": "上传图片失败",
-      "delete": "删除讲师",
-      "restore": "恢复讲师"
+      "delete": "删除讲师"
     }
   },
   "assistant": {
     "desc": "描述",
     "description": "从我们的AI助手中选择，帮助您完成各种任务。每个助手都专门针对不同类型的问题和对话进行了优化。",
     "noItems": "暂无可用助手",
-    "delete": "删除助手",
+    "deleted": "删除助手",
+    "not_deleted": "恢复助手",
     "edit": {
       "title": "编辑助手",
       "editTitle": "编辑助手",
-      "delete": "删除助手",
-      "restore": "恢复助手"
+      "delete": "删除助手"
     },
     "createNew": "创建新助手",
     "name": "名称",
@@ -263,18 +269,18 @@
     "group": "分组",
     "selectGroup": "选择分组",
     "image": "图片",
-    "show": "显示助手",
-    "hide": "隐藏助手",
+    "not_hidden": "显示助手",
+    "hidden": "隐藏助手",
     "search": {
       "placeholder": "按名称或描述搜索助手..."
     },
     "add": {
       "title": "添加新助手"
     },
-    "confirmDelete": "确定要删除「{name}」助手吗？",
-    "confirmRestore": "确定要恢复「{name}」助手吗？",
-    "confirmShow": "确定要显示「{name}」助手吗？",
-    "confirmHide": "确定要隐藏「{name}」助手吗？",
+    "confirm_deleted": "确定要删除「{name}」助手吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」助手吗？",
+    "confirm_not_hidden": "确定要显示「{name}」助手吗？",
+    "confirm_hidden": "确定要隐藏「{name}」助手吗？",
     "groups": {
       "title": "助手分组",
       "noGroup": "无分组",
@@ -287,7 +293,11 @@
       "message": "您需要会员资格才能访问此助手。您想购买会员资格吗？",
       "purchase": "购买",
       "cancel": "取消"
-    }
+    },
+    "shelf": "上架助手",
+    "confirm_shelf": "确定要上架「{name}」助手吗？",
+    "not_shelf": "下架助手",
+    "confirm_not_shelf": "确定要下架「{name}」助手吗？"
   },
   "course": {
     "instructor_id": "讲师",
@@ -299,11 +309,12 @@
     "isFree": "免费",
     "purchaseToLearn": "购买后学习",
     "createNew": "添加章节",
+    "deleted": "删除章节",
+    "not_deleted": "恢复章节",
     "edit": {
       "title": "编辑章节",
       "editTitle": "编辑章节",
-      "delete": "删除章节",
-      "restore": "恢复章节"
+      "delete": "删除章节"
     },
     "settings": "课程设置",
     "management": "课程管理",
@@ -341,12 +352,12 @@
     "pptFormat": "PPT",
     "moreKeywords": "+{count}",
     "noItems": "暂无可用课程",
-    "show": "显示章节",
-    "hide": "隐藏章节",
-    "confirmShow": "确定要显示「{name}」章节吗？",
-    "confirmDelete": "确定要删除「{name}」章节吗？",
-    "confirmRestore": "确定要恢复「{name}」章节吗？",
-    "confirmHide": "确定要隐藏「{name}」章节吗？"
+    "not_hidden": "显示章节",
+    "hidden": "隐藏章节",
+    "confirm_not_hidden": "确定要显示「{name}」章节吗？",
+    "confirm_deleted": "确定要删除「{name}」章节吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」章节吗？",
+    "confirm_hidden": "确定要隐藏「{name}」章节吗？"
   },
   "series": {
     "createNew": "创建新课程",
@@ -372,16 +383,17 @@
       "allCategories": "所有分类",
       "placeholder": "搜索课程..."
     },
-    "show": "上架课程",
-    "hide": "下架课程",
-    "confirmShow": "确定要上架「{name}」课程吗？",
-    "confirmHide": "确定要下架「{name}」课程吗？",
-    "confirmDelete": "确定要将「{name}」放入回收站吗？",
-    "confirmRestore": "确定要恢复「{name}」课程吗？",
+    "not_hidden": "显示课程",
+    "hidden": "隐藏课程",
+    "confirm_not_hidden": "确定要显示「{name}」课程吗？",
+    "confirm_hidden": "确定要隐藏「{name}」课程吗？",
+    "confirm_deleted": "确定要将「{name}」放入回收站吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」课程吗？",
+    "deleted": "删除课程",
+    "not_deleted": "恢复课程",
     "edit": {
       "title": "编辑课程",
       "delete": "删除课程",
-      "restore": "恢复课程",
       "loading": "加载中...",
       "editTitle": "编辑课程",
       "createTitle": "创建新课程",
@@ -504,13 +516,13 @@
       "delete": "删除分组",
       "confirmDelete": "确定要删除此分组吗？"
     },
+    "not_deleted": "恢复考试",
     "edit": {
       "title": "编辑考试",
-      "delete": "删除考试",
-      "restore": "恢复考试",
-      "editTitle": "编辑考试"
+      "editTitle": "编辑考试",
+      "delete": "删除考试"
     },
-    "confirmRestore": "确定要恢复「{name}」考试吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」考试吗？",
     "name": "考试名称",
     "group": "分组",
     "selectGroup": "选择分组",
@@ -518,12 +530,12 @@
     "cover": "封面图片",
     "desc": "描述",
     "upload_file": "上传试题Word文档",
-    "delete": "删除考试",
-    "hide": "隐藏考试",
-    "show": "显示考试",
-    "confirmDelete": "确定要删除「{name}」考试吗？",
-    "confirmHide": "确定要隐藏「{name}」考试吗？",
-    "confirmShow": "确定要显示「{name}」考试吗？",
+    "deleted": "删除考试",
+    "hidden": "隐藏考试",
+    "not_hidden": "显示考试",
+    "confirm_deleted": "确定要删除「{name}」考试吗？",
+    "confirm_hidden": "确定要隐藏「{name}」考试吗？",
+    "confirm_not_hidden": "确定要显示「{name}」考试吗？",
     "noItems": "暂无可用考试"
   },
   "tools": {
@@ -556,17 +568,19 @@
       "placeholder": "搜索会员名称..."
     },
     "createNew": "创建会员",
+    "not_deleted": "恢复会员",
     "edit": {
       "title": "编辑会员",
       "editTitle": "编辑会员",
-      "delete": "删除会员",
-      "restore": "恢复会员"
+      "delete": "删除会员"
     },
-    "delete": "删除",
-    "hide": "隐藏会员",
-    "confirmDelete": "确定要删除「{name}」会员吗？",
-    "confirmHide": "确定要隐藏「{name}」会员吗？",
-    "confirmRestore": "确定要恢复「{name}」会员吗？",
+    "deleted": "删除",
+    "hidden": "隐藏会员",
+    "not_hidden": "显示会员",
+    "confirm_deleted": "确定要删除「{name}」会员吗？",
+    "confirm_hidden": "确定要隐藏「{name}」会员吗？",
+    "confirm_not_hidden": "确定要显示「{name}」会员吗？",
+    "confirm_not_deleted": "确定要恢复「{name}」会员吗？",
     "noMemberships": "暂无会员设置",
     "addMembership": "添加会员",
     "managePlans": "管理方案",

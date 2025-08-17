@@ -53,15 +53,18 @@
   },
   "user": {
     "createNew": "新しいユーザーを作成",
-    "hide": "ユーザーを非表示",
-    "confirmHide": "「{name}」ユーザーを非表示にしてもよろしいですか？",
-    "confirmDelete": "「{name}」ユーザーを削除してもよろしいですか？",
-    "confirmRestore": "「{name}」ユーザーを復元してもよろしいですか？",
+    "hidden": "ユーザーを非表示",
+    "not_hidden": "ユーザーを表示",
+    "confirm_hidden": "「{name}」ユーザーを非表示にしてもよろしいですか？",
+    "confirm_not_hidden": "「{name}」ユーザーを表示してもよろしいですか？",
+    "confirm_deleted": "「{name}」ユーザーを削除してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」ユーザーを復元してもよろしいですか？",
+    "deleted": "ユーザーを削除",
+    "not_deleted": "ユーザーを復元",
     "edit": {
       "title": "ユーザーを編集",
       "editTitle": "ユーザーを編集",
-      "delete": "ユーザーを削除",
-      "restore": "ユーザーを復元"
+      "delete": "ユーザーを削除"
     },
     "name": "名前",
     "avatar": "アバター",
@@ -219,16 +222,20 @@
     "retry": "再試行",
     "notFound": "講師が見つかりません",
     "chat": "リアルタイムチャット",
-    "hide": "講師を非表示",
-    "confirmHide": "「{name}」講師を非表示にしてもよろしいですか？",
-    "confirmDelete": "「{name}」講師を削除してもよろしいですか？",
-    "confirmRestore": "「{name}」講師を復元してもよろしいですか？",
+    "hidden": "講師を非表示",
+    "not_hidden": "講師を表示",
+    "confirm_hidden": "「{name}」講師を非表示にしてもよろしいですか？",
+    "confirm_not_hidden": "「{name}」講師を表示してもよろしいですか？",
+    "confirm_deleted": "「{name}」講師を削除してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」講師を復元してもよろしいですか？",
     "add": {
       "button": "講師を追加",
       "title": "新規講師を追加",
       "creating": "作成中...",
       "create": "講師を作成"
     },
+    "deleted": "講師を削除",
+    "not_deleted": "講師を復元",
     "edit": {
       "button": "編集",
       "title": "講師を編集",
@@ -239,20 +246,19 @@
       "saving": "保存中...",
       "save": "講師を保存",
       "uploadError": "画像のアップロードに失敗しました",
-      "delete": "講師を削除",
-      "restore": "講師を復元"
+      "delete": "講師を削除"
     }
   },
   "assistant": {
     "desc": "説明",
     "description": "様々なタスクをサポートするAIアシスタントからお選びください。各アシスタントは異なる種類の質問や会話に特化しています。",
     "noItems": "利用可能なアシスタントがありません",
-    "delete": "アシスタントを削除",
+    "deleted": "アシスタントを削除",
+    "not_deleted": "アシスタントを復元",
     "edit": {
       "title": "アシスタントを編集",
       "editTitle": "アシスタントを編集",
-      "delete": "アシスタントを削除",
-      "restore": "アシスタントを復元"
+      "delete": "アシスタントを削除"
     },
     "createNew": "新しいアシスタントを作成",
     "name": "名前",
@@ -263,18 +269,18 @@
     "group": "グループ",
     "selectGroup": "グループを選択",
     "image": "画像",
-    "show": "アシスタントを表示",
-    "hide": "アシスタントを非表示",
+    "not_hidden": "アシスタントを表示",
+    "hidden": "アシスタントを非表示",
     "search": {
       "placeholder": "名前や説明でアシスタントを検索..."
     },
     "add": {
       "title": "新規アシスタントを追加"
     },
-    "confirmDelete": "「{name}」アシスタントを削除してもよろしいですか？",
-    "confirmRestore": "「{name}」アシスタントを復元してもよろしいですか？",
-    "confirmShow": "「{name}」アシスタントを表示してもよろしいですか？",
-    "confirmHide": "「{name}」アシスタントを非表示にしてもよろしいですか？",
+    "confirm_deleted": "「{name}」アシスタントを削除してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」アシスタントを復元してもよろしいですか？",
+    "confirm_not_hidden": "「{name}」アシスタントを表示してもよろしいですか？",
+    "confirm_hidden": "「{name}」アシスタントを非表示にしてもよろしいですか？",
     "groups": {
       "title": "アシスタントグループ",
       "noGroup": "グループなし",
@@ -287,7 +293,11 @@
       "message": "このアシスタントにアクセスするにはメンバーシップが必要です。メンバーシップを購入しますか？",
       "purchase": "購入",
       "cancel": "キャンセル"
-    }
+    },
+    "shelf": "アシスタントを棚上げ",
+    "confirm_shelf": "このアシスタントを棚上げしてもよろしいですか？",
+    "not_shelf": "アシスタントを棚から戻す",
+    "confirm_not_shelf": "このアシスタントを棚から戻してもよろしいですか？"
   },
   "course": {
     "instructor_id": "講師ID",
@@ -299,11 +309,12 @@
     "isFree": "無料",
     "purchaseToLearn": "購入後学習",
     "createNew": "新しいコースを作成",
+    "deleted": "コースを削除",
+    "not_deleted": "コースを復元",
     "edit": {
       "title": "コースを編集",
       "editTitle": "コースを編集",
-      "delete": "コースを削除",
-      "restore": "コースを復元"
+      "delete": "コースを削除"
     },
     "settings": "コース設定",
     "management": "コース管理",
@@ -341,12 +352,12 @@
     "pptFormat": "PPT",
     "moreKeywords": "+{count}",
     "noItems": "利用可能なコースがありません",
-    "show": "コースを表示",
-    "hide": "コースを非表示",
-    "confirmShow": "「{name}」コースを表示してもよろしいですか？",
-    "confirmDelete": "「{name}」コースを削除してもよろしいですか？",
-    "confirmRestore": "「{name}」コースを復元してもよろしいですか？",
-    "confirmHide": "「{name}」コースを非表示にしてもよろしいですか？"
+    "not_hidden": "コースを表示",
+    "hidden": "コースを非表示",
+    "confirm_not_hidden": "「{name}」コースを表示してもよろしいですか？",
+    "confirm_deleted": "「{name}」コースを削除してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」コースを復元してもよろしいですか？",
+    "confirm_hidden": "「{name}」コースを非表示にしてもよろしいですか？"
   },
   "series": {
     "createNew": "新しいシリーズを作成",
@@ -372,16 +383,17 @@
       "allCategories": "全てのカテゴリー",
       "placeholder": "シリーズを検索..."
     },
-    "show": "シリーズを表示",
-    "hide": "シリーズを非表示",
-    "confirmShow": "「{name}」シリーズを表示しますか？",
-    "confirmHide": "「{name}」シリーズを非表示にしますか？",
-    "confirmDelete": "「{name}」シリーズを削除してもよろしいですか？",
-    "confirmRestore": "「{name}」シリーズを復元してもよろしいですか？",
+    "not_hidden": "シリーズを表示",
+    "hidden": "シリーズを非表示",
+    "confirm_not_hidden": "「{name}」シリーズを表示しますか？",
+    "confirm_hidden": "「{name}」シリーズを非表示にしますか？",
+    "confirm_deleted": "「{name}」シリーズを削除してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」シリーズを復元してもよろしいですか？",
+    "deleted": "シリーズを削除",
+    "not_deleted": "シリーズを復元",
     "edit": {
       "title": "シリーズを編集",
-      "delete": "シリーズを削除",
-      "restore": "シリーズを復元"
+      "delete": "シリーズを削除"
     },
     "aboutThisSeries": "このシリーズについて",
     "courseList": "コース一覧",
@@ -505,13 +517,13 @@
       "delete": "グループを削除",
       "confirmDelete": "このグループを削除してもよろしいですか？"
     },
+    "not_deleted": "試験を復元",
     "edit": {
       "title": "試験を編集",
-      "delete": "試験を削除",
-      "restore": "試験を復元",
-      "editTitle": "試験を編集"
+      "editTitle": "試験を編集",
+      "delete": "試験を削除"
     },
-    "confirmRestore": "「{name}」試験を復元してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」試験を復元してもよろしいですか？",
     "name": "試験名",
     "group": "グループ",
     "selectGroup": "グループを選択",
@@ -519,12 +531,12 @@
     "cover": "カバー画像",
     "desc": "説明",
     "upload_file": "ファイルをアップロード",
-    "delete": "試験を削除",
-    "hide": "試験を非表示",
-    "show": "試験を表示",
-    "confirmDelete": "「{name}」試験を削除してもよろしいですか？",
-    "confirmHide": "「{name}」試験を非表示にしてもよろしいですか？",
-    "confirmShow": "「{name}」試験を表示してもよろしいですか？",
+    "deleted": "試験を削除",
+    "hidden": "試験を非表示",
+    "not_hidden": "試験を表示",
+    "confirm_deleted": "「{name}」試験を削除してもよろしいですか？",
+    "confirm_hidden": "「{name}」試験を非表示にしてもよろしいですか？",
+    "confirm_not_hidden": "「{name}」試験を表示してもよろしいですか？",
     "noItems": "利用可能な試験がありません"
   },
   "tools": {
@@ -557,17 +569,19 @@
       "placeholder": "メンバーシップ名で検索..."
     },
     "createNew": "新しいメンバーシップを作成",
+    "not_deleted": "メンバーシップを復元",
     "edit": {
       "title": "メンバーシップを編集",
       "editTitle": "メンバーシップを編集",
-      "delete": "メンバーシップを削除",
-      "restore": "メンバーシップを復元"
+      "delete": "メンバーシップを削除"
     },
-    "delete": "削除",
-    "hide": "メンバーシップを非表示",
-    "confirmDelete": "「{name}」メンバーシップを削除してもよろしいですか？",
-    "confirmHide": "「{name}」メンバーシップを非表示にしてもよろしいですか？",
-    "confirmRestore": "「{name}」メンバーシップを復元してもよろしいですか？",
+    "deleted": "削除",
+    "hidden": "メンバーシップを非表示",
+    "not_hidden": "メンバーシップを表示",
+    "confirm_deleted": "「{name}」メンバーシップを削除してもよろしいですか？",
+    "confirm_hidden": "「{name}」メンバーシップを非表示にしてもよろしいですか？",
+    "confirm_not_hidden": "「{name}」メンバーシップを表示してもよろしいですか？",
+    "confirm_not_deleted": "「{name}」メンバーシップを復元してもよろしいですか？",
     "noMemberships": "メンバーシップが設定されていません",
     "addMembership": "メンバーシップを追加",
     "managePlans": "プランを管理",

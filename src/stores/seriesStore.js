@@ -21,7 +21,7 @@ class SeriesStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('menu.admin_page.course_settings') : '';
+    return this.isSettingRoute ? t('menu.admin_page.course_settings') : '';
   }
 
   get detailRoute() {
@@ -36,7 +36,7 @@ class SeriesStore {
     return [
       'category',
       item => !this.selectedInstructorId || this.getSeriesInstructors(item).some(x => x.id === +this.selectedInstructorId),
-      item => this.isAdminMode || !this.isPaidMode || this.isPaid(item.id)
+      item => this.isSettingRoute || !this.isPaidRoute || this.isPaid(item.id)
     ];
   }
 

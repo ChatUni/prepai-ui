@@ -8,9 +8,7 @@ class EditingStore {
   isPageMode = false;
 
   showEditDialog = false;
-  showDeleteDialog = false;
-  showRestoreDialog = false;
-  showVisibilityDialog = false;
+  toggleConfirmField = '';
 
   get yesNoOptions() {
     return [
@@ -38,9 +36,7 @@ class EditingStore {
     this.isEditMode = false;
     this.isPageMode = false;
     this.showEditDialog = false;
-    this.showDeleteDialog = false;
-    this.showRestoreDialog = false;
-    this.showVisibilityDialog = false;
+    this.toggleConfirmField = '';
   };
 
   initPageEditing = function(item) {
@@ -76,31 +72,21 @@ class EditingStore {
 
   openDeleteDialog = function(item) {
     this.editingItem = item;
-    this.showDeleteDialog = true;
+    this.openConfirmDialog('deleted');
   };
 
   closeDeleteDialog = function() {
-    this.showDeleteDialog = false;
+    this.closeConfirmDialog();
     this.editingItem = {};
   };
 
-  openRestoreDialog = function(item) {
+  openToggleConfirmDialog = function(item, field) {
     this.editingItem = item;
-    this.showRestoreDialog = true;
+    this.toggleConfirmField = field;
   };
 
-  closeRestoreDialog = function() {
-    this.showRestoreDialog = false;
-    this.editingItem = {};
-  };
-
-  openVisibilityDialog = function(item) {
-    this.editingItem = item;
-    this.showVisibilityDialog = true;
-  };
-
-  closeVisibilityDialog = function() {
-    this.showVisibilityDialog = false;
+  closeToggleConfirmDialog = function() {
+    this.toggleConfirmField = '';
     this.editingItem = {};
   };
 
@@ -158,7 +144,7 @@ class EditingStore {
     dirty && await this.save(item);
   }
   
-  confirmDelete = async function() {
+  confirmDeleted = async function() {
     if (!this.editingItem) return;
     try {
       await this.remove(this.editingItem.id);
@@ -171,18 +157,7 @@ class EditingStore {
     }
   };
 
-  confirmRestore = async function() {
-    if (!this.editingItem) return;
-    try {
-      await this.toggleField('deleted');
-    } catch (e) {
-      this.openErrorDialog('Error restoring item');
-    } finally {
-      this.closeRestoreDialog();
-    }
-  };
-
-  toggleField = async function(field) {
+  confirmToggle = async function(field) {
     if (!this.editingItem) return;
     this.editingItem[field] = !this.editingItem[field];
     try {
@@ -190,16 +165,8 @@ class EditingStore {
     } catch (e) {
       this.openErrorDialog('Error toggle field');
     } finally {
-      this.closeVisibilityDialog();
+      this.closeToggleConfirmDialog();
     }
-  };
-
-  confirmToggleDelete = async function() {
-    await this.toggleField('deleted');
-  };
-
-  confirmToggleVisibility = async function() {
-    await this.toggleField('hidden');
   };
 }
 

@@ -11,10 +11,6 @@ import EditingStore from './editingStore';
 
 class ClientStore {
   client = {};
-  loading = false;
-  error = null;
-  isErrorDialogOpen = false;
-  isConfirmDialogOpen = false;
   previewUrls = [];
   originalBanners = [];
   // Track changes as {type: 'add'|'edit'|'delete', data: File|string, index?: number, oldUrl?: string}
@@ -154,7 +150,7 @@ class ClientStore {
       runInAction(() => {
         this.error = error.message;
         this.loading = false;
-        this.showErrorDialog();
+        this.openErrorDialog();
       });
     }
   }
@@ -192,7 +188,7 @@ class ClientStore {
   //     runInAction(() => {
   //       this.error = error.message;
   //       this.loading = false;
-  //       this.showErrorDialog();
+  //       this.openErrorDialog();
   //     });
   //     throw error;
   //   }
@@ -265,7 +261,7 @@ class ClientStore {
       runInAction(() => {
         this.error = error.message;
         this.loading = false;
-        this.showErrorDialog();
+        this.openErrorDialog();
       });
     }
   }
@@ -296,23 +292,6 @@ class ClientStore {
 
     // Default error message
     return lang.t('common.unexpectedError');
-  }
-
-  showErrorDialog = function() {
-    this.isErrorDialogOpen = true;
-  }
-
-  hideErrorDialog = function() {
-    this.isErrorDialogOpen = false;
-    this.error = null;
-  }
-
-  showConfirmDialog = function() {
-    this.isConfirmDialogOpen = true;
-  }
-
-  hideConfirmDialog = function() {
-    this.isConfirmDialogOpen = false;
   }
 }
 

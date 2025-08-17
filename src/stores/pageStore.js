@@ -2,23 +2,24 @@ import routeStore from './routeStore';
 
 class PageStore {
   loading = false;
-  error = null;
-  isErrorDialogOpen = false;
+  error = '';
+  confirmType = '';
+  info = '';
 
-  get isAdminMode() {
+  get isSettingRoute() {
     const isSetting = /\/settings$|\/.*-setting$/.test(routeStore.currentPath);
-    return isSetting || this.isUserAssistantMode;
+    return isSetting || this.isUserAssistantRoute;
   }
 
-  get isUserMode() {
+  get isUserRoute() {
     return routeStore.currentPath.endsWith('/user');
   }
 
-  get isPaidMode() {
+  get isPaidRoute() {
     return routeStore.currentPath.endsWith('/paid');
   }
 
-  get isUserAssistantMode() {
+  get isUserAssistantRoute() {
     return routeStore.currentPath.endsWith('/assistants/user');
   }
 
@@ -28,13 +29,33 @@ class PageStore {
   }
 
   openErrorDialog = function(error) {
-    this.error = error || this.error;
-    this.isErrorDialogOpen = true;
+    this.error = error;
   };
 
   closeErrorDialog = function() {
-    this.isErrorDialogOpen = false;
     this.error = '';
+  };
+
+  openConfirmDialog = function(type) {
+    this.confirmType = type;
+  };
+
+  closeConfirmDialog = function() {
+    this.confirmType = '';
+  };
+
+  openInfoDialog = function(info) {
+    this.info = info;
+  };
+
+  closeInfoDialog = function() {
+    this.info = '';
+  };
+
+  confirm = async function(type) {
+    if (!type) return;
+    const func = `confirm${type[0].toUpperCase() + type.slice(1)}`;
+    this[func] && await this[func]();
   };
 }
 

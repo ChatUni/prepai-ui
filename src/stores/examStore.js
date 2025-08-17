@@ -13,7 +13,7 @@ class ExamStore {
   }
 
   get pageTitle() {
-    return this.isAdminMode ? t('menu.admin_page.exam_settings') : t('exam.title');
+    return this.isSettingRoute ? t('menu.admin_page.exam_settings') : t('exam.title');
   }
 
   get detailRoute() {
