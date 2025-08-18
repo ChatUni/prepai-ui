@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+import { FiBookOpen, FiMessageSquare, FiSettings, FiInfo, FiLogOut } from 'react-icons/fi';
 import userStore from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
 import DEFAULT_AVATAR from '../../../assets/avatar.png';
@@ -85,24 +86,34 @@ const AccountPage = observer(() => {
         <MenuListItem
           label={t('menu.account_page.my_series')}
           onClick={() => handleMenuItemClick('my_series')}
+          icon={FiBookOpen}
+          iconColor="text-green-500"
         />
         <MenuListItem
           label={t('menu.account_page.my_assistants')}
           onClick={() => handleMenuItemClick('my_assistants')}
+          icon={FiMessageSquare}
+          iconColor="text-purple-500"
         />
         {userStore.isAdmin &&
           <MenuListItem
             label={t('menu.account_page.admin_portal')}
             onClick={() => handleMenuItemClick('admin')}
+            icon={FiSettings}
+            iconColor="text-blue-500"
           />
         }
         <MenuListItem
           label={t('menu.account_page.about')}
           onClick={() => handleMenuItemClick('about')}
+          icon={FiInfo}
+          iconColor="text-gray-500"
         />
         <MenuListItem
           label={t('menu.account_page.logout')}
           onClick={() => handleMenuItemClick('logout')}
+          icon={FiLogOut}
+          iconColor="text-red-500"
         />
       </div>
       {/* <UserListPage showSearchBar={false} hideList={true} /> */}

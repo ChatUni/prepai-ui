@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+import {
+  FiSettings,
+  FiUsers,
+  FiBookOpen,
+  FiFileText,
+  FiMessageSquare,
+  FiDollarSign,
+  FiTrendingUp,
+  FiMonitor,
+  FiSliders,
+  FiImage,
+  FiArrowLeft
+} from 'react-icons/fi';
 import { t } from '../../../stores/languageStore';
 import MenuListItem from '../../ui/MenuListItem';
 import userStore from '../../../stores/userStore';
@@ -44,30 +57,44 @@ const AdminPage = observer(() => {
       <MenuListItem
         label={t('menu.admin_page.system_settings')}
         onClick={handleSystemSettingsClick}
+        icon={FiSettings}
+        iconColor="text-blue-500"
       />
       <MenuListItem
         label={t('menu.admin_page.sub_admin_settings')}
         onClick={() => navigate(routeMap['sub-admin-settings'])}
+        icon={FiUsers}
+        iconColor="text-purple-500"
       />
       <MenuListItem
         label={t('menu.admin_page.course_settings')}
         onClick={() => navigate(routeMap['course-settings'])}
+        icon={FiBookOpen}
+        iconColor="text-green-500"
       />
       <MenuListItem
         label={t('menu.admin_page.exam_settings')}
         onClick={() => navigate(routeMap['exam-settings'])}
+        icon={FiFileText}
+        iconColor="text-yellow-500"
       />
       <MenuListItem
         label={t('menu.admin_page.manage_assistant')}
         onClick={() => navigate(routeMap['manage-assistant'])}
+        icon={FiMessageSquare}
+        iconColor="text-purple-500"
       />
       <MenuListItem
         label={t('menu.admin_page.price_settings')}
         onClick={() => navigate(routeMap['price-settings'])}
+        icon={FiDollarSign}
+        iconColor="text-red-500"
       />
       <MenuListItem
         label={t('menu.admin_page.upgrade')}
         onClick={() => navigate(routeMap['upgrade'])}
+        icon={FiTrendingUp}
+        iconColor="text-cyan-500"
       />
     </>
   );
@@ -77,18 +104,26 @@ const AdminPage = observer(() => {
       <MenuListItem
         label={t('menu.admin_page.basic_settings')}
         onClick={() => navigate(routeMap['basic-settings'])}
+        icon={FiMonitor}
+        iconColor="text-blue-500"
       />
       <MenuListItem
         label={t('menu.admin_page.advanced_settings')}
         onClick={() => navigate(routeMap['advanced-settings'])}
+        icon={FiSliders}
+        iconColor="text-orange-500"
       />
       <MenuListItem
         label={t('menu.admin_page.banner_settings')}
         onClick={() => navigate(routeMap['banner-settings'])}
+        icon={FiImage}
+        iconColor="text-pink-500"
       />
       <MenuListItem
         label={t('menu.admin_page.back')}
         onClick={handleBackClick}
+        icon={FiArrowLeft}
+        iconColor="text-gray-500"
       />
     </>
   );

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'react';
-import { FiTrash2, FiImage } from 'react-icons/fi';
+import { FiImage, FiTrash2 } from 'react-icons/fi';
 import { t } from '../../stores/languageStore';
 import { getSignedUrl } from '../../utils/tosHelper';
 import ActionButton from './ActionButton';
