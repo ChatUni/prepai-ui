@@ -54,7 +54,7 @@ export const InfoDialog = observer(({ store }) => store && (
     isOpen={!!store.info}
     onClose={() => store.closeInfoDialog()}
   >
-    {store.info && t(`${store.name}.${store.info}`)}
+    {store.info}
   </Dialog>
 ));
 

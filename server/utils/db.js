@@ -167,8 +167,10 @@ const replace = async (doc, obj, id = 'id') => {
 
   if (id === 'id' && list.some(o => !o.id)) {
     const id1 = await maxId(doc);
-    const id = Math.max(...list.map(o => o.id || 0), id1) + 1;
-    list.filter(o => !o.id).forEach((o, i) => (o.id = id + i));
+    if (typeof id1 == 'number') {
+      const id = Math.max(...list.map(o => o.id || 0), id1) + 1;
+      list.filter(o => !o.id).forEach((o, i) => (o.id = id + i));
+    }
   }
 
   await Promise.all(

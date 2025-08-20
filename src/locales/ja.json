@@ -619,7 +619,8 @@
         "userInfo": "ユーザー情報",
         "registrationStatus": "登録状況",
         "registrationTime": "登録時間",
-        "registered": "登録済み"
+        "registered": "登録済み",
+        "notRegistered": "未登録"
       },
       "step3": {
         "title": "ステップ3：製品を選択",
@@ -677,7 +678,9 @@
     "phone": "電話番号",
     "email": "メールアドレス",
     "qrcode": "QRコード",
-    "allowFree1Day": "1日無料を許可"
+    "allowFree1Day": "1日無料を許可",
+    "hideSeries": "シリーズを非表示",
+    "hideExam": "試験を非表示"
   },
   "generic": {
     "listPage": {

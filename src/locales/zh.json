@@ -618,7 +618,8 @@
         "userInfo": "用户信息",
         "registrationStatus": "注册状态",
         "registrationTime": "注册时间",
-        "registered": "已注册"
+        "registered": "已注册",
+        "notRegistered": "未注册"
       },
       "step3": {
         "title": "选择产品",
@@ -676,7 +677,9 @@
     "phone": "电话",
     "email": "邮箱",
     "qrcode": "二维码",
-    "allowFree1Day": "新用户1天免费试用"
+    "allowFree1Day": "新用户1天免费试用",
+    "hideSeries": "隐藏好课模块",
+    "hideExam": "隐藏考测模块"
   },
   "generic": {
     "listPage": {

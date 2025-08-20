@@ -94,6 +94,10 @@ class AssistantStore {
     return this.isUserAssistantRoute;
   }
 
+  get canGotoDetail() {
+    return this.isUserAssistantRoute;
+  }
+
   init = async function() {
     await this.fetchAvatars();
   }

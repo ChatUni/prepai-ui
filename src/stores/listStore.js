@@ -64,25 +64,21 @@ class ListStore {
   }
 
   gotoDetail = function(item, navigate) {
-    if (this.isUserAssistantRoute || !this.isSettingRoute) {
+    if (this.canGotoDetail || !this.isSettingRoute) {
+
+      // for pages that require membership, assistant...
       if (this.requireMembership && !userStore.isMember) {
         paymentManagerStore.setShowMembershipDialog(true);
         return;
       }
       
-      // Check if this is a membership - show purchase dialog
-      if (this.name === 'membership') {
-        if (item.name.includes('试用') && userStore.isTrialUsed) {
-          this.openErrorDialog(t('membership.trialMembershipOnlyOnce'));
-          return;
-        } else
-          this.showMembershipPurchaseDialog(item);
-        return;
-      }
-      
-      // Default behavior - navigate to detail route
-      if (this.detailRoute) {
-        navigate(this.detailRoute.replace('{id}', item.id));
+      if (this.handleItemClick) {
+        this.handleItemClick(item);
+      } else { 
+        // Default behavior - navigate to detail route
+        if (this.detailRoute) {
+          navigate(this.detailRoute.replace('{id}', item.id));
+        }
       }
     }
   };

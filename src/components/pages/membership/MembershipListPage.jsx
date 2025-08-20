@@ -68,7 +68,7 @@ const MembershipListPage = observer(() => {
                   </div>
                   <div className="mb-2">
                     <span className="text-sm text-gray-600">{t('membership.purchaseConfirm.type')}:</span>
-                    <span className="ml-2 font-medium">{t(store.getTypeLabel(store.selectedMembership.type))}</span>
+                    <span className="ml-2 font-medium">{t(`membership.types.${store.selectedMembership.type}`)}</span>
                   </div>
                   <div className="mb-2">
                     <span className="text-sm text-gray-600">{t('membership.purchaseConfirm.price')}:</span>

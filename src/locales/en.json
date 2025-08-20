@@ -618,7 +618,8 @@
         "userInfo": "User Information",
         "registrationStatus": "Registration Status",
         "registrationTime": "Registration Time",
-        "registered": "Registered"
+        "registered": "Registered",
+        "notRegistered": "Not Registered"
       },
       "step3": {
         "title": "Step 3: Select Products",
@@ -676,7 +677,9 @@
     "phone": "Phone",
     "email": "Email",
     "qrcode": "QR Code",
-    "allowFree1Day": "Allow Free 1 Day"
+    "allowFree1Day": "Allow Free 1 Day",
+    "hideSeries": "Hide Series",
+    "hideExam": "Hide Exam"
   },
   "generic": {
     "listPage": {

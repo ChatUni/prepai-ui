@@ -11,7 +11,11 @@ const EditClientPage = observer(({ mode }) => (
   <Page store={store} editItem={store.client}>
     <PageTitle title={t(`menu.admin_page.${mode || 'basic'}_settings`)} />
     {mode === 'advanced' ? (
-      <FormRadio store={store} field="allowFree1Day" options={store.yesNoOptions} defaultValue={false} />
+      <>
+        <FormRadio store={store} field="allowFree1Day" options={store.yesNoOptions} defaultValue={false} />
+        <FormRadio store={store} field="hideSeries" options={store.yesNoOptions} defaultValue={false} />
+        <FormRadio store={store} field="hideExam" options={store.yesNoOptions} defaultValue={false} />
+      </>
     ) : (
       <>
         <FormInput store={store} field="name" />

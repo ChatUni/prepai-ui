@@ -54,7 +54,7 @@ const MembershipCard = observer(({
               {membership.name}
             </h3>
             <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-              {t(membershipStore.getTypeLabel(membership.type))}
+              {t(`membership.types.${membership.type}`)}
             </span>
           </div>
         </div>

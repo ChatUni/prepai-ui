@@ -21,15 +21,15 @@ const Upgrade = observer(() => {
       return;
     }
 
-    if (!membershipStore.selectedMembershipForUpgrade) {
+    if (!membershipStore.selectedMembership) {
       membershipStore.openErrorDialog(t('membership.upgrade.errors.noMembershipSelected'));
       return;
     }
 
     try {
       setUpgradeLoading(true);
-      await membershipStore.upgradeUsers(membershipStore.selectedMembershipForUpgrade.id);
-      membershipStore.openSuccessDialog(t('membership.upgrade.success.usersUpgraded'));
+      await membershipStore.upgradeUsers(membershipStore.selectedMembership.id);
+      membershipStore.openInfoDialog(t('membership.upgrade.success.usersUpgraded'));
     } catch (error) {
       membershipStore.openErrorDialog(t('membership.upgrade.errors.upgradeFailed'));
     } finally {
@@ -38,7 +38,7 @@ const Upgrade = observer(() => {
   };
 
   const handleMembershipSelect = (membership) => {
-    membershipStore.setSelectedMembershipForUpgrade(membership);
+    membershipStore.setSelectedMembership(membership);
   };
 
   return (
@@ -122,15 +122,15 @@ const Upgrade = observer(() => {
               </div> */}
               <div className="col-span-4">
                 <div className="font-medium text-gray-900">{userStore.getUserName(user)}</div>
-                <div className="text-sm text-gray-600">ID: {user.id}</div>
+                <div className="text-sm text-gray-600">{user.id ? `ID: ${user.id}` : `Phone: ${user.phone}`}</div>
               </div>
               <div className="col-span-4">
-                <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                  {t('membership.upgrade.step2.registered')}
+                <span className={`inline-block px-2 py-1 text-xs rounded-full ${user.id ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {t(`membership.upgrade.step2.${user.id ? 'registered' : 'notRegistered'}`)}
                 </span>
               </div>
               <div className="col-span-4 text-sm text-gray-600">
-                {user.created_at ? new Date(user.created_at).toLocaleDateString() : '7/22/2025'}
+                {user.id && user.date_created ? new Date(user.date_created).toLocaleDateString() : ''}
               </div>
             </div>
           );
@@ -165,7 +165,7 @@ const Upgrade = observer(() => {
       {membershipStore.selectedProductCategory === 'membership' && (
         <div className="grid grid-cols-1 gap-6">
           {membershipStore.items.map((membership) => {
-            const isSelected = membershipStore.selectedMembershipForUpgrade?.id === membership.id;
+            const isSelected = membershipStore.selectedMembership?.id === membership.id;
             return (
               <div
                 key={membership.id}
@@ -205,13 +205,13 @@ const Upgrade = observer(() => {
         <div className="max-w-6xl mx-auto">
           <Button
             onClick={handleUpgradeUsers}
-            disabled={upgradeLoading || !(membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembershipForUpgrade)}
+            disabled={upgradeLoading || !(membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)}
             className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-medium transition-colors"
           >
             {upgradeLoading
               ? t('common.loading')
-              : (membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembershipForUpgrade)
-                ? `为${membershipStore.selectedUsers.length}位用户开通${membershipStore.selectedMembershipForUpgrade.name}`
+              : (membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)
+                ? `为${membershipStore.selectedUsers.length}位用户开通${membershipStore.selectedMembership.name}`
                 : '请选择用户和产品'
             }
           </Button>

@@ -79,7 +79,7 @@ class UserStore {
   }
 
   get isTrialUsed() {
-    return this.getMembershipOrders().some(order => order.body.includes('试用'));
+    return this.getMembershipOrders().some(order => order.body.includes(t('membership.trial')));
   }
 
   init = async function() {
@@ -150,14 +150,12 @@ class UserStore {
         const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
         // User doesn't exist, create a new one
         const newUser = {
-          id: `${cid}_${phone}`,
+          id: +phone * 10000 + cid,
           phone: phone,
           client_id: cid,
-          name: `用户${phone.slice(-4)}`, // Default name using last 4 digits
+          name: t('menu.account_page.guest'),
           role: 'user',
-          avatar: '',
           date_created: new Date().toISOString(),
-          isActive: true
         };
 
         // Save the new user to database
@@ -235,7 +233,7 @@ class UserStore {
     if (!this.user?.orders) return null;
     
     const matchingOrders = this.getOrdersByType(type).filter(order =>
-      !id || order.product_id.endsWith(`_${id}`)
+      !id || order.product_id.endsWith(`_${id}`) // no id = membership, with id = series
     );
     
     if (matchingOrders.length === 0) return null;

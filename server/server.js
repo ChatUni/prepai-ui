@@ -82,7 +82,7 @@ const handleEndpoint = async (req, res) => {
     res.status(200).send(response);
   } catch (error) {
     console.error(`Error in ${q?.type || 'unknown'}:`, error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json(error);
   }
 };
 

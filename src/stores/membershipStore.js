@@ -1,6 +1,6 @@
 import clientStore from './clientStore';
 import userStore from './userStore';
-import { get, remove, save } from '../utils/db';
+import { get, post, remove, save } from '../utils/db';
 import EditingStore from './editingStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
@@ -8,16 +8,14 @@ import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
-const membershipTypes = [
-  { type: "monthly", duration: 30 },
-  { type: "annually", duration: 365 },
-  { type: "lifetime", duration: -1 },
-  { type: "trial", duration: 3 },
-]
+const durations = {
+  monthly: 30,
+  annually: 365,
+  lifetime: -1,
+  trial: 3
+}
 
 class MembershipStore {
-  selectedType = '';
-  isTypeDropdownOpen = false;
   showPurchaseDialog = false;
   selectedMembership = null;
   showWeChatPayDialog = false;
@@ -31,7 +29,6 @@ class MembershipStore {
   selectedUsers = [];
   isSearchingUsers = false;
   selectedProductCategory = 'membership'; // 'membership', 'course', 'exam', 'agent'
-  selectedMembershipForUpgrade = null; // Single selected membership for upgrade
 
   get name() {
     return 'membership';
@@ -63,28 +60,8 @@ class MembershipStore {
   }
 
   get membershipTypes() {
-    return membershipTypes.map((x, i) => ({ value: i, label: t(`membership.types.${x.type}`) }));
+    return Object.keys(durations).map(k => ({ value: k, label: t(`membership.types.${k}`) }));
   }
-
-  get selectedMembershipType() {
-    return membershipTypes[this.selectedMembership.type] || membershipTypes[0];
-  }
-
-  get editingType() {
-    return membershipTypes[this.editingItem.type].type;
-  }
-
-  setSelectedType = (type) => {
-    this.selectedType = type;
-  };
-
-  setTypeDropdownOpen = (open) => {
-    this.isTypeDropdownOpen = open;
-  };
-
-  getTypeLabel = function(type) {
-    return `membership.types.${membershipTypes[type].type}`
-  };
 
   fetchItemList = async function() {
     return await get('memberships', { clientId: clientStore.client.id });
@@ -97,7 +74,6 @@ class MembershipStore {
   save = async function(item) {
     item.price = parseFloat(item.price) || 0;
     item.orig_price = parseFloat(item.orig_price) || 0;
-    item.type = parseInt(item.type) || 0;
     return await save('memberships', item);
   };
 
@@ -105,6 +81,13 @@ class MembershipStore {
     return group === t('membership.expired')
   }
   
+  handleItemClick = function(item) {
+    if (item.name.includes(t('membership.trial')) && userStore.isTrialUsed) {
+      this.openErrorDialog(t('membership.trialMembershipOnlyOnce'));
+    } else
+      this.showMembershipPurchaseDialog(item);
+  }
+
   setShowPurchaseDialog = function(show) {
     this.showPurchaseDialog = show;
   };
@@ -141,15 +124,15 @@ class MembershipStore {
       // Prepare order data for WeChat Pay
       const orderData = {
         amount: this.selectedMembership.price,
-        duration: this.selectedMembershipType.duration,
-        body: `${this.selectedMembership.name} - ${t(`membership.types.${this.selectedMembershipType.type}`)}`,
+        duration: durations[this.selectedMembership.type],
+        body: `${this.selectedMembership.name} - ${this.selectedMembership.type}`,
         clientId: clientStore.client.id,
         userId: userStore.user?.id || userStore.user?.phone || 'guest',
         productId: `membership_${this.selectedMembership.id}`,
         detail: this.selectedMembership.desc || '',
         attach: JSON.stringify({
           membershipId: this.selectedMembership.id,
-          membershipType: this.selectedMembershipType.type,
+          membershipType: this.selectedMembership.type,
           clientId: clientStore.client.id,
           userId: userStore.user?.id || userStore.user?.phone
         })
@@ -287,7 +270,7 @@ class MembershipStore {
         .filter(s => s.length > 0);
 
       // Search for users by ID or phone
-      const users = userStore.items.filter(user => inputs.includes(user.id.toLowerCase()) || inputs.includes(user.phone.toLowerCase()));
+      const users = inputs.map(id => userStore.items.find(user => user.id === id || user.phone === id) || { phone: id });
 
       this.setSearchedUsers(users);
       
@@ -317,12 +300,13 @@ class MembershipStore {
 
     try {
       const upgradeData = {
-        userIds: this.selectedUsers.map(u => u.id),
+        userIds: this.selectedUsers.filter(u => u.id).map(u => u.id),
+        phones: this.selectedUsers.filter(u => !u.id).map(u => u.phone) ,
         membershipId: membershipId,
         clientId: clientStore.client.id
       };
 
-      const result = await save('user-upgrades', upgradeData);
+      const result = await post('upgrade', {}, upgradeData);
       
       // Clear selections after successful upgrade
       this.selectedUsers = [];
@@ -335,10 +319,6 @@ class MembershipStore {
       console.error('Failed to upgrade users:', error);
       throw error;
     }
-  };
-
-  setSelectedMembershipForUpgrade = function(membership) {
-    this.selectedMembershipForUpgrade = membership;
   };
 
   get productCategories() {

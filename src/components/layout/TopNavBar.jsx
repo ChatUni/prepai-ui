@@ -17,8 +17,8 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const { t } = languageStore;
 
   const navItems = [
-    { id: 'private', label: t('menu.private') },
-    { id: 'testing', label: t('menu.testing') },
+    { id: 'private', label: t('menu.private'), hide: clientStore.client.hideSeries },
+    { id: 'testing', label: t('menu.testing'), hide: clientStore.client.hideExam },
     { id: 'ai', label: t('menu.ai') },
     { id: 'my', label: t('menu.my') }
   ];
@@ -97,7 +97,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         {/* Flexible middle section with desktop navigation items */}
         <div className="flex justify-center mr-2">
           <div className="hidden md:flex gap-4 lg:gap-12">
-            {navItems.map(item => {
+            {navItems.filter(x => !x.hide).map(item => {
               const isActive = uiStore.activeNavItem === item.label;
               
               return (
@@ -108,7 +108,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
                   }`}
                   onClick={() => handleNavClick(item)}
                 >
-                  {item.label}
+                  {item.label}a
                 </div>
               );
             })}
@@ -155,7 +155,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
             </div>
           ) : (
             // Show navigation items when logged in
-            navItems.map(item => {
+            navItems.filter(x => !x.hide).map(item => {
               const isActive = uiStore.activeNavItem === item.label;
               
               return (
