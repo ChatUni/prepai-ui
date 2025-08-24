@@ -107,7 +107,13 @@
       "membership_expires": "メンバーシップ有効期限",
       "membership_remaining": "残り日数",
       "about": "について",
-      "my_assistants": "マイアシスタント"
+      "my_assistants": "マイアシスタント",
+      "my_account": "マイアカウント",
+      "account_balance": "アカウント残高",
+      "cumulative_earnings": "累計収益",
+      "withdraw": "出金",
+      "recharge": "チャージ",
+      "withdrawal_records": "出金記録"
     },
     "admin_page": {
       "title": "管理ポータル",

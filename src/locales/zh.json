@@ -107,7 +107,13 @@
       "membership_expires": "会员到期时间",
       "membership_remaining": "剩余天数",
       "about": "关于",
-      "my_assistants": "我的助手"
+      "my_assistants": "我的助手",
+      "my_account": "我的账户",
+      "account_balance": "账户余额",
+      "cumulative_earnings": "累计收益",
+      "withdraw": "提现",
+      "recharge": "充值",
+      "withdrawal_records": "提现记录"
     },
     "admin_page": {
       "title": "管理后台",

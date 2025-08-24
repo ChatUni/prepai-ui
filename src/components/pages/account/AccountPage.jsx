@@ -20,6 +20,9 @@ const AccountPage = observer(() => {
       case 'admin':
         navigate('/admin');
         break;
+      case 'my_account':
+        navigate('/my_account');
+        break;
       case 'my_series':
         navigate('/series/paid');
         break;
@@ -83,6 +86,12 @@ const AccountPage = observer(() => {
           label={t('menu.account_page.coupons')}
           onClick={() => handleMenuItemClick('coupons')}
         /> */}
+        <MenuListItem
+          label={t('menu.account_page.my_account')}
+          onClick={() => handleMenuItemClick('my_account')}
+          icon={FiBookOpen}
+          iconColor="text-green-500"
+        />
         <MenuListItem
           label={t('menu.account_page.my_series')}
           onClick={() => handleMenuItemClick('my_series')}

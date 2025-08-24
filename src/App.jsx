@@ -26,6 +26,7 @@ import EditAssistantPage from './components/pages/assistant/EditAssistantPage';
 import EditInstructorPage from './components/pages/instructor/EditInstructorPage';
 import AssistantChatPage from './components/pages/assistant/AssistantChatPage';
 import AccountPage from './components/pages/account/AccountPage';
+import MyAccountPage from './components/pages/account/MyAccountPage';
 import AdminPage from './components/pages/account/AdminPage';
 import LoginPage from './components/pages/account/LoginPage';
 import MembershipListPage from './components/pages/membership/MembershipListPage';
@@ -245,6 +246,11 @@ const MainLayout = observer(() => {
                 <Route path="/users/settings" element={
                   <AuthRoute>
                     <UserListPage />
+                  </AuthRoute>
+                } />
+                <Route path="/my_account" element={
+                  <AuthRoute>
+                    <MyAccountPage />
                   </AuthRoute>
                 } />
                 <Route path="/about" element={

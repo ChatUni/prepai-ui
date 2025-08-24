@@ -107,7 +107,13 @@
       "membership_expires": "Membership expires",
       "membership_remaining": "Remaining days",
       "about": "About",
-      "my_assistants": "My Assistants"
+      "my_assistants": "My Assistants",
+      "my_account": "My Account",
+      "account_balance": "Account Balance",
+      "cumulative_earnings": "Cumulative Earnings",
+      "withdraw": "Withdraw",
+      "recharge": "Recharge",
+      "withdrawal_records": "Withdrawal Records"
     },
     "admin_page": {
       "title": "Admin Portal",
