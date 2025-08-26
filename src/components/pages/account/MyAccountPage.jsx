@@ -14,8 +14,7 @@ const MyAccountPage = observer(() => {
   const navigate = useNavigate();
 
   const handleWithdraw = () => {
-    console.log('Withdraw clicked');
-    // TODO: Implement withdraw functionality
+    paymentManagerStore.startWithdraw();
   };
 
   const handleRecharge = () => {
@@ -42,7 +41,7 @@ const MyAccountPage = observer(() => {
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 pb-8">
+        <div className="px-6 pb-4">
           <div className="grid grid-cols-2 gap-4">
             {/* Withdraw Button */}
             <Button
@@ -50,6 +49,7 @@ const MyAccountPage = observer(() => {
               icon={FiCreditCard}
               color="blue"
               className="rounded-lg p-4 shadow-lg"
+              disabled={clientStore.client.withdraw && clientStore.client.withdraw.status === 'pending'}
             >
               {t('menu.account_page.withdraw')}
             </Button>
@@ -65,6 +65,31 @@ const MyAccountPage = observer(() => {
             </Button>
           </div>
         </div>
+
+        {/* Current Withdraw Info */}
+        {clientStore.client.withdraw && clientStore.client.withdraw.status === 'pending' && (
+          <div className="px-6 pb-8">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center mb-2">
+                <FiCreditCard className="text-yellow-600 mr-2" />
+                <h3 className="text-sm font-medium text-yellow-800">
+                  {t('withdraw.processing')}
+                </h3>
+              </div>
+              <div className="text-sm text-yellow-700 space-y-1">
+                <div>
+                  <span className="font-medium">{t('withdraw.amount_label')}:</span> ¥{clientStore.client.withdraw.amount}
+                </div>
+                <div>
+                  <span className="font-medium">{t('withdraw.bank_account_label')}:</span> {clientStore.client.withdraw.account}
+                </div>
+                <div>
+                  <span className="font-medium">{t('common.date')}:</span> {new Date(clientStore.client.withdraw.date).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Payment Manager handles all payment dialogs */}
         <PaymentManager />

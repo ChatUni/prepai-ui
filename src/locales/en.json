@@ -20,6 +20,7 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
+    "date": "Date",
     "closeWithoutSaving": "Do you want to close without saving?",
     "saveAndNext": "Save and Next",
     "selectImage": "Select Image",
@@ -693,6 +694,31 @@
     "cancel": "Cancel",
     "success_message": "Account recharged successfully! Your balance has been updated.",
     "processing": "Processing recharge..."
+  },
+  "withdraw": {
+    "title": "Account Withdrawal",
+    "confirm_title": "Confirm Withdrawal",
+    "confirm_message": "Are you sure you want to withdraw from your account?",
+    "amount_dialog_title": "Enter Withdrawal Amount",
+    "amount_label": "Withdrawal Amount (¥)",
+    "amount_placeholder": "Enter amount",
+    "select_amount": "Select Amount",
+    "custom_amount": "Custom Amount",
+    "amount_to_withdraw": "Amount to Withdraw",
+    "bank_account_label": "Bank Account Number",
+    "bank_account_placeholder": "Enter your bank account number",
+    "bank_account_required": "Bank account number is required for withdrawal",
+    "insufficient_balance": "Insufficient balance. Your current balance is not enough for this withdrawal amount.",
+    "min_amount": "Minimum withdrawal amount is ¥1",
+    "invalid_amount": "Please enter a valid amount",
+    "request_submitted": "Withdrawal request submitted successfully! It will be processed within 1-3 business days.",
+    "request_failed": "Failed to submit withdrawal request. Please try again.",
+    "processing": "Processing withdrawal request..."
+  },
+  "transaction": {
+    "amount_dialog_title": "Enter Transaction Amount",
+    "recharge_mode": "Recharge Mode",
+    "withdraw_mode": "Withdraw Mode"
   },
   "client": {
     "name": "Client Name",

@@ -20,6 +20,7 @@
     "confirm": "确认",
     "yes": "是",
     "no": "否",
+    "date": "日期",
     "closeWithoutSaving": "确定要不保存就关闭吗？",
     "saveAndNext": "保存并下一步",
     "selectImage": "选择图片",
@@ -693,6 +694,31 @@
     "cancel": "取消",
     "success_message": "账户充值成功！您的余额已更新。",
     "processing": "正在处理充值..."
+  },
+  "withdraw": {
+    "title": "账户提现",
+    "confirm_title": "确认提现",
+    "confirm_message": "您确定要从账户中提现吗？",
+    "amount_dialog_title": "输入提现金额",
+    "amount_label": "提现金额（¥）",
+    "amount_placeholder": "请输入金额",
+    "select_amount": "选择金额",
+    "custom_amount": "自定义金额",
+    "amount_to_withdraw": "提现金额",
+    "bank_account_label": "银行账户号码",
+    "bank_account_placeholder": "请输入您的银行账户号码",
+    "bank_account_required": "提现需要银行账户号码",
+    "insufficient_balance": "余额不足。您当前的余额不足以支付此提现金额。",
+    "min_amount": "最低提现金额为¥1",
+    "invalid_amount": "请输入有效金额",
+    "request_submitted": "提现申请提交成功！将在1-3个工作日内处理。",
+    "request_failed": "提现申请提交失败，请重试。",
+    "processing": "正在处理提现申请..."
+  },
+  "transaction": {
+    "amount_dialog_title": "输入交易金额",
+    "recharge_mode": "充值模式",
+    "withdraw_mode": "提现模式"
   },
   "client": {
     "name": "客户名称",

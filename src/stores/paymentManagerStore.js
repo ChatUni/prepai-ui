@@ -15,6 +15,8 @@ class PaymentManagerStore {
   currentSeries = null;
   orderData = null;
   rechargeAmount = 100;
+  transactionMode = 'recharge'; // 'recharge' or 'withdraw'
+  bankAccount = '';
 
   constructor() {
     makeAutoObservable(this);
@@ -50,6 +52,14 @@ class PaymentManagerStore {
     this.rechargeAmount = parseFloat(amount) || 0;
   };
 
+  setTransactionMode = (mode) => {
+    this.transactionMode = mode;
+  };
+
+  setBankAccount = (account) => {
+    this.bankAccount = account;
+  };
+
   handleMembershipPurchase = (navigate) => {
     this.showMembershipDialog = false;
     navigate('/memberships');
@@ -73,50 +83,128 @@ class PaymentManagerStore {
     }
   };
 
-  // Recharge functionality
-  startRecharge = () => {
+  // Transaction functionality (recharge/withdraw)
+  startTransaction = (mode = 'recharge') => {
+    this.transactionMode = mode;
     this.showRechargeAmountDialog = true;
   };
 
-  confirmRecharge = () => {
-    this.showRechargeAmountDialog = false;
-    this.showRechargeDialog = true;
+  startRecharge = () => {
+    this.startTransaction('recharge');
   };
 
-  cancelRecharge = () => {
-    this.showRechargeDialog = false;
-    this.showRechargeAmountDialog = false;
-    this.rechargeAmount = 100;
+  startWithdraw = () => {
+    this.startTransaction('withdraw');
   };
 
-  proceedWithRecharge = async () => {
+  confirmTransaction = () => {
+    // Validate amount first
     if (this.rechargeAmount < 1) {
-      this.openErrorDialog(t('recharge.min_amount'));
+      userStore.openErrorDialog(t(`${this.transactionMode}.min_amount`));
       return;
     }
 
     if (!this.rechargeAmount || isNaN(this.rechargeAmount)) {
-      this.openErrorDialog(t('recharge.invalid_amount'));
+      userStore.openErrorDialog(t(`${this.transactionMode}.invalid_amount`));
       return;
     }
 
+    // For withdraw mode, validate bank account and balance
+    if (this.transactionMode === 'withdraw') {
+      if (!this.bankAccount || this.bankAccount.trim() === '') {
+        userStore.openErrorDialog(t('withdraw.bank_account_required'));
+        return;
+      }
+
+      // Check if client has sufficient balance
+      const currentBalance = clientStore.client.balance || 0;
+      if (currentBalance < this.rechargeAmount) {
+        userStore.openErrorDialog(t('withdraw.insufficient_balance'));
+        return;
+      }
+    }
+
+    // If all validations pass, show confirm dialog
+    this.showRechargeAmountDialog = false;
+    this.showRechargeDialog = true;
+  };
+
+  confirmRecharge = () => {
+    this.confirmTransaction();
+  };
+
+  cancelTransaction = () => {
+    this.showRechargeDialog = false;
+    this.showRechargeAmountDialog = false;
+    this.rechargeAmount = 100;
+    this.bankAccount = '';
+    this.transactionMode = 'recharge';
+  };
+
+  cancelRecharge = () => {
+    this.cancelTransaction();
+  };
+
+  proceedWithTransaction = async () => {
     this.showRechargeDialog = false;
 
-    const orderData = {
-      amount: this.rechargeAmount,
-      body: `${t('recharge.title')} - ¥${this.rechargeAmount}`,
-      clientId: clientStore.client.id,
-      userId: userStore.user?.id || userStore.user?.phone || 'guest',
-      type: 'recharge',
-      attach: JSON.stringify({
-        type: 'recharge',
-        amount: this.rechargeAmount,
-        clientId: clientStore.client.id,
-        userId: userStore.user?.id || userStore.user?.phone
-      })
-    };
+    if (this.transactionMode === 'withdraw') {
+      // Handle withdraw - set client withdraw info and save to database
+      try {
+        const withdrawData = {
+          amount: this.rechargeAmount,
+          date: new Date().toISOString(),
+          account: this.bankAccount,
+          status: 'pending'
+        };
 
-    this.setShowWeChatDialog(true, orderData);
+        // Set the withdraw info in clientStore
+        clientStore.client.withdraw = withdrawData;
+        
+        // Also save to database for record keeping
+        // const dbWithdrawData = {
+        //   userId: userStore.user?.id || userStore.user?.phone,
+        //   clientId: clientStore.client.id,
+        //   amount: this.rechargeAmount,
+        //   bankAccount: this.bankAccount,
+        //   type: 'withdraw',
+        //   status: 'pending',
+        //   createdAt: new Date().toISOString()
+        // };
+
+        // await post('/api/save?doc=withdrawals', dbWithdrawData);
+        
+        // Save the updated client data
+        await clientStore.save();
+        
+        userStore.openInfoDialog(t('withdraw.request_submitted'));
+        this.cancelTransaction();
+      } catch (error) {
+        console.error('Withdraw request error:', error);
+        userStore.openErrorDialog(t('withdraw.request_failed'));
+      }
+    } else {
+      // Handle recharge - proceed with WeChat payment
+      const orderData = {
+        amount: this.rechargeAmount,
+        body: `${t('recharge.title')} - ¥${this.rechargeAmount}`,
+        clientId: clientStore.client.id,
+        userId: userStore.user?.id || userStore.user?.phone || 'guest',
+        type: 'recharge',
+        attach: JSON.stringify({
+          type: 'recharge',
+          amount: this.rechargeAmount,
+          clientId: clientStore.client.id,
+          userId: userStore.user?.id || userStore.user?.phone
+        })
+      };
+
+      this.setShowWeChatDialog(true, orderData);
+    }
+  };
+
+  proceedWithRecharge = async () => {
+    await this.proceedWithTransaction();
   };
 
   handlePaymentSuccess = async (paymentData) => {
@@ -125,16 +213,18 @@ class PaymentManagerStore {
     // Handle recharge success
     if (paymentData.order.type === 'recharge') {
       await clientStore.loadClient();
-      this.openInfoDialog(t('recharge.success_message'));
+      userStore.openInfoDialog(t('recharge.success_message'));
       this.rechargeAmount = 100;
     } else {
       // Handle other payment types
       await userStore.loadUser();
-      this.openInfoDialog(t('payment.success_message'));
+      userStore.openInfoDialog(t('payment.success_message'));
     }
 
     this.currentSeries = null;
     this.orderData = null;
+    this.transactionMode = 'recharge';
+    this.bankAccount = '';
   };
 
   handlePaymentError = (error) => {
@@ -151,6 +241,8 @@ class PaymentManagerStore {
     this.currentSeries = null;
     this.orderData = null;
     this.rechargeAmount = 100;
+    this.transactionMode = 'recharge';
+    this.bankAccount = '';
   };
 }
 

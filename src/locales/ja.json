@@ -20,6 +20,7 @@
     "confirm": "確認",
     "yes": "はい",
     "no": "いいえ",
+    "date": "日付",
     "closeWithoutSaving": "保存せずに閉じますか？",
     "saveAndNext": "保存して次へ",
     "selectImage": "画像を選択",
@@ -694,6 +695,31 @@
     "cancel": "キャンセル",
     "success_message": "アカウントチャージが成功しました！残高が更新されました。",
     "processing": "チャージを処理中..."
+  },
+  "withdraw": {
+    "title": "アカウント出金",
+    "confirm_title": "出金確認",
+    "confirm_message": "アカウントから出金してもよろしいですか？",
+    "amount_dialog_title": "出金金額を入力",
+    "amount_label": "出金金額（¥）",
+    "amount_placeholder": "金額を入力してください",
+    "select_amount": "金額を選択",
+    "custom_amount": "カスタム金額",
+    "amount_to_withdraw": "出金金額",
+    "bank_account_label": "銀行口座番号",
+    "bank_account_placeholder": "銀行口座番号を入力してください",
+    "bank_account_required": "出金には銀行口座番号が必要です",
+    "insufficient_balance": "残高不足です。現在の残高では、この出金金額に対して不足しています。",
+    "min_amount": "最低出金金額は¥1です",
+    "invalid_amount": "有効な金額を入力してください",
+    "request_submitted": "出金リクエストが正常に送信されました！1〜3営業日以内に処理されます。",
+    "request_failed": "出金リクエストの送信に失敗しました。もう一度お試しください。",
+    "processing": "出金リクエストを処理中..."
+  },
+  "transaction": {
+    "amount_dialog_title": "取引金額を入力",
+    "recharge_mode": "チャージモード",
+    "withdraw_mode": "出金モード"
   },
   "client": {
     "name": "クライアント名",
