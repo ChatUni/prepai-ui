@@ -677,6 +677,24 @@
     "expired_or_timeout": "支払いが期限切れまたはタイムアウトしました",
     "close": "閉じる"
   },
+  "recharge": {
+    "title": "アカウントチャージ",
+    "confirm_title": "チャージ確認",
+    "confirm_message": "WeChat Payを使用してアカウントにチャージしますか？",
+    "amount_dialog_title": "チャージ金額を入力",
+    "amount_label": "チャージ金額（¥）",
+    "amount_placeholder": "金額を入力してください",
+    "select_amount": "金額を選択",
+    "custom_amount": "カスタム金額",
+    "amount_to_recharge": "チャージ金額",
+    "default_amount": "100",
+    "min_amount": "最低チャージ金額は¥1です",
+    "invalid_amount": "有効な金額を入力してください",
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "success_message": "アカウントチャージが成功しました！残高が更新されました。",
+    "processing": "チャージを処理中..."
+  },
   "client": {
     "name": "クライアント名",
     "desc": "説明",

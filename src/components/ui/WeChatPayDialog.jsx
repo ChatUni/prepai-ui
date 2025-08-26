@@ -109,7 +109,7 @@ const WeChatPayDialog = observer(({
 
       if (result.paid) {
         setPaymentState('success');
-        onPaymentSuccess?.(result.data);
+        onPaymentSuccess?.(result);
       } else if (result.expired || result.timeout) {
         setPaymentState('error');
         setError(t('payment.expired_or_timeout'));

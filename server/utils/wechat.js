@@ -2,7 +2,8 @@ const crypto = require('crypto');
 const https = require('https');
 const xml2js = require('xml2js');
 const qrcode = require('qrcode');
-const { get, save, flat } = require('./db.js');
+const { get, getById, save, flat } = require('./db.js');
+const { getCommCost } = require('./account.js');
 
 class WeChatPay {
   constructor(config) {
@@ -836,6 +837,7 @@ const wechat_pay = async (q, b, req) => {
       status: 'PENDING',
       user_id: b.userId,
       client_id: b.clientId,
+      type: b.type,
       product_id: b.productId,
       body: b.body,
       date_created: new Date().toISOString(),
@@ -874,9 +876,12 @@ const wechat_query = async (q, b) => {
       outTradeNo: b.orderId
     });
 
+    if (process.env.FAKE_PAYMENT == 1) result.trade_state = 'SUCCESS';
+
+    let orderData
     // Update order status in database
     if (result.trade_state === 'SUCCESS') {
-      const orderData = await flat('orders', `m_id=${b.orderId}`);
+      orderData = await flat('orders', `m_id=${b.orderId}`);
       if (orderData && orderData.length > 0) {
         const updatedOrder = {
           ...orderData[0],
@@ -885,6 +890,14 @@ const wechat_query = async (q, b) => {
           transactionId: result.transaction_id
         };
         await save('orders', updatedOrder);
+
+        if (updatedOrder.type === 'recharge' || updatedOrder.type === 'membership') {
+          const client = await getById('clients', updatedOrder.client_id);
+          client.balance = (client.balance || 0)
+            + parseFloat(updatedOrder.amount)
+            - (updatedOrder.type === 'membership' ? getCommCost(client, updatedOrder.type) : 0);
+          await save('clients', client);
+        }
       }
     }
 
@@ -892,7 +905,8 @@ const wechat_query = async (q, b) => {
       success: true,
       status: result.trade_state,
       paid: result.trade_state === 'SUCCESS',
-      data: result
+      data: result,
+      order: orderData && orderData.length > 0 ? orderData[0] : {},
     };
 
   } catch (error) {

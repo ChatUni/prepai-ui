@@ -215,7 +215,7 @@ class UserStore {
     if (!this.user?.orders) return [];
     return this.user.orders.filter(order =>
       order.client_id == clientStore.client.id &&
-      order.product_id.startsWith(type) &&
+      order.type == type &&
       order.status === 'PAID' &&
       order.expireDate
     );
@@ -233,7 +233,7 @@ class UserStore {
     if (!this.user?.orders) return null;
     
     const matchingOrders = this.getOrdersByType(type).filter(order =>
-      !id || order.product_id.endsWith(`_${id}`) // no id = membership, with id = series
+      !id || order.product_id == id
     );
     
     if (matchingOrders.length === 0) return null;

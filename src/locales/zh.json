@@ -676,6 +676,24 @@
     "expired_or_timeout": "支付已过期或超时",
     "close": "关闭"
   },
+  "recharge": {
+    "title": "账户充值",
+    "confirm_title": "确认充值",
+    "confirm_message": "您确定要使用微信支付为账户充值吗？",
+    "amount_dialog_title": "输入充值金额",
+    "amount_label": "充值金额（¥）",
+    "amount_placeholder": "请输入金额",
+    "select_amount": "选择金额",
+    "custom_amount": "自定义金额",
+    "amount_to_recharge": "充值金额",
+    "default_amount": "100",
+    "min_amount": "最低充值金额为¥1",
+    "invalid_amount": "请输入有效金额",
+    "confirm": "确认",
+    "cancel": "取消",
+    "success_message": "账户充值成功！您的余额已更新。",
+    "processing": "正在处理充值..."
+  },
   "client": {
     "name": "客户名称",
     "desc": "描述",

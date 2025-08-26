@@ -16,7 +16,8 @@ const upgrade = async (user, membership) => {
     status: "PAID",
     client_id: user.client_id,
     user_id: user.id,
-    product_id: `membership_${membership.id}`,
+    type: "membership",
+    product_id: membership.id,
     body: `${membership.name} - ${membership.type}`,
     date_created: new Date().toISOString(),
   }
@@ -31,6 +32,12 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
   const membership = await getById('memberships', membershipId)
   if (!membership) throw new Error('Membership not found')
   if (membership.client_id !== clientId) throw new Error('membership client mismatch')
+
+  const client = await getById('clients', clientId)
+  if (!client) throw new Error('Client not found')
+
+  const cost = getCommCost(client, membership.type) * userIds.length
+  if (client.balance < cost) throw new Error(`此次升级需扣款¥${cost}，当前余额为¥${client.balance}，请先充值`)
 
   const users = await flat('users', `m_client_id=${clientId}`)
 
@@ -60,6 +67,12 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
   return { success: true }
 }
 
+const getCommCost = (client, type) => {
+  const comm = client.commPerDay || +process.env.COMM_PER_DAY || 0.5
+  return comm * durations[type]
+}
+
 module.exports = {
-  upgradeAll
+  upgradeAll,
+  getCommCost
 }

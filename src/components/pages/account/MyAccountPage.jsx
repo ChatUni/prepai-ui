@@ -6,7 +6,9 @@ import userStore from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
 import Page from '../../ui/Page';
 import Button from '../../ui/Button';
+import PaymentManager from '../../ui/PaymentManager';
 import clientStore from '../../../stores/clientStore';
+import paymentManagerStore from '../../../stores/paymentManagerStore';
 
 const MyAccountPage = observer(() => {
   const navigate = useNavigate();
@@ -17,8 +19,7 @@ const MyAccountPage = observer(() => {
   };
 
   const handleRecharge = () => {
-    console.log('Recharge clicked');
-    // TODO: Implement recharge functionality
+    paymentManagerStore.startRecharge();
   };
 
   const handleWithdrawalRecords = () => {
@@ -32,7 +33,7 @@ const MyAccountPage = observer(() => {
           {/* Balance Display */}
           <div className="mb-2">
             <div className="text-4xl font-bold mb-4 text-gray-900">
-              ¥{clientStore.client.balance.toFixed(2)}
+              ¥{(clientStore.client.balance || 0).toFixed(2)}
             </div>
             {/* <div className="text-gray-600 text-sm">
               {t('menu.account_page.cumulative_earnings')}：¥{userStore.cumulativeEarnings.toFixed(2)}
@@ -64,6 +65,9 @@ const MyAccountPage = observer(() => {
             </Button>
           </div>
         </div>
+
+        {/* Payment Manager handles all payment dialogs */}
+        <PaymentManager />
     </Page>
   );
 });

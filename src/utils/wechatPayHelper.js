@@ -24,6 +24,7 @@ export const createWeChatPayOrder = async (orderData) => {
         body: orderData.body || 'Course Purchase',
         clientId: orderData.clientId,
         userId: orderData.userId,
+        type: orderData.type,
         productId: orderData.productId,
         detail: orderData.detail || '',
         attach: orderData.attach || '',
@@ -79,7 +80,8 @@ export const queryWeChatPayOrder = async (orderId) => {
       success: true,
       status: result.status,
       paid: result.paid,
-      data: result.data
+      data: result.data,
+      order: result.order
     };
   } catch (error) {
     console.error('WeChat Pay query failed:', error);
@@ -136,7 +138,8 @@ export const pollWeChatPayStatus = async (orderId, options = {}) => {
           success: true,
           status: 'SUCCESS',
           paid: true,
-          data: result.data
+          data: result.data,
+          order: result.order,
         };
       }
 

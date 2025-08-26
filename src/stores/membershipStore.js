@@ -128,7 +128,8 @@ class MembershipStore {
         body: `${this.selectedMembership.name} - ${this.selectedMembership.type}`,
         clientId: clientStore.client.id,
         userId: userStore.user?.id || userStore.user?.phone || 'guest',
-        productId: `membership_${this.selectedMembership.id}`,
+        type: 'membership',
+        productId: this.selectedMembership.id,
         detail: this.selectedMembership.desc || '',
         attach: JSON.stringify({
           membershipId: this.selectedMembership.id,

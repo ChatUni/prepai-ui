@@ -1,6 +1,12 @@
 {
   "rules": [
     {
+      "name": "no-alert-usage",
+      "description": "Never use alert() for user notifications. Always use openErrorDialog() for error messages and openInfoDialog() for informational messages. These methods are available in stores that extend PageStore or have dialog functionality.",
+      "severity": "error",
+      "category": "user-interface"
+    },
+    {
       "name": "use-mobx-for-state",
       "description": "Never put any state inside a React component using useState. All states, derived states, and related actions should be in MobX stores.",
       "severity": "error",

@@ -676,6 +676,24 @@
     "expired_or_timeout": "Payment expired or timed out",
     "close": "Close"
   },
+  "recharge": {
+    "title": "Account Recharge",
+    "confirm_title": "Confirm Recharge",
+    "confirm_message": "Are you sure you want to recharge your account using WeChat Pay?",
+    "amount_dialog_title": "Enter Recharge Amount",
+    "amount_label": "Recharge Amount (¥)",
+    "amount_placeholder": "Enter amount",
+    "select_amount": "Select Amount",
+    "custom_amount": "Custom Amount",
+    "amount_to_recharge": "Amount to Recharge",
+    "default_amount": "100",
+    "min_amount": "Minimum recharge amount is ¥1",
+    "invalid_amount": "Please enter a valid amount",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "success_message": "Account recharged successfully! Your balance has been updated.",
+    "processing": "Processing recharge..."
+  },
   "client": {
     "name": "Client Name",
     "desc": "Description",
