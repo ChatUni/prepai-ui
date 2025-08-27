@@ -122,7 +122,7 @@ const PaymentManager = observer(() => {
   };
 
   const renderTransactionAmountDialog = () => {
-    const predefinedAmounts = [100, 500, 1000, 5000];
+    const predefinedAmounts = [500, 1000, 5000, 10000];
     const isWithdraw = paymentManagerStore.transactionMode === 'withdraw';
     const modeKey = isWithdraw ? 'withdraw' : 'recharge';
     
@@ -158,7 +158,7 @@ const PaymentManager = observer(() => {
           </div>
 
           {/* Custom Amount Input */}
-          <div className="border-t pt-4">
+          <div className="pt-4">
             <FormInput
               label={t(`${modeKey}.custom_amount`)}
               type="number"
@@ -172,7 +172,21 @@ const PaymentManager = observer(() => {
 
           {/* Bank Account Input for Withdraw Mode */}
           {isWithdraw && (
-            <div className="border-t pt-4 mt-4">
+            <div className="pt-4 mt-4 space-y-4">
+              <FormInput
+                label={t('withdraw.user_name_label')}
+                type="text"
+                value={paymentManagerStore.userName}
+                onChange={(value) => paymentManagerStore.setUserName(value)}
+                placeholder={t('withdraw.user_name_placeholder')}
+              />
+              <FormInput
+                label={t('withdraw.bank_name_label')}
+                type="text"
+                value={paymentManagerStore.bankName}
+                onChange={(value) => paymentManagerStore.setBankName(value)}
+                placeholder={t('withdraw.bank_name_placeholder')}
+              />
               <FormInput
                 label={t('withdraw.bank_account_label')}
                 type="text"

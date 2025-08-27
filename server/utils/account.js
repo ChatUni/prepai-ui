@@ -20,6 +20,7 @@ const upgrade = async (user, membership) => {
     product_id: membership.id,
     body: `${membership.name} - ${membership.type}`,
     date_created: new Date().toISOString(),
+    paidAt: new Date().toISOString(),
   }
 
   const cnt = await count('orders')
@@ -48,6 +49,10 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
     await upgrade(user, membership)
   }
 
+  client.balance = client.balance - cost
+  await save('clients', client);
+
+
   for (const phone of phones) {
     let user = users.find(u => u.phone === phone)
     if (!user) {
@@ -68,7 +73,7 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
 }
 
 const getCommCost = (client, type) => {
-  const comm = client.commPerDay || +process.env.COMM_PER_DAY || 0.5
+  const comm = client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
   return comm * durations[type]
 }
 

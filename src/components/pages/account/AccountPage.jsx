@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
-import { FiBookOpen, FiMessageSquare, FiSettings, FiInfo, FiLogOut } from 'react-icons/fi';
+import { FiBookOpen, FiMessageSquare, FiSettings, FiInfo, FiLogOut, FiUser } from 'react-icons/fi';
 import userStore from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
 import DEFAULT_AVATAR from '../../../assets/avatar.png';
@@ -89,8 +89,8 @@ const AccountPage = observer(() => {
         <MenuListItem
           label={t('menu.account_page.my_account')}
           onClick={() => handleMenuItemClick('my_account')}
-          icon={FiBookOpen}
-          iconColor="text-green-500"
+          icon={FiUser}
+          iconColor="text-orange-500"
         />
         <MenuListItem
           label={t('menu.account_page.my_series')}

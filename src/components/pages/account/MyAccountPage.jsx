@@ -58,7 +58,7 @@ const MyAccountPage = observer(() => {
             <Button
               onClick={handleRecharge}
               icon={FiDollarSign}
-              color="gray"
+              color="green"
               className="rounded-lg p-4 shadow-lg bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300"
             >
               {t('menu.account_page.recharge')}

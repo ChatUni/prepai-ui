@@ -14,9 +14,11 @@ class PaymentManagerStore {
   showWeChatDialog = false;
   currentSeries = null;
   orderData = null;
-  rechargeAmount = 100;
+  rechargeAmount = 500;
   transactionMode = 'recharge'; // 'recharge' or 'withdraw'
   bankAccount = '';
+  userName = '';
+  bankName = '';
 
   constructor() {
     makeAutoObservable(this);
@@ -25,6 +27,10 @@ class PaymentManagerStore {
   get name() {
     return 'paymentManager';
   }
+
+  setField = (field, value) => {
+    this[field] = value;
+  };
 
   setShowMembershipDialog = (show) => {
     this.showMembershipDialog = show;
@@ -58,6 +64,14 @@ class PaymentManagerStore {
 
   setBankAccount = (account) => {
     this.bankAccount = account;
+  };
+
+  setUserName = (name) => {
+    this.userName = name;
+  };
+
+  setBankName = (name) => {
+    this.bankName = name;
   };
 
   handleMembershipPurchase = (navigate) => {
@@ -109,10 +123,20 @@ class PaymentManagerStore {
       return;
     }
 
-    // For withdraw mode, validate bank account and balance
+    // For withdraw mode, validate bank account, user name, bank name and balance
     if (this.transactionMode === 'withdraw') {
       if (!this.bankAccount || this.bankAccount.trim() === '') {
         userStore.openErrorDialog(t('withdraw.bank_account_required'));
+        return;
+      }
+
+      if (!this.userName || this.userName.trim() === '') {
+        userStore.openErrorDialog(t('withdraw.user_name_required'));
+        return;
+      }
+
+      if (!this.bankName || this.bankName.trim() === '') {
+        userStore.openErrorDialog(t('withdraw.bank_name_required'));
         return;
       }
 
@@ -136,8 +160,10 @@ class PaymentManagerStore {
   cancelTransaction = () => {
     this.showRechargeDialog = false;
     this.showRechargeAmountDialog = false;
-    this.rechargeAmount = 100;
+    this.rechargeAmount = 500;
     this.bankAccount = '';
+    this.userName = '';
+    this.bankName = '';
     this.transactionMode = 'recharge';
   };
 
@@ -155,6 +181,8 @@ class PaymentManagerStore {
           amount: this.rechargeAmount,
           date: new Date().toISOString(),
           account: this.bankAccount,
+          userName: this.userName,
+          bankName: this.bankName,
           status: 'pending'
         };
 
@@ -214,7 +242,7 @@ class PaymentManagerStore {
     if (paymentData.order.type === 'recharge') {
       await clientStore.loadClient();
       userStore.openInfoDialog(t('recharge.success_message'));
-      this.rechargeAmount = 100;
+      this.rechargeAmount = 500;
     } else {
       // Handle other payment types
       await userStore.loadUser();
@@ -225,6 +253,8 @@ class PaymentManagerStore {
     this.orderData = null;
     this.transactionMode = 'recharge';
     this.bankAccount = '';
+    this.userName = '';
+    this.bankName = '';
   };
 
   handlePaymentError = (error) => {
@@ -240,9 +270,11 @@ class PaymentManagerStore {
     this.showWeChatDialog = false;
     this.currentSeries = null;
     this.orderData = null;
-    this.rechargeAmount = 100;
+    this.rechargeAmount = 500;
     this.transactionMode = 'recharge';
     this.bankAccount = '';
+    this.userName = '';
+    this.bankName = '';
   };
 }
 

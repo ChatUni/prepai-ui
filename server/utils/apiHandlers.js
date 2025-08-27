@@ -18,6 +18,7 @@ module.exports = {
       series: q => flat('series', `m_client_id=${q.clientId}&f_+courses|course|series`),
       user: q => flat('users', `m_phone='${q.phone}'&m_client_id=${q.clientId}&f_+orders`),
       users: q => flat('users', `m_client_id=${q.clientId}`),
+      orders: q => flat('orders', `m_client_id=${q.clientId}&f_users`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),
       favorites: q => flat('favorites', `m_user_id=${q.userId}`),
     },

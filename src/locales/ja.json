@@ -137,6 +137,7 @@
       "banner_settings": "バナー設定",
       "upgrade": "メンバーシップアップグレード",
       "advanced_settings": "高度な設定",
+      "orders": "注文管理",
       "back": "戻る"
     },
     "categories": {
@@ -709,6 +710,12 @@
     "bank_account_label": "銀行口座番号",
     "bank_account_placeholder": "銀行口座番号を入力してください",
     "bank_account_required": "出金には銀行口座番号が必要です",
+    "user_name_label": "口座名義人",
+    "user_name_placeholder": "口座名義人を入力してください",
+    "user_name_required": "出金には口座名義人が必要です",
+    "bank_name_label": "銀行名",
+    "bank_name_placeholder": "銀行名を入力してください",
+    "bank_name_required": "出金には銀行名が必要です",
     "insufficient_balance": "残高不足です。現在の残高では、この出金金額に対して不足しています。",
     "min_amount": "最低出金金額は¥1です",
     "invalid_amount": "有効な金額を入力してください",
@@ -757,5 +764,28 @@
     "width": "幅",
     "height": "高さ",
     "duration": "時間"
+  },
+  "order": {
+    "title": "注文リスト",
+    "noOrders": "注文がありません",
+    "noOrdersDesc": "まだ支払い済みの注文がありません",
+    "totalOrders": "合計 {count} 件の注文",
+    "userId": "ユーザーID",
+    "user": "ユーザー",
+    "copyUserId": "ユーザーIDをコピー",
+    "systemCost": "システムコスト",
+    "netIncome": "純収入",
+    "accountBalance": "アカウント残高",
+    "search": {
+      "placeholder": "注文を検索..."
+    },
+    "types": {
+      "membership": "メンバーシップ",
+      "series": "シリーズ",
+      "exam": "試験",
+      "assistant": "アシスタント",
+      "recharge": "チャージ",
+      "withdraw": "出金"
+    }
   }
 }

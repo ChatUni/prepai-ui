@@ -11,8 +11,8 @@ import GroupedListStore from './groupedListStore';
 const durations = {
   monthly: 30,
   annually: 365,
-  lifetime: -1,
-  trial: 3
+  lifetime: 730,
+  trial: 1
 }
 
 class MembershipStore {

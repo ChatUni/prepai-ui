@@ -12,7 +12,8 @@ import {
   FiMonitor,
   FiSliders,
   FiImage,
-  FiArrowLeft
+  FiArrowLeft,
+  FiBarChart
 } from 'react-icons/fi';
 import { t } from '../../../stores/languageStore';
 import MenuListItem from '../../ui/MenuListItem';
@@ -33,6 +34,7 @@ const routeMap = {
   'exam-settings': '/exams/settings',
   'price-settings': '/memberships/settings',
   'upgrade': '/memberships/upgrade',
+  'orders': '/orders',
   'basic-settings': '/client/settings',
   'advanced-settings': '/client/advanced-settings',
   'banner-settings': '/settings/banners'
@@ -95,6 +97,12 @@ const AdminPage = observer(() => {
         onClick={() => navigate(routeMap['upgrade'])}
         icon={FiTrendingUp}
         iconColor="text-cyan-500"
+      />
+      <MenuListItem
+        label={t('menu.admin_page.orders')}
+        onClick={() => navigate(routeMap['orders'])}
+        icon={FiBarChart}
+        iconColor="text-indigo-500"
       />
     </>
   );

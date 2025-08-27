@@ -137,6 +137,7 @@
       "banner_settings": "横幅设置",
       "upgrade": "指定升级",
       "advanced_settings": "高级设置",
+      "orders": "资金明细",
       "back": "返回"
     },
     "categories": {
@@ -708,6 +709,12 @@
     "bank_account_label": "银行账户号码",
     "bank_account_placeholder": "请输入您的银行账户号码",
     "bank_account_required": "提现需要银行账户号码",
+    "user_name_label": "账户持有人姓名",
+    "user_name_placeholder": "请输入账户持有人姓名",
+    "user_name_required": "提现需要账户持有人姓名",
+    "bank_name_label": "银行名称",
+    "bank_name_placeholder": "请输入银行名称",
+    "bank_name_required": "提现需要银行名称",
     "insufficient_balance": "余额不足。您当前的余额不足以支付此提现金额。",
     "min_amount": "最低提现金额为¥1",
     "invalid_amount": "请输入有效金额",
@@ -756,5 +763,28 @@
     "width": "宽度",
     "height": "高度",
     "duration": "时长"
+  },
+  "order": {
+    "title": "资金明细",
+    "noOrders": "暂无订单",
+    "noOrdersDesc": "您还没有任何已支付的订单",
+    "totalOrders": "共 {count} 个订单",
+    "userId": "用户ID",
+    "user": "用户",
+    "copyUserId": "复制用户ID",
+    "systemCost": "系统成本",
+    "netIncome": "净收入",
+    "accountBalance": "账户余额",
+    "search": {
+      "placeholder": "搜索订单..."
+    },
+    "types": {
+      "membership": "会员",
+      "series": "课程",
+      "exam": "考试",
+      "assistant": "助手",
+      "recharge": "充值",
+      "withdraw": "提现"
+    }
   }
 }

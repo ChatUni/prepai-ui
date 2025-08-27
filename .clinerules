@@ -137,6 +137,12 @@
       "description": "Do not run tests after finishing a task. Tests should be executed separately by the user when needed. This prevents unnecessary test execution and allows the user to control when tests are run.",
       "severity": "error",
       "category": "workflow"
+    },
+    {
+      "name": "no-dark-mode",
+      "description": "Never use dark mode styling in components. Always use light theme with appropriate colors like white backgrounds, gray text colors, and proper contrast. Avoid dark backgrounds (bg-gray-800, bg-black, etc.) and light text colors (text-white, text-gray-100, etc.). Use light backgrounds and dark text for better readability and consistency.",
+      "severity": "error",
+      "category": "user-interface"
     }
   ]
 }

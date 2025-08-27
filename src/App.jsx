@@ -30,6 +30,7 @@ import MyAccountPage from './components/pages/account/MyAccountPage';
 import AdminPage from './components/pages/account/AdminPage';
 import LoginPage from './components/pages/account/LoginPage';
 import MembershipListPage from './components/pages/membership/MembershipListPage';
+import OrderList from './components/pages/account/OrderList';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthWrapper from './components/auth/AuthWrapper';
 
@@ -256,6 +257,11 @@ const MainLayout = observer(() => {
                 <Route path="/about" element={
                   <AuthRoute>
                     <AboutPage />
+                  </AuthRoute>
+                } />
+                <Route path="/orders" element={
+                  <AuthRoute>
+                    <OrderList />
                   </AuthRoute>
                 } />
               </Routes>

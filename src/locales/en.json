@@ -137,6 +137,7 @@
       "banner_settings": "Banner Settings",
       "upgrade": "Membership Upgrade",
       "advanced_settings": "Advanced Settings",
+      "orders": "Order Management",
       "back": "Back"
     },
     "categories": {
@@ -708,6 +709,12 @@
     "bank_account_label": "Bank Account Number",
     "bank_account_placeholder": "Enter your bank account number",
     "bank_account_required": "Bank account number is required for withdrawal",
+    "user_name_label": "Account Holder Name",
+    "user_name_placeholder": "Enter account holder name",
+    "user_name_required": "Account holder name is required for withdrawal",
+    "bank_name_label": "Bank Name",
+    "bank_name_placeholder": "Enter bank name",
+    "bank_name_required": "Bank name is required for withdrawal",
     "insufficient_balance": "Insufficient balance. Your current balance is not enough for this withdrawal amount.",
     "min_amount": "Minimum withdrawal amount is ¥1",
     "invalid_amount": "Please enter a valid amount",
@@ -756,5 +763,28 @@
     "width": "Width",
     "height": "Height",
     "duration": "Duration"
+  },
+  "order": {
+    "title": "Order List",
+    "noOrders": "No orders",
+    "noOrdersDesc": "You don't have any paid orders yet",
+    "totalOrders": "Total {count} orders",
+    "userId": "User ID",
+    "user": "User",
+    "copyUserId": "Copy User ID",
+    "systemCost": "System Cost",
+    "netIncome": "Net Income",
+    "accountBalance": "Account Balance",
+    "search": {
+      "placeholder": "Search orders..."
+    },
+    "types": {
+      "membership": "Membership",
+      "series": "Series",
+      "exam": "Exam",
+      "assistant": "Assistant",
+      "recharge": "Recharge",
+      "withdraw": "Withdraw"
+    }
   }
 }
