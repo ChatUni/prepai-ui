@@ -10,6 +10,10 @@ class EditingStore {
   showEditDialog = false;
   toggleConfirmField = '';
 
+  get isCRUD() {
+    return true;
+  }
+
   get yesNoOptions() {
     return [
       { value: true, text: t('common.yes') },
@@ -21,14 +25,30 @@ class EditingStore {
     this.editingItem = { ...(item || this.newItem) };
   };
 
-  setEditingField = function(name, value, index = -1) {
-    if (Array.isArray(this.editingItem[name]) && index > -1) {
-      this.editingItem[name][index] = value;
+  getValueByType = function(obj, value) {
+    if (typeof value !== 'string') return value;
+    const type = typeof obj;
+    if (type === 'number') return +value;
+    if (type === 'boolean') return value.toLowerCase() === 'true';
+    return value;
+  };
+
+  setValue = function(object, field, value, index = -1) {
+    if (Array.isArray(object[field]) && index > -1) {
+      object[field][index] = this.getValueByType(object[field][index], value);
     } else {
-      this.editingItem[name] = value;
+      object[field] = this.getValueByType(object[field], value);
     }
     this.isDirty = true;
   };
+
+  setEditingItemField = function(name, value, index = -1) {
+    this.setValue(this.editingItem, name, value, index);
+  }
+
+  setField = function(name, value, index = -1) {
+    this.setValue(this, name, value, index);
+  }
 
   reset = function() {
     this.editingItem = {};
@@ -90,7 +110,7 @@ class EditingStore {
     this.editingItem = {};
   };
 
-  confirmEdit = async function(isReload = true, isClose = true) {
+  confirmEdit = async function(isReload = true, isClose = true) { // only for editingItem
     if (!this.editingItem) return;
 
     if (this.validator) {

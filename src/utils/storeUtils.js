@@ -20,8 +20,8 @@ export const combineStores = (...storeClasses) => {
       Object.keys(prototypeDescriptors).forEach(key => {
         const descriptor = prototypeDescriptors[key];
         
-        // Only copy getters (and setters if they exist) that aren't already defined
-        if ((descriptor.get || descriptor.set) && !combined.hasOwnProperty(key)) {
+        // copy getters (and setters if they exist) and override previously copied
+        if (descriptor.get || descriptor.set) { // && !combined.hasOwnProperty(key)) {
           Object.defineProperty(combined, key, {
             get: descriptor.get,
             set: descriptor.set,

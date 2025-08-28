@@ -5,6 +5,9 @@ import clientStore from './clientStore';
 import PageStore from './pageStore';
 import { combineStores } from '../utils/storeUtils';
 import { makeAutoObservable } from 'mobx';
+import EditingStore from './editingStore';
+
+const defaultRechargeAmount = 500;
 
 class PaymentManagerStore {
   showMembershipDialog = false;
@@ -14,72 +17,41 @@ class PaymentManagerStore {
   showWeChatDialog = false;
   currentSeries = null;
   orderData = null;
-  rechargeAmount = 500;
+  rechargeAmount = defaultRechargeAmount;
   transactionMode = 'recharge'; // 'recharge' or 'withdraw'
   bankAccount = '';
   userName = '';
   bankName = '';
 
-  constructor() {
-    makeAutoObservable(this);
-  }
+  // constructor() {
+  //   makeAutoObservable(this);
+  // }
 
   get name() {
     return 'paymentManager';
   }
 
-  setField = (field, value) => {
-    this[field] = value;
-  };
+  get isCRUD() {
+    return false;
+  }
 
-  setShowMembershipDialog = (show) => {
-    this.showMembershipDialog = show;
-  };
-
-  setShowSeriesDialog = (show, series = null) => {
+  // Helper methods for complex setters that affect multiple fields
+  setShowSeriesDialog = function(show, series = null) {
     this.showSeriesDialog = show;
     this.currentSeries = series;
   };
 
-  setShowRechargeDialog = (show) => {
-    this.showRechargeDialog = show;
-  };
-
-  setShowRechargeAmountDialog = (show) => {
-    this.showRechargeAmountDialog = show;
-  };
-
-  setShowWeChatDialog = (show, orderData = null) => {
+  setShowWeChatDialog = function(show, orderData = null) {
     this.showWeChatDialog = show;
     this.orderData = orderData;
   };
 
-  setRechargeAmount = (amount) => {
-    this.rechargeAmount = parseFloat(amount) || 0;
-  };
-
-  setTransactionMode = (mode) => {
-    this.transactionMode = mode;
-  };
-
-  setBankAccount = (account) => {
-    this.bankAccount = account;
-  };
-
-  setUserName = (name) => {
-    this.userName = name;
-  };
-
-  setBankName = (name) => {
-    this.bankName = name;
-  };
-
-  handleMembershipPurchase = (navigate) => {
+  handleMembershipPurchase = function(navigate) {
     this.showMembershipDialog = false;
     navigate('/memberships');
   };
 
-  handleSeriesPurchase = () => {
+  handleSeriesPurchase = function() {
     this.showSeriesDialog = false;
     
     if (this.currentSeries) {
@@ -98,20 +70,20 @@ class PaymentManagerStore {
   };
 
   // Transaction functionality (recharge/withdraw)
-  startTransaction = (mode = 'recharge') => {
+  startTransaction = function(mode = 'recharge') {
     this.transactionMode = mode;
     this.showRechargeAmountDialog = true;
   };
 
-  startRecharge = () => {
+  startRecharge = function() {
     this.startTransaction('recharge');
   };
 
-  startWithdraw = () => {
+  startWithdraw = function() {
     this.startTransaction('withdraw');
   };
 
-  confirmTransaction = () => {
+  confirmTransaction = function() {
     // Validate amount first
     if (this.rechargeAmount < 1) {
       userStore.openErrorDialog(t(`${this.transactionMode}.min_amount`));
@@ -153,25 +125,25 @@ class PaymentManagerStore {
     this.showRechargeDialog = true;
   };
 
-  confirmRecharge = () => {
+  confirmRecharge = function() {
     this.confirmTransaction();
   };
 
-  cancelTransaction = () => {
+  cancelTransaction = function() {
     this.showRechargeDialog = false;
     this.showRechargeAmountDialog = false;
-    this.rechargeAmount = 500;
+    this.rechargeAmount = defaultRechargeAmount;
     this.bankAccount = '';
     this.userName = '';
     this.bankName = '';
     this.transactionMode = 'recharge';
   };
 
-  cancelRecharge = () => {
+  cancelRecharge = function() {
     this.cancelTransaction();
   };
 
-  proceedWithTransaction = async () => {
+  proceedWithTransaction = async function() {
     this.showRechargeDialog = false;
 
     if (this.transactionMode === 'withdraw') {
@@ -231,18 +203,18 @@ class PaymentManagerStore {
     }
   };
 
-  proceedWithRecharge = async () => {
+  proceedWithRecharge = async function() {
     await this.proceedWithTransaction();
   };
 
-  handlePaymentSuccess = async (paymentData) => {
+  handlePaymentSuccess = async function(paymentData) {
     this.setShowWeChatDialog(false);
     
     // Handle recharge success
     if (paymentData.order.type === 'recharge') {
       await clientStore.loadClient();
       userStore.openInfoDialog(t('recharge.success_message'));
-      this.rechargeAmount = 500;
+      this.rechargeAmount = defaultRechargeAmount;
     } else {
       // Handle other payment types
       await userStore.loadUser();
@@ -257,12 +229,12 @@ class PaymentManagerStore {
     this.bankName = '';
   };
 
-  handlePaymentError = (error) => {
+  handlePaymentError = function(error) {
     console.error('Payment error:', error);
     // Handle payment error (e.g., show error message)
   };
 
-  closeAllDialogs = () => {
+  closeAllDialogs = function() {
     this.showMembershipDialog = false;
     this.showSeriesDialog = false;
     this.showRechargeDialog = false;
@@ -270,7 +242,7 @@ class PaymentManagerStore {
     this.showWeChatDialog = false;
     this.currentSeries = null;
     this.orderData = null;
-    this.rechargeAmount = 500;
+    this.rechargeAmount = defaultRechargeAmount;
     this.transactionMode = 'recharge';
     this.bankAccount = '';
     this.userName = '';
@@ -278,5 +250,5 @@ class PaymentManagerStore {
   };
 }
 
-export default new PaymentManagerStore();
-//export default combineStores(PageStore, PaymentManagerStore);
+//export default new PaymentManagerStore();
+export default combineStores(EditingStore, PaymentManagerStore);

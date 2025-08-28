@@ -68,7 +68,7 @@ class ListStore {
 
       // for pages that require membership, assistant...
       if (this.requireMembership && !userStore.isMember) {
-        paymentManagerStore.setShowMembershipDialog(true);
+        paymentManagerStore.setField('showMembershipDialog', true);
         return;
       }
       

@@ -20,15 +20,18 @@ const FormInput = observer(({
   defaultValue
 }) => {
   const id = store && field ? `${store.name}-${field}` : `custom-input-${Math.random()}`;
-  
+
   // Use custom value/onChange if provided, otherwise use store pattern
-  const inputValue = value !== undefined ? value : (store?.editingItem?.[field] || '');
+  const inputValue = value !== undefined ? value : ((store.isCRUD ? store.editingItem : store)[field] || '');
   
-  const handleChange = (e) => {
+  const setValue = (v) => {
     if (onChange) {
-      onChange(e.target.value);
+      onChange(v);
     } else if (store && field) {
-      store.setEditingField(field, e.target.value);
+      if (store.isCRUD)
+        store.setEditingItemField(field, v);
+      else
+        store.setField(field, v);
     }
   };
 
@@ -50,28 +53,14 @@ const FormInput = observer(({
       }
       
       // Update value if correction is needed
-      if (correctedValue !== e.target.value) {
-        if (onChange) {
-          onChange(correctedValue);
-        } else if (store && field) {
-          store.setEditingField(field, correctedValue);
-        }
-      }
-    }
-  };
-
-  const handleChoiceClick = (choice) => {
-    if (onChange) {
-      onChange(choice);
-    } else if (store && field) {
-      store.setEditingField(field, choice);
+      if (correctedValue !== e.target.value) setValue(correctedValue);
     }
   };
 
   const inputProps = {
     id,
     value: inputValue,
-    onChange: handleChange,
+    onChange: e => setValue(e.target.value),
     onBlur: handleBlur,
     className: "w-full p-3 border rounded",
     required,
@@ -108,7 +97,7 @@ const FormInput = observer(({
                 ${choice === inputValue
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-              onClick={() => handleChoiceClick(choice)}
+              onClick={() => setValue(choice)}
             >
               {choice}
             </button>

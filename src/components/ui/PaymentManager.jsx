@@ -21,7 +21,7 @@ const PaymentManager = observer(() => {
   const renderMembershipDialog = () => (
     <Dialog
       isOpen={isMembershipDialogOpen}
-      onClose={() => paymentManagerStore.setShowMembershipDialog(false)}
+      onClose={() => paymentManagerStore.setField('showMembershipDialog', false)}
       onConfirm={() => paymentManagerStore.handleMembershipPurchase(navigate)}
       title={t('assistant.membershipRequired.title')}
       isConfirm={true}
@@ -144,7 +144,7 @@ const PaymentManager = observer(() => {
               {predefinedAmounts.map((amount) => (
                 <button
                   key={amount}
-                  onClick={() => paymentManagerStore.setRechargeAmount(amount)}
+                  onClick={() => paymentManagerStore.setField('rechargeAmount', amount)}
                   className={`p-3 border-2 rounded-lg text-center transition-colors ${
                     paymentManagerStore.rechargeAmount === amount
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
@@ -163,7 +163,7 @@ const PaymentManager = observer(() => {
               label={t(`${modeKey}.custom_amount`)}
               type="number"
               value={paymentManagerStore.rechargeAmount}
-              onChange={(value) => paymentManagerStore.setRechargeAmount(value)}
+              onChange={(value) => paymentManagerStore.setField('rechargeAmount', value)}
               placeholder={t(`${modeKey}.amount_placeholder`)}
               min={1}
               step="0.01"
@@ -177,21 +177,20 @@ const PaymentManager = observer(() => {
                 label={t('withdraw.user_name_label')}
                 type="text"
                 value={paymentManagerStore.userName}
-                onChange={(value) => paymentManagerStore.setUserName(value)}
+                onChange={(value) => paymentManagerStore.setField('userName', value)}
                 placeholder={t('withdraw.user_name_placeholder')}
               />
               <FormInput
                 label={t('withdraw.bank_name_label')}
                 type="text"
                 value={paymentManagerStore.bankName}
-                onChange={(value) => paymentManagerStore.setBankName(value)}
+                onChange={(value) => paymentManagerStore.setField('bankName', value)}
                 placeholder={t('withdraw.bank_name_placeholder')}
               />
               <FormInput
                 label={t('withdraw.bank_account_label')}
-                type="text"
-                value={paymentManagerStore.bankAccount}
-                onChange={(value) => paymentManagerStore.setBankAccount(value)}
+                store={paymentManagerStore}
+                field="bankAccount"
                 placeholder={t('withdraw.bank_account_placeholder')}
               />
             </div>
