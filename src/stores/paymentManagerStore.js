@@ -35,6 +35,23 @@ class PaymentManagerStore {
     return false;
   }
 
+  get isWithdraw() {
+    return this.transactionMode === 'withdraw';
+  }
+
+  get isRecharge() {
+    return this.transactionMode === 'recharge';
+  }
+
+  get validator() {
+    return {
+      rechargeAmount: 1,
+      userName: () => this.isWithdraw && this.userName.trim() === '' && t('withdraw.user_name_required'),
+      bankName: () => this.isWithdraw && this.bankName.trim() === '' && t('withdraw.bank_name_required'),
+      bankAccount: () => this.isWithdraw && this.bankAccount.trim() === '' && t('withdraw.bank_account_required'),
+    };
+  }
+
   // Helper methods for complex setters that affect multiple fields
   setShowSeriesDialog = function(show, series = null) {
     this.showSeriesDialog = show;
@@ -76,51 +93,22 @@ class PaymentManagerStore {
   };
 
   startRecharge = function() {
+    this.rechargeAmount = defaultRechargeAmount;
     this.startTransaction('recharge');
   };
 
   startWithdraw = function() {
+    this.rechargeAmount = clientStore.client.balance;
     this.startTransaction('withdraw');
   };
 
   confirmTransaction = function() {
-    // Validate amount first
-    if (this.rechargeAmount < 1) {
-      userStore.openErrorDialog(t(`${this.transactionMode}.min_amount`));
+    const err = this.validate();
+    if (err.length > 0) {
+      userStore.openErrorDialog(err);
       return;
     }
 
-    if (!this.rechargeAmount || isNaN(this.rechargeAmount)) {
-      userStore.openErrorDialog(t(`${this.transactionMode}.invalid_amount`));
-      return;
-    }
-
-    // For withdraw mode, validate bank account, user name, bank name and balance
-    if (this.transactionMode === 'withdraw') {
-      if (!this.bankAccount || this.bankAccount.trim() === '') {
-        userStore.openErrorDialog(t('withdraw.bank_account_required'));
-        return;
-      }
-
-      if (!this.userName || this.userName.trim() === '') {
-        userStore.openErrorDialog(t('withdraw.user_name_required'));
-        return;
-      }
-
-      if (!this.bankName || this.bankName.trim() === '') {
-        userStore.openErrorDialog(t('withdraw.bank_name_required'));
-        return;
-      }
-
-      // Check if client has sufficient balance
-      const currentBalance = clientStore.client.balance || 0;
-      if (currentBalance < this.rechargeAmount) {
-        userStore.openErrorDialog(t('withdraw.insufficient_balance'));
-        return;
-      }
-    }
-
-    // If all validations pass, show confirm dialog
     this.showRechargeAmountDialog = false;
     this.showRechargeDialog = true;
   };
@@ -150,33 +138,16 @@ class PaymentManagerStore {
       // Handle withdraw - set client withdraw info and save to database
       try {
         const withdrawData = {
+          userId: userStore.user.id,
+          clientId: clientStore.client.id,
           amount: this.rechargeAmount,
-          date: new Date().toISOString(),
-          account: this.bankAccount,
+          bankAccount: this.bankAccount,
           userName: this.userName,
           bankName: this.bankName,
-          status: 'pending'
         };
 
-        // Set the withdraw info in clientStore
-        clientStore.client.withdraw = withdrawData;
-        
-        // Also save to database for record keeping
-        // const dbWithdrawData = {
-        //   userId: userStore.user?.id || userStore.user?.phone,
-        //   clientId: clientStore.client.id,
-        //   amount: this.rechargeAmount,
-        //   bankAccount: this.bankAccount,
-        //   type: 'withdraw',
-        //   status: 'pending',
-        //   createdAt: new Date().toISOString()
-        // };
-
-        // await post('/api/save?doc=withdrawals', dbWithdrawData);
-        
-        // Save the updated client data
-        await clientStore.save();
-        
+        await post('withdraw', {}, withdrawData);
+        await clientStore.loadClient();
         userStore.openInfoDialog(t('withdraw.request_submitted'));
         this.cancelTransaction();
       } catch (error) {

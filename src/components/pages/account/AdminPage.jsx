@@ -13,7 +13,8 @@ import {
   FiSliders,
   FiImage,
   FiArrowLeft,
-  FiBarChart
+  FiBarChart,
+  FiUser
 } from 'react-icons/fi';
 import { t } from '../../../stores/languageStore';
 import MenuListItem from '../../ui/MenuListItem';
@@ -37,7 +38,8 @@ const routeMap = {
   'orders': '/orders',
   'basic-settings': '/client/settings',
   'advanced-settings': '/client/advanced-settings',
-  'banner-settings': '/settings/banners'
+  'banner-settings': '/settings/banners',
+  'my_account': '/my_account'
 };
 
 const AdminPage = observer(() => {
@@ -104,6 +106,14 @@ const AdminPage = observer(() => {
         icon={FiBarChart}
         iconColor="text-indigo-500"
       />
+      {userStore.isClientAdmin &&
+        <MenuListItem
+          label={t('menu.admin_page.my_account')}
+          onClick={() => navigate(routeMap['my_account'])}
+          icon={FiUser}
+          iconColor="text-orange-500"
+        />
+      }
     </>
   );
 

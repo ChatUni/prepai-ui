@@ -109,7 +109,6 @@
       "membership_remaining": "残り日数",
       "about": "について",
       "my_assistants": "マイアシスタント",
-      "my_account": "マイアカウント",
       "account_balance": "アカウント残高",
       "cumulative_earnings": "累計収益",
       "withdraw": "出金",
@@ -138,7 +137,8 @@
       "upgrade": "メンバーシップアップグレード",
       "advanced_settings": "高度な設定",
       "orders": "注文管理",
-      "back": "戻る"
+      "back": "戻る",
+      "my_account": "マイアカウント"
     },
     "categories": {
       "testing": "テスト",
@@ -705,7 +705,7 @@
     "amount_label": "出金金額（¥）",
     "amount_placeholder": "金額を入力してください",
     "select_amount": "金額を選択",
-    "custom_amount": "カスタム金額",
+    "custom_amount": "出金金額（最大値 {max}）",
     "amount_to_withdraw": "出金金額",
     "bank_account_label": "銀行口座番号",
     "bank_account_placeholder": "銀行口座番号を入力してください",
@@ -719,7 +719,7 @@
     "insufficient_balance": "残高不足です。現在の残高では、この出金金額に対して不足しています。",
     "min_amount": "最低出金金額は¥1です",
     "invalid_amount": "有効な金額を入力してください",
-    "request_submitted": "出金リクエストが正常に送信されました！1〜3営業日以内に処理されます。",
+    "request_submitted": "出金リクエストが正常に送信されました！1〜2営業日以内に処理されます。",
     "request_failed": "出金リクエストの送信に失敗しました。もう一度お試しください。",
     "processing": "出金リクエストを処理中..."
   },

@@ -109,7 +109,6 @@
       "membership_remaining": "剩余天数",
       "about": "关于",
       "my_assistants": "我的助手",
-      "my_account": "我的账户",
       "account_balance": "账户余额",
       "cumulative_earnings": "累计收益",
       "withdraw": "提现",
@@ -138,7 +137,8 @@
       "upgrade": "指定升级",
       "advanced_settings": "高级设置",
       "orders": "资金明细",
-      "back": "返回"
+      "back": "返回",
+      "my_account": "我的账户"
     },
     "categories": {
       "testing": "考测",
@@ -704,7 +704,7 @@
     "amount_label": "提现金额（¥）",
     "amount_placeholder": "请输入金额",
     "select_amount": "选择金额",
-    "custom_amount": "自定义金额",
+    "custom_amount": "提现金额（最大值 {max}）",
     "amount_to_withdraw": "提现金额",
     "bank_account_label": "银行账户号码",
     "bank_account_placeholder": "请输入您的银行账户号码",
@@ -718,9 +718,9 @@
     "insufficient_balance": "余额不足。您当前的余额不足以支付此提现金额。",
     "min_amount": "最低提现金额为¥1",
     "invalid_amount": "请输入有效金额",
-    "request_submitted": "提现申请提交成功！将在1-3个工作日内处理。",
+    "request_submitted": "提现申请提交成功！将在1-2个工作日内处理。",
     "request_failed": "提现申请提交失败，请重试。",
-    "processing": "正在处理提现申请..."
+    "processing": "正在处理提现申请, 将在1-2个工作日内处理"
   },
   "transaction": {
     "amount_dialog_title": "输入交易金额",

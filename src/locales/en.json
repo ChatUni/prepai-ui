@@ -109,7 +109,6 @@
       "membership_remaining": "Remaining days",
       "about": "About",
       "my_assistants": "My Assistants",
-      "my_account": "My Account",
       "account_balance": "Account Balance",
       "cumulative_earnings": "Cumulative Earnings",
       "withdraw": "Withdraw",
@@ -138,7 +137,8 @@
       "upgrade": "Membership Upgrade",
       "advanced_settings": "Advanced Settings",
       "orders": "Order Management",
-      "back": "Back"
+      "back": "Back",
+      "my_account": "My Account"
     },
     "categories": {
       "testing": "Testing",
@@ -704,7 +704,7 @@
     "amount_label": "Withdrawal Amount (¥)",
     "amount_placeholder": "Enter amount",
     "select_amount": "Select Amount",
-    "custom_amount": "Custom Amount",
+    "custom_amount": "Withdrawal Amount (Max {max})",
     "amount_to_withdraw": "Amount to Withdraw",
     "bank_account_label": "Bank Account Number",
     "bank_account_placeholder": "Enter your bank account number",
@@ -718,7 +718,7 @@
     "insufficient_balance": "Insufficient balance. Your current balance is not enough for this withdrawal amount.",
     "min_amount": "Minimum withdrawal amount is ¥1",
     "invalid_amount": "Please enter a valid amount",
-    "request_submitted": "Withdrawal request submitted successfully! It will be processed within 1-3 business days.",
+    "request_submitted": "Withdrawal request submitted successfully! It will be processed within 1-2 business days.",
     "request_failed": "Failed to submit withdrawal request. Please try again.",
     "processing": "Processing withdrawal request..."
   },

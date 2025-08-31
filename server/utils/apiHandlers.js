@@ -3,7 +3,7 @@ const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete,
 const { wechat_pay, wechat_query } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
 const { chat, draw, video, tts } = require('../openai.js');
-const { upgradeAll } = require('./account.js');
+const { upgradeAll, withdraw } = require('./account.js');
 
 module.exports = {
   db_handlers: {
@@ -45,6 +45,7 @@ module.exports = {
       tos_upload: (q, b) => handleFileUpload(b.file, b.key),
       tos_delete: (q, b) => handleFileDelete(b.key),
       upgrade: (q, b) => upgradeAll(b),
+      withdraw: (q, b) => withdraw(b),
       wechat_pay,
       wechat_query,
       send_sms,

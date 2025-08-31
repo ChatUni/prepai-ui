@@ -108,7 +108,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
                   }`}
                   onClick={() => handleNavClick(item)}
                 >
-                  {item.label}a
+                  {item.label}
                 </div>
               );
             })}

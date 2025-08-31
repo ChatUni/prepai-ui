@@ -229,6 +229,14 @@ class UserStore {
     return this.getOrdersByType('series');
   }
 
+  getWithdrawOrders = function() {
+    return this.getOrdersByType('withdraw');
+  }
+
+  getRechargeOrders = function() {
+    return this.getOrdersByType('recharge');
+  }
+
   getRemainingDays = function(type, id) {
     if (!this.user?.orders) return null;
     

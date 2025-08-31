@@ -35,20 +35,22 @@ const connect = async dbName => {
 const count = doc => db.collection(doc).count();
 
 const get = doc =>
-  db.collection(tap(doc)).find().project({ _id: 0 }).toArray();
+  db.collection(doc).find().project({ _id: 0 }).toArray();
 
 const getById = (doc, id) =>
   db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } });
 
-const maxId = doc =>
-  db
+const maxId = async doc => {
+  const c = await db
     .collection(doc)
     .find()
     .project({ _id: 0, id: 1 })
     .sort({ id: -1 })
     .limit(1)
     .toArray()
-    .then(r => (r.length > 0 ? r[0].id : 0));
+    .then(r => (r.length > 0 ? +r[0].id : 0));
+  return c || await count(doc);
+}
 
 // 0: prop ('$videos')
 // 1: number
@@ -88,7 +90,7 @@ const strNum = v => {
 
 const flat = async (doc, agg) => {
   // agg = 'm_id=1,code='123',firstName=in$Nan;Fiona|name=regex$fan&u_songs&p_id,name=0,img=movies.img&s_type,date=-1&r_size=20'
-  console.log(agg)
+  console.log(doc, agg)
   const liftUps = []
   const stages = !agg
     ? [{ $match: {} }]
@@ -154,9 +156,9 @@ const flat = async (doc, agg) => {
         }, [])
       }).flat().filter(x => x)
   stages.push({ '$project': { _id: 0 } })
-  console.log(doc, stages)
+  // console.log(doc, stages)
   const r = await db.collection(doc).aggregate(stages).toArray()
-  console.log(r.length)
+  // console.log(r.length)
   return r
 }
 
@@ -167,10 +169,8 @@ const replace = async (doc, obj, id = 'id') => {
 
   if (id === 'id' && list.some(o => !o.id)) {
     const id1 = await maxId(doc);
-    if (typeof id1 == 'number') {
-      const id = Math.max(...list.map(o => o.id || 0), id1) + 1;
-      list.filter(o => !o.id).forEach((o, i) => (o.id = id + i));
-    }
+    const id = Math.max(...list.map(o => o.id || 0), id1) + 1;
+    list.filter(o => !o.id).forEach((o, i) => (o.id = id + i));
   }
 
   await Promise.all(

@@ -1,10 +1,16 @@
 const { getById, save, flat, count } = require('./db.js');
+const { getClientById, getMembershipById } = require('./rep.js');
 
 const durations = {
   monthly: 30,
   annually: 365,
   lifetime: 730,
   trial: 1
+}
+
+const getCommCost = (client, type) => {
+  const comm = client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
+  return comm * durations[type]
 }
 
 const upgrade = async (user, membership) => {
@@ -23,19 +29,13 @@ const upgrade = async (user, membership) => {
     paidAt: new Date().toISOString(),
   }
 
-  const cnt = await count('orders')
-  orderData.id = cnt + 1
-
   await save('orders', orderData)
 }
 
 const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
-  const membership = await getById('memberships', membershipId)
-  if (!membership) throw new Error('Membership not found')
+  const client = await getClientById(clientId)
+  const membership = await getMembershipById(membershipId)
   if (membership.client_id !== clientId) throw new Error('membership client mismatch')
-
-  const client = await getById('clients', clientId)
-  if (!client) throw new Error('Client not found')
 
   const cost = getCommCost(client, membership.type) * userIds.length
   if (client.balance < cost) throw new Error(`此次升级需扣款¥${cost}，当前余额为¥${client.balance}，请先充值`)
@@ -72,12 +72,34 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
   return { success: true }
 }
 
-const getCommCost = (client, type) => {
-  const comm = client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
-  return comm * durations[type]
+const withdraw = async ({ clientId, userId, amount, userName, bankAccount, bankName }) => {
+  const client = await getClientById(clientId)
+  if (client.balance < amount) throw new Error('余额不足')
+
+  const orderData = {
+    amount: amount,
+    status: "Pending",
+    client_id: clientId,
+    user_id: userId,
+    type: "withdraw",
+    body: '',
+    date_created: new Date().toISOString(),
+    userName,
+    bankName,
+    bankAccount,
+  }
+
+  client.balance = client.balance - amount
+  client.withdraw = orderData
+  
+  await save('clients', client)
+  await save('orders', orderData)
+
+  return { success: true }
 }
 
 module.exports = {
   upgradeAll,
+  withdraw,
   getCommCost
 }

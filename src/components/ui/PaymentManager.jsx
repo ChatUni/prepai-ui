@@ -1,28 +1,31 @@
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { SiWechat } from 'react-icons/si';
-import paymentManagerStore from '../../stores/paymentManagerStore';
+import store from '../../stores/paymentManagerStore';
 import seriesStore from '../../stores/seriesStore';
 import Dialog from './Dialog';
 import FormInput from './FormInput';
 import WeChatPayDialog from './WeChatPayDialog';
 import { t } from '../../stores/languageStore';
+import clientStore from '../../stores/clientStore';
+
+const predefinedAmounts = [500, 1000, 5000, 10000];
 
 const PaymentManager = observer(() => {
   const navigate = useNavigate();
-  const isMembershipDialogOpen = paymentManagerStore.showMembershipDialog;
-  const isSeriesDialogOpen = paymentManagerStore.showSeriesDialog;
-  const isRechargeDialogOpen = paymentManagerStore.showRechargeDialog;
-  const isRechargeAmountDialogOpen = paymentManagerStore.showRechargeAmountDialog;
-  const isWeChatDialogOpen = paymentManagerStore.showWeChatDialog;
-  const currentSeries = paymentManagerStore.currentSeries;
-  const orderData = paymentManagerStore.orderData;
+  const isMembershipDialogOpen = store.showMembershipDialog;
+  const isSeriesDialogOpen = store.showSeriesDialog;
+  const isRechargeDialogOpen = store.showRechargeDialog;
+  const isRechargeAmountDialogOpen = store.showRechargeAmountDialog;
+  const isWeChatDialogOpen = store.showWeChatDialog;
+  const currentSeries = store.currentSeries;
+  const orderData = store.orderData;
 
   const renderMembershipDialog = () => (
     <Dialog
       isOpen={isMembershipDialogOpen}
-      onClose={() => paymentManagerStore.setField('showMembershipDialog', false)}
-      onConfirm={() => paymentManagerStore.handleMembershipPurchase(navigate)}
+      onClose={() => store.setField('showMembershipDialog', false)}
+      onConfirm={() => store.handleMembershipPurchase(navigate)}
       title={t('assistant.membershipRequired.title')}
       isConfirm={true}
     >
@@ -36,8 +39,8 @@ const PaymentManager = observer(() => {
     return (
       <Dialog
         isOpen={isSeriesDialogOpen}
-        onClose={() => paymentManagerStore.setShowSeriesDialog(false)}
-        onConfirm={() => paymentManagerStore.handleSeriesPurchase()}
+        onClose={() => store.setShowSeriesDialog(false)}
+        onConfirm={() => store.handleSeriesPurchase()}
         title={t('series.seriesPurchaseRequired.title')}
         isConfirm={true}
       >
@@ -81,72 +84,81 @@ const PaymentManager = observer(() => {
     );
   };
 
-  const renderTransactionDialog = () => {
-    const isWithdraw = paymentManagerStore.transactionMode === 'withdraw';
-    const modeKey = isWithdraw ? 'withdraw' : 'recharge';
-    
-    return (
-      <Dialog
-        isOpen={isRechargeDialogOpen}
-        onClose={() => paymentManagerStore.cancelTransaction()}
-        onConfirm={() => paymentManagerStore.proceedWithTransaction()}
-        title={t(`${modeKey}.confirm_title`)}
-        isConfirm={true}
-      >
-        <div>
-          <p className="text-gray-600 mb-4">{t(`${modeKey}.confirm_message`)}</p>
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                ¥{paymentManagerStore.rechargeAmount}
-              </div>
-              <div className="text-sm text-gray-600 mt-1">
-                {t(`${modeKey}.amount_to_${isWithdraw ? 'withdraw' : 'recharge'}`)}
-              </div>
+  const renderTransactionDialog = () => (
+    <Dialog
+      isOpen={isRechargeDialogOpen}
+      onClose={() => store.cancelTransaction()}
+      onConfirm={() => store.proceedWithTransaction()}
+      title={t(`${store.transactionMode}.confirm_title`)}
+      isConfirm={true}
+    >
+      <div>
+        <p className="text-gray-600 mb-4">{t(`${store.transactionMode}.confirm_message`)}</p>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              ¥{store.rechargeAmount}
             </div>
-            {/* Show bank account info for withdraw */}
-            {isWithdraw && paymentManagerStore.bankAccount && (
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 mt-1">
+              {t(`${store.transactionMode}.amount_to_${store.transactionMode}`)}
+            </div>
+          </div>
+          {/* Show bank account info for withdraw */}
+          {store.isWithdraw && store.bankAccount && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="text-sm text-gray-600 space-y-2">
+                {store.userName && (
+                  <div>
+                    <span className="font-medium">{t('withdraw.user_name_label')}:</span>
+                    <div className="mt-1 text-gray-800">
+                      {store.userName}
+                    </div>
+                  </div>
+                )}
+                {store.bankName && (
+                  <div>
+                    <span className="font-medium">{t('withdraw.bank_name_label')}:</span>
+                    <div className="mt-1 text-gray-800">
+                      {store.bankName}
+                    </div>
+                  </div>
+                )}
+                <div>
                   <span className="font-medium">{t('withdraw.bank_account_label')}:</span>
                   <div className="mt-1 font-mono text-gray-800">
-                    {paymentManagerStore.bankAccount}
+                    {store.bankAccount}
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </Dialog>
-    );
-  };
+      </div>
+    </Dialog>
+  );
 
-  const renderTransactionAmountDialog = () => {
-    const predefinedAmounts = [500, 1000, 5000, 10000];
-    const isWithdraw = paymentManagerStore.transactionMode === 'withdraw';
-    const modeKey = isWithdraw ? 'withdraw' : 'recharge';
-    
-    return (
-      <Dialog
-        isOpen={isRechargeAmountDialogOpen}
-        onClose={() => paymentManagerStore.cancelTransaction()}
-        onConfirm={() => paymentManagerStore.confirmTransaction()}
-        title={t(`${modeKey}.amount_dialog_title`)}
-        isConfirm={true}
-      >
-        <div className="mb-6">
-          {/* Predefined Amount Cards */}
+  const renderTransactionAmountDialog = () => (
+    <Dialog
+      isOpen={isRechargeAmountDialogOpen}
+      onClose={() => store.cancelTransaction()}
+      onConfirm={() => store.confirmTransaction()}
+      title={t(`${store.transactionMode}.amount_dialog_title`)}
+      isConfirm={true}
+    >
+      <div className="mb-6">
+        {/* Predefined Recharge Amount Cards */}
+        {store.isRecharge && (
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t(`${modeKey}.select_amount`)}
+              {t('recharge.select_amount')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               {predefinedAmounts.map((amount) => (
                 <button
                   key={amount}
-                  onClick={() => paymentManagerStore.setField('rechargeAmount', amount)}
+                  onClick={() => store.setField('rechargeAmount', amount)}
                   className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                    paymentManagerStore.rechargeAmount === amount
+                    store.rechargeAmount === amount
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-gray-200 hover:border-gray-300 text-gray-700'
                   }`}
@@ -156,49 +168,48 @@ const PaymentManager = observer(() => {
               ))}
             </div>
           </div>
+        )}
 
-          {/* Custom Amount Input */}
-          <div className="pt-4">
+        {/* Custom Amount Input */}
+        <div className="pt-4">
+          <FormInput
+            label={t(`${store.transactionMode}.custom_amount`, { max: clientStore.client.balance })}
+            type="number"
+            store={store}
+            field="rechargeAmount"
+            placeholder={t(`${store.transactionMode}.amount_placeholder`)}
+            min={1}
+            max={clientStore.client.balance}
+            step="0.01"
+          />
+        </div>
+
+        {/* Bank Account Input for Withdraw Mode */}
+        {store.isWithdraw && (
+          <div className="pt-4 mt-4 space-y-4">
             <FormInput
-              label={t(`${modeKey}.custom_amount`)}
-              type="number"
-              value={paymentManagerStore.rechargeAmount}
-              onChange={(value) => paymentManagerStore.setField('rechargeAmount', value)}
-              placeholder={t(`${modeKey}.amount_placeholder`)}
-              min={1}
-              step="0.01"
+              label={t('withdraw.user_name_label')}
+              store={store}
+              field="userName"
+              placeholder={t('withdraw.user_name_placeholder')}
+            />
+            <FormInput
+              label={t('withdraw.bank_name_label')}
+              store={store}
+              field="bankName"
+              placeholder={t('withdraw.bank_name_placeholder')}
+            />
+            <FormInput
+              label={t('withdraw.bank_account_label')}
+              store={store}
+              field="bankAccount"
+              placeholder={t('withdraw.bank_account_placeholder')}
             />
           </div>
-
-          {/* Bank Account Input for Withdraw Mode */}
-          {isWithdraw && (
-            <div className="pt-4 mt-4 space-y-4">
-              <FormInput
-                label={t('withdraw.user_name_label')}
-                type="text"
-                value={paymentManagerStore.userName}
-                onChange={(value) => paymentManagerStore.setField('userName', value)}
-                placeholder={t('withdraw.user_name_placeholder')}
-              />
-              <FormInput
-                label={t('withdraw.bank_name_label')}
-                type="text"
-                value={paymentManagerStore.bankName}
-                onChange={(value) => paymentManagerStore.setField('bankName', value)}
-                placeholder={t('withdraw.bank_name_placeholder')}
-              />
-              <FormInput
-                label={t('withdraw.bank_account_label')}
-                store={paymentManagerStore}
-                field="bankAccount"
-                placeholder={t('withdraw.bank_account_placeholder')}
-              />
-            </div>
-          )}
-        </div>
-      </Dialog>
-    );
-  };
+        )}
+      </div>
+    </Dialog>
+  );
 
   return (
     <>
@@ -208,10 +219,10 @@ const PaymentManager = observer(() => {
       {renderTransactionAmountDialog()}
       <WeChatPayDialog
         isOpen={isWeChatDialogOpen}
-        onClose={() => paymentManagerStore.setShowWeChatDialog(false)}
+        onClose={() => store.setShowWeChatDialog(false)}
         orderData={orderData}
-        onPaymentSuccess={paymentManagerStore.handlePaymentSuccess}
-        onPaymentError={paymentManagerStore.handlePaymentError}
+        onPaymentSuccess={store.handlePaymentSuccess}
+        onPaymentError={store.handlePaymentError}
       />
     </>
   );

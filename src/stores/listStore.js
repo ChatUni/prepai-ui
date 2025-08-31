@@ -19,6 +19,7 @@ class ListStore {
       filtered = filtered.filter(item => this.searchableFields.some(field => (item[field]?.toString() || '').toLowerCase().includes(query)));
     }
 
+    // filteringFields used for filter controls in the search bar
     (this.filteringFields || []).forEach(filter => {
       if (typeof filter === 'function') {
         filtered = filtered.filter(filter)

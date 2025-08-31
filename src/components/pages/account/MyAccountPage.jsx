@@ -49,7 +49,7 @@ const MyAccountPage = observer(() => {
               icon={FiCreditCard}
               color="blue"
               className="rounded-lg p-4 shadow-lg"
-              disabled={clientStore.client.withdraw && clientStore.client.withdraw.status === 'pending'}
+              disabled={clientStore.client.withdraw}
             >
               {t('menu.account_page.withdraw')}
             </Button>
@@ -67,7 +67,7 @@ const MyAccountPage = observer(() => {
         </div>
 
         {/* Current Withdraw Info */}
-        {clientStore.client.withdraw && clientStore.client.withdraw.status === 'pending' && (
+        {clientStore.client.withdraw && (
           <div className="px-6 pb-8">
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex items-center mb-2">
@@ -81,10 +81,16 @@ const MyAccountPage = observer(() => {
                   <span className="font-medium">{t('withdraw.amount_label')}:</span> ¥{clientStore.client.withdraw.amount}
                 </div>
                 <div>
-                  <span className="font-medium">{t('withdraw.bank_account_label')}:</span> {clientStore.client.withdraw.account}
+                  <span className="font-medium">{t('withdraw.user_name_label')}:</span> {clientStore.client.withdraw.userName}
                 </div>
                 <div>
-                  <span className="font-medium">{t('common.date')}:</span> {new Date(clientStore.client.withdraw.date).toLocaleDateString()}
+                  <span className="font-medium">{t('withdraw.bank_name_label')}:</span> {clientStore.client.withdraw.bankName}
+                </div>
+                <div>
+                  <span className="font-medium">{t('withdraw.bank_account_label')}:</span> {clientStore.client.withdraw.bankAccount}
+                </div>
+                <div>
+                  <span className="font-medium">{t('common.date')}:</span> {new Date(clientStore.client.withdraw.date_created).toLocaleDateString()}
                 </div>
               </div>
             </div>

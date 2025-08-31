@@ -22,11 +22,11 @@ class OrderStore {
     return ['body', 'id', 'product_id'];
   }
 
-  get filteringFields() {
-    return [
-      item => item.status === 'PAID',
-    ];
-  }
+  // get filteringFields() {
+  //   return [
+  //     item => item.status === 'PAID',
+  //   ];
+  // }
 
   // get paidOrders() {
   //   if (!userStore.user?.orders) return [];
@@ -43,18 +43,50 @@ class OrderStore {
     const orders = await get('orders', { clientId: clientStore.client.id })
     let bal = 0
     return orders
-      .filter(o => o.status === 'PAID')
-      .sort((a, b) => new Date(a.paidAt) - new Date(b.paidAt))
+      .filter(o => this.isPaid(o) || this.isWithdraw(o))
+      .sort(this.sortOrders)
       .map(o => {
-        const systemCost = o.type === 'membership'
+        const systemCost = this.isMembership(o)
           ? o.duration * (clientStore.client.commPerDay || import.meta.env.VITE_COMM_PER_DAY || 0.5)
           : 0;
         const net = o.amount - systemCost;
         bal += net;        
         return { ...o, title: o.body.split(' - ')[0], systemCost, net, bal };
       })
-      .sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt))
+      .sort(this.sortOrders)
   };
+
+  sortOrders = function(a, b) {
+    return new Date(b.paidAt || b.date_created) - new Date(a.paidAt || a.date_created);
+  }
+
+  isPaid = function(order) {
+    return order.status.toLowerCase() === 'paid';
+  }
+
+  isPending = function(order) {
+    return order.status.toLowerCase() === 'pending';
+  }
+
+  isCancelled = function(order) {
+    return order.status.toLowerCase() === 'cancelled';
+  }
+
+  isMembership = function(order) {
+    return order.type.toLowerCase() === 'membership';
+  }
+
+  isSeries = function(order) {
+    return order.type.toLowerCase() === 'series';
+  }
+
+  isWithdraw = function(order) {
+    return order.type.toLowerCase() === 'withdraw';
+  }
+
+  isRecharge = function(order) {
+    return order.type.toLowerCase() === 'recharge';
+  }
 
   formatOrderDate = (dateString) => {
     if (!dateString) return '';

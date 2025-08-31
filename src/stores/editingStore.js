@@ -110,12 +110,10 @@ class EditingStore {
     this.editingItem = {};
   };
 
-  confirmEdit = async function(isReload = true, isClose = true) { // only for editingItem
-    if (!this.editingItem) return;
-
+  validate = function() { // return a list of errors
     if (this.validator) {
       const err = Object.entries(this.validator).map(([k, v]) => {
-        const iv = this.editingItem[k];
+        const iv = (this.isCRUD ? this.editingItem : this)[k];
         const f = t(`${this.name}.${k}`);
         if (v === 1) {
           if (iv === null || iv === undefined || iv === '') return t('common.required', { name: f });
@@ -123,10 +121,18 @@ class EditingStore {
           return v(iv);
         }
       }).filter(x => x);
-      if (err.length > 0) {
-        this.openErrorDialog(err);
-        return;
-      }
+      return err;
+    }
+    return [];
+  }
+
+  confirmEdit = async function(isReload = true, isClose = true) { // only for editingItem
+    if (!this.editingItem) return;
+
+    const err = this.validate();
+    if (err.length > 0) {
+      this.openErrorDialog(err);
+      return;
     }
 
     try {
