@@ -40,6 +40,9 @@ const get = doc =>
 const getById = (doc, id) =>
   db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } });
 
+const getLatest = (doc, q, dateField = 'date_created') =>
+  db.collection(doc).find(q, { _id: 0 }).sort({ [dateField]: -1 }).limit(1).toArray().then(r => r.length > 0 ? r[0] : null);
+
 const maxId = async doc => {
   const c = await db
     .collection(doc)
@@ -162,6 +165,11 @@ const flat = async (doc, agg) => {
   return r
 }
 
+const flatOne = async (doc, agg) => {
+  const r = await flat(doc, agg)
+  return r.length > 0 ? r[0] : null
+}
+
 const add = (doc, obj) => db.collection(doc).insertMany(makeArray(obj));
 
 const replace = async (doc, obj, id = 'id') => {
@@ -221,8 +229,10 @@ module.exports = {
   count,
   get,
   getById,
+  getLatest,
   maxId,
   flat,
+  flatOne,
   add,
   replace,
   save,

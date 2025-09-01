@@ -17,21 +17,25 @@ export const omit = (obj, keys) => {
   return result;
 }
 
-export const buildOptions = (options) => options.map(option => {
-  if (typeof option === 'string') {
-    return { value: option, label: option };
-  }
+export const buildOptions = (options, first) => {
+  const opts = options.map(option => {
+    if (typeof option === 'string') {
+      return { value: option, label: option };
+    }
 
-  let value = option.value;
-  if (value === undefined) value = option.id;
+    let value = option.value;
+    if (value === undefined) value = option.id;
 
-  return {
-    value,
-    label: option.label || option.text || option.name || value,
-    icon: buildUrl(option.icon),
-    url: option.url
-  };
-})
+    return {
+      value,
+      label: option.label || option.text || option.name || value,
+      icon: buildUrl(option.icon),
+      url: option.url
+    };
+  })
+
+  return first ? [{ value: '', label: first }, ...opts] : opts;
+}
 
 const buildUrl = (url) => {
   if (!url) return undefined

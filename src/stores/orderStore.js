@@ -9,6 +9,8 @@ import { t } from './languageStore';
 
 class OrderStore {
   orders = [];
+  selectedType = '';
+  selectedStatus = '';
 
   get name() {
     return 'order';
@@ -22,42 +24,32 @@ class OrderStore {
     return ['body', 'id', 'product_id'];
   }
 
-  // get filteringFields() {
-  //   return [
-  //     item => item.status === 'PAID',
-  //   ];
-  // }
+  get filteringFields() {
+    return [
+      'type',
+      'status',
+    ];
+  }
+  
+  get types() {
+    return ['membership', 'series', 'recharge', 'withdraw'].map(x => ({ value: x, text: t(`order.types.${x}`) }));
+  }
 
-  // get paidOrders() {
-  //   if (!userStore.user?.orders) return [];
-    
-  //   return userStore.user.orders
-  //     .filter(order => 
-  //       order.status === 'PAID' && 
-  //       order.client_id == clientStore.client.id
-  //     )
-  //     .sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
-  // }
+  get status() {
+    return ['Paid', 'Pending'].map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
+  }
 
   fetchItemList = async function() {
     const orders = await get('orders', { clientId: clientStore.client.id })
-    let bal = 0
     return orders
       .filter(o => this.isPaid(o) || this.isWithdraw(o))
-      .sort(this.sortOrders)
-      .map(o => {
-        const systemCost = this.isMembership(o)
-          ? o.duration * (clientStore.client.commPerDay || import.meta.env.VITE_COMM_PER_DAY || 0.5)
-          : 0;
-        const net = o.amount - systemCost;
-        bal += net;        
-        return { ...o, title: o.body.split(' - ')[0], systemCost, net, bal };
-      })
-      .sort(this.sortOrders)
+      .sort(this.sortOrders())
+      .map(o => ({ ...o, title: o.body.split(' - ')[0] }))
   };
 
-  sortOrders = function(a, b) {
-    return new Date(b.paidAt || b.date_created) - new Date(a.paidAt || a.date_created);
+  sortOrders = (desc = true) => (a, b) => {
+    const d = x => x.paidAt || x.date_created
+    return new Date(desc ? d(b) : d(a)) - new Date(desc ? d(a) : d(b));
   }
 
   isPaid = function(order) {
@@ -88,6 +80,14 @@ class OrderStore {
     return order.type.toLowerCase() === 'recharge';
   }
 
+  isPendingWithdraw = function(order) {
+    return this.isWithdraw(order) && this.isPending(order);
+  }
+
+  hasSystemCost = function(order) {
+    return this.isMembership(order);
+  }
+
   formatOrderDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -101,10 +101,8 @@ class OrderStore {
   };
 
   formatPrice = (price) => {
-    if (typeof price === 'number') {
-      return price.toFixed(2);
-    }
-    return parseFloat(price || 0).toFixed(2);
+    const p = parseFloat(price || 0).toFixed(2);
+    return p < 0 ? '-¥' + Math.abs(p) : '¥' + p;
   };
 
   get typeMap() {

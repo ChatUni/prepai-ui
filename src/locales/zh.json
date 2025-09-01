@@ -11,6 +11,7 @@
     "save": "保存",
     "delete": "删除",
     "edit": "编辑",
+    "close": "关闭",
     "loading": "加载中...",
     "error": "错误",
     "success": "成功",
@@ -773,7 +774,7 @@
     "user": "用户",
     "copyUserId": "复制用户ID",
     "systemCost": "系统成本",
-    "netIncome": "净收入",
+    "netIncome": "净收入/支出",
     "accountBalance": "账户余额",
     "search": {
       "placeholder": "搜索订单..."
@@ -785,6 +786,14 @@
       "assistant": "助手",
       "recharge": "充值",
       "withdraw": "提现"
+    },
+    "status": {
+      "all": "所有状态",
+      "paid": "已支付",
+      "pending": "待处理"
     }
+  },
+  "paymentManager": {
+    "rechargeAmount": "金额"
   }
 }

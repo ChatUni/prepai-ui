@@ -152,7 +152,7 @@ class PaymentManagerStore {
         this.cancelTransaction();
       } catch (error) {
         console.error('Withdraw request error:', error);
-        userStore.openErrorDialog(t('withdraw.request_failed'));
+        userStore.openErrorDialog(`${error.message} ${t('withdraw.request_failed')}`);
       }
     } else {
       // Handle recharge - proceed with WeChat payment

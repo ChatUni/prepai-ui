@@ -26,13 +26,15 @@ const MyAccountPage = observer(() => {
     // TODO: Navigate to withdrawal records page
   };
 
+  const withdraw = clientStore.client.latestWithdraw;
+
   return (
     <Page store={userStore} title={t('menu.account_page.account_balance')}>
         <div className="px-6 pt-4 pb-4">
           {/* Balance Display */}
           <div className="mb-2">
             <div className="text-4xl font-bold mb-4 text-gray-900">
-              ¥{(clientStore.client.balance || 0).toFixed(2)}
+              ¥{clientStore.balance.toFixed(2)}
             </div>
             {/* <div className="text-gray-600 text-sm">
               {t('menu.account_page.cumulative_earnings')}：¥{userStore.cumulativeEarnings.toFixed(2)}
@@ -49,7 +51,7 @@ const MyAccountPage = observer(() => {
               icon={FiCreditCard}
               color="blue"
               className="rounded-lg p-4 shadow-lg"
-              disabled={clientStore.client.withdraw}
+              disabled={withdraw}
             >
               {t('menu.account_page.withdraw')}
             </Button>
@@ -67,7 +69,7 @@ const MyAccountPage = observer(() => {
         </div>
 
         {/* Current Withdraw Info */}
-        {clientStore.client.withdraw && (
+        {withdraw && (
           <div className="px-6 pb-8">
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex items-center mb-2">
@@ -78,19 +80,19 @@ const MyAccountPage = observer(() => {
               </div>
               <div className="text-sm text-yellow-700 space-y-1">
                 <div>
-                  <span className="font-medium">{t('withdraw.amount_label')}:</span> ¥{clientStore.client.withdraw.amount}
+                  <span className="font-medium">{t('withdraw.amount_label')}:</span> ¥{-withdraw.amount}
                 </div>
                 <div>
-                  <span className="font-medium">{t('withdraw.user_name_label')}:</span> {clientStore.client.withdraw.userName}
+                  <span className="font-medium">{t('withdraw.user_name_label')}:</span> {withdraw.userName}
                 </div>
                 <div>
-                  <span className="font-medium">{t('withdraw.bank_name_label')}:</span> {clientStore.client.withdraw.bankName}
+                  <span className="font-medium">{t('withdraw.bank_name_label')}:</span> {withdraw.bankName}
                 </div>
                 <div>
-                  <span className="font-medium">{t('withdraw.bank_account_label')}:</span> {clientStore.client.withdraw.bankAccount}
+                  <span className="font-medium">{t('withdraw.bank_account_label')}:</span> {withdraw.bankAccount}
                 </div>
                 <div>
-                  <span className="font-medium">{t('common.date')}:</span> {new Date(clientStore.client.withdraw.date_created).toLocaleDateString()}
+                  <span className="font-medium">{t('common.date')}:</span> {new Date(withdraw.date_created).toLocaleDateString()}
                 </div>
               </div>
             </div>

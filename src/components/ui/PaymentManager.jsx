@@ -173,13 +173,13 @@ const PaymentManager = observer(() => {
         {/* Custom Amount Input */}
         <div className="pt-4">
           <FormInput
-            label={t(`${store.transactionMode}.custom_amount`, { max: clientStore.client.balance })}
+            label={t(`${store.transactionMode}.custom_amount`, { max: clientStore.balance })}
             type="number"
             store={store}
             field="rechargeAmount"
             placeholder={t(`${store.transactionMode}.amount_placeholder`)}
             min={1}
-            max={clientStore.client.balance}
+            max={store.isWithdraw ? clientStore.balance : null}
             step="0.01"
           />
         </div>
@@ -221,8 +221,8 @@ const PaymentManager = observer(() => {
         isOpen={isWeChatDialogOpen}
         onClose={() => store.setShowWeChatDialog(false)}
         orderData={orderData}
-        onPaymentSuccess={store.handlePaymentSuccess}
-        onPaymentError={store.handlePaymentError}
+        onPaymentSuccess={data => store.handlePaymentSuccess(data)}
+        onPaymentError={error => store.handlePaymentError(error)}
       />
     </>
   );

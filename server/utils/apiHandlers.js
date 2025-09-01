@@ -4,11 +4,12 @@ const { wechat_pay, wechat_query } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
 const { chat, draw, video, tts } = require('../openai.js');
 const { upgradeAll, withdraw } = require('./account.js');
+const { getClient } = require('./rep.js');
 
 module.exports = {
   db_handlers: {
     get: {
-      clients: q => flat('clients', `m_id=${q.id}&f_+memberships`),
+      client: q => getClient(q.id),
       courses: q => flat('courses', `${q.seriesId ? `m_series_id=${q.seriesId}&` : ''}f_series|series&f_instructors`),
       instructors: q => flat('instructors', `m_client_id=${q.clientId}`),
       assistants: q => flat('assistants', `m_type=platform|client_id=${q.clientId}|user_id=${q.userId}`),

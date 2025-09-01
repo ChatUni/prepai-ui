@@ -48,6 +48,10 @@ class ClientStore {
   //   return this.client;
   // }
 
+  get balance() {
+    return this.client.latestOrder?.balance || 0;
+  }
+
   get hasEmptyBanners() {
     return this.client.settings.banners.some((banner, index) => {
       // If banner URL is empty, check if there's a file selected for upload
@@ -156,7 +160,7 @@ class ClientStore {
   }
 
   save = async function(item = this.client) {
-    const r = await save('clients', omit(item, ['memberships']));
+    const r = await save('clients', omit(item, ['memberships', 'latestOrder', 'latestWithdraw']));
     this.loadClient();
     return r;
   }
@@ -242,11 +246,11 @@ class ClientStore {
     this.error = null;
 
     try {
-      const data = await get('clients', { id: import.meta.env.VITE_CLIENT_ID });
+      const client = await get('client', { id: import.meta.env.VITE_CLIENT_ID });
       
       runInAction(() => {
-        if (data && data.length > 0) {
-          this.client = data[0];
+        if (client) {
+          this.client = client;
           // Sort memberships by order field if they exist
           if (this.client.memberships && Array.isArray(this.client.memberships)) {
             this.client.memberships.sort((a, b) => a.order - b.order);

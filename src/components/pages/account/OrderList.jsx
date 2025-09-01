@@ -24,36 +24,19 @@ const OrderList = observer(() => {
             index={index}
           />
         )}
+        filters={[
+          {
+            selectedField: 'selectedType',
+            optionsField: 'types',
+            allLabel: t('series.search.allCategories'),
+          },
+          {
+            selectedField: 'selectedStatus',
+            optionsField: 'status',
+            allLabel: t('order.status.all'),
+          },
+        ]}
       />
-    // <Page store={orderStore} title={t('order.title')}>
-    //   <div className="flex flex-col bg-gray-100 w-full max-w-sm mx-auto">
-    //     {/* Order list */}
-    //     <div className="space-y-3 p-4">
-    //       {paidOrders.length === 0 ? (
-    //         <div className="text-center py-8">
-    //           <div className="text-gray-500 text-lg mb-2">
-    //             {t('order.noOrders')}
-    //           </div>
-    //           <div className="text-gray-400 text-sm">
-    //             {t('order.noOrdersDesc')}
-    //           </div>
-    //         </div>
-    //       ) : (
-    //         <>
-    //           <div className="text-gray-600 text-sm mb-4">
-    //             {t('order.totalOrders', { count: paidOrders.length })}
-    //           </div>
-    //           {paidOrders.map((order, index) => (
-    //             <OrderCard 
-    //               key={`${order.id}-${index}`} 
-    //               order={order} 
-    //             />
-    //           ))}
-    //         </>
-    //       )}
-    //     </div>
-    //   </div>
-    // </Page>
   );
 });
 

@@ -1,5 +1,6 @@
-const { getById, save, flat, count } = require('./db.js');
-const { getClientById, getMembershipById } = require('./rep.js');
+const { getById, save, flat, count, getLatest } = require('./db.js');
+const { getClientById, getMembershipById, getLatestOrder } = require('./rep.js');
+const e = require('express');
 
 const durations = {
   monthly: 30,
@@ -8,28 +9,74 @@ const durations = {
   trial: 1
 }
 
-const getCommCost = (client, type) => {
-  const comm = client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
-  return comm * durations[type]
+const getComm = client => client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
+
+const getCurrentBalance = async clientId => {
+  const latestOrder = await getLatestOrder(clientId)
+  return (latestOrder && latestOrder.balance) || 0
 }
 
-const upgrade = async (user, membership) => {
-  const duration = durations[membership.type];
-  const orderData = {
+const createOrder = async (order, balance) => {
+  order.date_created = new Date().toISOString()
+
+  if (order.duration) {
+    order.duration = durations[order.duration]
+    order.expireDate = new Date(Date.now() + (order.duration * 24 * 60 * 60 * 1000)).toISOString()
+  }
+
+  if (order.type === 'withdraw') await payOrder(order, balance)
+  
+  if (order.status.toLowerCase() === 'pending')
+    await save('orders', order)
+  else
+    await completeOrder(order, balance)
+}
+
+// happens at createOrder for withdraw, completeOrder otherwise
+const payOrder = async (order, balance) => {
+  if (!balance) balance = await getCurrentBalance(order.client_id)
+
+  order.paidAt = new Date().toISOString()
+
+  if (order.comm && order.duration) {
+    const isUpgrade = order.source === 'upgrade'
+    order.systemCost = -order.comm * order.duration
+    order.net = isUpgrade ? order.systemCost : order.amount + order.systemCost;
+    order.balance = balance + net;
+  } else {
+    order.net = order.amount;
+    order.balance = balance + order.amount;
+  }
+}
+
+const completeOrder = async (order, balance, isCancelled, transactionId) => {
+  if (isCancelled) {
+    order.status = 'Cancelled'
+    order.cancelledAt = new Date().toISOString()
+  } else {
+    if (order.type !== 'withdraw') await payOrder(order, balance)
+    order.status = 'Paid'
+    if (transactionId) order.transactionId = transactionId
+  }
+
+  await save('orders', order)
+}
+
+const upgrade = async (client, user, membership, balance) => {
+  const order = {
     amount: membership.price,
-    duration: duration,
-    expireDate: new Date(Date.now() + (duration * 24 * 60 * 60 * 1000)).toISOString(),
-    status: "PAID",
+    duration: membership.type,
+    comm: getComm(client),
     client_id: user.client_id,
     user_id: user.id,
     type: "membership",
+    source: "upgrade",
     product_id: membership.id,
     body: `${membership.name} - ${membership.type}`,
-    date_created: new Date().toISOString(),
-    paidAt: new Date().toISOString(),
   }
 
-  await save('orders', orderData)
+  await createOrder(order, balance)
+  return order.balance
 }
 
 const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
@@ -37,8 +84,9 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
   const membership = await getMembershipById(membershipId)
   if (membership.client_id !== clientId) throw new Error('membership client mismatch')
 
-  const cost = getCommCost(client, membership.type) * userIds.length
-  if (client.balance < cost) throw new Error(`此次升级需扣款¥${cost}，当前余额为¥${client.balance}，请先充值`)
+  let balance = await getCurrentBalance(clientId)
+  const cost = getComm(client) * durations[membership.type] * userIds.length
+  if (balance < cost) throw new Error(`此次升级需扣款¥${cost}，当前余额为¥${balance}，请先充值`)
 
   const users = await flat('users', `m_client_id=${clientId}`)
 
@@ -46,12 +94,8 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
     const user = users.find(u => u.id === userId)
     if (!user) throw new Error('User not found')
   
-    await upgrade(user, membership)
+    balance = await upgrade(client, user, membership, balance)
   }
-
-  client.balance = client.balance - cost
-  await save('clients', client);
-
 
   for (const phone of phones) {
     let user = users.find(u => u.phone === phone)
@@ -65,7 +109,7 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
         date_created: new Date().toISOString(),
       }
       await save('users', user)
-      await upgrade(user, membership)
+      balance = await upgrade(client, user, membership, balance)
     }
   }
 
@@ -73,27 +117,22 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
 }
 
 const withdraw = async ({ clientId, userId, amount, userName, bankAccount, bankName }) => {
-  const client = await getClientById(clientId)
-  if (client.balance < amount) throw new Error('余额不足')
+  const balance = await getCurrentBalance(clientId)
+  if (balance < amount) throw new Error('余额不足。')
 
-  const orderData = {
-    amount: amount,
+  const order = {
+    amount: -amount,
     status: "Pending",
     client_id: clientId,
     user_id: userId,
     type: "withdraw",
     body: '',
-    date_created: new Date().toISOString(),
     userName,
     bankName,
     bankAccount,
   }
 
-  client.balance = client.balance - amount
-  client.withdraw = orderData
-  
-  await save('clients', client)
-  await save('orders', orderData)
+  await createOrder(order, balance)
 
   return { success: true }
 }
@@ -101,5 +140,6 @@ const withdraw = async ({ clientId, userId, amount, userName, bankAccount, bankN
 module.exports = {
   upgradeAll,
   withdraw,
-  getCommCost
+  createOrder,
+  completeOrder,
 }

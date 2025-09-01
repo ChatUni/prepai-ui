@@ -3,23 +3,7 @@ import { FiSearch } from 'react-icons/fi';
 import { t } from '../../stores/languageStore';
 import DropdownFilter from './DropdownFilter';
 import Icon from './Icon';
-
-const buildFilterItems = (store, filter) => {
-  const options = store[filter.optionsField];
-  
-  return [
-    { value: "", label: filter.allLabel },
-    ...options.map(option => {
-      if (typeof option === 'string') {
-        return { value: option, label: option };
-      }
-      return {
-        value: option.id || option.value,
-        label: option.name || option.label
-      };
-    })
-  ];
-};
+import { buildOptions } from '../../utils/utils';
 
 const handleFilterSelect = (store, filter, value) => {
   const parsedValue = value === "" ? null : value;
@@ -56,7 +40,7 @@ const SearchBar = observer(({
       <DropdownFilter
         key={filter.key || index}
         selectedValue={store[filter.selectedField] || ''}
-        items={buildFilterItems(store, filter)}
+        items={buildOptions(store[filter.optionsField], filter.allLabel)}
         onSelect={(value) => handleFilterSelect(store, filter, value)}
         buttonClassName={filter.buttonClassName || ""}
       />

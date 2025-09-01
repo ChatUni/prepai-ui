@@ -7,7 +7,14 @@ const api = (type, ps = {}) => {
   return `${base}?type=${type}${p ? `&${p}` : ''}`
 }
 
-export const get = (type, ps) => fetch(api(type, ps)).then(r => r.json())
+const http = async (url, opts) => {
+  const r = await fetch(url, opts)
+  const d = await r.json()
+  if (!r.ok) throw new Error(d.error)
+  return d
+}
+
+export const get = (type, ps) => http(api(type, ps))
 export const post = (type, ps, data) => {
   // Check if data contains File objects
   const hasFiles = data && typeof data === 'object' && Object.values(data).some(value => value instanceof File);
@@ -23,19 +30,19 @@ export const post = (type, ps, data) => {
       }
     });
     
-    return fetch(api(type, ps), {
+    return http(api(type, ps), {
       method: 'POST',
       body: formData
-    }).then(r => r.json());
+    });
   } else {
     // Use JSON for regular data
-    return fetch(api(type, ps), {
+    return http(api(type, ps), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
-    }).then(r => r.json());
+    });
   }
 }
 export const save = (doc, data) => post('save', { doc }, data)

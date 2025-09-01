@@ -11,6 +11,7 @@
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
+    "close": "Close",
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
@@ -785,6 +786,14 @@
       "assistant": "Assistant",
       "recharge": "Recharge",
       "withdraw": "Withdraw"
+    },
+    "status": {
+      "all": "All",
+      "paid": "Paid",
+      "pending": "Pending"
     }
+  },
+  "paymentManager": {
+    "rechargeAmount": "Amount"
   }
 }
