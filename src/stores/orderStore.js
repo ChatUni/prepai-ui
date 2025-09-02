@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { get } from '../utils/db';
+import { get, post } from '../utils/db';
 import clientStore from './clientStore';
 import userStore from './userStore';
 import PageStore from './pageStore';
@@ -10,6 +10,7 @@ import { t } from './languageStore';
 class OrderStore {
   selectedType = '';
   selectedStatus = '';
+  selectedOrder = null;
 
   get name() {
     return 'order';
@@ -72,6 +73,23 @@ class OrderStore {
     return new Date(desc ? d(b) : d(a)) - new Date(desc ? d(a) : d(b));
   }
 
+  openConfirmCompleteWithdrawDialog = function(order) {
+    this.selectedOrder = order;
+    this.openConfirmDialog('completeWithdraw');
+  }
+
+  confirmCompleteWithdraw = async function() {
+    if (this.selectedOrder) {
+      await post('complete_withdraw', {}, { orderId: this.selectedOrder.id });
+      await this.fetchItems();
+      this.closeConfirmDialog();
+      this.openInfoDialog(t('order.complete_withdraw_success'));
+      this.selectedOrder = null;
+    } else {
+      this.closeConfirmDialog();
+    }
+  }
+
   isPaid = function(order) {
     return order.status.toLowerCase() === 'paid';
   }
@@ -102,6 +120,10 @@ class OrderStore {
 
   isPendingWithdraw = function(order) {
     return this.isWithdraw(order) && this.isPending(order);
+  }
+
+  isPaidWithdraw = function(order) {
+    return this.isWithdraw(order) && this.isPaid(order);
   }
 
   isUpgrade = function(order) {

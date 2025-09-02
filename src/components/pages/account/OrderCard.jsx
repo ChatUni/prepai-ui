@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite';
-import { FiCopy } from 'react-icons/fi';
+import { FiCopy, FiCheck } from 'react-icons/fi';
 import { t } from '../../../stores/languageStore';
 import orderStore from '../../../stores/orderStore';
 import clientStore from '../../../stores/clientStore';
+import userStore from '../../../stores/userStore';
+import { save } from '../../../utils/db';
 
 const OrderCard = observer(({ order }) => (
   <div className={`rounded-lg p-4 mb-3 shadow-sm border ${
@@ -19,6 +21,11 @@ const OrderCard = observer(({ order }) => (
         {orderStore.isPendingWithdraw(order) && (
           <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
             {t('membership.pending')}
+          </span>
+        )}
+        {orderStore.isPaidWithdraw(order) && (
+          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
+            {t('membership.paid')}
           </span>
         )}
         <span className="text-gray-900 font-medium">
@@ -79,6 +86,19 @@ const OrderCard = observer(({ order }) => (
             <div className="flex">
               <span className="text-gray-600 pr-2">{t('withdraw.bank_account_label')}:</span>
               <span className="text-gray-900">{order.bankAccount}</span>
+            </div>
+          )}
+          
+          {/* Complete transaction button for super admin */}
+          {userStore.isSuperAdmin && orderStore.isPendingWithdraw(order) && (
+            <div className="mt-3 pt-2 border-t border-gray-200">
+              <button
+                onClick={() => orderStore.openConfirmCompleteWithdrawDialog(order)}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 transition-colors"
+              >
+                <FiCheck size={14} />
+                {t('order.completeWithdraw')}
+              </button>
             </div>
           )}
         </div>

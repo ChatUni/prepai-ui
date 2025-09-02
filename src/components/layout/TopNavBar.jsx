@@ -17,9 +17,9 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const { t } = languageStore;
 
   const navItems = [
-    { id: 'private', label: t('menu.private'), hide: clientStore.client.hideSeries },
-    { id: 'testing', label: t('menu.testing'), hide: clientStore.client.hideExam },
-    { id: 'ai', label: t('menu.ai') },
+    { id: 'private', label: t('menu.private'), hide: userStore.isSuperAdmin || clientStore.client.hideSeries },
+    { id: 'testing', label: t('menu.testing'), hide: userStore.isSuperAdmin || clientStore.client.hideExam },
+    { id: 'ai', label: t('menu.ai'), hide: userStore.isSuperAdmin },
     { id: 'my', label: t('menu.my') }
   ];
 

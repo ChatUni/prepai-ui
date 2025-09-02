@@ -320,6 +320,7 @@
     "not_deleted": "恢复会员",
     "not_hidden": "显示会员",
     "orig_price": "原价",
+    "paid": "已付",
     "pending": "待处理",
     "premium": "高级",
     "price": "价格",
@@ -537,6 +538,9 @@
   },
   "order": {
     "accountBalance": "账户余额",
+    "completeWithdraw": "完成提现",
+    "confirm_completeWithdraw": "确定已完成转账并关闭此提现交易吗？",
+    "complete_withdraw_success": "提现交易已完成",
     "copyUserId": "复制用户ID",
     "grossIncome": "总收入",
     "netIncome": "净收入/支出",
@@ -796,6 +800,7 @@
     "title": "账户提现",
     "user_name_label": "账户持有人姓名",
     "user_name_placeholder": "请输入账户持有人姓名",
-    "user_name_required": "提现需要账户持有人姓名"
+    "user_name_required": "提现需要账户持有人姓名",
+    "complete_transaction": "完成交易"
   }
 }

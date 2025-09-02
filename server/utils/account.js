@@ -137,10 +137,18 @@ const withdraw = async ({ clientId, userId, amount, userName, bankAccount, bankN
   return { success: true }
 }
 
+const completeWithdraw = async ({ orderId }) => {
+  const order = await getById('orders', orderId)
+  if (!order) throw new Error('Order not found')
+  await completeOrder(order)
+  return { success: true }
+}
+
 module.exports = {
   upgradeAll,
   withdraw,
   createOrder,
   completeOrder,
+  completeWithdraw,
   getComm,
 }
