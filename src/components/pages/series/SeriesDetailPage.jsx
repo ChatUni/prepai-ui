@@ -6,12 +6,15 @@ import { t } from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';
 import PaymentManager from '../../ui/PaymentManager';
 import { useParams } from 'react-router-dom';
+import { StickyButton } from '../../ui/Button';
+import paymentManagerStore from '../../../stores/paymentManagerStore';
 
 const SeriesDetailPage = observer(() => {
   const { id } = useParams();
   const selectedSeries = seriesStore.items.find(x => x.id == id);
   if (!selectedSeries) return null;
   const instructors = seriesStore.getSeriesInstructors(selectedSeries);
+  const isPaid = seriesStore.isPaid(selectedSeries.id);
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
@@ -111,6 +114,16 @@ const SeriesDetailPage = observer(() => {
           <CourseListPage series={selectedSeries} />
         </TabPanel.Tab>
       </TabPanel>
+
+      {!isPaid && (
+        <StickyButton
+          onClick={() => paymentManagerStore.setShowSeriesDialog(true, selectedSeries)}
+          color="green"
+        >
+          {t('series.purchase')}
+        </StickyButton>
+      )}
+
       <PaymentManager />
     </div>
   );

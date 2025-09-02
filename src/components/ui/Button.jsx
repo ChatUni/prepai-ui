@@ -33,4 +33,31 @@ const Button = ({
   </button>
 );
 
+const StickyButton = ({
+  onClick,
+  className = '',
+  icon,
+  iconSize = 20,
+  color = 'blue',
+  children,
+  disabled = false,
+  bottom = '12'
+}) => (
+  <div className={`fixed bottom-${bottom} left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg`}>
+    <div className="max-w-6xl mx-auto">
+      <Button
+        onClick={onClick}
+        disabled={disabled}
+        icon={icon}
+        iconSize={iconSize}
+        color={color}
+        className={`w-full py-4 text-lg font-medium ${className}`}
+      >
+        {children}
+      </Button>
+    </div>
+  </div>
+);
+
 export default Button;
+export { StickyButton };

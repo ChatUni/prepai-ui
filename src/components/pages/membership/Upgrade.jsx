@@ -4,7 +4,7 @@ import { t } from '../../../stores/languageStore';
 import membershipStore from '../../../stores/membershipStore';
 import userStore from '../../../stores/userStore';
 import MembershipCard from './MembershipCard';
-import Button from '../../ui/Button';
+import Button, { StickyButton } from '../../ui/Button';
 import { FiUpload, FiSearch, FiCheck } from 'react-icons/fi';
 import Page from '../../ui/Page';
 
@@ -201,22 +201,17 @@ const Upgrade = observer(() => {
       <div className="pb-18"></div>
 
       {/* Sticky Bottom Confirm Button */}
-      <div className="fixed bottom-12 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
-        <div className="max-w-6xl mx-auto">
-          <Button
-            onClick={handleUpgradeUsers}
-            disabled={upgradeLoading || !(membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-medium transition-colors"
-          >
-            {upgradeLoading
-              ? t('common.loading')
-              : (membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)
-                ? `为${membershipStore.selectedUsers.length}位用户开通${membershipStore.selectedMembership.name}`
-                : '请选择用户和产品'
-            }
-          </Button>
-        </div>
-      </div>
+      <StickyButton
+        onClick={handleUpgradeUsers}
+        disabled={upgradeLoading || !(membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)}
+      >
+        {upgradeLoading
+          ? t('common.loading')
+          : (membershipStore.selectedUsers.length > 0 && membershipStore.selectedMembership)
+            ? `为${membershipStore.selectedUsers.length}位用户开通${membershipStore.selectedMembership.name}`
+            : '请选择用户和产品'
+        }
+      </StickyButton>
     </Page>
   );
 });
