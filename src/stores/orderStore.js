@@ -8,7 +8,6 @@ import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 
 class OrderStore {
-  orders = [];
   selectedType = '';
   selectedStatus = '';
 
@@ -37,6 +36,27 @@ class OrderStore {
 
   get status() {
     return ['Paid', 'Pending'].map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
+  }
+
+  get grossIncome() {
+    return this.getTotal('amount');
+  }
+
+  get netIncome() {
+    return this.getTotal('net');
+  }
+
+  get systemCost() {
+    return this.getTotal('systemCost');
+  }
+
+  getTotal = function(field = 'net') {
+    return this.items.reduce(
+      (p, c) => this.isPaid(c) && (this.isMembership(c) || this.isSeries(c)) && (field !== 'amount' || !this.isUpgrade(c))
+        ? p + (c[field] || 0)
+        : p,
+      0
+    );
   }
 
   fetchItemList = async function() {
@@ -82,6 +102,10 @@ class OrderStore {
 
   isPendingWithdraw = function(order) {
     return this.isWithdraw(order) && this.isPending(order);
+  }
+
+  isUpgrade = function(order) {
+    return order.source?.toLowerCase() === 'upgrade';
   }
 
   hasSystemCost = function(order) {

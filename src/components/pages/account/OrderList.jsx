@@ -8,15 +8,52 @@ import Page from '../../ui/Page';
 import LoadingState from '../../ui/LoadingState';
 import ListPage from '../../ui/ListPage';
 
+const SummaryItem = ({ label, value, color = 'gray-800' }) => (
+  <div className="text-center">
+    <div className="text-sm text-gray-600">{label}</div>
+    <div className={`text-lg font-semibold text-${color}`}>
+      {value}
+    </div>
+  </div>
+);
+
 const OrderList = observer(() => {
   useEffect(() => {
     orderStore.fetchItems();
   }, []);
 
+  const summaryItems = [
+    <SummaryItem
+      key="grossIncome"
+      label={t('order.grossIncome')}
+      value={orderStore.formatPrice(orderStore.grossIncome)}
+      color="blue-600"
+    />,
+    <SummaryItem
+      key="totalOrders"
+      label={t('order.totalOrders')}
+      value={orderStore.items.length}
+      color="gray-800"
+    />,
+    <SummaryItem
+      key="netIncome"
+      label={t('order.netIncome')}
+      value={orderStore.formatPrice(orderStore.netIncome)}
+      color="green-600"
+    />,
+    <SummaryItem
+      key="systemCost"
+      label={t('order.systemCost')}
+      value={orderStore.formatPrice(orderStore.systemCost)}
+      color="red-600"
+    />,
+  ];
+
   return (
       <ListPage
         isGrouped={false}
         store={orderStore}
+        summaryItems={summaryItems}
         renderItem={(order, index) => (
           <OrderCard
             key={order.id || index}

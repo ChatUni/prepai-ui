@@ -4,6 +4,7 @@ import SearchBar from './SearchBar';
 import GroupedList from './GroupedList';
 import Button from './Button';
 import { EditDialog } from './Dialogs';
+import SummaryCard from './SummaryCard';
 import { t } from '../../stores/languageStore';
 import Page from './Page';
 
@@ -53,7 +54,11 @@ const ListPage = observer(({
   
   // Layout props
   className = "w-full pt-4 space-y-4",
-  containerClassName = ""
+  containerClassName = "",
+  
+  // Summary card props
+  summaryItems = null,
+  children
 }) => {
   shortcutButtons = [...shortcutButtons, ...shortcusts(store)].filter(b => !b.isVisible || b.isVisible(store, isGrouped));
 
@@ -101,6 +106,8 @@ const ListPage = observer(({
                 ))}
               </div>
             )}
+
+            {summaryItems && <SummaryCard>{summaryItems}</SummaryCard>}
 
             <GroupedList
               isGrouped={isGrouped}

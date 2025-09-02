@@ -115,6 +115,12 @@
       "category": "internationalization"
     },
     {
+      "name": "zh-only-resource-edits",
+      "description": "When adding or editing resource key/values for translations, only make changes to 'src/locales/zh.json'. Do not modify other language files (en.json, ja.json) directly. This ensures the Chinese translation file serves as the primary source for new translation keys.",
+      "severity": "error",
+      "category": "internationalization"
+    },
+    {
       "name": "no-makeobservable-in-merged-stores",
       "description": "If a store only exports the class (not an instance), it means the store instance will be created elsewhere and merged with other stores using combineStores. The combineStores function calls makeObservable after the merge, so never add a constructor with makeObservable/makeAutoObservable to these stores. Only stores that export instances should have their own MobX decorations.",
       "severity": "error",
@@ -143,6 +149,12 @@
       "description": "Never use dark mode styling in components. Always use light theme with appropriate colors like white backgrounds, gray text colors, and proper contrast. Avoid dark backgrounds (bg-gray-800, bg-black, etc.) and light text colors (text-white, text-gray-100, etc.). Use light backgrounds and dark text for better readability and consistency.",
       "severity": "error",
       "category": "user-interface"
+    },
+    {
+      "name": "create-small-components-for-repetition",
+      "description": "When encountering repetitive JSX patterns or similar markup structures, immediately create small, reusable components to eliminate duplication. These components should be created in the same file if they are specific to that context, or in the ui folder if they are generic. Always prefer creating a small component over copying and pasting similar JSX structures, even for just 2-3 repetitions.",
+      "severity": "error",
+      "category": "component-architecture"
     }
   ]
 }

@@ -538,6 +538,7 @@
   "order": {
     "accountBalance": "账户余额",
     "copyUserId": "复制用户ID",
+    "grossIncome": "总收入",
     "netIncome": "净收入/支出",
     "noOrders": "暂无订单",
     "noOrdersDesc": "您还没有任何已支付的订单",
@@ -551,7 +552,7 @@
     },
     "systemCost": "系统成本",
     "title": "资金明细",
-    "totalOrders": "共 {count} 个订单",
+    "totalOrders": "订单总数",
     "types": {
       "assistant": "助手",
       "exam": "考试",
