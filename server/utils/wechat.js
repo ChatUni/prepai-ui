@@ -3,7 +3,8 @@ const https = require('https');
 const xml2js = require('xml2js');
 const qrcode = require('qrcode');
 const { get, getById, save, flat } = require('./db.js');
-const { createOrder, completeOrder } = require('./account.js');
+const { createOrder, completeOrder, getComm } = require('./account.js');
+const { getClientById } = require('./rep.js');
 
 class WeChatPay {
   constructor(config) {
@@ -826,6 +827,8 @@ const wechat_pay = async (q, b, req) => {
       throw new Error(result.error);
     }
 
+    const client = await getClientById(b.clientId);
+
     // Save order to database
     await createOrder({
       id: outTradeNo,
@@ -839,6 +842,7 @@ const wechat_pay = async (q, b, req) => {
       type: b.type,
       product_id: b.productId,
       body: b.body,
+      comm: b.type == 'membership' ? getComm(client) : null,
       expires: new Date(Date.now() + 7200000).toISOString() // 2 hours
     });
 

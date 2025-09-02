@@ -216,7 +216,7 @@ class UserStore {
     return this.user.orders.filter(order =>
       order.client_id == clientStore.client.id &&
       order.type == type &&
-      order.status === 'PAID' &&
+      order.status.toLowerCase() === 'paid' &&
       order.expireDate
     );
   }

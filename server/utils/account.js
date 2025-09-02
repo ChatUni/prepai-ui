@@ -20,13 +20,13 @@ const createOrder = async (order, balance) => {
   order.date_created = new Date().toISOString()
 
   if (order.duration) {
-    order.duration = durations[order.duration]
+    if (typeof order.duration === 'string') order.duration = durations[order.duration]
     order.expireDate = new Date(Date.now() + (order.duration * 24 * 60 * 60 * 1000)).toISOString()
   }
 
   if (order.type === 'withdraw') await payOrder(order, balance)
   
-  if (order.status.toLowerCase() === 'pending')
+  if (order.status?.toLowerCase() === 'pending')
     await save('orders', order)
   else
     await completeOrder(order, balance)
@@ -42,7 +42,7 @@ const payOrder = async (order, balance) => {
     const isUpgrade = order.source === 'upgrade'
     order.systemCost = -order.comm * order.duration
     order.net = isUpgrade ? order.systemCost : order.amount + order.systemCost;
-    order.balance = balance + net;
+    order.balance = balance + order.net;
   } else {
     order.net = order.amount;
     order.balance = balance + order.amount;
@@ -142,4 +142,5 @@ module.exports = {
   withdraw,
   createOrder,
   completeOrder,
+  getComm,
 }

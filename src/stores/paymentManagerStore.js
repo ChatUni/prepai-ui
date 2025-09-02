@@ -181,15 +181,17 @@ class PaymentManagerStore {
   handlePaymentSuccess = async function(paymentData) {
     this.setShowWeChatDialog(false);
     
+    await clientStore.loadClient();
     // Handle recharge success
+
     if (paymentData.order.type === 'recharge') {
-      await clientStore.loadClient();
       userStore.openInfoDialog(t('recharge.success_message'));
       this.rechargeAmount = defaultRechargeAmount;
     } else {
       // Handle other payment types
       await userStore.loadUser();
-      userStore.openInfoDialog(t('payment.success_message'));
+      // userStore.openInfoDialog(t('payment.success_message'));
+      alert(t('payment.success_message'));
     }
 
     this.currentSeries = null;

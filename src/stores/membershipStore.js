@@ -8,13 +8,6 @@ import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
-const durations = {
-  monthly: 30,
-  annually: 365,
-  lifetime: 730,
-  trial: 1
-}
-
 class MembershipStore {
   showPurchaseDialog = false;
   selectedMembership = null;
@@ -124,7 +117,7 @@ class MembershipStore {
       // Prepare order data for WeChat Pay
       const orderData = {
         amount: this.selectedMembership.price,
-        duration: durations[this.selectedMembership.type],
+        duration: this.selectedMembership.type,
         body: `${this.selectedMembership.name} - ${this.selectedMembership.type}`,
         clientId: clientStore.client.id,
         userId: userStore.user?.id || userStore.user?.phone || 'guest',
@@ -158,6 +151,7 @@ class MembershipStore {
     this.paymentOrderData = null;
     this.selectedMembership = null;
 
+    await clientStore.loadClient();
     await userStore.loadUser();
 
     // Here you would typically:
@@ -189,7 +183,7 @@ class MembershipStore {
     // }
     
     // Show success message or redirect
-    alert(t('payment.success_message'));
+    this.openInfoDialog(t('payment.success_message'));
   };
 
   handlePaymentError = function(error) {
