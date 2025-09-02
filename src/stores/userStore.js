@@ -135,8 +135,7 @@ class UserStore {
   loadUser = async function(phone) {
     if (!phone && this.user.phone) phone = this.user.phone;
     const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
-    const users = await get('user', { phone, clientId: cid });
-    const user = users && users.length > 0 ? users[0] : null;
+    const user = await get('user', { phone, clientId: cid });
     if (user) this.user = {...user, isLoggedIn: true};
     return user;
   }

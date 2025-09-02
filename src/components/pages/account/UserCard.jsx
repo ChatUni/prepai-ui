@@ -8,6 +8,8 @@ import { t } from '../../../stores/languageStore';
 const UserCard = observer(({ user, isProfile }) => {
   const navigate = useNavigate();
 
+  isProfile = isProfile && !store.isSuperAdmin;
+  
   return (
   <div className="relative w-full">
     {/* Role Toggle - Top Right */}

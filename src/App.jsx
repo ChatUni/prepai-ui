@@ -57,6 +57,7 @@ import EditClientPage from './components/pages/client/EditClientPage';
 import AboutPage from './components/pages/client/AboutPage';
 import UserListPage from './components/pages/account/UserListPage';
 import Upgrade from './components/pages/membership/Upgrade';
+import ClientListPage from './components/pages/client/ClientListPage';
 
 // RouteHandler component to sync route store with current location
 const RouteHandler = observer(() => {
@@ -83,6 +84,12 @@ const MainLayout = observer(() => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
   
+  const SpecialLayout = ({ children }) => (
+    <div className="flex flex-grow w-full justify-center items-center overflow-y-auto bg-gray-100">
+      { children }
+    </div>
+  )
+
   return (
     <div className="flex flex-col h-screen bg-white">
       <TopNavBar onMenuToggle={toggleMobileMenu} />
@@ -91,7 +98,7 @@ const MainLayout = observer(() => {
       <div className="flex flex-1 overflow-y-auto">
         {/* For account and admin pages, we use a different layout without the left menu */}
         {isSpecialLayoutPage ? (
-          <div className="flex w-full justify-center items-center overflow-y-auto bg-gray-100">
+          <SpecialLayout>
             <Routes>
               <Route path="/account" element={
                 <AuthRoute>
@@ -104,7 +111,7 @@ const MainLayout = observer(() => {
                 </AuthRoute>
               } />
             </Routes>
-          </div>
+          </SpecialLayout>
         ) : (
           <>
             {/* Mobile menu overlay */}
@@ -136,7 +143,7 @@ const MainLayout = observer(() => {
                 {/* Protected routes */}
                 <Route path="/" element={
                   <AuthRoute>
-                    <SeriesListPage />
+                    {userStore.isSuperAdmin ? <SpecialLayout><AccountPage /></SpecialLayout> : <SeriesListPage />}
                   </AuthRoute>
                 } />
                 <Route path="/series" element={
@@ -232,6 +239,11 @@ const MainLayout = observer(() => {
                 <Route path="/settings/banners" element={
                   <AuthRoute>
                     <EditBannerPage />
+                  </AuthRoute>
+                } />
+                <Route path="/clients" element={
+                  <AuthRoute>
+                    <ClientListPage />
                   </AuthRoute>
                 } />
                 <Route path="/client/settings" element={
