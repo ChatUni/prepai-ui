@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+import { FcLock } from "react-icons/fc";
 import seriesStore from '../../../stores/seriesStore';
 import paymentManagerStore from '../../../stores/paymentManagerStore';
 import userStore from '../../../stores/userStore';
@@ -45,9 +46,7 @@ const CourseCard = observer(({ series, course, isEditMode, index, moveItem }) =>
               </span>
             ) :
             !seriesStore.isSettingRoute && (
-              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
-                {t('course.purchaseToLearn')}
-              </span>
+              <FcLock />
             ))}
           </div>
           
