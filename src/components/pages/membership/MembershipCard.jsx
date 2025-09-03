@@ -53,9 +53,19 @@ const MembershipCard = observer(({
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
               {membership.name}
             </h3>
-            <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-              {t(`membership.types.${membership.type}`)}
-            </span>
+            <div className="flex gap-2">
+              <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                {t(`membership.types.${membership.type}`)}
+              </span>
+              {membershipStore.isTextImage(membership) ?
+                <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200">
+                  {t('membership.contentTypes.textImage')}
+                </span> :
+                <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-orange-200 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                  {t('membership.contentTypes.video')}
+                </span>
+              }
+            </div>
           </div>
         </div>
 

@@ -42,11 +42,14 @@ const FormSelect = observer(({
   const selectedValue = value !== undefined ? value : (store?.editingItem?.[field]);
   const selectedOption = opts.find(opt => opt.value === selectedValue);
 
-  const handleSelect = (newValue) => {
+  const handleSelect = (v) => {
     if (onChange) {
-      onChange(newValue);
+      onChange(value);
     } else if (store && field) {
-      store.setEditingField(field, newValue);
+      if (store.isCRUD)
+        store.setEditingItemField(field, v);
+      else
+        store.setField(field, v);
     }
     if (displayMode === 'dropdown') {
       setIsOpen(false);

@@ -8,6 +8,15 @@ import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
+const durations = {
+  monthly: 30,
+  annually: 365,
+  lifetime: 730,
+  trial: 1
+}
+
+const contentTypes = ['textImage', 'video']
+
 class MembershipStore {
   showPurchaseDialog = false;
   selectedMembership = null;
@@ -54,6 +63,18 @@ class MembershipStore {
 
   get membershipTypes() {
     return Object.keys(durations).map(k => ({ value: k, label: t(`membership.types.${k}`) }));
+  }
+
+  get contentTypes() {
+    return contentTypes.map(k => ({ value: k, label: t(`membership.contentTypes.${k}`) }));
+  }
+
+  isTextImage = function(m) {
+    return !m.content || m.content === 'textImage'
+  }
+
+  isVideo = function(m) {
+    return m.content === 'video'
   }
 
   fetchItemList = async function() {

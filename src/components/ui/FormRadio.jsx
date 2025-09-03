@@ -35,8 +35,10 @@ const FormRadio = observer(({
     if (onChange) {
       onChange(v);
     } else if (store && field) {
-      if (store.setEditingField) {
-        store.setEditingField(field, v);
+      if (store.isCRUD && store.setEditingItemField) {
+        store.setEditingItemField(field, v);
+      } else if (store.setField) {
+        store.setField(field, v);
       } else {
         const setter = store[`set${field[0].toUpperCase() + field.slice(1)}`];
         setter(v);
