@@ -13,32 +13,26 @@ const predefinedAmounts = [500, 1000, 5000, 10000];
 
 const PaymentManager = observer(() => {
   const navigate = useNavigate();
-  const isMembershipDialogOpen = store.showMembershipDialog;
-  const isSeriesDialogOpen = store.showSeriesDialog;
-  const isRechargeDialogOpen = store.showRechargeDialog;
-  const isRechargeAmountDialogOpen = store.showRechargeAmountDialog;
-  const isWeChatDialogOpen = store.showWeChatDialog;
-  const currentSeries = store.currentSeries;
-  const orderData = store.orderData;
+  const series = store.currentSeries;
 
   const renderMembershipDialog = () => (
     <Dialog
-      isOpen={isMembershipDialogOpen}
+      isOpen={store.showMembershipDialog}
       onClose={() => store.setField('showMembershipDialog', false)}
       onConfirm={() => store.handleMembershipPurchase(navigate)}
       title={t('assistant.membershipRequired.title')}
       isConfirm={true}
     >
-      <p>{t('assistant.membershipRequired.message')}</p>
+      <p>{t('assistant.membershipRequired.message', { type: t(`order.types.${store.editingItem.memberType}`) })}</p>
     </Dialog>
   );
 
   const renderSeriesDialog = () => {
-    if (!currentSeries) return null;
+    if (!series) return null;
     
     return (
       <Dialog
-        isOpen={isSeriesDialogOpen}
+        isOpen={store.showSeriesDialog}
         onClose={() => store.setShowSeriesDialog(false)}
         onConfirm={() => store.handleSeriesPurchase()}
         title={t('series.seriesPurchaseRequired.title')}
@@ -47,21 +41,21 @@ const PaymentManager = observer(() => {
         <div>
           <p className="mb-4">{t('series.seriesPurchaseRequired.message')}</p>
           <div className="p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-medium text-gray-900">{currentSeries.name}</h4>
+            <h4 className="font-medium text-gray-900">{series.name}</h4>
             
             {/* Price Information */}
             <div className="mt-2">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-red-600">¥{currentSeries.price}</span>
-                {currentSeries.originalPrice && currentSeries.originalPrice > currentSeries.price && (
-                  <span className="text-sm text-gray-500 line-through">¥{currentSeries.originalPrice}</span>
+                <span className="text-lg font-semibold text-red-600">¥{series.price}</span>
+                {series.originalPrice && series.originalPrice > series.price && (
+                  <span className="text-sm text-gray-500 line-through">¥{series.originalPrice}</span>
                 )}
               </div>
             </div>
             
             {/* Instructor Information */}
             {(() => {
-              const instructors = seriesStore.getSeriesInstructors(currentSeries);
+              const instructors = seriesStore.getSeriesInstructors(series);
               return instructors.length > 0 && (
                 <p className="text-sm text-gray-600 mt-1">
                   {t('series.edit.instructor')}: {instructors.map(i => i.name).join(', ')}
@@ -70,7 +64,7 @@ const PaymentManager = observer(() => {
             })()}
             
             <p className="text-sm text-gray-600 mt-1">
-              {t('series.duration')}: {currentSeries.duration} {t('series.edit.days')}
+              {t('series.duration')}: {series.duration} {t('series.edit.days')}
             </p>
           </div>
           
@@ -86,7 +80,7 @@ const PaymentManager = observer(() => {
 
   const renderTransactionDialog = () => (
     <Dialog
-      isOpen={isRechargeDialogOpen}
+      isOpen={store.showRechargeDialog}
       onClose={() => store.cancelTransaction()}
       onConfirm={() => store.proceedWithTransaction()}
       title={t(`${store.transactionMode}.confirm_title`)}
@@ -139,7 +133,7 @@ const PaymentManager = observer(() => {
 
   const renderTransactionAmountDialog = () => (
     <Dialog
-      isOpen={isRechargeAmountDialogOpen}
+      isOpen={store.showRechargeAmountDialog}
       onClose={() => store.cancelTransaction()}
       onConfirm={() => store.confirmTransaction()}
       title={t(`${store.transactionMode}.amount_dialog_title`)}
@@ -218,9 +212,9 @@ const PaymentManager = observer(() => {
       {renderTransactionDialog()}
       {renderTransactionAmountDialog()}
       <WeChatPayDialog
-        isOpen={isWeChatDialogOpen}
+        isOpen={store.showWeChatDialog}
         onClose={() => store.setShowWeChatDialog(false)}
-        orderData={orderData}
+        orderData={store.orderData}
         onPaymentSuccess={data => store.handlePaymentSuccess(data)}
         onPaymentError={error => store.handlePaymentError(error)}
       />

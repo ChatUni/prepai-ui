@@ -16,7 +16,7 @@ const OrderCard = observer(({ order }) => (
     <div className="flex justify-between items-start mb-3">
       <div className="flex items-center gap-2">
         <span className={`${orderStore.getOrderTypeColor(order.type)} text-white px-2 py-1 rounded text-xs font-medium`}>
-          {orderStore.getOrderTypeLabel(order.type)}
+          {t(`order.types.${order.type}`)}
         </span>
         {orderStore.isPendingWithdraw(order) && (
           <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">

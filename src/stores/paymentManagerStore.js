@@ -52,7 +52,11 @@ class PaymentManagerStore {
     };
   }
 
-  // Helper methods for complex setters that affect multiple fields
+  setShowMembershipDialog = function(show, item) {
+    this.showMembershipDialog = show;
+    this.editingItem = show ? item : null;
+  };
+
   setShowSeriesDialog = function(show, series = null) {
     this.showSeriesDialog = show;
     this.currentSeries = series;

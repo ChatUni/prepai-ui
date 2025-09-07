@@ -121,6 +121,7 @@ const AccountPage = observer(() => {
         />
       </div>
       {/* <UserListPage showSearchBar={false} hideList={true} /> */}
+      {<UserListPage showDialogsOnly={true} />}
     </div>
   );
 });

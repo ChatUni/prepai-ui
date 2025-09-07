@@ -4,7 +4,7 @@ import ConfirmButtons from './ConfirmButtons';
 import PageTitle from './PageTitle';
 import { ConfirmDialog, ErrorDialog, InfoDialog, ToggleConfirmDialog } from './Dialogs';
 
-const Page = observer(({ store, editItem, title, children }) => {
+const Page = observer(({ store, editItem, title, showDialogsOnly, children }) => {
   useEffect(() => {
     store.initPageEditing && editItem && store.initPageEditing(editItem);
     return () => {
@@ -15,7 +15,7 @@ const Page = observer(({ store, editItem, title, children }) => {
   return (
     <div className="p-4 space-y-4">
 
-      <PageTitle title={title || store.pageTitle} />
+      {!showDialogsOnly && <PageTitle title={title || store.pageTitle} />}
 
       {children}
 

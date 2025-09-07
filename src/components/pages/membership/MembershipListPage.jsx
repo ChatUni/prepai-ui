@@ -46,6 +46,13 @@ const MembershipListPage = observer(() => {
         renderItem={renderMembershipCard}
         itemsContainerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         renderEdit={() => <EditMembershipPage />}
+        filters={[
+          {
+            selectedField: 'selectedContent',
+            optionsField: 'contents',
+            allLabel: t('series.search.allCategories'),
+          },
+        ]}
       />
 
       {/* Purchase Confirmation Dialog */}

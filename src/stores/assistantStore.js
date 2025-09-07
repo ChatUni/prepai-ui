@@ -9,6 +9,7 @@ import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
 import userStore from './userStore';
 import { TOS } from '../utils/const';
+import membershipStore from './membershipStore';
 
 const models = ['DeepSeek', '豆包', '通义千问', 'Kimi', '百川', '智谱']
 
@@ -78,10 +79,6 @@ class AssistantStore {
     }
   }
 
-  get requireMembership() {
-    return true;
-  }
-
   get modelOptions() {
     return models;
   }
@@ -109,10 +106,14 @@ class AssistantStore {
 
   fetchItemList = async function() {
     const assistants = await get('assistants', { clientId: clientStore.client.id, userId: userStore.user.id })
-    return assistants.map(a => this.isPlatformAssistant(a)
-      ? { ...a, ...this.getOverrideItem(a) }
-      : { ...a, shelf: !this.isUserAssistant(a) }
-    )
+    return assistants.map(a => {
+      const result = a.result || a.function || 'text';
+      const memberType = membershipStore.getMemberType(result);
+      
+      return this.isPlatformAssistant(a)
+        ? { ...a, result, memberType, ...this.getOverrideItem(a) }
+        : { ...a, result, memberType, shelf: !this.isUserAssistant(a) }
+    })
   };
   
   getOverrideItem = function(item) {
@@ -160,7 +161,7 @@ class AssistantStore {
   isUserAssistant = function(item) {
     return (item || this.editingItem).type === 'user';
   }
- }
+}
 
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, AssistantStore);
 

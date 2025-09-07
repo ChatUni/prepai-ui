@@ -63,7 +63,7 @@ const ListPage = observer(({
   shortcutButtons = [...shortcutButtons, ...shortcusts(store)].filter(b => !b.isVisible || b.isVisible(store, isGrouped));
 
   return (
-    <Page store={store}>
+    <Page store={store} showDialogsOnly={showDialogsOnly}>
       {!showDialogsOnly && (
         <div className={containerClassName}>
           {!store.isSettingRoute && bannerImages && bannerImages.length > 0 && (

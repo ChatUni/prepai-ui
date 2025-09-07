@@ -74,10 +74,6 @@ class UserStore {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
   }
 
-  get isMember() {
-    return this.isPaid('membership');
-  }
-
   get isTrialUsed() {
     return this.getMembershipOrders().some(order => order.body.includes(t('membership.trial')));
   }
@@ -221,7 +217,7 @@ class UserStore {
   }
 
   getMembershipOrders = function() {
-    return this.getOrdersByType('membership');
+    return membershipStore.contentTypes.map(type => this.getOrdersByType(membershipStore.getMemberType(type))).flat();
   }
 
   getSeriesOrders = function() {

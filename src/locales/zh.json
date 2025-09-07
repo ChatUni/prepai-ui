@@ -43,7 +43,7 @@
     "image": "图片",
     "membershipRequired": {
       "cancel": "取消",
-      "message": "您需要会员资格才能访问此助手。您想购买会员资格吗？",
+      "message": "您需要「{type}」资格才能访问此助手。您想购买会员资格吗？",
       "purchase": "购买",
       "title": "需要会员资格"
     },
@@ -305,7 +305,7 @@
     "confirm_not_hidden": "确定要显示「{name}」会员吗？",
     "content": "内容",
     "contentTypes": {
-      "textImage": "图文",
+      "text": "图文",
       "video": "视频"
     },
     "createNew": "创建会员",
@@ -569,6 +569,8 @@
       "membership": "会员",
       "recharge": "充值",
       "series": "课程",
+      "text_member": "图文会员",
+      "video_member": "视频会员",
       "withdraw": "提现"
     },
     "user": "用户",

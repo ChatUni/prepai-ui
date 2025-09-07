@@ -4,12 +4,33 @@ import CardEditActions from '../../ui/CardEditActions';
 import Toggle from '../../ui/Toggle';
 import store from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
+import ActionButton from '../../ui/ActionButton';
+import { FiEdit } from 'react-icons/fi';
+import Icon from '../../ui/Icon';
 
 const UserCard = observer(({ user, isProfile }) => {
   const navigate = useNavigate();
 
   isProfile = isProfile && !store.isSuperAdmin;
-  
+
+  const MemberInfo = ({ type }) => (
+    <>
+      <p className="text-lg font-semibold mt-4">{t(`order.types.${type}`)}</p>
+      <p className="text-green-600 text-sm">
+        {t('menu.account_page.membership_expires')}: {store.getExpireDate(type)?.toLocaleDateString()}
+      </p>
+      <p className={`text-sm ${store.getRemainingDays(type) < 5 ? 'text-red-600' : 'text-blue-600'}`}>
+        {t('menu.account_page.membership_remaining')}: {store.getRemainingDays(type)}
+      </p>
+      <button
+        onClick={() => navigate('/memberships')}
+        className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+      >
+        {t('membership.title')}
+      </button>
+    </>
+  )
+
   return (
   <div className="relative w-full">
     {/* Role Toggle - Top Right */}
@@ -25,7 +46,7 @@ const UserCard = observer(({ user, isProfile }) => {
       </div>
     )}
 
-    <div className="flex items-center">
+    <div className="flex items-start">
       {/* Avatar */}
       <div className="relative">
         <img
@@ -42,34 +63,28 @@ const UserCard = observer(({ user, isProfile }) => {
         <p className="text-gray-600 text-sm">ID: {user.id}</p>
         {isProfile && (
           <>
-            <p className="text-green-600 text-sm">
-              {t('menu.account_page.membership_expires')}: {store.getExpireDate('membership')?.toLocaleDateString()}
-            </p>
-            <p className={`text-sm ${store.getRemainingDays('membership') < 5 ? 'text-red-600' : 'text-blue-600'}`}>
-              {t('menu.account_page.membership_remaining')}: {store.getRemainingDays('membership')}
-            </p>
-            <button
-              onClick={() => navigate('/memberships')}
-              className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
-            >
-              {t('membership.title')}
-            </button>
+            <MemberInfo type="text_member" />
+            <MemberInfo type="video_member" />
           </>
         )}
       </div>
+
+      {isProfile && (
+        <div className="flex-grow flex justify-end m-1">
+          <Icon icon={FiEdit} color="green" onClick={() => store.openEditDialog(user)} />
+        </div>
+      )}
     </div>
 
-    {isProfile && (
-      <CardEditActions
-        store={store}
-        item={user}
-        hideDelete={() => true}
-        hideDrag={() => true}
-        hideVisibility={() => true}
-      />
-    )}
   </div>
   );
 });
 
 export default UserCard;
+
+    /* <button
+      onClick={() => navigate('/memberships')}
+      className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+    >
+      {t('membership.title')}
+    </button> */

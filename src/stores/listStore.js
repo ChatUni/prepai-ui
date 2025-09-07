@@ -67,9 +67,8 @@ class ListStore {
   gotoDetail = function(item, navigate) {
     if (this.canGotoDetail || !this.isSettingRoute) {
 
-      // for pages that require membership, assistant...
-      if (this.requireMembership && !userStore.isMember) {
-        paymentManagerStore.setField('showMembershipDialog', true);
+      if (item.memberType && !userStore.isPaid(item.memberType)) {
+        paymentManagerStore.setShowMembershipDialog(true, item);
         return;
       }
       

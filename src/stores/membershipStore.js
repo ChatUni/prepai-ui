@@ -8,18 +8,19 @@ import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
 import GroupedListStore from './groupedListStore';
 
-const durations = {
+export const durations = {
   monthly: 30,
   annually: 365,
   lifetime: 730,
   trial: 1
 }
 
-const contentTypes = ['textImage', 'video']
+export const contentTypes = ['text', 'video']
 
 class MembershipStore {
   showPurchaseDialog = false;
   selectedMembership = null;
+  selectedContent = null;
   showWeChatPayDialog = false;
   paymentOrderData = null;
   paymentLoading = false;
@@ -44,6 +45,16 @@ class MembershipStore {
     return ['name', 'desc'];
   }
 
+  get filteringFields() {
+    return [
+      'content',
+    ];
+  }
+
+  get contents() {
+    return ['text', 'video'].map(x => ({ value: x, text: t(`order.types.${x}_member`) }));
+  }
+
   get newItem() {
     return {
       client_id: clientStore.client.id,
@@ -61,20 +72,24 @@ class MembershipStore {
     }
   }
 
-  get membershipTypes() {
+  get membershipTypeOptions() {
     return Object.keys(durations).map(k => ({ value: k, label: t(`membership.types.${k}`) }));
   }
 
-  get contentTypes() {
+  get contentTypeOptions() {
     return contentTypes.map(k => ({ value: k, label: t(`membership.contentTypes.${k}`) }));
   }
 
-  isTextImage = function(m) {
-    return !m.content || m.content === 'textImage'
+  isText = function(m) {
+    return !m.content || m.content === 'text'
   }
 
   isVideo = function(m) {
     return m.content === 'video'
+  }
+
+  getMemberType = function(type) {
+    return `${contentTypes.find(t => t === type) || 'text'}_member`
   }
 
   fetchItemList = async function() {
@@ -135,22 +150,20 @@ class MembershipStore {
       this.setPaymentError(null);
       this.showPurchaseDialog = false;
 
-      // Prepare order data for WeChat Pay
+      const { id, name, price, type, desc } = this.selectedMembership
+      const userId = userStore.user?.id || userStore.user?.phone || 'guest';
+      const clientId = clientStore.client.id;
+      
       const orderData = {
-        amount: this.selectedMembership.price,
-        duration: this.selectedMembership.type,
-        body: `${this.selectedMembership.name} - ${this.selectedMembership.type}`,
-        clientId: clientStore.client.id,
-        userId: userStore.user?.id || userStore.user?.phone || 'guest',
-        type: 'membership',
-        productId: this.selectedMembership.id,
-        detail: this.selectedMembership.desc || '',
-        attach: JSON.stringify({
-          membershipId: this.selectedMembership.id,
-          membershipType: this.selectedMembership.type,
-          clientId: clientStore.client.id,
-          userId: userStore.user?.id || userStore.user?.phone
-        })
+        amount: price,
+        duration: type,
+        body: `${name} - ${type}`,
+        clientId,
+        userId,
+        type: this.getMemberType(type),
+        productId: id,
+        detail: desc || '',
+        attach: JSON.stringify({ membershipId: id, membershipType: type, clientId, userId })
       };
 
       this.paymentOrderData = orderData;

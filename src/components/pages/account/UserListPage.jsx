@@ -4,11 +4,12 @@ import ListPage from '../../ui/ListPage';
 import EditUserPage from './EditUserPage';
 import UserCard from './UserCard';
 
-const UserListPage = observer(({ showSearchBar, hideList }) => (
+const UserListPage = observer(({ showSearchBar, showDialogsOnly }) => (
   <ListPage
     isGrouped={false}
     showSearchBar={showSearchBar}
     showShortcutButtons={false}
+    showDialogsOnly={showDialogsOnly}
     store={store}
     renderEdit={() => <EditUserPage />}
     renderItem={(user) => <UserCard user={user} />}

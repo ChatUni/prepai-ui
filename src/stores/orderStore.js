@@ -32,7 +32,7 @@ class OrderStore {
   }
   
   get types() {
-    return ['membership', 'series', 'recharge', 'withdraw'].map(x => ({ value: x, text: t(`order.types.${x}`) }));
+    return ['text_member', 'video_member', 'series', 'recharge', 'withdraw'].map(x => ({ value: x, text: t(`order.types.${x}`) }));
   }
 
   get status() {
@@ -153,39 +153,18 @@ class OrderStore {
 
   get typeMap() {
     return {
-      'membership': {
-        label: t('order.types.membership'),
-        color: 'bg-purple-600'
-      },
-      'series': {
-        label: t('order.types.series'),
-        color: 'bg-blue-600'
-      },
-      'exam': {
-        label: t('order.types.exam'),
-        color: 'bg-green-600'
-      },
-      'assistant': {
-        label: t('order.types.assistant'),
-        color: 'bg-indigo-600'
-      },
-      'recharge': {
-        label: t('order.types.recharge'),
-        color: 'bg-emerald-600'
-      },
-      'withdraw': {
-        label: t('order.types.withdraw'),
-        color: 'bg-red-600'
-      }
+      'text_member': 'purple',
+      'video_member': 'pink',
+      'series': 'blue',
+      'exam': 'green',
+      'assistant': 'indigo',
+      'recharge': 'emerald',
+      'withdraw': 'red',
     };
   }
 
-  getOrderTypeLabel = (type) => {
-    return this.typeMap[type]?.label || type;
-  };
-
   getOrderTypeColor = (type) => {
-    return this.typeMap[type]?.color || 'bg-gray-600';
+    return `bg-${this.typeMap[type] || 'gray'}-600`;
   };
 }
 
