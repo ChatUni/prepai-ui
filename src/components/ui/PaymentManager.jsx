@@ -98,7 +98,7 @@ const PaymentManager = observer(() => {
             </div>
           </div>
           {/* Show bank account info for withdraw */}
-          {store.isWithdraw && store.bankAccount && (
+          {store.isWithdrawMode && store.bankAccount && (
             <div className="mt-3 pt-3 border-t border-gray-200">
               <div className="text-sm text-gray-600 space-y-2">
                 {store.userName && (
@@ -141,7 +141,7 @@ const PaymentManager = observer(() => {
     >
       <div className="mb-6">
         {/* Predefined Recharge Amount Cards */}
-        {store.isRecharge && (
+        {store.isRechargeMode && (
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-3">
               {t('recharge.select_amount')}
@@ -173,13 +173,13 @@ const PaymentManager = observer(() => {
             field="rechargeAmount"
             placeholder={t(`${store.transactionMode}.amount_placeholder`)}
             min={1}
-            max={store.isWithdraw ? clientStore.balance : null}
+            max={store.isWithdrawMode ? clientStore.balance : null}
             step="0.01"
           />
         </div>
 
         {/* Bank Account Input for Withdraw Mode */}
-        {store.isWithdraw && (
+        {store.isWithdrawMode && (
           <div className="pt-4 mt-4 space-y-4">
             <FormInput
               label={t('withdraw.user_name_label')}

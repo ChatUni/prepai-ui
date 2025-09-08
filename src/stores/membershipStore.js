@@ -52,7 +52,7 @@ class MembershipStore {
   }
 
   get contents() {
-    return ['text', 'video'].map(x => ({ value: x, text: t(`order.types.${x}_member`) }));
+    return contentTypes.map(x => ({ value: x, text: t(`order.types.${x}_member`) }));
   }
 
   get newItem() {
@@ -150,7 +150,7 @@ class MembershipStore {
       this.setPaymentError(null);
       this.showPurchaseDialog = false;
 
-      const { id, name, price, type, desc } = this.selectedMembership
+      const { id, name, price, type, content, desc } = this.selectedMembership
       const userId = userStore.user?.id || userStore.user?.phone || 'guest';
       const clientId = clientStore.client.id;
       
@@ -160,7 +160,7 @@ class MembershipStore {
         body: `${name} - ${type}`,
         clientId,
         userId,
-        type: this.getMemberType(type),
+        type: this.getMemberType(content),
         productId: id,
         detail: desc || '',
         attach: JSON.stringify({ membershipId: id, membershipType: type, clientId, userId })

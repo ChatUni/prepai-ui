@@ -9,6 +9,7 @@ class RouteStore {
   // seriesId = null;
   // courseId = null;
   currentPath = '';
+  queryParams = new Map();
   
   constructor() {
     makeAutoObservable(this);
@@ -97,6 +98,24 @@ class RouteStore {
     return this.currentPath.split('/').filter(Boolean);
   }
 
+  // Get a specific query parameter
+  getQueryParam(key) {
+    return this.queryParams.get(key);
+  }
+
+  // Get all query parameters as an object
+  get queryParamsObject() {
+    return Object.fromEntries(this.queryParams);
+  }
+
+  // Set query parameters from URLSearchParams
+  setQueryParams(searchParams) {
+    this.queryParams.clear();
+    for (const [key, value] of searchParams) {
+      this.queryParams.set(key, value);
+    }
+  }
+
   // Methods to handle navigation with store updates
   // navigateToInstructor(instructorId, navigate) {
   //   this.setInstructorId(instructorId);
@@ -126,6 +145,11 @@ class RouteStore {
     // Use runInAction to batch all state changes
     runInAction(() => {
       this.currentPath = location.pathname;
+      
+      // Parse query parameters
+      const searchParams = new URLSearchParams(location.search);
+      this.setQueryParams(searchParams);
+      
       // const pathSegments = location.pathname.split('/').filter(Boolean);
       
       // // Clear all IDs by default

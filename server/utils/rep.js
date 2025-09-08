@@ -34,7 +34,7 @@ const getMembershipById = async (id) => {
 
 const getLatestOrder = clientId => getLatest('orders', { client_id: +clientId }, 'paidAt')
 
-const getLatestWithdraw = clientId => getLatest('orders', { client_id: +clientId, type: 'withdraw' }, 'paidAt')
+const getLatestWithdraw = clientId => getLatest('orders', { client_id: +clientId, type: 'withdraw', status: 'Pending' }, 'date_created')
 
 module.exports = {
   getClient,

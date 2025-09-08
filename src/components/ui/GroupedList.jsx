@@ -13,7 +13,7 @@ const GroupedList = observer(({
   editGroupTitle,
   deleteGroupTitle,
   isEditMode,
-  itemsContainerClassName = "space-y-3 p-2",
+  itemsContainerClassName = "space-y-3",
   onItemMove,
   itemType = "items",
   isGrouped = true
@@ -67,7 +67,7 @@ const GroupedList = observer(({
       isDraggable={isEditMode && store.isGroupEditable(group)}
       isDanger={store.isGroupDanger && store.isGroupDanger(group)}
     >
-      <div className={itemsContainerClassName}>
+      <div className={`${itemsContainerClassName} p-2`}>
         {items.map((item, itemIndex) =>
           renderItem(item, itemIndex, group, {
             moveItem: onItemMove ? (fromIndex, toIndex) => {

@@ -103,7 +103,7 @@ class OrderStore {
   }
 
   isMembership = function(order) {
-    return order.type.toLowerCase() === 'membership';
+    return order.type.toLowerCase().endsWith('_member');
   }
 
   isSeries = function(order) {
@@ -153,18 +153,18 @@ class OrderStore {
 
   get typeMap() {
     return {
-      'text_member': 'purple',
-      'video_member': 'pink',
-      'series': 'blue',
-      'exam': 'green',
-      'assistant': 'indigo',
-      'recharge': 'emerald',
-      'withdraw': 'red',
+      'text_member': 'bg-purple-600',
+      'video_member': 'bg-pink-600',
+      'series': 'bg-blue-600',
+      'exam': 'bg-green-600',
+      'assistant': 'bg-indigo-600',
+      'recharge': 'bg-emerald-600',
+      'withdraw': 'bg-red-600',
     };
   }
 
   getOrderTypeColor = (type) => {
-    return `bg-${this.typeMap[type] || 'gray'}-600`;
+    return this.typeMap[type];
   };
 }
 

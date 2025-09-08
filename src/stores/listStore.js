@@ -68,7 +68,7 @@ class ListStore {
     if (this.canGotoDetail || !this.isSettingRoute) {
 
       if (item.memberType && !userStore.isPaid(item.memberType)) {
-        paymentManagerStore.setShowMembershipDialog(true, item);
+        paymentManagerStore.setShowMembershipDialog(true, item, item.memberType.slice(0, -7));
         return;
       }
       

@@ -13,23 +13,26 @@ const UserCard = observer(({ user, isProfile }) => {
 
   isProfile = isProfile && !store.isSuperAdmin;
 
-  const MemberInfo = ({ type }) => (
-    <>
-      <p className="text-lg font-semibold mt-4">{t(`order.types.${type}`)}</p>
-      <p className="text-green-600 text-sm">
-        {t('menu.account_page.membership_expires')}: {store.getExpireDate(type)?.toLocaleDateString()}
-      </p>
-      <p className={`text-sm ${store.getRemainingDays(type) < 5 ? 'text-red-600' : 'text-blue-600'}`}>
-        {t('menu.account_page.membership_remaining')}: {store.getRemainingDays(type)}
-      </p>
-      <button
-        onClick={() => navigate('/memberships')}
-        className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
-      >
-        {t('membership.title')}
-      </button>
-    </>
-  )
+  const MemberInfo = ({ content }) => {
+    const type = `${content}_member`
+    return (
+      <>
+        <p className="text-lg font-semibold mt-4">{t(`order.types.${type}`)}</p>
+        <p className="text-green-600 text-sm">
+          {t('menu.account_page.membership_expires')}: {store.getExpireDate(type)?.toLocaleDateString()}
+        </p>
+        <p className={`text-sm ${store.getRemainingDays(type) < 5 ? 'text-red-600' : 'text-blue-600'}`}>
+          {t('menu.account_page.membership_remaining')}: {store.getRemainingDays(type)}
+        </p>
+        <button
+          onClick={() => navigate(`/memberships?content=${content}`)}
+          className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+        >
+          {t('membership.title')}
+        </button>
+      </>
+    )
+  }
 
   return (
   <div className="relative w-full">
@@ -63,8 +66,8 @@ const UserCard = observer(({ user, isProfile }) => {
         <p className="text-gray-600 text-sm">ID: {user.id}</p>
         {isProfile && (
           <>
-            <MemberInfo type="text_member" />
-            <MemberInfo type="video_member" />
+            <MemberInfo content="text" />
+            <MemberInfo content="video" />
           </>
         )}
       </div>

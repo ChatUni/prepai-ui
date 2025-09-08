@@ -842,7 +842,7 @@ const wechat_pay = async (q, b, req) => {
       type: b.type,
       product_id: b.productId,
       body: b.body,
-      comm: b.type == 'membership' ? getComm(client) : null,
+      comm: b.type.endsWith('_member') ? getComm(client, b.type.slice(0, -7)) : null,
       expires: new Date(Date.now() + 7200000).toISOString() // 2 hours
     });
 

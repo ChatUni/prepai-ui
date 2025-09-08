@@ -7,7 +7,7 @@ import userStore from '../../../stores/userStore';
 import { save } from '../../../utils/db';
 
 const OrderCard = observer(({ order }) => (
-  <div className={`rounded-lg p-4 mb-3 shadow-sm border ${
+  <div className={`rounded-lg p-4 mb-1 shadow-sm border ${
     orderStore.isPendingWithdraw(order)
       ? 'bg-yellow-50 border-yellow-200'
       : 'bg-white border-gray-200'
@@ -34,7 +34,7 @@ const OrderCard = observer(({ order }) => (
       </div>
       <div className="text-right">
         <div className={`font-bold text-lg ${
-          orderStore.isPendingWithdraw(order) ? 'text-yellow-600' : 'text-green-600'
+          order.amount < 0 ? 'text-red-600' : 'text-green-600'
         }`}>
           {orderStore.formatPrice(order.amount)}
         </div>
@@ -113,12 +113,14 @@ const OrderCard = observer(({ order }) => (
           </div>
         )}
         
-        <div className="flex justify-between text-sm mt-1">
-          <span className="text-gray-600">{t('order.netIncome')}:</span>
-          <span className={order.net < 0 ? "text-red-600" : "text-green-600"}>
-            {orderStore.formatPrice(order.net)}
-          </span>
-        </div>
+        {!orderStore.isWithdraw(order) && !orderStore.isRecharge(order) && (
+          <div className="flex justify-between text-sm mt-1">
+            <span className="text-gray-600">{t('order.netIncome')}:</span>
+            <span className={order.net < 0 ? "text-red-600" : "text-green-600"}>
+              {orderStore.formatPrice(order.net)}
+            </span>
+          </div>
+        )}
         
         <div className="flex justify-between text-sm mt-1">
           <span className="text-gray-600">{t('order.accountBalance')}:</span>

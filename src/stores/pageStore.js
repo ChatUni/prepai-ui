@@ -5,6 +5,7 @@ class PageStore {
   error = '';
   confirmType = '';
   info = '';
+  //queryParams = {};
 
   get isSettingRoute() {
     const isSetting = /\/settings$|\/.*-setting$/.test(routeStore.currentPath);
@@ -57,6 +58,14 @@ class PageStore {
     const func = `confirm${type[0].toUpperCase() + type.slice(1)}`;
     this[func] && await this[func]();
   };
+
+  // setQueryParams = function(params) {
+  //   this.queryParams = { ...params };
+  // };
+
+  // getQueryParam = function(key) {
+  //   return this.queryParams[key];
+  // };
 }
 
 export default PageStore;

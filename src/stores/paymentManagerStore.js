@@ -15,6 +15,7 @@ class PaymentManagerStore {
   showRechargeDialog = false;
   showRechargeAmountDialog = false;
   showWeChatDialog = false;
+  memberContent = null;
   currentSeries = null;
   orderData = null;
   rechargeAmount = defaultRechargeAmount;
@@ -35,11 +36,11 @@ class PaymentManagerStore {
     return false;
   }
 
-  get isWithdraw() {
+  get isWithdrawMode() {
     return this.transactionMode === 'withdraw';
   }
 
-  get isRecharge() {
+  get isRechargeMode() {
     return this.transactionMode === 'recharge';
   }
 
@@ -52,9 +53,10 @@ class PaymentManagerStore {
     };
   }
 
-  setShowMembershipDialog = function(show, item) {
+  setShowMembershipDialog = function(show, item, content) {
     this.showMembershipDialog = show;
     this.editingItem = show ? item : null;
+    this.memberContent = show ? content : null;
   };
 
   setShowSeriesDialog = function(show, series = null) {
@@ -69,7 +71,7 @@ class PaymentManagerStore {
 
   handleMembershipPurchase = function(navigate) {
     this.showMembershipDialog = false;
-    navigate('/memberships');
+    navigate(`/memberships?content=${this.memberContent}`);
   };
 
   handleSeriesPurchase = function() {

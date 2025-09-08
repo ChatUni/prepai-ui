@@ -9,7 +9,14 @@ const durations = {
   trial: 1
 }
 
-const getComm = client => client.commPerDay || +process.env.VITE_COMM_PER_DAY || 0.5
+const getComm = (client, content) => {
+  let comm = client.comm && client.comm[content];
+  if (!comm) {
+    if (content === 'text') comm = +process.env.TEXT_MEMBER_COMM_PER_DAY;
+    else if (content === 'video') comm = +process.env.VIDEO_MEMBER_COMM_PER_DAY;
+  }
+  return comm || 0.3;
+}
 
 const getCurrentBalance = async clientId => {
   const latestOrder = await getLatestOrder(clientId)
@@ -66,7 +73,7 @@ const upgrade = async (client, user, membership, balance) => {
   const order = {
     amount: membership.price,
     duration: membership.type,
-    comm: getComm(client),
+    comm: getComm(client, membership.content),
     client_id: user.client_id,
     user_id: user.id,
     type: "membership",
@@ -85,7 +92,7 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
   if (membership.client_id !== clientId) throw new Error('membership client mismatch')
 
   let balance = await getCurrentBalance(clientId)
-  const cost = getComm(client) * durations[membership.type] * userIds.length
+  const cost = getComm(client, membership.content) * durations[membership.type] * userIds.length
   if (balance < cost) throw new Error(`此次升级需扣款¥${cost}，当前余额为¥${balance}，请先充值`)
 
   const users = await flat('users', `m_client_id=${clientId}`)

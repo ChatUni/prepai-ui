@@ -6,8 +6,10 @@ import ListPage from '../../ui/ListPage';
 import EditMembershipPage from './EditMembershipPage';
 import WeChatPayDialog from '../../ui/WeChatPayDialog';
 import { SiWechat } from 'react-icons/si';
+import routeStore from '../../../stores/routeStore';
 
 const MembershipListPage = observer(() => {
+  store.selectedContent = routeStore.getQueryParam('content') || '';
 
   const renderMembershipCard = (membership, index, group, { moveItem, isEditMode }, isFirstCard) => (
     <MembershipCard
