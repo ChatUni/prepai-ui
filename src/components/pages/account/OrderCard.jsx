@@ -36,7 +36,7 @@ const OrderCard = observer(({ order }) => (
         <div className={`font-bold text-lg ${
           order.amount < 0 ? 'text-red-600' : 'text-green-600'
         }`}>
-          {orderStore.formatPrice(order.amount)}
+          {orderStore.isUpgrade(order) ? t('order.upgrade') : orderStore.formatPrice(order.amount)}
         </div>
         <div className="text-gray-500 text-sm">
           {orderStore.formatOrderDate(order.paidAt)}

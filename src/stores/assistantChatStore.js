@@ -1,5 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { post, get } from '../utils/db.js';
+import assistantStore from './assistantStore.js';
+import userStore from './userStore.js';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -223,7 +225,11 @@ class AssistantChatStore {
           
           const r = await post(
             'run_workflow',
-            { workflow_id: this.selectedAssistant.workflow_id },
+            {
+              workflow_id: this.selectedAssistant.workflow_id,
+              usageType: assistantStore.getResult(this.selectedAssistant),
+              userId: userStore.user.id
+            },
             parameters
           );
           

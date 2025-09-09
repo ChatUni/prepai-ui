@@ -40,10 +40,9 @@ const StickyButton = ({
   iconSize = 20,
   color = 'blue',
   children,
-  disabled = false,
-  bottom = '12'
+  disabled = false
 }) => (
-  <div className={`fixed bottom-${bottom} left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg`}>
+  <div className={`fixed bottom-12 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg`}>
     <div className="max-w-6xl mx-auto">
       <Button
         onClick={onClick}

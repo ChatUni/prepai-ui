@@ -67,14 +67,25 @@ class ListStore {
   gotoDetail = function(item, navigate) {
     if (this.canGotoDetail || !this.isSettingRoute) {
 
-      if (item.memberType && !userStore.isPaid(item.memberType)) {
-        paymentManagerStore.setShowMembershipDialog(true, item, item.memberType.slice(0, -7));
-        return;
+      if (item.memberType) {
+        const type = item.memberType.slice(0, -7);
+
+        if (!userStore.isPaid(item.memberType)) {
+          paymentManagerStore.setShowMembershipDialog(true, item, type);
+          return;
+        }
+
+        const usage = userStore.getUsage(item.usageType);
+
+        if (usage.remain <= 0) {
+          this.openErrorDialog(t('assistant.limit.error', { type: t(`assistant.limit.${item.usageType}`), limit: usage.used }));
+          return;
+        }
       }
-      
+
       if (this.handleItemClick) {
         this.handleItemClick(item);
-      } else { 
+      } else {
         // Default behavior - navigate to detail route
         if (this.detailRoute) {
           navigate(this.detailRoute.replace('{id}', item.id));

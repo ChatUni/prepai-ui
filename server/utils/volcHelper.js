@@ -1,6 +1,8 @@
 const { TosClient } = require('@volcengine/tos-sdk');
 const crypto = require('crypto');
 const { voices } = require('./volcVoices.js');
+const { getById, save } = require('./db.js');
+const { getLimit } = require('./rep.js');
 
 let tosInstance = null;
 
@@ -527,7 +529,7 @@ const queryJimengTask = async (task_id) => {
 };
 
 // Run Coze workflow
-const run_workflow = async (workflow_id, parameters) => {
+const run_workflow = async (workflow_id, query, parameters) => {
   if (!process.env.COZE_API_TOKEN) {
     throw new Error('Missing required COZE_API_TOKEN environment variable');
   }
@@ -564,6 +566,18 @@ console.log(parameters)
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Coze API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    if (query.usageType) {
+      const user = await getById('users', query.userId)
+      if (!user.usage) user.usage = {}
+      if (!user.usage[query.usageType]) user.usage[query.usageType] = {}
+      const u = user.usage[query.usageType]
+      const d = new Date().toDateString()
+      const m = getLimit(query.usageType)
+      if (u.date === d && u.used <= m) u.used++
+      else u.date = d, u.used = 1
+      await save('users', user)
     }
 
     const result = await response.json();

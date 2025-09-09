@@ -107,12 +107,12 @@ class AssistantStore {
   fetchItemList = async function() {
     const assistants = await get('assistants', { clientId: clientStore.client.id, userId: userStore.user.id })
     return assistants.map(a => {
-      const result = a.result || a.function || 'text';
+      const result = this.getResult(a);
       const memberType = membershipStore.getMemberType(result);
       
       return this.isPlatformAssistant(a)
-        ? { ...a, result, memberType, ...this.getOverrideItem(a) }
-        : { ...a, result, memberType, shelf: !this.isUserAssistant(a) }
+        ? { ...a, memberType, usageType: result, ...this.getOverrideItem(a) }
+        : { ...a, memberType, usageType: result, shelf: !this.isUserAssistant(a) }
     })
   };
   
@@ -150,16 +150,38 @@ class AssistantStore {
     await remove('assistants', id);
   }
 
-  isPlatformAssistant = function(item) {
-    return (item || this.editingItem).type === 'platform';
+  isPlatformAssistant = function(item = this.editingItem) {
+    return item.type === 'platform';
   }
 
-  isClientAssistant = function(item) {
-    return (item || this.editingItem).type === 'client';
+  isClientAssistant = function(item = this.editingItem) {
+    return item.type === 'client';
   }
 
-  isUserAssistant = function(item) {
-    return (item || this.editingItem).type === 'user';
+  isUserAssistant = function(item = this.editingItem) {
+    return item.type === 'user';
+  }
+
+  getResult = function(item = this.editingItem) {
+    let r = item.result || item.function || 'text';
+    if (r.startsWith('<')) r = 'text';
+    return r;
+  }
+
+  isText = function(item = this.editingItem) {
+    return this.getResult(item) === 'text';
+  }
+
+  isImage = function(item = this.editingItem) {
+    return this.getResult(item) === 'image';
+  }
+
+  isAudio = function(item = this.editingItem) {
+    return this.getResult(item) === 'audio';
+  }
+
+  isVideo = function(item = this.editingItem) {
+    return this.getResult(item) === 'video';
   }
 }
 

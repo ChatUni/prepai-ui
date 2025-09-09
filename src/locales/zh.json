@@ -41,6 +41,11 @@
     },
     "hidden": "隐藏助手",
     "image": "图片",
+    "limit": {
+      "error": "今天{type}生成上限{limit}个已达到，请明天继续使用",
+      "image": "图片",
+      "video": "视频"
+    },
     "membershipRequired": {
       "cancel": "取消",
       "message": "您需要「{type}」资格才能访问此助手。您想购买会员资格吗？",
@@ -573,6 +578,7 @@
       "video_member": "视频会员",
       "withdraw": "提现"
     },
+    "upgrade": "赠送会员",
     "user": "用户",
     "userId": "用户ID"
   },

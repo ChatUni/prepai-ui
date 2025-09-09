@@ -282,6 +282,10 @@ class UserStore {
     await this.save(updatedUser);
     this.fetchItems();
   }
+
+  getUsage = function(type) {
+    return this.user.usage[type] || {}
+  }
 }
 
 export default combineStores(PageStore, ListStore, GroupedListStore, EditingStore, UserStore);

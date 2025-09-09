@@ -3,8 +3,7 @@ const https = require('https');
 const xml2js = require('xml2js');
 const qrcode = require('qrcode');
 const { get, getById, save, flat } = require('./db.js');
-const { createOrder, completeOrder, getComm } = require('./account.js');
-const { getClientById } = require('./rep.js');
+const { getClientById, createOrder, completeOrder, getComm } = require('./rep.js');
 
 class WeChatPay {
   constructor(config) {
