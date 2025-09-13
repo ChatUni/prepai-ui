@@ -5,6 +5,6 @@ const parsePathParams = (path, routeName) => {
   return matches ? { resource: matches[1], id: matches[2] } : { resource: '', id: null };
 };
 
-module.exports = {
+export {
   parsePathParams
 };

@@ -1,10 +1,10 @@
-const OpenAI = require('openai');
-const { parsePathParams } = require('./utils/pathUtils.js');
-const { parse } = require('multipart-formdata');
-const { headers: getResponseHeaders } = require('./utils/http.js');
-const fs = require('fs');
-const path = require('path');
-const { toFile } = require('openai');
+import OpenAI from 'openai';
+import { parsePathParams } from './utils/pathUtils.js';
+import { parse } from 'multipart-formdata';
+import { headers as getResponseHeaders } from './utils/http.js';
+import fs from 'fs';
+import path from 'path';
+import { toFile } from 'openai';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
 const CHATGPT_MODEL = 'gpt-5-mini';
@@ -894,4 +894,4 @@ const handler = async (event, context) => {
   }
 };
 
-module.exports = { handler, chat, draw, video, tts };
+export { handler, chat, draw, video, tts };

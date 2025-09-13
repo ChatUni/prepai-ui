@@ -1,5 +1,5 @@
-const busboy = require('busboy');
-const { connect } = require('./db');
+import busboy from 'busboy';
+import { connect } from './db.js';
 
 const FUNC = '/.netlify/functions/'
 const CONTENT_TYPES = { json: 'application/json', html: 'text/html', ast: 'application/json' }
@@ -84,10 +84,11 @@ const tryc = (func, err) => {
   }
 };
 
-module.exports = {
+export {
   getOrigin,
   headers,
   res,
   makeApi,
-  parseForm
+  parseForm,
+  tryc
 };

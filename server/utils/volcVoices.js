@@ -1,4 +1,4 @@
-module.exports = { voices: [
+export const voices = [
     {
         "text": "甜美桃子 (女 - 青年)",
         "value": "zh_female_tianmeitaozi_mars_bigtts",
@@ -1727,4 +1727,4 @@ module.exports = { voices: [
         "icon": "",
         "url": "https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_hz_ihsph/ljhwZthlaukjlkulzlp/portal/bigtts/ICL_zh_male_jijiaozhineng_tob.wav"
     }
-]}
+];

@@ -6,7 +6,7 @@ const tap = (x, m) => {
 
 const add = (x, y) => x + y;
 
-module.exports = {
+export {
   tap,
   add
-}
+};

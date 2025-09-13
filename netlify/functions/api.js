@@ -1,4 +1,4 @@
-const { makeApi } = require('../../server/utils/http.js');
-const apiHandlers = require('../../server/utils/apiHandlers.js');
+import { makeApi } from '../../server/utils/http.js';
+import apiHandlers from '../../server/utils/apiHandlers.js';
 
 exports.handler = makeApi(apiHandlers);

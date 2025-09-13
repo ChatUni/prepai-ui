@@ -3,10 +3,10 @@
  * https://github.com/tencentcloud/tencentcloud-sdk-nodejs
  */
 
-const tencentcloud = require("tencentcloud-sdk-nodejs")
+import tencentcloud from "tencentcloud-sdk-nodejs";
 // 导入对应产品模块的client models。
-const smsClient = tencentcloud.sms.v20210111.Client
-const { get, save } = require('./db.js');
+const smsClient = tencentcloud.sms.v20210111.Client;
+import { get, save } from './db.js';
 
 /* 实例化要请求产品(以sms为例)的client对象 */
 let client = null
@@ -181,8 +181,8 @@ const verify_sms = async (q, b) => {
   }
 };
 
-module.exports = {
+export {
     sendSms,
     send_sms,
     verify_sms
-}
+};

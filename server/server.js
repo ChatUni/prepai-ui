@@ -1,10 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-const compression = require('compression');
-const dotenv = require('dotenv');
-const apiHandlers = require('./utils/apiHandlers.js');
-const { connect } = require('./utils/db.js');
-const { parseForm } = require('./utils/http.js');
+import express from 'express';
+import cors from 'cors';
+import compression from 'compression';
+import dotenv from 'dotenv';
+import apiHandlers from './utils/apiHandlers.js';
+import { connect } from './utils/db.js';
+import { parseForm } from './utils/http.js';
 
 // Load environment variables from .env file
 dotenv.config();

@@ -1,4 +1,4 @@
-const { getById, getLatest, flatOne, flat, save } = require('./db.js');
+import { getById, getLatest, flatOne, flat, save } from './db.js';
 
 const durations = {
   monthly: 30,
@@ -232,7 +232,7 @@ const getMembershipById = async (id) => {
   return membership;
 }
 
-module.exports = {
+export {
   getClient,
   getUser,
   getClientById,
@@ -246,4 +246,4 @@ module.exports = {
   requestRefund,
   getComm,
   getLimit,
-}
+};

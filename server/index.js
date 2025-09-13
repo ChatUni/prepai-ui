@@ -1,8 +1,8 @@
-const { connect } = require('./utils/db.js');
-const { res, tryc } = require('./utils/http.js');
-const { db_handlers, handlers, nocache } = require('./utils/apiHandlers.js');
+import { connect } from './utils/db.js';
+import { res, tryc } from './utils/http.js';
+import { db_handlers, handlers, nocache } from './utils/apiHandlers.js';
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   // context.callbackWaitsForEmptyEventLoop = false;
   const q = event.queryStringParameters;
   const method = event.httpMethod.toLowerCase();

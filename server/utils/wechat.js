@@ -1,9 +1,9 @@
-const crypto = require('crypto');
-const https = require('https');
-const xml2js = require('xml2js');
-const qrcode = require('qrcode');
-const { get, getById, save, flat } = require('./db.js');
-const { getClientById, createOrder, completeOrder, getComm } = require('./rep.js');
+import crypto from 'crypto';
+import https from 'https';
+import xml2js from 'xml2js';
+import qrcode from 'qrcode';
+import { get, getById, save, flat } from './db.js';
+import { getClientById, createOrder, completeOrder, getComm } from './rep.js';
 
 class WeChatPay {
   constructor(config) {
@@ -1022,7 +1022,7 @@ const wechat_refund_query = async (q, b) => {
   }
 };
 
-module.exports = {
+export {
   WeChatPay,
   utils,
   nativeExamples,

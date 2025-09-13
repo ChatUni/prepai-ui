@@ -1,5 +1,5 @@
-const { MongoClient } = require('mongodb');
-const { tap } = require('./util.js');
+import { MongoClient } from 'mongodb';
+import { tap } from './util.js';
 
 let db = null;
 let client = null;
@@ -222,7 +222,7 @@ const closeDB = async () => {
   }
 };
 
-module.exports = {
+export {
   connectDB,
   connect,
   closeDB,

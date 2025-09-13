@@ -1,6 +1,6 @@
-const fs = require('fs');
-const cd = require('cloudinary');
-const { orderBy } = require('lodash');
+import fs from 'fs';
+import cd from 'cloudinary';
+import { orderBy } from 'lodash';
 
 const app = 'prepai'
 
@@ -48,7 +48,7 @@ const cdUploadFolder = async (local, remote) => {
 const cdDelete = id =>
   cd.v2.api.delete_resources([`${app}/${id}`]);
 
-module.exports = {
+export {
   cdList,
   cdVersion,
   cdupload,

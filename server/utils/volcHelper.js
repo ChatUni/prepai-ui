@@ -1,8 +1,8 @@
-const { TosClient } = require('@volcengine/tos-sdk');
-const crypto = require('crypto');
-const { voices } = require('./volcVoices.js');
-const { getById, save } = require('./db.js');
-const { getLimit } = require('./rep.js');
+import { TosClient } from '@volcengine/tos-sdk';
+import crypto from 'crypto';
+import { voices } from './volcVoices.js';
+import { getById, save } from './db.js';
+import { getLimit } from './rep.js';
 
 let tosInstance = null;
 
@@ -825,7 +825,7 @@ const cleanupTempFiles = async (fileKeys) => {
   }
 };
 
-module.exports = {
+export {
   getSignedUrl,
   checkObjectExists,
   uploadObject,
