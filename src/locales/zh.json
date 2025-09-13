@@ -42,7 +42,7 @@
     "hidden": "隐藏助手",
     "image": "图片",
     "limit": {
-      "error": "今天{type}生成上限{limit}个已达到，请明天继续使用",
+      "error": "系统繁忙，请稍后再试",
       "image": "图片",
       "video": "视频"
     },
@@ -550,13 +550,20 @@
   "order": {
     "accountBalance": "账户余额",
     "completeWithdraw": "完成提现",
-    "confirm_completeWithdraw": "确定已完成转账并关闭此提现交易吗？",
     "complete_withdraw_success": "提现交易已完成",
+    "confirm_completeWithdraw": "确定已完成转账并关闭此提现交易吗？",
+    "confirm_refund": "确定退款吗？",
+    "confirm_requestRefund": "确定提交退款申请吗？",
     "copyUserId": "复制用户ID",
     "grossIncome": "总收入",
     "netIncome": "净收入/支出",
     "noOrders": "暂无订单",
     "noOrdersDesc": "您还没有任何已支付的订单",
+    "refund": "退款",
+    "refundRequested": "等待退款",
+    "refund_success": "退款成功",
+    "requestRefund": "申请退款",
+    "request_refund_success": "退款申请已提交",
     "search": {
       "placeholder": "搜索订单..."
     },

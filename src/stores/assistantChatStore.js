@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { post, get } from '../utils/db.js';
 import assistantStore from './assistantStore.js';
 import userStore from './userStore.js';
+import { t } from './languageStore';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -259,10 +260,16 @@ class AssistantChatStore {
             text: messageText,
             type: isHtml ? 'html' : result
           });
-          this.setLoading(false);
         } catch (error) {
           console.error('Error running workflow:', error);
-          this.setError(error.message);
+          this.addMessage({
+            sender: 'assistant',
+            isHtml: true,
+            text: `<div style="color: red">${t('assistant.limit.error')}</div>`,
+            type: 'html'
+          });
+        } finally {
+          this.setLoading(false);
         }
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected

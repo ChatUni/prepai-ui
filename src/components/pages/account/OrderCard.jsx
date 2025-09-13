@@ -8,7 +8,7 @@ import { save } from '../../../utils/db';
 
 const OrderCard = observer(({ order }) => (
   <div className={`rounded-lg p-4 mb-1 shadow-sm border ${
-    orderStore.isPendingWithdraw(order)
+    orderStore.isPendingWithdraw(order) || orderStore.isPendingRefund(order)
       ? 'bg-yellow-50 border-yellow-200'
       : 'bg-white border-gray-200'
   }`}>
@@ -26,6 +26,11 @@ const OrderCard = observer(({ order }) => (
         {orderStore.isPaidWithdraw(order) && (
           <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
             {t('membership.paid')}
+          </span>
+        )}
+        {orderStore.isPendingRefund(order) && (
+          <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
+            {t('order.refundRequested')}
           </span>
         )}
         <span className="text-gray-900 font-medium">
@@ -65,6 +70,30 @@ const OrderCard = observer(({ order }) => (
         <div className="flex">
           <span className="text-gray-600 pr-2">{t('order.user')}:</span>
           <span className="text-gray-900">{order.user.name}</span>
+        </div>
+      )}
+
+      {/* Refund requet button for client admin */}
+      {userStore.isClientAdmin && orderStore.isRefundable(order) && (
+        <div className="mt-3 pt-2 border-t border-gray-200">
+          <button
+            onClick={() => orderStore.openConfirmRequestRefundDialog(order)}
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 transition-colors"
+          >
+            {t('order.requestRefund')}
+          </button>
+        </div>
+      )}
+
+      {/* Refund button for super admin */}
+      {userStore.isSuperAdmin && orderStore.isPendingRefund(order) && (
+        <div className="mt-3 pt-2 border-t border-gray-200">
+          <button
+            onClick={() => orderStore.openConfirmRefundDialog(order)}
+            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 transition-colors"
+          >
+            {t('order.refund')}
+          </button>
         </div>
       )}
 

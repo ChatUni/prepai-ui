@@ -18,7 +18,7 @@ const getComm = (client, content) => {
 }
 
 const getLimit = (client, type) => {
-  let limit = client.limits && client.limits[type];
+  let limit = client?.limits && client?.limits?.[type];
   if (!limit) {
     if (type === 'image') limit = +process.env.IMAGES_PER_DAY;
     else if (type === 'video') limit = +process.env.VIDEOS_PER_DAY;
@@ -172,13 +172,22 @@ const completeWithdraw = async ({ orderId }) => {
   return { success: true }
 }
 
+const requestRefund = async ({ orderId }) => {
+  const order = await flatOne('orders', `m_id=${orderId}`)
+  if (!order) throw new Error('Order not found')
+  if (order.status !== 'Paid' || !order.transactionId) throw new Error('Order not refundable')
+  order.status = 'Refunding'
+  await save('orders', order)
+  return { success: true }
+}
+
 const getLatestOrder = clientId => getLatest('orders', { client_id: +clientId }, 'paidAt')
 
 const getLatestWithdraw = clientId => getLatest('orders', { client_id: +clientId, type: 'withdraw', status: 'Pending' }, 'date_created')
 
 // user
 const getUser = async (phone, clientId) => {
-  const users = await flat('users', `m_phone='${phone}'&f_+orders&f_clients`)
+  const users = await flat('users', `m_phone='${phone}'&f_+orders`)
   if (users.length === 0) throw new Error('User not found')
   
   let user
@@ -191,11 +200,12 @@ const getUser = async (phone, clientId) => {
   }
   if (!user) throw new Error('User not found')
   
-  if (user.client) {
+  if (user.client_id) {
+    const client = await getClientById(user.client_id)
     if (!user.usage) user.usage = {}
     const types = ['image', 'video']
     types.forEach(t => {
-      const m = getLimit(user.client, t)
+      const m = getLimit(client, t)
       const u = user.usage[t] || {}
       if (u.date) {
         const d = new Date().toDateString()
@@ -233,6 +243,7 @@ module.exports = {
   createOrder,
   completeOrder,
   completeWithdraw,
+  requestRefund,
   getComm,
   getLimit,
 }

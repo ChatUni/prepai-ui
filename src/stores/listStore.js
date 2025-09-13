@@ -75,12 +75,12 @@ class ListStore {
           return;
         }
 
-        const usage = userStore.getUsage(item.usageType);
+        // const usage = userStore.getUsage(item.usageType);
 
-        if (usage.remain <= 0) {
-          this.openErrorDialog(t('assistant.limit.error', { type: t(`assistant.limit.${item.usageType}`), limit: usage.used }));
-          return;
-        }
+        // if (usage.remain <= 0) {
+        //   this.openErrorDialog(t('assistant.limit.error', { type: t(`assistant.limit.${item.usageType}`), limit: usage.used }));
+        //   return;
+        // }
       }
 
       if (this.handleItemClick) {

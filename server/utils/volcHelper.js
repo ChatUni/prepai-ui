@@ -530,12 +530,24 @@ const queryJimengTask = async (task_id) => {
 
 // Run Coze workflow
 const run_workflow = async (workflow_id, query, parameters) => {
-  if (!process.env.COZE_API_TOKEN) {
+  if (!process.env.COZE_API_TOKEN)
     throw new Error('Missing required COZE_API_TOKEN environment variable');
-  }
 
-  if (!workflow_id) {
+  if (!workflow_id)
     throw new Error('workflow_id is required to run Coze workflow');
+
+  const user = await getById('users', query.userId)
+  const client = await getById('clients', user.client_id)
+  const date = new Date().toDateString()
+
+  if (query.usageType) {
+    if (!user.usage) user.usage = {}
+    if (!user.usage[query.usageType]) user.usage[query.usageType] = { date, used: 0 }
+    const u = user.usage[query.usageType]
+    const m = getLimit(client, query.usageType)
+
+    if (u.date === date && u.used >= m)
+      throw new Error(`Daily quota for ${query.usageType} generation reached`);
   }
 
   let uploadedFileKeys = [];
@@ -569,14 +581,8 @@ console.log(parameters)
     }
 
     if (query.usageType) {
-      const user = await getById('users', query.userId)
-      if (!user.usage) user.usage = {}
-      if (!user.usage[query.usageType]) user.usage[query.usageType] = {}
-      const u = user.usage[query.usageType]
-      const d = new Date().toDateString()
-      const m = getLimit(query.usageType)
-      if (u.date === d && u.used <= m) u.used++
-      else u.date = d, u.used = 1
+      user.usage[query.usageType].date = date
+      user.usage[query.usageType].used += 1
       await save('users', user)
     }
 

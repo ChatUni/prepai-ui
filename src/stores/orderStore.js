@@ -63,7 +63,7 @@ class OrderStore {
   fetchItemList = async function() {
     const orders = await get('orders', { clientId: clientStore.client.id })
     return orders
-      .filter(o => this.isPaid(o) || this.isWithdraw(o))
+      .filter(o => this.isPaid(o) || this.isWithdraw(o) || this.isPendingRefund(o))
       .sort(this.sortOrders())
       .map(o => ({ ...o, title: o.body.split(' - ')[0] }))
   };
@@ -90,12 +90,50 @@ class OrderStore {
     }
   }
 
+  openConfirmRequestRefundDialog = function(order) {
+    this.selectedOrder = order;
+    this.openConfirmDialog('requestRefund');
+  }
+
+  confirmRequestRefund = async function() {
+    if (this.selectedOrder) {
+      await post('request_refund', {}, { orderId: this.selectedOrder.id });
+      await this.fetchItems();
+      this.closeConfirmDialog();
+      this.openInfoDialog(t('order.request_refund_success'));
+      this.selectedOrder = null;
+    } else {
+      this.closeConfirmDialog();
+    }
+  }
+
+  openConfirmRefundDialog = function(order) {
+    this.selectedOrder = order;
+    this.openConfirmDialog('refund');
+  }
+
+  confirmRefund = async function() {
+    if (this.selectedOrder) {
+      await post('wechat_refund', {}, { orderId: this.selectedOrder.id });
+      await this.fetchItems();
+      this.closeConfirmDialog();
+      this.openInfoDialog(t('order.refund_success'));
+      this.selectedOrder = null;
+    } else {
+      this.closeConfirmDialog();
+    }
+  }
+
   isPaid = function(order) {
     return order.status.toLowerCase() === 'paid';
   }
 
   isPending = function(order) {
     return order.status.toLowerCase() === 'pending';
+  }
+
+  isPendingRefund = function(order) {
+    return order.status.toLowerCase() === 'refunding';
   }
 
   isCancelled = function(order) {
@@ -132,6 +170,26 @@ class OrderStore {
 
   hasSystemCost = function(order) {
     return this.isMembership(order);
+  }
+
+  isRefundable = function(order) {
+    if (!this.isPaid(order) || this.isWithdraw(order) || this.isRecharge(order)) {
+      return false;
+    }
+
+    const now = new Date();
+    const paidAt = new Date(order.paidAt);
+    const duration = order.duration || 0;
+
+    if (duration > 7) {
+      // If duration > 7 days, refundable when now - paidAt < 7 days
+      const daysSincePaid = (now - paidAt) / (1000 * 60 * 60 * 24);
+      return daysSincePaid < 7;
+    } else {
+      // Otherwise, refundable when now < expireDate  
+      const expireDate = new Date(order.expireDate);
+      return now < expireDate;
+    }
   }
 
   formatOrderDate = (dateString) => {

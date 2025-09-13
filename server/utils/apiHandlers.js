@@ -1,9 +1,9 @@
 const { save, remove, flat } = require('./db.js');
 const { handleUrlSigning, handleFileUpload, handleFileServing, handleFileDelete, getAllFilesInFolder, jimeng, queryJimengTask, run_workflow, getVoiceOptions } = require('./volcHelper.js');
-const { wechat_pay, wechat_query } = require('./wechat.js');
+const { wechat_pay, wechat_query, wechat_refund } = require('./wechat.js');
 const { send_sms, verify_sms } = require('./sms.js');
 const { chat, draw, video, tts } = require('../openai.js');
-const { getClient, getUser, upgradeAll, withdraw, completeWithdraw } = require('./rep.js');
+const { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund } = require('./rep.js');
 
 module.exports = {
   db_handlers: {
@@ -47,8 +47,10 @@ module.exports = {
       upgrade: (q, b) => upgradeAll(b),
       withdraw: (q, b) => withdraw(b),
       complete_withdraw: (q, b) => completeWithdraw(b),
+      request_refund: (q, b) => requestRefund(b),
       wechat_pay,
       wechat_query,
+      wechat_refund,
       send_sms,
       verify_sms
     },

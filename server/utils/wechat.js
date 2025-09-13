@@ -903,10 +903,131 @@ const wechat_query = async (q, b) => {
   }
 };
 
+const wechat_refund = async (q, b) => {
+  try {
+    const wechatPay = new WeChatPay({
+      appId: process.env.WECHAT_APP_ID,
+      mchId: process.env.WECHAT_MCH_ID,
+      apiKey: process.env.WECHAT_API_KEY,
+      notifyUrl: process.env.WECHAT_NOTIFY_URL || 'https://your-domain.com/api/wechat/notify'
+    });
+
+    // Get order information from database
+    const orders = await flat('orders', `m_id=${b.orderId}`);
+    if (!orders || orders.length === 0) {
+      throw new Error('Order not found');
+    }
+
+    const order = orders[0];
+    
+    // Validate order status
+    if (order.status !== 'Refunding') {
+      throw new Error('Order must be completed to process refund');
+    }
+
+    // Generate unique refund number
+    const outRefundNo = utils.generateOrderNo('REFUND');
+    
+    // Prepare refund parameters
+    const refundParams = {
+      outTradeNo: b.orderId,
+      outRefundNo: outRefundNo,
+      totalFee: utils.formatAmount(order.amount), // Convert yuan to fen
+      refundFee: utils.formatAmount(b.refundAmount || order.amount), // Full refund if not specified
+      refundDesc: b.refundDesc || 'Order refund'
+    };
+
+    // Add optional parameters
+    if (b.refundFeeType) refundParams.refundFeeType = b.refundFeeType;
+    if (b.refundAccount) refundParams.refundAccount = b.refundAccount;
+    if (b.notifyUrl) refundParams.notifyUrl = b.notifyUrl;
+
+    // Process refund with WeChat Pay
+    const result = await wechatPay.refund(refundParams);
+
+    // Update order status in database
+    const updatedOrder = {
+      ...order,
+      status: 'Refunded',
+      refund_id: result.refund_id,
+      refund_no: outRefundNo,
+      refund_amount: b.refundAmount || order.amount,
+      refund_time: new Date().toISOString(),
+      refund_desc: b.refundDesc || 'Order refund'
+    };
+
+    await save('orders', updatedOrder);
+
+    return {
+      success: true,
+      refundId: result.refund_id,
+      refundNo: outRefundNo,
+      refundAmount: b.refundAmount || order.amount,
+      orderId: b.orderId,
+      data: result
+    };
+
+  } catch (error) {
+    console.error('WeChat Pay refund error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
+const wechat_refund_query = async (q, b) => {
+  try {
+    const wechatPay = new WeChatPay({
+      appId: process.env.WECHAT_APP_ID,
+      mchId: process.env.WECHAT_MCH_ID,
+      apiKey: process.env.WECHAT_API_KEY,
+      notifyUrl: process.env.WECHAT_NOTIFY_URL || 'https://your-domain.com/api/wechat/notify'
+    });
+
+    // Query refund status
+    const queryParams = {};
+    
+    if (b.refundId) {
+      queryParams.refundId = b.refundId;
+    } else if (b.outRefundNo) {
+      queryParams.outRefundNo = b.outRefundNo;
+    } else if (b.orderId) {
+      queryParams.outTradeNo = b.orderId;
+    } else {
+      throw new Error('Either refundId, outRefundNo, or orderId is required');
+    }
+
+    const result = await wechatPay.refundQuery(queryParams);
+
+    // Parse refund status
+    const refundStatus = result.refund_status_0 || result.refund_status;
+    const refundAmount = result.refund_fee_0 || result.refund_fee;
+    const refundTime = result.refund_success_time_0 || result.refund_success_time;
+
+    return {
+      success: true,
+      refundStatus: refundStatus,
+      refundAmount: utils.parseAmount(refundAmount),
+      refundTime: refundTime ? utils.parseTime(refundTime) : null,
+      data: result
+    };
+
+  } catch (error) {
+    console.error('WeChat Pay refund query error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
 module.exports = {
   WeChatPay,
   utils,
   nativeExamples,
   wechat_pay,
-  wechat_query
+  wechat_query,
+  wechat_refund,
+  wechat_refund_query
 };
