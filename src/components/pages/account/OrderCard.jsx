@@ -8,7 +8,7 @@ import { save } from '../../../utils/db';
 
 const OrderCard = observer(({ order }) => (
   <div className={`rounded-lg p-4 mb-1 shadow-sm border ${
-    orderStore.isPendingWithdraw(order) || orderStore.isPendingRefund(order)
+    order.isPendingWithdraw || order.isPendingRefund
       ? 'bg-yellow-50 border-yellow-200'
       : 'bg-white border-gray-200'
   }`}>
@@ -18,17 +18,17 @@ const OrderCard = observer(({ order }) => (
         <span className={`${orderStore.getOrderTypeColor(order.type)} text-white px-2 py-1 rounded text-xs font-medium`}>
           {t(`order.types.${order.type}`)}
         </span>
-        {orderStore.isPendingWithdraw(order) && (
+        {order.isPendingWithdraw && (
           <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
             {t('membership.pending')}
           </span>
         )}
-        {orderStore.isPaidWithdraw(order) && (
+        {order.isPaidWithdraw && (
           <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
             {t('membership.paid')}
           </span>
         )}
-        {orderStore.isPendingRefund(order) && (
+        {order.isPendingRefund && (
           <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
             {t('order.refundRequested')}
           </span>
@@ -41,7 +41,7 @@ const OrderCard = observer(({ order }) => (
         <div className={`font-bold text-lg ${
           order.amount < 0 ? 'text-red-600' : 'text-green-600'
         }`}>
-          {orderStore.isUpgrade(order) ? t('order.upgrade') : orderStore.formatPrice(order.amount)}
+          {order.isUpgrade ? t('order.upgrade') : orderStore.formatPrice(order.amount)}
         </div>
         <div className="text-gray-500 text-sm">
           {orderStore.formatOrderDate(order.paidAt)}
@@ -74,7 +74,7 @@ const OrderCard = observer(({ order }) => (
       )}
 
       {/* Refund requet button for client admin */}
-      {userStore.isClientAdmin && orderStore.isRefundable(order) && (
+      {userStore.isClientAdmin && order.isRefundable && (
         <div className="mt-3 pt-2 border-t border-gray-200">
           <button
             onClick={() => orderStore.openConfirmRequestRefundDialog(order)}
@@ -86,7 +86,7 @@ const OrderCard = observer(({ order }) => (
       )}
 
       {/* Refund button for super admin */}
-      {userStore.isSuperAdmin && orderStore.isPendingRefund(order) && (
+      {userStore.isSuperAdmin && order.isPendingRefund && (
         <div className="mt-3 pt-2 border-t border-gray-200">
           <button
             onClick={() => orderStore.openConfirmRefundDialog(order)}
@@ -97,7 +97,7 @@ const OrderCard = observer(({ order }) => (
         </div>
       )}
 
-      {orderStore.isWithdraw(order) && (
+      {order.isWithdraw && (
         <div className="border-t border-gray-200 pt-2 mt-3">
           {order.userName && (
             <div className="flex">
@@ -119,7 +119,7 @@ const OrderCard = observer(({ order }) => (
           )}
           
           {/* Complete transaction button for super admin */}
-          {userStore.isSuperAdmin && orderStore.isPendingWithdraw(order) && (
+          {userStore.isSuperAdmin && order.isPendingWithdraw && (
             <div className="mt-3 pt-2 border-t border-gray-200">
               <button
                 onClick={() => orderStore.openConfirmCompleteWithdrawDialog(order)}
@@ -135,14 +135,14 @@ const OrderCard = observer(({ order }) => (
 
       {/* Additional order details */}
       <div className="border-t border-gray-200 pt-2 mt-3">
-        {orderStore.hasSystemCost(order) && (
+        {order.hasSystemCost && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">{t('order.systemCost')}:</span>
             <span className="text-red-600">{orderStore.formatPrice(order.systemCost)}</span>
           </div>
         )}
         
-        {!orderStore.isWithdraw(order) && !orderStore.isRecharge(order) && (
+        {!order.isWithdraw && !order.isRecharge && (
           <div className="flex justify-between text-sm mt-1">
             <span className="text-gray-600">{t('order.netIncome')}:</span>
             <span className={order.net < 0 ? "text-red-600" : "text-green-600"}>

@@ -1,11 +1,10 @@
-import { makeAutoObservable } from 'mobx';
 import { get, post } from '../utils/db';
 import clientStore from './clientStore';
-import userStore from './userStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
+import Order from '../../common/models/order';
 
 class OrderStore {
   selectedType = '';
@@ -53,7 +52,7 @@ class OrderStore {
 
   getTotal = function(field = 'net') {
     return this.items.reduce(
-      (p, c) => this.isPaid(c) && (this.isMembership(c) || this.isSeries(c)) && (field !== 'amount' || !this.isUpgrade(c))
+      (p, c) => c.isPaid && (c.isMembership || c.isSeries) && (field !== 'amount' || !c.isUpgrade)
         ? p + (c[field] || 0)
         : p,
       0
@@ -63,9 +62,9 @@ class OrderStore {
   fetchItemList = async function() {
     const orders = await get('orders', { clientId: clientStore.client.id })
     return orders
-      .filter(o => this.isPaid(o) || this.isWithdraw(o) || this.isPendingRefund(o))
+      .map(o => new Order(o))
+      .filter(o => o.isPaid || o.isWithdraw || o.isPendingRefund)
       .sort(this.sortOrders())
-      .map(o => ({ ...o, title: o.body.split(' - ')[0] }))
   };
 
   sortOrders = (desc = true) => (a, b) => {
@@ -114,81 +113,13 @@ class OrderStore {
 
   confirmRefund = async function() {
     if (this.selectedOrder) {
-      await post('wechat_refund', {}, { orderId: this.selectedOrder.id });
+      await post(`${this.selectedOrder.isUpgrade ? 'upgrade' : 'wechat'}_refund`, {}, { orderId: this.selectedOrder.id });
       await this.fetchItems();
       this.closeConfirmDialog();
       this.openInfoDialog(t('order.refund_success'));
       this.selectedOrder = null;
     } else {
       this.closeConfirmDialog();
-    }
-  }
-
-  isPaid = function(order) {
-    return order.status.toLowerCase() === 'paid';
-  }
-
-  isPending = function(order) {
-    return order.status.toLowerCase() === 'pending';
-  }
-
-  isPendingRefund = function(order) {
-    return order.status.toLowerCase() === 'refunding';
-  }
-
-  isCancelled = function(order) {
-    return order.status.toLowerCase() === 'cancelled';
-  }
-
-  isMembership = function(order) {
-    return order.type.toLowerCase().endsWith('_member');
-  }
-
-  isSeries = function(order) {
-    return order.type.toLowerCase() === 'series';
-  }
-
-  isWithdraw = function(order) {
-    return order.type.toLowerCase() === 'withdraw';
-  }
-
-  isRecharge = function(order) {
-    return order.type.toLowerCase() === 'recharge';
-  }
-
-  isPendingWithdraw = function(order) {
-    return this.isWithdraw(order) && this.isPending(order);
-  }
-
-  isPaidWithdraw = function(order) {
-    return this.isWithdraw(order) && this.isPaid(order);
-  }
-
-  isUpgrade = function(order) {
-    return order.source?.toLowerCase() === 'upgrade';
-  }
-
-  hasSystemCost = function(order) {
-    return this.isMembership(order);
-  }
-
-  isRefundable = function(order) {
-    if (!this.isPaid(order) || this.isWithdraw(order) || this.isRecharge(order)) {
-      return false;
-    }
-
-    const now = new Date();
-    const paidAt = new Date(order.paidAt);
-    const duration = order.duration || 0;
-
-    if (duration > 7) {
-      // If duration > 7 days, refundable when now - paidAt < 7 days
-      const daysSincePaid = (now - paidAt) / (1000 * 60 * 60 * 24);
-      return daysSincePaid < 7;
-    } else {
-      // Otherwise, refundable when now < expireDate  
-      const expireDate = new Date(order.expireDate);
-      return now < expireDate;
     }
   }
 
@@ -218,6 +149,7 @@ class OrderStore {
       'assistant': 'bg-indigo-600',
       'recharge': 'bg-emerald-600',
       'withdraw': 'bg-red-600',
+      'refund': 'bg-yellow-600',
     };
   }
 

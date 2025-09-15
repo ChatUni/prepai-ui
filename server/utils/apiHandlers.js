@@ -3,7 +3,7 @@ import { handleUrlSigning, handleFileUpload, handleFileDelete, getAllFilesInFold
 import { wechat_pay, wechat_query, wechat_refund } from './wechat.js';
 import { send_sms, verify_sms } from './sms.js';
 import { chat, draw, video, tts } from '../openai.js';
-import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund } from './rep.js';
+import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund } from './rep.js';
 
 export default {
   db_handlers: {
@@ -48,6 +48,7 @@ export default {
       withdraw: (q, b) => withdraw(b),
       complete_withdraw: (q, b) => completeWithdraw(b),
       request_refund: (q, b) => requestRefund(b),
+      upgrade_refund: (q, b) => upgradeRefund(b),
       wechat_pay,
       wechat_query,
       wechat_refund,

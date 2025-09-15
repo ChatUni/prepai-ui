@@ -1,3 +1,4 @@
+import Order from '../../common/models/order.js';
 import { getById, getLatest, flatOne, flat, save } from './db.js';
 
 const durations = {
@@ -38,10 +39,10 @@ const getClient = async (id) => {
   return client
 }
 
-const getClientById = async (id) => {
-  const client = await getById('clients', id)
-  if (!client) throw new Error('Client not found')
-  return client
+const getDocById = async (doc, id) => {
+  const item = await getById(doc, id)
+  if (!item) throw new Error(`${doc} not found`)
+  return item
 }
 
 // order
@@ -108,8 +109,8 @@ const upgrade = async (client, user, membership, balance) => {
 }
 
 const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
-  const client = await getClientById(clientId)
-  const membership = await getMembershipById(membershipId)
+  const client = await getDocById('clients', clientId)
+  const membership = await getDocById('memberships', membershipId)
   if (membership.client_id !== clientId) throw new Error('membership client mismatch')
 
   let balance = await getCurrentBalance(clientId)
@@ -166,18 +167,45 @@ const withdraw = async ({ clientId, userId, amount, userName, bankAccount, bankN
 }
 
 const completeWithdraw = async ({ orderId }) => {
-  const order = await getById('orders', orderId)
-  if (!order) throw new Error('Order not found')
+  const order = await getDocById('orders', orderId)
   await completeOrder(order)
   return { success: true }
 }
 
 const requestRefund = async ({ orderId }) => {
-  const order = await flatOne('orders', `m_id=${orderId}`)
-  if (!order) throw new Error('Order not found')
-  if (order.status !== 'Paid' || !order.transactionId) throw new Error('Order not refundable')
+  const o = await getDocById('orders', orderId)
+  const order = new Order(o)
+  if (!order.isRefundable) throw new Error('Order not refundable')
+  
   order.status = 'Refunding'
   await save('orders', order)
+  return { success: true }
+}
+
+const upgradeRefund = async ({ orderId }) => {
+  const o = await getDocById('orders', orderId)
+  const order = new Order(o)
+  if (!order.isRefundable) throw new Error('Order not refundable')
+  if (!order.isUpgrade) throw new Error('Not an upgrade order')
+  
+  order.status = 'Refunded'
+  await save('orders', order)
+
+  const o1 = await getLatestOrder(order.client_id)
+  const o2 = new Order({
+    amount: -order.systemCost,
+    status: "Paid",
+    client_id: order.client_id,
+    user_id: order.user_id,
+    type: "refund",
+    body: '升级退款',
+    net: -order.systemCost,
+    balance: o1.balance - order.systemCost,
+    date_created: new Date().toISOString(),
+    paidAt: new Date().toISOString(),
+  })
+  await save('orders', o2)
+
   return { success: true }
 }
 
@@ -201,7 +229,7 @@ const getUser = async (phone, clientId) => {
   if (!user) throw new Error('User not found')
   
   if (user.client_id) {
-    const client = await getClientById(user.client_id)
+    const client = await getDocById('clients', user.client_id)
     if (!user.usage) user.usage = {}
     const types = ['image', 'video']
     types.forEach(t => {
@@ -225,18 +253,10 @@ const getUser = async (phone, clientId) => {
   return user
 }
 
-// membership
-const getMembershipById = async (id) => {
-  const membership = await getById('memberships', id)
-  if (!membership) throw new Error('Membership not found')
-  return membership;
-}
-
 export {
   getClient,
   getUser,
-  getClientById,
-  getMembershipById,
+  getDocById,
   getLatestOrder,
   upgradeAll,
   withdraw,
@@ -244,6 +264,7 @@ export {
   completeOrder,
   completeWithdraw,
   requestRefund,
+  upgradeRefund,
   getComm,
   getLimit,
 };

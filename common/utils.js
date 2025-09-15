@@ -1,0 +1,1 @@
+export const ni = (C, o) => Object.assign(new C({}), o);

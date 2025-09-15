@@ -3,7 +3,7 @@ import https from 'https';
 import xml2js from 'xml2js';
 import qrcode from 'qrcode';
 import { get, getById, save, flat } from './db.js';
-import { getClientById, createOrder, completeOrder, getComm } from './rep.js';
+import { getDocById, createOrder, completeOrder, getComm } from './rep.js';
 
 class WeChatPay {
   constructor(config) {
@@ -826,7 +826,7 @@ const wechat_pay = async (q, b, req) => {
       throw new Error(result.error);
     }
 
-    const client = await getClientById(b.clientId);
+    const client = await getDocById('clients',b.clientId);
 
     // Save order to database
     await createOrder({
