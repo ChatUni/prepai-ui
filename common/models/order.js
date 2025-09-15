@@ -1,4 +1,7 @@
-export default class Order {
+export const orderStatuses = ['paid', 'pending', 'refunding', 'refunded', 'cancelled']
+export const orderTypes = ['text_member', 'video_member', 'series', 'recharge', 'withdraw', 'refund']
+
+export class Order {
   id
   prepay_id
   code_url
@@ -25,11 +28,13 @@ export default class Order {
 
   get title() { return this.body.split(' - ')[0] }
 
-  get isPaid() { return this.status.toLowerCase() === 'paid' || this.status.toLowerCase() === 'refunded' }
+  get isPaid() { return this.status.toLowerCase() === 'paid' }
 
   get isPending() { return this.status.toLowerCase() === 'pending' }
 
   get isPendingRefund() { return this.status.toLowerCase() === 'refunding' }
+
+  get isRefunded() { return this.status.toLowerCase() === 'refunded' }
 
   get isCancelled() { return this.status.toLowerCase() === 'cancelled' }
 
@@ -37,9 +42,13 @@ export default class Order {
 
   get isSeries() { return this.type.toLowerCase() === 'series' }
 
+  get isRefund() { return this.type.toLowerCase() === 'refund' }
+
   get isWithdraw() { return this.type.toLowerCase() === 'withdraw' }
 
   get isRecharge() { return this.type.toLowerCase() === 'recharge' }
+
+  get isWithdrawRecharge() { return this.isWithdraw || this.isRecharge }
 
   get isPendingWithdraw() { return this.isWithdraw && this.isPending }
 
@@ -49,10 +58,12 @@ export default class Order {
 
   get hasSystemCost() { return this.isMembership }
 
+  get isRefundableType() { return this.isMembership || this.isSeries }
+
+  get isRefundableStatus() { return this.isPaid }
+
   get isRefundable() {
-    if (!(this.isPaid || this.isPendingRefund) || this.isWithdraw || this.isRecharge) {
-      return false;
-    }
+    if (!this.isRefundableType || !this.isRefundableStatus) return false;
 
     const now = new Date();
     const paidAt = new Date(this.paidAt);
@@ -63,9 +74,15 @@ export default class Order {
       const daysSincePaid = (now - paidAt) / (1000 * 60 * 60 * 24);
       return daysSincePaid < 7;
     } else {
-      // Otherwise, refundable when now < expireDate  
+      // Otherwise, refundable when now < expireDate
       const expireDate = new Date(this.expireDate);
       return now < expireDate;
     }
+  }
+
+  isIncludedInTotal = function(field) {
+    if (this.isWithdrawRecharge) return false
+    if (field === 'amount') return !this.isUpgrade // gross doesn't count upgrade
+    return true // systemCost/net count upgrade, gross - systemCost = net
   }
 }

@@ -1,4 +1,4 @@
-import Order from '../../common/models/order.js';
+import { Order } from '../../common/models/order.js';
 import { getById, getLatest, flatOne, flat, save } from './db.js';
 
 const durations = {
@@ -195,10 +195,12 @@ const upgradeRefund = async ({ orderId }) => {
   const o2 = new Order({
     amount: -order.systemCost,
     status: "Paid",
+    source: 'upgrade',
     client_id: order.client_id,
     user_id: order.user_id,
     type: "refund",
-    body: '升级退款',
+    body: `升级退款 - 订单号: ${order.id}`,
+    systemCost: -order.systemCost,
     net: -order.systemCost,
     balance: o1.balance - order.systemCost,
     date_created: new Date().toISOString(),

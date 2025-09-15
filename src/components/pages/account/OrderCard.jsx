@@ -33,6 +33,11 @@ const OrderCard = observer(({ order }) => (
             {t('order.refundRequested')}
           </span>
         )}
+        {order.isRefunded && (
+          <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">
+            {t('order.status.refunded')}
+          </span>
+        )}
         <span className="text-gray-900 font-medium">
           {order.title}
         </span>

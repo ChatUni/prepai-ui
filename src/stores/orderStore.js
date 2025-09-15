@@ -4,7 +4,7 @@ import PageStore from './pageStore';
 import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
 import { t } from './languageStore';
-import Order from '../../common/models/order';
+import { Order, orderStatuses, orderTypes } from '../../common/models/order';
 
 class OrderStore {
   selectedType = '';
@@ -31,11 +31,11 @@ class OrderStore {
   }
   
   get types() {
-    return ['text_member', 'video_member', 'series', 'recharge', 'withdraw'].map(x => ({ value: x, text: t(`order.types.${x}`) }));
+    return orderTypes.map(x => ({ value: x, text: t(`order.types.${x}`) }));
   }
 
   get status() {
-    return ['Paid', 'Pending'].map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
+    return orderStatuses.map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
   }
 
   get grossIncome() {
@@ -52,9 +52,7 @@ class OrderStore {
 
   getTotal = function(field = 'net') {
     return this.items.reduce(
-      (p, c) => c.isPaid && (c.isMembership || c.isSeries) && (field !== 'amount' || !c.isUpgrade)
-        ? p + (c[field] || 0)
-        : p,
+      (p, c) => p + (c.isIncludedInTotal(field) ? (c[field] || 0) : 0),
       0
     );
   }
@@ -63,7 +61,7 @@ class OrderStore {
     const orders = await get('orders', { clientId: clientStore.client.id })
     return orders
       .map(o => new Order(o))
-      .filter(o => o.isPaid || o.isWithdraw || o.isPendingRefund)
+      .filter(o => !o.isPending && !o.isCancelled)
       .sort(this.sortOrders())
   };
 

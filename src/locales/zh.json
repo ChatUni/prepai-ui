@@ -570,7 +570,10 @@
     "status": {
       "all": "所有状态",
       "paid": "已支付",
-      "pending": "待处理"
+      "pending": "待处理",
+      "refunding": "退款中",
+      "refunded": "已退款",
+      "cancelled": "已取消"
     },
     "systemCost": "系统成本",
     "title": "资金明细",
