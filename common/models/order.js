@@ -12,12 +12,15 @@ export class Order {
   client_id
   type
   product_id
+  refund_id
+  refund_no
   body
   comm
   expires
   date_created
   expireDate
   paidAt
+  transactionId
   systemCost
   net
   balance
@@ -54,9 +57,9 @@ export class Order {
 
   get isPaidWithdraw() { return this.isWithdraw && this.isPaid }
 
-  get isUpgrade() { return this.source?.toLowerCase() === 'upgrade' }
+  get isIncludedInOrderList() { return (!this.isPending || this.isWithdraw) && !this.isCancelled }
 
-  get hasSystemCost() { return this.isMembership }
+  get isUpgrade() { return this.source?.toLowerCase() === 'upgrade' }
 
   get isRefundableType() { return this.isMembership || this.isSeries }
 

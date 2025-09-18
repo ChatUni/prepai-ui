@@ -92,6 +92,10 @@ class MembershipStore {
     return `${contentTypes.find(t => t === type) || 'text'}_member`
   }
 
+  getMemberTypes = function() {
+    return contentTypes.map(type => this.getMemberType(type))
+  }
+
   fetchItemList = async function() {
     return await get('memberships', { clientId: clientStore.client.id });
   };

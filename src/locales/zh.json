@@ -549,6 +549,7 @@
   },
   "order": {
     "accountBalance": "账户余额",
+    "completeRefund": "完成退款",
     "completeWithdraw": "完成提现",
     "complete_withdraw_success": "提现交易已完成",
     "confirm_completeWithdraw": "确定已完成转账并关闭此提现交易吗？",

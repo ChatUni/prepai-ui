@@ -38,6 +38,10 @@ class OrderStore {
     return orderStatuses.map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
   }
 
+  get balance() {
+    return (this.items || []).length > 0 ? this.items[0].balance : 0;
+  }
+
   get grossIncome() {
     return this.getTotal('amount');
   }
@@ -61,7 +65,7 @@ class OrderStore {
     const orders = await get('orders', { clientId: clientStore.client.id })
     return orders
       .map(o => new Order(o))
-      .filter(o => !o.isPending && !o.isCancelled)
+      .filter(o => o.isIncludedInOrderList)
       .sort(this.sortOrders())
   };
 
@@ -92,33 +96,42 @@ class OrderStore {
     this.openConfirmDialog('requestRefund');
   }
 
-  confirmRequestRefund = async function() {
-    if (this.selectedOrder) {
-      await post('request_refund', {}, { orderId: this.selectedOrder.id });
-      await this.fetchItems();
-      this.closeConfirmDialog();
-      this.openInfoDialog(t('order.request_refund_success'));
-      this.selectedOrder = null;
-    } else {
-      this.closeConfirmDialog();
-    }
-  }
-
   openConfirmRefundDialog = function(order) {
     this.selectedOrder = order;
     this.openConfirmDialog('refund');
   }
 
-  confirmRefund = async function() {
-    if (this.selectedOrder) {
-      await post(`${this.selectedOrder.isUpgrade ? 'upgrade' : 'wechat'}_refund`, {}, { orderId: this.selectedOrder.id });
-      await this.fetchItems();
+  refund = async function(isRequest) {
+    try {
+      if (this.selectedOrder) {
+        const r = await post(
+          isRequest ? 'request_refund' : `${this.selectedOrder.isUpgrade ? 'upgrade' : 'wechat'}_refund`,
+          {},
+          { orderId: this.selectedOrder.id }
+        );
+        this.closeConfirmDialog();
+        if (r.success) {
+          await this.fetchItems();
+          this.openInfoDialog(t(`order.${isRequest ? 'request_' : ''}refund_success`));
+        } else {
+          this.openErrorDialog(r.error);
+        }
+        this.selectedOrder = null;
+      } else {
+        this.closeConfirmDialog();
+      }
+    } catch (error) {
       this.closeConfirmDialog();
-      this.openInfoDialog(t('order.refund_success'));
-      this.selectedOrder = null;
-    } else {
-      this.closeConfirmDialog();
+      this.openErrorDialog(error.message);
     }
+  }
+
+  confirmRequestRefund = async function() {
+    this.refund(true);
+  }
+
+  confirmRefund = async function() {
+    this.refund(false);
   }
 
   formatOrderDate = (dateString) => {

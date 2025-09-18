@@ -376,7 +376,7 @@ const AssistantChatPage = observer(() => {
       </div>
       
       {/* Input area */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t max-h-[300px] overflow-y-auto">
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={assistantChatStore.loading}

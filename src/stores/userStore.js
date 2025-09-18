@@ -217,7 +217,7 @@ class UserStore {
   }
 
   getMembershipOrders = function() {
-    return membershipStore.contentTypes.map(type => this.getOrdersByType(membershipStore.getMemberType(type))).flat();
+    return membershipStore.getMemberTypes().map(type => this.getOrdersByType(type)).flat();
   }
 
   getSeriesOrders = function() {

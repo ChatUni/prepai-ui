@@ -1,9 +1,12 @@
 import crypto from 'crypto';
 import https from 'https';
+import fs from 'fs';
+import path from 'path';
 import xml2js from 'xml2js';
 import qrcode from 'qrcode';
 import { get, getById, save, flat } from './db.js';
-import { getDocById, createOrder, completeOrder, getComm } from './rep.js';
+import { getDocById, createOrder, completeOrder, getComm, getLatestOrder } from './rep.js';
+import { Order } from '../../common/models/order.js';
 
 class WeChatPay {
   constructor(config) {
@@ -80,7 +83,7 @@ class WeChatPay {
   async makeRequest(url, data) {
     return new Promise((resolve, reject) => {
       const postData = this.objectToXml(data);
-      
+
       const options = {
         method: 'POST',
         headers: {
@@ -97,7 +100,7 @@ class WeChatPay {
         });
         
         res.on('end', async () => {
-          try {
+          try {console.log(responseData)
             const result = await this.xmlToObject(responseData);
             resolve(result);
           } catch (error) {
@@ -108,6 +111,82 @@ class WeChatPay {
 
       req.on('error', (error) => {
         reject(error);
+      });
+
+      req.write(postData);
+      req.end();
+    });
+  }
+
+  // Make secure HTTP request with SSL certificates (for refund and other secure APIs)
+  async makeSecureRequest(url, data) {
+    return new Promise((resolve, reject) => {
+      const postData = this.objectToXml(data);
+
+      // Load SSL certificates
+      let cert, key, ca;
+      try {
+        const certPath = process.env.WECHAT_CERT_PATH;
+        const keyPath = process.env.WECHAT_KEY_PATH;
+        const caPath = process.env.WECHAT_CA_PATH;
+
+        if (!certPath || !keyPath) {
+          throw new Error('SSL certificate paths not configured. Please set WECHAT_CERT_PATH and WECHAT_KEY_PATH in environment variables.');
+        }
+
+        // Check if certificate files exist
+        if (!fs.existsSync(certPath)) {
+          throw new Error(`SSL certificate file not found: ${certPath}`);
+        }
+        if (!fs.existsSync(keyPath)) {
+          throw new Error(`SSL key file not found: ${keyPath}`);
+        }
+
+        cert = fs.readFileSync(certPath);
+        key = fs.readFileSync(keyPath);
+        
+        // CA certificate is optional
+        if (caPath && fs.existsSync(caPath)) {
+          ca = fs.readFileSync(caPath);
+        }
+      } catch (error) {
+        reject(new Error(`SSL certificate loading failed: ${error.message}`));
+        return;
+      }
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/xml',
+          'Content-Length': Buffer.byteLength(postData)
+        },
+        cert: cert,
+        key: key,
+        ca: ca,
+        // Disable certificate verification for development (remove in production)
+        rejectUnauthorized: process.env.NODE_ENV === 'production'
+      };
+
+      const req = https.request(url, options, (res) => {
+        let responseData = '';
+        
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+        
+        res.on('end', async () => {
+          try {
+            console.log('Secure request response:', responseData);
+            const result = await this.xmlToObject(responseData);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(new Error(`Secure request failed: ${error.message}`));
       });
 
       req.write(postData);
@@ -234,7 +313,7 @@ class WeChatPay {
     requiredParams.sign = this.generateSign(requiredParams);
 
     const url = `${this.baseUrl}/secapi/pay/refund`;
-    const result = await this.makeRequest(url, requiredParams);
+    const result = await this.makeSecureRequest(url, requiredParams);
 
     if (result.return_code !== 'SUCCESS') {
       throw new Error(`WeChat Pay API Error: ${result.return_msg}`);
@@ -912,17 +991,22 @@ const wechat_refund = async (q, b) => {
       notifyUrl: process.env.WECHAT_NOTIFY_URL || 'https://your-domain.com/api/wechat/notify'
     });
 
-    // Get order information from database
+    // Get order information from database, use flat since id is string
     const orders = await flat('orders', `m_id=${b.orderId}`);
     if (!orders || orders.length === 0) {
-      throw new Error('Order not found');
+      throw new Error('订单未找到');
     }
 
     const order = orders[0];
     
     // Validate order status
     if (order.status !== 'Refunding') {
-      throw new Error('Order must be completed to process refund');
+      throw new Error('订单未申请付款');
+    }
+
+    const o1 = await getLatestOrder(order.client_id)
+    if (order.net > o1.balance) {
+      throw new Error('余额不足');
     }
 
     // Generate unique refund number
@@ -937,6 +1021,11 @@ const wechat_refund = async (q, b) => {
       refundDesc: b.refundDesc || 'Order refund'
     };
 
+    // Add transaction_id if available (more reliable than outTradeNo)
+    if (order.transaction_id) {
+      refundParams.transactionId = order.transaction_id;
+    }
+
     // Add optional parameters
     if (b.refundFeeType) refundParams.refundFeeType = b.refundFeeType;
     if (b.refundAccount) refundParams.refundAccount = b.refundAccount;
@@ -945,18 +1034,25 @@ const wechat_refund = async (q, b) => {
     // Process refund with WeChat Pay
     const result = await wechatPay.refund(refundParams);
 
-    // Update order status in database
-    const updatedOrder = {
-      ...order,
-      status: 'Refunded',
+    order.status = 'Refunded'
+    await save('orders', order)
+
+    const o2 = new Order({
       refund_id: result.refund_id,
       refund_no: outRefundNo,
-      refund_amount: b.refundAmount || order.amount,
-      refund_time: new Date().toISOString(),
-      refund_desc: b.refundDesc || 'Order refund'
-    };
-
-    await save('orders', updatedOrder);
+      amount: -order.amount,
+      status: "Paid",
+      client_id: order.client_id,
+      user_id: order.user_id,
+      type: "refund",
+      body: `退款 - 订单号: ${order.id}`,
+      systemCost: order.systemCost ? -order.systemCost : null,
+      net: -order.net,
+      balance: o1.balance - order.net,
+      date_created: new Date().toISOString(),
+      paidAt: new Date().toISOString(),
+    })
+    await save('orders', o2)
 
     return {
       success: true,

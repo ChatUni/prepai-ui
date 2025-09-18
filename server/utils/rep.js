@@ -173,9 +173,12 @@ const completeWithdraw = async ({ orderId }) => {
 }
 
 const requestRefund = async ({ orderId }) => {
-  const o = await getDocById('orders', orderId)
-  const order = new Order(o)
-  if (!order.isRefundable) throw new Error('Order not refundable')
+  const orders = await flat('orders', `m_id=${orderId}`);
+  if (!orders || orders.length === 0) {
+    throw new Error('订单未找到');
+  }
+  const order = new Order(orders[0])
+  if (!order.isRefundable) throw new Error('订单不可退款')
   
   order.status = 'Refunding'
   await save('orders', order)
@@ -185,8 +188,8 @@ const requestRefund = async ({ orderId }) => {
 const upgradeRefund = async ({ orderId }) => {
   const o = await getDocById('orders', orderId)
   const order = new Order(o)
-  if (!order.isRefundable) throw new Error('Order not refundable')
-  if (!order.isUpgrade) throw new Error('Not an upgrade order')
+  if (!order.isPendingRefund) throw new Error('订单未申请退款')
+  if (!order.isUpgrade) throw new Error('不是升级订单')
   
   order.status = 'Refunded'
   await save('orders', order)

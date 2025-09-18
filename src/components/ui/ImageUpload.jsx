@@ -183,7 +183,7 @@ const ImageUpload = observer(({
       } else if (onImageSelect) {
         onImageSelect(file);
       } else {
-        store.setEditingField(field, file, index);
+        store.setEditingItemField(field, file, index);
       }
     }
   };
@@ -198,7 +198,7 @@ const ImageUpload = observer(({
     } else if (onImageSelect) {
       onImageSelect(null);
     } else {
-      store.setEditingField(field, null, index);
+      store.setEditingItemField(field, null, index);
     }
   };
 
@@ -212,7 +212,7 @@ const ImageUpload = observer(({
     } else if (onImageSelect) {
       onImageSelect(imageUrl);
     } else {
-      store.setEditingField(field, imageUrl, index);
+      store.setEditingItemField(field, imageUrl, index);
     }
     setShowCollectionDialog(false);
   };
@@ -366,7 +366,7 @@ const ImageUpload = observer(({
   return (
     <div className={className}>
       {hasTitle && (
-        <div className="flex items-baseline justify-between mb-2">
+        <div className="flex items-baseline justify-between mb-2 mt-2">
           <label className="text-sm font-medium leading-none">
             {label || (store ? t(`${store.name}.${field}`) : '')}
           </label>

@@ -46,7 +46,7 @@ const OrderCard = observer(({ order }) => (
         <div className={`font-bold text-lg ${
           order.amount < 0 ? 'text-red-600' : 'text-green-600'
         }`}>
-          {order.isUpgrade ? t('order.upgrade') : orderStore.formatPrice(order.amount)}
+          {order.isUpgrade && !order.isRefund ? t('order.upgrade') : orderStore.formatPrice(order.amount)}
         </div>
         <div className="text-gray-500 text-sm">
           {orderStore.formatOrderDate(order.paidAt)}
@@ -97,7 +97,7 @@ const OrderCard = observer(({ order }) => (
             onClick={() => orderStore.openConfirmRefundDialog(order)}
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 transition-colors"
           >
-            {t('order.refund')}
+            {t('order.completeRefund')}
           </button>
         </div>
       )}
@@ -130,7 +130,6 @@ const OrderCard = observer(({ order }) => (
                 onClick={() => orderStore.openConfirmCompleteWithdrawDialog(order)}
                 className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 transition-colors"
               >
-                <FiCheck size={14} />
                 {t('order.completeWithdraw')}
               </button>
             </div>
@@ -140,10 +139,10 @@ const OrderCard = observer(({ order }) => (
 
       {/* Additional order details */}
       <div className="border-t border-gray-200 pt-2 mt-3">
-        {order.hasSystemCost && (
+        {order.systemCost && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">{t('order.systemCost')}:</span>
-            <span className="text-red-600">{orderStore.formatPrice(order.systemCost)}</span>
+            <span className={order.systemCost < 0 ? "text-red-600" : "text-green-600"}>{orderStore.formatPrice(order.systemCost)}</span>
           </div>
         )}
         

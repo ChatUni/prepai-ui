@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { t } from '../../../stores/languageStore';
 import orderStore from '../../../stores/orderStore';
-import userStore from '../../../stores/userStore';
 import OrderCard from './OrderCard';
-import Page from '../../ui/Page';
-import LoadingState from '../../ui/LoadingState';
 import ListPage from '../../ui/ListPage';
 
 const SummaryItem = ({ label, value, color = 'gray-800' }) => (
@@ -24,9 +21,9 @@ const OrderList = observer(() => {
 
   const summaryItems = [
     <SummaryItem
-      key="grossIncome"
-      label={t('order.grossIncome')}
-      value={orderStore.formatPrice(orderStore.grossIncome)}
+      key="balance"
+      label={t('order.accountBalance')}
+      value={orderStore.formatPrice(orderStore.balance)}
       color="blue-600"
     />,
     <SummaryItem
@@ -36,11 +33,17 @@ const OrderList = observer(() => {
       color="gray-800"
     />,
     <SummaryItem
-      key="netIncome"
-      label={t('order.netIncome')}
-      value={orderStore.formatPrice(orderStore.netIncome)}
+      key="grossIncome"
+      label={t('order.grossIncome')}
+      value={orderStore.formatPrice(orderStore.grossIncome)}
       color="green-600"
     />,
+    // <SummaryItem
+    //   key="netIncome"
+    //   label={t('order.netIncome')}
+    //   value={orderStore.formatPrice(orderStore.netIncome)}
+    //   color="green-600"
+    // />,
     <SummaryItem
       key="systemCost"
       label={t('order.systemCost')}
