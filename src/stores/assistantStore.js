@@ -10,8 +10,10 @@ import GroupedListStore from './groupedListStore';
 import userStore from './userStore';
 import { TOS } from '../utils/const';
 import membershipStore from './membershipStore';
+import { omit, range } from '../utils/utils';
 
 const models = ['DeepSeek', '豆包', '通义千问', 'Kimi', '百川', '智谱']
+const resultTypes = ['text', 'image', 'video', 'audio']
 
 class AssistantStore {
   avatars = [];
@@ -55,6 +57,8 @@ class AssistantStore {
     if (this.isUserAssistantRoute) {
       item.user_id = userStore.user.id;
       item.type = 'user';
+    } else if (userStore.isSuperAdmin) {
+      item.type = 'platform'
     } else {
       item.client_id = clientStore.client.id;
       item.type = 'client';
@@ -72,15 +76,19 @@ class AssistantStore {
     return {
       name: 1,
       greeting: 1,
-      prompt: 1,
+      prompt: () => !this.isPlatformAssistant(),
       image: 1,
-      model: 1,
+      model: () => !this.isPlatformAssistant(),
       group: 1,
     }
   }
 
   get modelOptions() {
     return models;
+  }
+
+  get resultOptions() {
+    return resultTypes;
   }
 
   get imageCollections() {
@@ -106,22 +114,59 @@ class AssistantStore {
 
   fetchItemList = async function() {
     const assistants = await get('assistants', { clientId: clientStore.client.id, userId: userStore.user.id })
-    return assistants.map(a => {
-      const result = this.getResult(a);
-      const memberType = membershipStore.getMemberType(result);
-      
-      return this.isPlatformAssistant(a)
-        ? { ...a, memberType, usageType: result, ...this.getOverrideItem(a) }
-        : { ...a, memberType, usageType: result, shelf: !this.isUserAssistant(a) }
-    })
+    return assistants
+      .filter(a => !userStore.isSuperAdmin || this.isPlatformAssistant(a))
+      .map(a => {
+        this.parseParams(a)
+        const result = this.getResult(a);
+        const memberType = membershipStore.getMemberType(result);
+        return this.isPlatformAssistant(a)
+          ? { ...a, memberType, usageType: result, ...this.getOverrideItem(a) }
+          : { ...a, memberType, usageType: result, shelf: !this.isUserAssistant(a) }
+      })
   };
   
   getOverrideItem = function(item) {
     return clientStore.client.settings.assistants.find(x => x.id === item.id)
   }
 
+  parseParams = function(item) {
+    if (item.param) {
+      Object.keys(item.param).forEach((k, i) => {
+        if (item.param[k] !== 1) {
+          item[`p${i}_name`] = k
+          item[`p${i}_type`] = item.param[k].type || ''
+          item[`p${i}_options`] = item.param[k].options || ''
+          item[`p${i}_mode`] = item.param[k].mode || ''
+          item[`p${i}_default`] = item.param[k].default || ''
+          item[`p${i}_title`] = item.param[k].title || ''
+          item[`p${i}_cols`] = item.param[k].cols
+        }
+      })
+    }
+  }
+
   save = async function(item) {
-    if (this.isPlatformAssistant(item)) {
+    if (userStore.isSuperAdmin) {
+      item.type = 'platform'
+      if (item.workflow_id) {
+        item.function = 'workflow'
+        item.param = { input: 1 };
+        range(1, 5).forEach(x => {
+          if (item[`p${x}_name`]) {
+            const p = {}
+            if (item[`p${x}_type`]) p.type = item[`p${x}_type`]
+            if (item[`p${x}_options`]) p.options = item[`p${x}_options`]
+            if (item[`p${x}_mode`]) p.mode = item[`p${x}_mode`]
+            if (item[`p${x}_default`]) p.default = item[`p${x}_default`]
+            if (item[`p${x}_title`]) p.title = item[`p${x}_title`]
+            if (item[`p${x}_cols`]) p.cols = +item[`p${x}_cols`]
+            item.param[item[`p${x}_name`]] = p
+          }
+        })
+      }
+      return await save('assistants', this.omitParams(item));
+    } else if (this.isPlatformAssistant(item)) {
       const pa = {
         id: item.id,
         type: item.type,
@@ -144,6 +189,14 @@ class AssistantStore {
       item.type = item.shelf ? 'client' : 'user';
       return await save('assistants', item);
     }
+  }
+
+  omitParams = function(item) {
+    return omit(item, [
+      'memberType',
+      'usageType',
+      ...range(1, 5).map(x => [`p${x}_name`,`p${x}_type`,`p${x}_options`,`p${x}_mode`,`p${x}_default`,`p${x}_title`,`p${x}_cols`]).flat()
+    ])
   }
 
   remove = async function(id) {

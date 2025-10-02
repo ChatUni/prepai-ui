@@ -22,6 +22,7 @@ const FormSelect = observer(({
   value,
   onChange,
   label,
+  emptyLabel,
   placeholder,
   displayMode = 'dropdown',
   cols = 5

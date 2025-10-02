@@ -58,13 +58,27 @@
     "not_deleted": "恢复助手",
     "not_hidden": "显示助手",
     "not_shelf": "下架助手",
+    "param": {
+      "cols": "几列",
+      "default": "缺省值",
+      "mode": "显示方式",
+      "name": "参数名称",
+      "options": "选项",
+      "title": "标签",
+      "type": "参数类型",
+      "var": "参数"
+    },
+    "placeholder": "用户输入提示",
     "prompt": "提示词",
+    "result": "输出类型",
     "search": {
       "placeholder": "按名称或描述搜索助手..."
     },
     "selectGroup": "选择分组",
     "selectModel": "选择AI模型",
-    "shelf": "上架助手"
+    "selectResult": "选择输出类型",
+    "shelf": "上架助手",
+    "workflow_id": "工作流ID"
   },
   "auth": {
     "email": "邮箱",

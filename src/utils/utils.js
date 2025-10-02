@@ -11,6 +11,8 @@ export const shuffleArray = (array) => {
   return array;
 }
 
+export const range = (from, to) => [...Array(to - from).keys()].map(i => i + from)
+
 export const omit = (obj, keys) => {
   const result = { ...obj };
   keys.forEach(key => delete result[key]);

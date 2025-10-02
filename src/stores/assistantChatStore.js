@@ -224,6 +224,8 @@ class AssistantChatStore {
             }
           }
           
+          if (this.selectedAssistant.model) parameters.model = this.selectedAssistant.model
+
           const r = await post(
             'run_workflow',
             {
@@ -273,7 +275,7 @@ class AssistantChatStore {
         }
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected
-        const useOpenRouter = !!this.selectedAssistant.model;
+        const useOpenRouter = false; // !!this.selectedAssistant.model;
         
         // Call OpenAI API with the assistant's prompt as system message
         try {
