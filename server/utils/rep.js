@@ -32,6 +32,11 @@ const getCurrentBalance = async clientId => {
   return (latestOrder && latestOrder.balance) || 0
 }
 
+const getClientByHost = async (host) => {
+  const client = await flatOne('clients', `m_host=regex$${host}`)
+  return client
+}
+
 const getClient = async (id) => {
   const client = await flatOne('clients', `m_id=${id}&f_+memberships`)
   client.latestOrder = await getLatestOrder(id)
@@ -260,6 +265,7 @@ const getUser = async (phone, clientId) => {
 
 export {
   getClient,
+  getClientByHost,
   getUser,
   getDocById,
   getLatestOrder,

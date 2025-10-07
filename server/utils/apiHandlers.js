@@ -25,6 +25,8 @@ export default {
     post: {
       save: (q, b) => save(q.doc, b),
       remove: (q, b) => remove(q.doc, b.id),
+      send_sms,
+      verify_sms
     },
   },
   handlers: {
@@ -52,8 +54,6 @@ export default {
       wechat_pay,
       wechat_query,
       wechat_refund,
-      send_sms,
-      verify_sms
     },
   },
   nocache: true,

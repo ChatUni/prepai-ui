@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import userStore from '../../../stores/userStore';
 import Logo from '../../ui/Logo';
 import { post } from '../../../utils/db';
+import clientStore from '../../../stores/clientStore';
 
 const LoginPage = observer(() => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -54,7 +55,7 @@ const LoginPage = observer(() => {
       return;
     }
 
-    if (import.meta.env.VITE_NO_SMS) {
+    if (import.meta.env.VITE_NO_SMS == 1) {
       await userStore.loginWithPhone(phoneNumber);
       navigate(from, { replace: true });
       return;
@@ -65,6 +66,7 @@ const LoginPage = observer(() => {
     
     try {
       const response = await post('send_sms', {}, {
+        host: window.location.hostname,
         phone: phoneNumber,
         countryCode: '+86'
       });
@@ -95,6 +97,7 @@ const LoginPage = observer(() => {
     try {
       // First verify the SMS code
       const verifyResponse = await post('verify_sms', {}, {
+        host: window.location.hostname,
         phone: phoneNumber,
         code: verificationCode,
         countryCode: '+86'

@@ -6,7 +6,7 @@
 import tencentcloud from "tencentcloud-sdk-nodejs";
 // 导入对应产品模块的client models。
 const smsClient = tencentcloud.sms.v20210111.Client;
-import { get, save } from './db.js';
+import { flatOne, get, save } from './db.js';
 
 /* 实例化要请求产品(以sms为例)的client对象 */
 let client = null
@@ -83,7 +83,7 @@ const send_sms = async (q, b) => {
     // Store verification code in database for later verification
     // Using a temporary collection with expiration
     const verificationData = {
-      id: `${countryCode}${b.phone}`,
+      id: `${countryCode}${b.phone}_${b.host}`,
       phone: b.phone,
       countryCode: countryCode,
       code: verificationCode,
@@ -120,25 +120,23 @@ const verify_sms = async (q, b) => {
     }
 
     const countryCode = b.countryCode || '+86';
-    const verificationId = `${countryCode}${b.phone}`;
+    const verificationId = `${countryCode}${b.phone}_${b.host}`;
     
     // Get verification record from database
-    const verifications = await get('sms_verifications', `m_id=${verificationId}`);
-    
-    if (!verifications || verifications.length === 0) {
+    const verification = await flatOne('sms_verifications', `m_id=${verificationId}`);
+
+    if (!verification) {
       return {
         success: false,
         error: 'No verification code found for this phone number'
       };
     }
     
-    const verification = verifications[0];
-    
     // Check if code has expired
     if (new Date() > new Date(verification.expiresAt)) {
       return {
         success: false,
-        error: 'Verification code has expired'
+        error: '验证码已过期'
       };
     }
     
@@ -146,7 +144,7 @@ const verify_sms = async (q, b) => {
     if (verification.verified) {
       return {
         success: false,
-        error: 'Verification code has already been used'
+        error: '验证码已被使用'
       };
     }
     
@@ -154,7 +152,7 @@ const verify_sms = async (q, b) => {
     if (verification.code !== b.code) {
       return {
         success: false,
-        error: 'Invalid verification code'
+        error: '验证码无效'
       };
     }
     
