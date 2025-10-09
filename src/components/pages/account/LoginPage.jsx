@@ -8,8 +8,10 @@ import clientStore from '../../../stores/clientStore';
 
 const LoginPage = observer(() => {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [step, setStep] = useState('phone'); // 'phone' or 'verify'
+  const [step, setStep] = useState('input'); // 'input' or 'verify'
+  const [loginMethod, setLoginMethod] = useState('phone'); // 'phone' or 'email'
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(0);
@@ -42,6 +44,11 @@ const LoginPage = observer(() => {
     setError('');
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setError('');
+  };
+
   const handleVerificationCodeChange = (e) => {
     // Allow only numbers
     const value = e.target.value.replace(/\D/g, '');
@@ -50,39 +57,83 @@ const LoginPage = observer(() => {
   };
 
   const sendVerificationCode = async () => {
-    if (!phoneNumber) {
-      setError('请输入手机号码');
-      return;
-    }
-
-    if (import.meta.env.VITE_NO_SMS == 1) {
-      await userStore.loginWithPhone(phoneNumber);
-      navigate(from, { replace: true });
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-    
-    try {
-      const response = await post('send_sms', {}, {
-        host: window.location.hostname,
-        phone: phoneNumber,
-        countryCode: '+86'
-      });
-      
-      if (response.success) {
-        setStep('verify');
-        setCountdown(60); // 60 second countdown for resend
-        setIsLoading(false);
-      } else {
-        setError(response.error || '发送验证码失败，请稍后再试');
-        setIsLoading(false);
+    if (loginMethod === 'phone') {
+      if (!phoneNumber) {
+        setError('请输入手机号码');
+        return;
       }
-    } catch (error) {
-      console.error('Error sending SMS:', error);
-      setIsLoading(false);
-      setError('发送验证码失败，请稍后再试');
+
+      if (import.meta.env.VITE_NO_SMS == 1) {
+        await userStore.loginWithPhone(phoneNumber);
+        navigate(from, { replace: true });
+        return;
+      }
+
+      setIsLoading(true);
+      setError('');
+      
+      try {
+        const response = await post('send_sms', {}, {
+          host: window.location.hostname,
+          phone: phoneNumber,
+          countryCode: '+86'
+        });
+        
+        if (response.success) {
+          setStep('verify');
+          setCountdown(60); // 60 second countdown for resend
+          setIsLoading(false);
+        } else {
+          setError(response.error || '发送验证码失败，请稍后再试');
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error sending SMS:', error);
+        setIsLoading(false);
+        setError('发送验证码失败，请稍后再试');
+      }
+    } else {
+      // Email login
+      if (!email) {
+        setError('请输入邮箱地址');
+        return;
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setError('请输入有效的邮箱地址');
+        return;
+      }
+
+      if (import.meta.env.VITE_NO_SMS == 1) {
+        await userStore.loginWithEmail(email);
+        navigate(from, { replace: true });
+        return;
+      }
+
+      setIsLoading(true);
+      setError('');
+      
+      try {
+        const response = await post('send_email', {}, {
+          host: window.location.hostname,
+          email: email
+        });
+        
+        if (response.success) {
+          setStep('verify');
+          setCountdown(60); // 60 second countdown for resend
+          setIsLoading(false);
+        } else {
+          setError(response.error || '发送验证码失败，请稍后再试');
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error sending email:', error);
+        setIsLoading(false);
+        setError('发送验证码失败，请稍后再试');
+      }
     }
   };
   const verifyAndLogin = async () => {
@@ -95,23 +146,43 @@ const LoginPage = observer(() => {
     setError('');
     
     try {
-      // First verify the SMS code
-      const verifyResponse = await post('verify_sms', {}, {
-        host: window.location.hostname,
-        phone: phoneNumber,
-        code: verificationCode,
-        countryCode: '+86'
-      });
-      
-      if (verifyResponse.success) {
-        // SMS verification successful, now login with phone
-        await userStore.loginWithPhone(phoneNumber, verificationCode);
+      if (loginMethod === 'phone') {
+        // First verify the SMS code
+        const verifyResponse = await post('verify_sms', {}, {
+          host: window.location.hostname,
+          phone: phoneNumber,
+          code: verificationCode,
+          countryCode: '+86'
+        });
         
-        // Redirect to the original page after successful login
-        navigate(from, { replace: true });
+        if (verifyResponse.success) {
+          // SMS verification successful, now login with phone
+          await userStore.loginWithPhone(phoneNumber, verificationCode);
+          
+          // Redirect to the original page after successful login
+          navigate(from, { replace: true });
+        } else {
+          setError(verifyResponse.error || '验证码无效，请重试');
+          setIsLoading(false);
+        }
       } else {
-        setError(verifyResponse.error || '验证码无效，请重试');
-        setIsLoading(false);
+        // First verify the email code
+        const verifyResponse = await post('verify_email', {}, {
+          host: window.location.hostname,
+          email: email,
+          code: verificationCode
+        });
+        
+        if (verifyResponse.success) {
+          // Email verification successful, now login with email
+          await userStore.loginWithEmail(email, verificationCode);
+          
+          // Redirect to the original page after successful login
+          navigate(from, { replace: true });
+        } else {
+          setError(verifyResponse.error || '验证码无效，请重试');
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error('Verification or login error:', error);
@@ -128,7 +199,7 @@ const LoginPage = observer(() => {
         </div>
         
         <h1 className="text-2xl font-bold text-center mb-6">
-          {step === 'phone' ? '手机号登录' : '验证码登录'}
+          {step === 'input' ? (loginMethod === 'phone' ? '手机号登录' : '邮箱登录') : '验证码登录'}
         </h1>
         
         {error && (
@@ -137,36 +208,82 @@ const LoginPage = observer(() => {
           </div>
         )}
         
-        {step === 'phone' ? (
+        {step === 'input' ? (
           <div>
-            <div className="mb-4">
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                手机号
-              </label>
-              <div className="flex">
-                <div className="flex items-center justify-center bg-gray-50 border border-gray-300 rounded-l-md px-3">
-                  <span className="text-gray-500">+86</span>
+            {/* Login method toggle */}
+            <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+              <button
+                className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
+                  loginMethod === 'phone'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => {
+                  setLoginMethod('phone');
+                  setError('');
+                }}
+              >
+                手机号登录
+              </button>
+              <button
+                className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
+                  loginMethod === 'email'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => {
+                  setLoginMethod('email');
+                  setError('');
+                }}
+              >
+                邮箱登录
+              </button>
+            </div>
+
+            {loginMethod === 'phone' ? (
+              <div className="mb-4">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  手机号
+                </label>
+                <div className="flex">
+                  <div className="flex items-center justify-center bg-gray-50 border border-gray-300 rounded-l-md px-3">
+                    <span className="text-gray-500">+86</span>
+                  </div>
+                  <input
+                    type="tel"
+                    id="phone"
+                    className="flex-1 rounded-r-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="请输入手机号码"
+                    value={phoneNumber}
+                    onChange={handlePhoneChange}
+                    maxLength={11}
+                  />
                 </div>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  邮箱地址
+                </label>
                 <input
-                  type="tel"
-                  id="phone"
-                  className="flex-1 rounded-r-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="请输入手机号码"
-                  value={phoneNumber}
-                  onChange={handlePhoneChange}
-                  maxLength={11}
+                  type="email"
+                  id="email"
+                  className="w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="请输入邮箱地址"
+                  value={email}
+                  onChange={handleEmailChange}
                 />
               </div>
-            </div>
+            )}
             
             <button
               className={`w-full py-2 px-4 rounded-md font-medium text-white ${
-                isLoading || !phoneNumber
+                isLoading || (loginMethod === 'phone' ? !phoneNumber : !email)
                   ? 'bg-blue-300 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700'
               }`}
               onClick={sendVerificationCode}
-              disabled={isLoading || !phoneNumber}
+              disabled={isLoading || (loginMethod === 'phone' ? !phoneNumber : !email)}
             >
               {isLoading ? '发送中...' : '获取验证码'}
             </button>
@@ -198,14 +315,14 @@ const LoginPage = observer(() => {
                 </button>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                验证码已发送至 +86 {phoneNumber}
+                验证码已发送至 {loginMethod === 'phone' ? `+86 ${phoneNumber}` : email}
               </p>
             </div>
             
             <div className="flex gap-4">
               <button
                 className="w-1/3 py-2 px-4 rounded-md border border-gray-300 font-medium"
-                onClick={() => setStep('phone')}
+                onClick={() => setStep('input')}
                 disabled={isLoading}
               >
                 返回

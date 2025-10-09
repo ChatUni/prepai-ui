@@ -29,7 +29,7 @@ class UserStore {
   }
 
   get searchableFields() {
-    return ['name', 'id', 'phone'];
+    return ['name', 'id', 'phone', 'email'];
   }
 
   get newItem() {
@@ -37,6 +37,7 @@ class UserStore {
       client_id: clientStore.client.id,
       name: '',
       phone: '',
+      email: '',
       role: 'user'
     };
   }
@@ -128,11 +129,18 @@ class UserStore {
     }
   }
 
-  loadUser = async function(phone) {
-    if (!phone && this.user.phone) phone = this.user.phone;
+  loadUser = async function(phone, email) {
+    if (!phone && !email) {
+      if (this.user.phone) phone = this.user.phone;
+      if (this.user.email) email = this.user.email;
+    }
     const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
     try {
-      const user = await get('user', { phone, clientId: cid });
+      const queryParams = { clientId: cid };
+      if (phone) queryParams.phone = phone;
+      if (email) queryParams.email = email;
+      
+      const user = await get('user', queryParams);
       if (user) this.user = {...user, isLoggedIn: true};
       return user;
     } catch {
@@ -168,6 +176,40 @@ class UserStore {
       return this.user;
     } catch (error) {
       console.error('Error during login:', error);
+      throw error;
+    }
+  }
+
+  loginWithEmail = async function(email, verificationCode, savedUser) {
+    try {
+      let user = savedUser;
+      if (!user) user = await this.loadUser(null, email);
+
+      if (!user) {
+        const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
+        // User doesn't exist, create a new one
+        // Generate a unique ID based on email hash and client ID
+        const emailHash = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+        const newUser = {
+          id: `email_${emailHash}_${cid}_${Date.now()}`,
+          email: email,
+          client_id: cid,
+          name: t('menu.account_page.guest'),
+          role: 'user',
+          date_created: new Date().toISOString(),
+        };
+
+        // Save the new user to database
+        await save('users', newUser);
+        this.user = newUser;
+      }
+      
+      this.user.isLoggedIn = true;
+      this.saveLoginState();
+      this.initData();
+      return this.user;
+    } catch (error) {
+      console.error('Error during email login:', error);
       throw error;
     }
   }

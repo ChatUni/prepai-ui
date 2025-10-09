@@ -16,6 +16,7 @@
     "mongodb": "^6.17.0",
     "multipart-formdata": "^1.1.0",
     "node-fetch": "^2.7.0",
+    "nodemailer": "^7.0.9",
     "openai": "^4.90.0",
     "qrcode": "^1.5.4",
     "tencentcloud-sdk-nodejs": "^4.1.72",

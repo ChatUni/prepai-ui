@@ -224,43 +224,52 @@ const getLatestOrder = clientId => getLatest('orders', { client_id: +clientId },
 const getLatestWithdraw = clientId => getLatest('orders', { client_id: +clientId, type: 'withdraw', status: 'Pending' }, 'date_created')
 
 // user
-const getUser = async (phone, clientId) => {
-  const users = await flat('users', `m_phone='${phone}'&f_+orders`)
-  if (users.length === 0) throw new Error('User not found')
-  
-  let user
-  
-  if (users.length === 1) {
-    if (users[0].role === 'super' && !users[0].client_id) user = users[0]
-    else if (users[0].client_id === clientId) user = users[0]
-  } else if (users.length > 1) {
-    user = users.find(u => u.client_id === clientId)
-  }
-  if (!user) throw new Error('User not found')
-  
-  if (user.client_id) {
-    const client = await getDocById('clients', user.client_id)
-    if (!user.usage) user.usage = {}
-    const types = ['image', 'video']
-    types.forEach(t => {
-      const m = getLimit(client, t)
-      const u = user.usage[t] || {}
-      if (u.date) {
-        const d = new Date().toDateString()
-        if (d === u.date) {
-          u.remain = m - (u.used || 0)
-          return user
-        }
-      }
-      u.date = new Date().toDateString()
-      u.used = 0
-      u.remain = m
-      user.usage[t] = u
-      return user
-    })
+const getUser = async (phone, clientId, email) => {
+  let query = '';
+  if (phone) {
+    query = `m_phone='${phone}'&f_+orders`;
+  } else if (email) {
+    query = `m_email='${email}'&f_+orders`;
+  } else {
+    throw new Error('Phone or email is required');
   }
 
-  return user
+  const users = await flat('users', query);
+  if (users.length === 0) throw new Error('User not found');
+  
+  let user;
+  
+  if (users.length === 1) {
+    if (users[0].role === 'super' && !users[0].client_id) user = users[0];
+    else if (users[0].client_id === clientId) user = users[0];
+  } else if (users.length > 1) {
+    user = users.find(u => u.client_id === clientId);
+  }
+  if (!user) throw new Error('User not found');
+  
+  if (user.client_id) {
+    const client = await getDocById('clients', user.client_id);
+    if (!user.usage) user.usage = {};
+    const types = ['image', 'video'];
+    types.forEach(t => {
+      const m = getLimit(client, t);
+      const u = user.usage[t] || {};
+      if (u.date) {
+        const d = new Date().toDateString();
+        if (d === u.date) {
+          u.remain = m - (u.used || 0);
+          return user;
+        }
+      }
+      u.date = new Date().toDateString();
+      u.used = 0;
+      u.remain = m;
+      user.usage[t] = u;
+      return user;
+    });
+  }
+
+  return user;
 }
 
 export {

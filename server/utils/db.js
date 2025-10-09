@@ -40,6 +40,9 @@ const get = doc =>
 const getById = (doc, id) =>
   db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } });
 
+const getByStrId = (doc, id) =>
+  db.collection(doc).findOne({ id: id }, { projection: { _id: 0 } });
+
 const getLatest = (doc, q, dateField = 'date_created') =>
   db.collection(doc).find(q, { _id: 0 }).sort({ [dateField]: -1 }).limit(1).toArray().then(r => r.length > 0 ? r[0] : null);
 
@@ -229,6 +232,7 @@ export {
   count,
   get,
   getById,
+  getByStrId,
   getLatest,
   maxId,
   flat,
