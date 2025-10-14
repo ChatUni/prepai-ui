@@ -57,7 +57,7 @@ class RouteStore {
     const pathSegments = this.getPathSegments();
     if (pathSegments.length === 0) return true;
     
-    const topLevelRoutes = ['exam', 'series', 'assistants', 'account'];
+    const topLevelRoutes = ['exams', 'series', 'assistants', 'account'];
     const firstSegment = pathSegments[0];
     
     return topLevelRoutes.includes(firstSegment) && pathSegments.length === 1;

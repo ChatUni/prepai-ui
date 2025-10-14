@@ -540,7 +540,7 @@ const run_workflow = async (workflow_id, query, parameters) => {
   const client = await getById('clients', user.client_id)
   const date = new Date().toDateString()
 
-  if (query.usageType) {
+  if (query.usageType && query.usageType !== 'text') {
     if (!user.usage) user.usage = {}
     if (!user.usage[query.usageType]) user.usage[query.usageType] = { date, used: 0 }
     const u = user.usage[query.usageType]
@@ -580,7 +580,7 @@ console.log(parameters)
       throw new Error(`Coze API request failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    if (query.usageType) {
+    if (query.usageType && query.usageType !== 'text') {
       user.usage[query.usageType].date = date
       user.usage[query.usageType].used += 1
       await save('users', user)

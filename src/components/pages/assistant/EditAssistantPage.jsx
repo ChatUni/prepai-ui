@@ -12,7 +12,7 @@ const Param = ({ idx }) => (
     <div>{t('assistant.param.var')} {idx}</div>
     <FormInput store={store} field={`p${idx}_name`} label={t('assistant.param.name')} />
     <FormSelect store={store} field={`p${idx}_type`} label={t('assistant.param.type')} options={['select', 'radio', 'image', 'video']} placeholder=" " />
-    <FormInput store={store} field={`p${idx}_options`} label={t('assistant.param.options')} />
+    <FormInput store={store} field={`p${idx}_options`} label={t('assistant.param.options')} rows={10} />
     <FormSelect store={store} field={`p${idx}_mode`} label={t('assistant.param.mode')} options={['dropdown', 'card', 'row']} placeholder=" " />
     <FormInput store={store} field={`p${idx}_default`} label={t('assistant.param.default')} />
     <FormInput store={store} field={`p${idx}_title`} label={t('assistant.param.title')} />

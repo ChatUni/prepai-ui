@@ -10,6 +10,7 @@ import PageStore from './pageStore';
 import ListStore from './listStore';
 import instructorStore from './instructorStore';
 import { uploadImage } from '../utils/uploadHelper';
+import { TOS } from '../utils/const';
 
 class SeriesStore {
   selectedCategory;
@@ -50,7 +51,7 @@ class SeriesStore {
       duration: 0,
       descType: 'text',
       desc: '',
-      image: '',
+      image: `${TOS}common/series/icon.jpg`,
     };
   }
 

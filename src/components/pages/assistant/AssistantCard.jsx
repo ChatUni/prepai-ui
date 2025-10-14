@@ -16,7 +16,6 @@ const AssistantCard = observer(({
 
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
-    e.target.src = '/images/avatar.png';
   }, []);
 
   const handleCardClick = (e) => {
@@ -40,7 +39,7 @@ const AssistantCard = observer(({
         <div className="flex items-start gap-4">
           <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
             <img
-              src={assistant.image || '/images/avatar.png'}
+              src={assistant.image}
               alt={assistant.name}
               className="w-full h-full object-cover"
               onError={handleImageError}

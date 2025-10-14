@@ -4,6 +4,7 @@ import FormInput from '../../ui/FormInput';
 import ImageUpload from '../../ui/ImageUpload';
 import clientStore from '../../../stores/clientStore';
 import FormSelect from '../../ui/FormSelect';
+import { TOS } from '../../../utils/const';
 
 const EditExamPage = observer(() => (
   <div className="space-y-4">
@@ -15,7 +16,7 @@ const EditExamPage = observer(() => (
       store={store}
       type="document"
       field="upload_file"
-      template="https://prepai-files.tos-cn-beijing.volces.com/common/question_template.docx"
+      template={`${TOS}common/question_template.docx`}
     />
   </div>
 ));

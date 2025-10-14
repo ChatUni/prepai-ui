@@ -50,7 +50,7 @@ class AssistantStore {
       name: '',
       greeting: '',
       prompt: '',
-      image: '',
+      image: `${TOS}common/assistants/icon.png`,
       model: '',
       group: ''
     };

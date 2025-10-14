@@ -6,6 +6,7 @@ import EditingStore from './editingStore';
 import PageStore from './pageStore';
 import ListStore from './listStore';
 import GroupedListStore from './groupedListStore';
+import { TOS } from '../utils/const.js';
 
 class ExamStore {
   get name() {
@@ -29,7 +30,7 @@ class ExamStore {
       client_id: clientStore.client.id,
       name: '',
       desc: '',
-      image: '',
+      image: `${TOS}common/exams/icon.jpg`,
       group: ''
     };
   }

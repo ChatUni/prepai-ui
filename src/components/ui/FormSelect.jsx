@@ -45,7 +45,7 @@ const FormSelect = observer(({
 
   const handleSelect = (v) => {
     if (onChange) {
-      onChange(value);
+      onChange(v);
     } else if (store && field) {
       if (store.isCRUD)
         store.setEditingItemField(field, v);
@@ -211,16 +211,16 @@ const FormSelect = observer(({
         <img
           src={option.icon}
           alt=""
-          className={`${config.img} cursor-pointer hover:opacity-80 ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
-          onClick={(e) => handleIconClick(e, option.url)}
+          className={`${config.img} ${displayMode === 'card' ? '' : 'cursor-pointer hover:opacity-80'} ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
+          onClick={displayMode === 'card' ? undefined : (e) => handleIconClick(e, option.url)}
         />
       );
     }
     
     return (
       <div
-        className={`cursor-pointer hover:opacity-80 ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
-        onClick={(e) => handleIconClick(e, option.url)}
+        className={`${displayMode === 'card' ? '' : 'cursor-pointer hover:opacity-80'} ${displayMode === 'dropdown' ? 'mr-2' : ''}`}
+        onClick={displayMode === 'card' ? undefined : (e) => handleIconClick(e, option.url)}
       >
         <Icon icon={option.icon} size={config.icon} />
       </div>

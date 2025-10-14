@@ -1,5 +1,3 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import DEFAULT_AVATAR from '../assets/avatar.png';
 import clientStore from './clientStore';
 import { t } from './languageStore';
 import { get, save } from '../utils/db';
@@ -14,6 +12,7 @@ import ListStore from './listStore';
 import { combineStores } from '../utils/storeUtils';
 import { omit } from '../utils/utils';
 import GroupedListStore from './groupedListStore';
+import { TOS } from '../utils/const';
 
 class UserStore {
   user = {};
@@ -245,7 +244,7 @@ class UserStore {
   }
 
   getAvatar = function(user = this.user) {
-    return user.avatar || DEFAULT_AVATAR;
+    return user.avatar || `${TOS}common/users/icon.png`;
   }
 
   isSeriesPaid = function(id) {

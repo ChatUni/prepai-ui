@@ -164,11 +164,36 @@ class AssistantChatStore {
       return;
     }
     
+    // Collect any image data from workflow parameters
+    let imageData = null;
+    if (this.selectedAssistant.function === 'workflow') {
+      for (const [paramName, paramConfig] of Object.entries(this.wf_params)) {
+        if (paramConfig && paramConfig.type === 'image' && paramConfig.value) {
+          imageData = {
+            file: paramConfig.value,
+            paramName: paramName
+          };
+          break; // Take the first image found
+        }
+      }
+    }
+    
     // Add user message to the chat
     this.addMessage({
       sender: 'user',
       text
     });
+    
+    // If there's an image, add it to the message
+    if (imageData && imageData.file instanceof File) {
+      this.addMessage({
+        sender: 'user',
+        type: 'image',
+        url: URL.createObjectURL(imageData.file),
+        file: imageData.file,
+      });
+    }
+    
     this.setLoading(true);
     
     try {
@@ -207,6 +232,9 @@ class AssistantChatStore {
           console.error('Error generating video:', error);
           this.setError(error.message);
         }
+        
+        // Clear image parameters after sending
+        this.clearImageParams();
       } else if (this.selectedAssistant.function === 'workflow') {
         try {
           // Build parameters object from wf_params and text input
@@ -225,6 +253,8 @@ class AssistantChatStore {
           }
           
           if (this.selectedAssistant.model) parameters.model = this.selectedAssistant.model
+
+          this.clearImageParams();
 
           const r = await post(
             'run_workflow',
@@ -272,7 +302,7 @@ class AssistantChatStore {
           });
         } finally {
           this.setLoading(false);
-        }
+        }        
       } else {
         // Determine if we should use OpenRouter based on whether a model is selected
         const useOpenRouter = false; // !!this.selectedAssistant.model;
@@ -302,6 +332,9 @@ class AssistantChatStore {
           console.error(`Error sending message to ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}:`, error);
           this.setError(error.message);
         }
+        
+        // Clear image parameters after sending
+        this.clearImageParams();
       }
     } catch (error) {
       console.error('Error in sendMessage:', error);
@@ -373,7 +406,18 @@ class AssistantChatStore {
   
   setSelectedVideoResolution(resolution) {
     this.selectedVideoResolution = resolution;
-  }  
+  }
+  
+  // Clear image parameters from workflow params
+  clearImageParams = () => {
+    runInAction(() => {
+      for (const [paramName, paramConfig] of Object.entries(this.wf_params)) {
+        if (paramConfig && paramConfig.type === 'image') {
+          paramConfig.value = null;
+        }
+      }
+    });
+  }
 }
 
 // Create and export a singleton instance

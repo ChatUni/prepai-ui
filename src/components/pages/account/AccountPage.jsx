@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { FiBookOpen, FiMessageSquare, FiSettings, FiInfo, FiLogOut, FiUser } from 'react-icons/fi';
 import userStore from '../../../stores/userStore';
 import { t } from '../../../stores/languageStore';
-import DEFAULT_AVATAR from '../../../assets/avatar.png';
 import MenuListItem from '../../ui/MenuListItem';
 import UserCard from './UserCard';
 import UserListPage from './UserListPage';
