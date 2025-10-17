@@ -75,6 +75,10 @@ class ExamStore {
     return await save('exams', item);
   }
 
+  remove = async function(id) {
+    await remove('exams', id);
+  };
+
   getExamQuestions = function(id) {
     const exam = this.items.find(item => item.id === +id);
     return (exam && exam.questions) || []

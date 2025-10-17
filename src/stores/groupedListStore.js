@@ -144,7 +144,7 @@ class GroupedListStore {
 
   getGroups = function() {
     const groups = (this.isUserGroups ? userStore.user?.[this.groupField] : clientStore.client?.settings?.[this.groupField]) || [];
-    const itemGroups = [...new Set(this.filteredItems.map(item => item.group || 'Default'))];
+    const itemGroups = this.filteredItems ? [...new Set(this.filteredItems.map(item => item.group || 'Default'))] : [];
     return [...new Set([...groups, ...itemGroups])];
   }
 

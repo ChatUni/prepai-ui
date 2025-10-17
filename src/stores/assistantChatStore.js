@@ -232,9 +232,6 @@ class AssistantChatStore {
           console.error('Error generating video:', error);
           this.setError(error.message);
         }
-        
-        // Clear image parameters after sending
-        this.clearImageParams();
       } else if (this.selectedAssistant.function === 'workflow') {
         try {
           // Build parameters object from wf_params and text input
@@ -332,9 +329,6 @@ class AssistantChatStore {
           console.error(`Error sending message to ${useOpenRouter ? 'OpenRouter' : 'OpenAI'}:`, error);
           this.setError(error.message);
         }
-        
-        // Clear image parameters after sending
-        this.clearImageParams();
       }
     } catch (error) {
       console.error('Error in sendMessage:', error);

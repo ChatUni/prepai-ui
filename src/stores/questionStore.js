@@ -26,7 +26,23 @@ class QuestionStore {
   selectAnswer(questionId, option) {
     if (!this.isSubmitted) {
       runInAction(() => {
-        this.selectedAnswers.set(questionId, option);
+        const question = this.questions.find(q => q.id === questionId);
+        if (this.isMulti(question)) {
+          // Multi-select: add/remove option from array
+          const currentAnswers = this.selectedAnswers.get(questionId) || [];
+          const updatedAnswers = currentAnswers.includes(option)
+            ? currentAnswers.filter(ans => ans !== option)
+            : [...currentAnswers, option];
+          this.selectedAnswers.set(questionId, updatedAnswers);
+        } else {
+          // Single select: toggle selection (unselect if already selected)
+          const currentAnswer = this.selectedAnswers.get(questionId);
+          if (currentAnswer === option) {
+            this.selectedAnswers.delete(questionId);
+          } else {
+            this.selectedAnswers.set(questionId, option);
+          }
+        }
       });
     }
   }
@@ -36,15 +52,13 @@ class QuestionStore {
     let incorrect = 0;
     
     this.questions.forEach(question => {
-      const selectedAnswer = this.getSelectedAnswer(question.id);
-      if (selectedAnswer) {
-        const options = question.options;
-        if (this.correctOptions(question).includes(selectedAnswer)) {
-          correct++;
-        } else {
-          incorrect++;
-        }
+      const result = this.isQuestionAnsweredCorrectly(question);
+      if (result === true) {
+        correct++;
+      } else if (result === false) {
+        incorrect++;
       }
+      // result === null means unanswered, so we don't count it
     });
     
     runInAction(() => {
@@ -75,6 +89,25 @@ class QuestionStore {
     
     return this.correctOptions(question).includes(option);
   }
+
+  // Method to determine if a question's selected answer is correct (handles both single and multi-select)
+  // Returns: true if correct, false if incorrect, null if not answered
+  isQuestionAnsweredCorrectly(question) {
+    const selectedAnswer = this.getSelectedAnswer(question.id);
+    if (!selectedAnswer) return null;
+    
+    const correctOptions = this.correctOptions(question);
+    
+    if (this.isMulti(question)) {
+      // For multi-select: check if arrays are identical
+      const selectedArray = Array.isArray(selectedAnswer) ? selectedAnswer : [selectedAnswer];
+      return correctOptions.length === selectedArray.length &&
+        correctOptions.every(option => selectedArray.includes(option));
+    } else {
+      // For single select: check if option is in correct options
+      return correctOptions.includes(selectedAnswer);
+    }
+  }
   
   getAnswers(q) {
     return Array.isArray(q.answer) ? q.answer : [q.answer];
@@ -84,6 +117,19 @@ class QuestionStore {
     return this.getAnswers(q).map(a => q.options[a.charCodeAt(0) - 65]);
   }
 
+  isMulti(q) {
+    return this.correctOptions(q).length > 1;
+  }
+
+  getCorrectAnswersText(question) {
+    const correctOptions = this.correctOptions(question);
+    const correctLetters = correctOptions.map(option => {
+      const index = question.options.indexOf(option);
+      return String.fromCharCode(65 + index); // Convert to A, B, C, D...
+    });
+    return correctLetters.join(', ');
+  }
+
   get getOptionClass() {
     return (questionId, option) => {
       let optionClass = "p-3 rounded-lg border cursor-pointer transition-colors";
@@ -91,21 +137,28 @@ class QuestionStore {
       if (!question) return optionClass;
       
       const selectedAnswer = this.getSelectedAnswer(questionId);
+      const isSelected = this.isMulti(question)
+        ? Array.isArray(selectedAnswer) && selectedAnswer.includes(option)
+        : selectedAnswer === option;
       
+      const green = " bg-green-100 border-green-500"
+      const red = " bg-red-100 border-red-500"
+      const blue = " bg-blue-100 border-blue-500"
+      
+      if (isSelected) optionClass += blue;
+
       if (this.isSubmitted) {
-        if (this.correctOptions(question).includes(option)) {
-          // Always show correct answer in green after submission
-          optionClass += " bg-green-100 border-green-500";
-        } else if (selectedAnswer === option) {
-          // Show incorrect selected answer in red
-          optionClass += " bg-red-100 border-red-500";
-        } else {
+        if (isSelected) {
+          optionClass += blue;
+        } else if (this.correctOptions(question).includes(option)) { // correct
+          optionClass += green;
+        } else { // incorrect
           optionClass += " border-gray-200";
         }
       } else {
         // Not submitted yet - show selection in blue
-        optionClass += selectedAnswer === option
-          ? " bg-blue-100 border-blue-500"
+        optionClass += isSelected
+          ? blue
           : " hover:bg-gray-50 border-gray-200";
       }
       

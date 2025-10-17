@@ -11,6 +11,7 @@ const QuestionPage = observer(() => {
 
   useEffect(() => {
     questionStore.setQuestions(examStore.getExamQuestions(id));
+    return () => questionStore.resetExam();
   }, [id]);
   
   const handleOptionClick = (questionId, option) => {
@@ -21,19 +22,58 @@ const QuestionPage = observer(() => {
     questionStore.questions.map((question, index) => (
       <div key={index} className="bg-white">
         <h3 className="text-lg font-medium mb-4">
-          {index + 1}. {question.question}
+          {index + 1}. {question.question} {questionStore.isMulti(question) ? `(多选)` : ''}
         </h3>
         <div className="space-y-2">
-          {question.options.map((option, optIndex) => (
-            <div
-              key={optIndex}
-              className={questionStore.getOptionClass(question.id, option)}
-              onClick={() => !questionStore.isSubmitted && handleOptionClick(question.id, option)}
-            >
-              {option}
-            </div>
-          ))}
+          {question.options.map((option, optIndex) => {
+            const isCorrect = questionStore.isSubmitted && questionStore.isCorrectAnswer(question.id, option);
+            const selectedAnswer = questionStore.getSelectedAnswer(question.id);
+            const isSelected = questionStore.isMulti(question)
+              ? Array.isArray(selectedAnswer) && selectedAnswer.includes(option)
+              : selectedAnswer === option;
+            const isWrongSelection = questionStore.isSubmitted && isSelected && !isCorrect;
+
+            return (
+              <div
+                key={optIndex}
+                className={questionStore.getOptionClass(question.id, option)}
+                onClick={() => !questionStore.isSubmitted && handleOptionClick(question.id, option)}
+              >
+                <div className="flex items-center">
+                  <span className="mr-3 font-medium text-gray-700 min-w-[20px]">
+                    {String.fromCharCode(65 + optIndex)}.
+                  </span>
+                  {questionStore.isSubmitted && (
+                    <span className="mr-2">
+                      {isCorrect && <span className="text-green-700 font-bold">✓</span>}
+                      {isWrongSelection && <span className="text-red-600 font-bold">✗</span>}
+                    </span>
+                  )}
+                  <span>{option}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
+        {questionStore.isSubmitted && (
+          <div className="mt-3 text-sm flex">
+            <div className="flex items-center mb-1">
+              {(() => {
+                const result = questionStore.isQuestionAnsweredCorrectly(question);
+                if (result === null) {
+                  return <span className="text-yellow-700 font-bold mr-2">未作答</span>;
+                } else if (result === true) {
+                  return <span className="text-green-700 font-bold mr-2">✓</span>;
+                } else {
+                  return <span className="text-red-600 font-bold mr-2">✗</span>;
+                }
+              })()}
+            </div>
+            <div className="text-gray-600">
+              <span className="font-bold">正确答案: </span>{questionStore.getCorrectAnswersText(question)}
+            </div>
+          </div>
+        )}
       </div>
     ))
   );

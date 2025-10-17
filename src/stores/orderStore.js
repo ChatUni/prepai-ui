@@ -35,7 +35,7 @@ class OrderStore {
   }
 
   get status() {
-    return orderStatuses.map(x => ({ value: x, text: t(`order.status.${x.toLowerCase()}`) }));
+    return orderStatuses.map(x => ({ value: `${x[0].toUpperCase()}${x.slice(1)}`, text: t(`order.status.${x.toLowerCase()}`) }));
   }
 
   get balance() {
