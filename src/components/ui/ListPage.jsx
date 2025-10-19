@@ -22,7 +22,7 @@ const shortcusts = store => [
     color: 'blue',
     onClick: () => store.openAddDialog(),
     isVisible: (s, g) => s.isSettingRoute,
-    disabled: (s, g) => s.getGroups().length === 0,
+    disabled: (s, g) => !s.isNonGroupedList && s.getGroups().length === 0,
   },
 ]
 

@@ -29,7 +29,7 @@ class ListStore {
       }
     })
     
-    return filtered;
+    return filtered.slice().sort((a, b) => a.order - b.order);
   }
 
   setItems = function(items) {

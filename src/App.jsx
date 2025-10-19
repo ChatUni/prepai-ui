@@ -41,7 +41,7 @@ import examStore from './stores/questionStore';
 import videoPlayerStore from './stores/videoPlayerStore';
 import userStore from './stores/userStore';
 import routeStore from './stores/routeStore';
-import './stores/instructorChatStore';
+// import './stores/instructorChatStore';
 import './stores/assistantStore';
 import './stores/instructorStore';
 import './stores/languageStore';

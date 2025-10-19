@@ -103,7 +103,7 @@ const upgrade = async (client, user, membership, balance) => {
     comm: getComm(client, membership.content),
     client_id: user.client_id,
     user_id: user.id,
-    type: `${membership.content}_member`,
+    type: `${membership.content || 'text'}_member`,
     source: "upgrade",
     product_id: membership.id,
     body: `${membership.name} - ${membership.type}`,

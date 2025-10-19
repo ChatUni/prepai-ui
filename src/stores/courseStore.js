@@ -18,6 +18,10 @@ class CourseStore {
     return '';
   }
 
+  get isNonGroupedList() {
+    return true;
+  }
+
   get detailRoute() {
     return `/video/${this.series.id}/{id}`;
   }

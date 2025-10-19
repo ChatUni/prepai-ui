@@ -119,8 +119,9 @@ class SeriesStore {
     return series.map((s, index) => ({
       ...s,
       order: typeof s.order === 'number' ? s.order : index,
-      courses: s.courses.map(c => ({
+      courses: s.courses.map((c, idx) => ({
         ...c,
+        order: typeof c.order === 'number' ? c.order : idx,
         isFree: c.isFree == null ? false : c.isFree
       }))
     }));

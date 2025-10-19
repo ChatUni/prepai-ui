@@ -265,7 +265,7 @@ class GroupedListStore {
   moveItemInGroup = function(group, fromIndex, toIndex) {
     if (fromIndex === toIndex) return;
 
-    const currentGroupItems = [...this.getGroupedItems()[group]];
+    const currentGroupItems = [...this.getGroupedItems()[group || 'Default']];
     
     const [movedItem] = currentGroupItems.splice(fromIndex, 1);
     currentGroupItems.splice(toIndex, 0, movedItem);
