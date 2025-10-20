@@ -3,7 +3,7 @@ import { handleUrlSigning, handleFileUpload, handleFileDelete, getAllFilesInFold
 import { wechat_pay, wechat_query, wechat_refund } from './wechat.js';
 import { send_sms, verify_sms, send_email, verify_email } from './sms.js';
 import { chat, draw, video, tts } from '../openai.js';
-import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund } from './rep.js';
+import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund, checkUser } from './rep.js';
 
 export default {
   db_handlers: {
@@ -16,7 +16,8 @@ export default {
       exams: q => flat('exams', `m_client_id=${q.clientId}`),
       models: q => flat('models', `m_enabled=true&p_id,name,pricing`),
       series: q => flat('series', `m_client_id=${q.clientId}&f_+courses|course|series`),
-      user: q => getUser(q.phone, +q.clientId, q.email),
+      user: q => getUser(q.phone, +q.clientId, q.email, q.withOrders),
+      check_user: q => checkUser(q.phone, +q.clientId, q.email),
       users: q => flat('users', `m_client_id=${q.clientId}`),
       orders: q => flat('orders', `m_client_id=${q.clientId}&f_users`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),

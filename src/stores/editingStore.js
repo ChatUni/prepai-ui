@@ -110,9 +110,9 @@ class EditingStore {
     this.editingItem = {};
   };
 
-  validate = function() { // return a list of errors
+  validate = async function() { // return a list of error msgs, each validator should return its own error msg
     if (this.validator) {
-      const err = Object.entries(this.validator).map(([k, v]) => {
+      const err = await Promise.all(Object.entries(this.validator).map(([k, v]) => {
         const iv = (this.isCRUD ? this.editingItem : this)[k];
         const f = t(`${this.name}.${k}`);
         if (v === 1) {
@@ -120,7 +120,7 @@ class EditingStore {
         } else if (typeof v === 'function') {
           return v(iv);
         }
-      }).filter(x => x);
+      })).then(r => r.filter(x => (typeof(x) === 'string' && x !== '') || x === false)); // keep the ones with error msg or === false
       return err;
     }
     return [];
@@ -129,9 +129,10 @@ class EditingStore {
   confirmEdit = async function(isReload = true, isClose = true) { // only for editingItem
     if (!this.editingItem) return;
 
-    const err = this.validate();
+    const err = await this.validate();
     if (err.length > 0) {
-      this.openErrorDialog(err);
+      const msgs = err.filter(x => x);
+      if (msgs.length > 0) this.openErrorDialog(msgs);
       return;
     }
 

@@ -62,7 +62,12 @@ const UserCard = observer(({ user, isProfile }) => {
       {/* User Info */}
       <div className="ml-4">
         <h2 className="text-xl font-semibold">{store.getUserName(user)}</h2>
-        <p className="text-gray-600 text-sm">{`${t('user.phone')}: ${user.phone}`}</p>
+        {user.phone &&
+          <p className="text-gray-600 text-sm">{`${t('user.phone')}: ${user.phone}`}</p>
+        }
+        {user.email &&
+          <p className="text-gray-600 text-sm">{`${t('user.email')}: ${user.email}`}</p>
+        }
         <p className="text-gray-600 text-sm">ID: {user.id}</p>
         {isProfile && (
           <>

@@ -89,9 +89,9 @@ const handleEndpoint = async (req, res) => {
 app.get('/api', handleEndpoint);
 app.post('/api', handleEndpoint);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// app.get('/(.*)/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 // Start the server
 app.listen(PORT, () => {

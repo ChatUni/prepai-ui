@@ -34,8 +34,8 @@ const connect = async dbName => {
 
 const count = doc => db.collection(doc).count();
 
-const get = doc =>
-  db.collection(doc).find().project({ _id: 0 }).toArray();
+const get = (doc, filter) =>
+  db.collection(doc).find(filter || {}).project({ _id: 0 }).toArray();
 
 const getById = (doc, id) =>
   db.collection(doc).findOne({ id: +id }, { projection: { _id: 0 } });
@@ -110,11 +110,10 @@ const flat = async (doc, agg) => {
         if (type === 0) return [{ [$stage]: `$${props}` }]
         if (type === 1) return [{ [$stage]: +props }]
         if (type === 2) {
-          const ps = props.split(',').map(p => {
+          const ps = props.split(',').map(p => { // 'and'
             const ors = p.split('|').map(o => { // 'or' separated by '|', a=1,b=2|c=3,d=4, a=1 && (b=2 || c=3) && d=4
               let [k, v] = o.split('=')
-              if (v.includes('$')) {
-                // prop value contains operator
+              if (v.includes('$')) { // prop value contains operator, regex$abc
                 const [op, opv] = v.split('$')
                 return [k, { [`$${op}`]: strNum(Ops[op] ? Ops[op](opv, k) : opv) }]
               }

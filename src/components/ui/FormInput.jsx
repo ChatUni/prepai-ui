@@ -15,6 +15,7 @@ const FormInput = observer(({
   // New props for custom handling
   value,
   onChange,
+  onBlur,
   label,
   placeholder,
   defaultValue
@@ -36,6 +37,7 @@ const FormInput = observer(({
   };
 
   const handleBlur = (e) => {
+    // Handle number validation first
     if (type === 'number') {
       const numValue = parseFloat(e.target.value);
       let correctedValue = e.target.value;
@@ -54,6 +56,11 @@ const FormInput = observer(({
       
       // Update value if correction is needed
       if (correctedValue !== e.target.value) setValue(correctedValue);
+    }
+    
+    // Call custom onBlur handler if provided
+    if (onBlur) {
+      onBlur(e);
     }
   };
 

@@ -1,5 +1,5 @@
 import { Order } from '../../common/models/order.js';
-import { getById, getLatest, flatOne, flat, save } from './db.js';
+import { get, getById, getLatest, flatOne, flat, save } from './db.js';
 
 const durations = {
   monthly: 30,
@@ -223,20 +223,8 @@ const getLatestOrder = clientId => getLatest('orders', { client_id: +clientId },
 
 const getLatestWithdraw = clientId => getLatest('orders', { client_id: +clientId, type: 'withdraw', status: 'Pending' }, 'date_created')
 
-// user
-const getUser = async (phone, clientId, email) => {
-  let query = '';
-  if (phone) {
-    query = `m_phone='${phone}'&f_+orders`;
-  } else if (email) {
-    query = `m_email='${email}'&f_+orders`;
-  } else {
-    throw new Error('Phone or email is required');
-  }
-
-  const users = await flat('users', query);
-  if (users.length === 0) throw new Error('User not found');
-  
+const getUser = async (phone, clientId, email, withOrders) => {
+  let users = await checkUser(phone, clientId, email);  
   let user;
   
   if (users.length === 1) {
@@ -269,13 +257,31 @@ const getUser = async (phone, clientId, email) => {
     });
   }
 
+  if (withOrders) user = await flatOne('users', `m_id=${user.id}&f_+orders`);
+
   return user;
+}
+
+const checkUser = async (phone, clientId, email) => {
+  const query = { client_id: clientId };
+  if (phone) {
+    query.phone = phone;
+  } else if (email) {
+    query.email = email;
+  } else {
+    throw new Error('Phone or email is required');
+  }
+
+  const users = await get('users', query);
+  if (users.length === 0) throw new Error('User not found');
+  return users
 }
 
 export {
   getClient,
   getClientByHost,
   getUser,
+  checkUser,
   getDocById,
   getLatestOrder,
   upgradeAll,

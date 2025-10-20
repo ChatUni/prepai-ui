@@ -3,8 +3,6 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate, useLocation } from 'react-router-dom';
 import userStore from '../../../stores/userStore';
 import Logo from '../../ui/Logo';
-import { post } from '../../../utils/db';
-import clientStore from '../../../stores/clientStore';
 
 const LoginPage = observer(() => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -73,11 +71,7 @@ const LoginPage = observer(() => {
       setError('');
       
       try {
-        const response = await post('send_sms', {}, {
-          host: window.location.hostname,
-          phone: phoneNumber,
-          countryCode: '+86'
-        });
+        const response = await userStore.sendPhoneVerification(phoneNumber);
         
         if (response.success) {
           setStep('verify');
@@ -116,10 +110,7 @@ const LoginPage = observer(() => {
       setError('');
       
       try {
-        const response = await post('send_email', {}, {
-          host: window.location.hostname,
-          email: email
-        });
+        const response = await userStore.sendEmailVerification(email);
         
         if (response.success) {
           setStep('verify');
@@ -148,12 +139,7 @@ const LoginPage = observer(() => {
     try {
       if (loginMethod === 'phone') {
         // First verify the SMS code
-        const verifyResponse = await post('verify_sms', {}, {
-          host: window.location.hostname,
-          phone: phoneNumber,
-          code: verificationCode,
-          countryCode: '+86'
-        });
+        const verifyResponse = await userStore.verifyPhoneCode(phoneNumber, verificationCode);
         
         if (verifyResponse.success) {
           // SMS verification successful, now login with phone
@@ -167,11 +153,7 @@ const LoginPage = observer(() => {
         }
       } else {
         // First verify the email code
-        const verifyResponse = await post('verify_email', {}, {
-          host: window.location.hostname,
-          email: email,
-          code: verificationCode
-        });
+        const verifyResponse = await userStore.verifyEmailCode(email, verificationCode);
         
         if (verifyResponse.success) {
           // Email verification successful, now login with email

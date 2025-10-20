@@ -1,6 +1,6 @@
 import clientStore from './clientStore';
 import { t } from './languageStore';
-import { get, save } from '../utils/db';
+import { get, save, post } from '../utils/db';
 import seriesStore from './seriesStore';
 import assistantStore from './assistantStore';
 import membershipStore from './membershipStore';
@@ -18,6 +18,21 @@ class UserStore {
   user = {};
   examRecords = [];
   coupons = [];
+  verificationDialog = {
+    isOpen: false,
+    type: '', // 'phone', 'email', or 'dual'
+    contact: '',
+    phone: '',
+    email: '',
+    error: '',
+    isLoading: false
+  };
+
+  // Track pending changes for dual verification
+  pendingChanges = {
+    phone: null,
+    email: null
+  };
 
   get name() {
     return 'user';
@@ -72,6 +87,72 @@ class UserStore {
 
   get isAdmin() {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
+  }
+
+  get validator() {
+    return {
+      name: 1,
+      phone: async (value, allValues) => {
+        if (value && value !== (this.user.phone || '')) {
+          // Phone changed, check if user exists
+          const userExists = await this.checkUserExists(value, null);
+          if (userExists) {
+            this.openErrorDialog(t('user.edit.phoneExists'));
+            return false;
+          }
+          this.pendingChanges.phone = value;
+          
+          // Check if email is also being changed in the same save operation
+          const emailValue = allValues?.email;
+          const emailChanged = emailValue && emailValue !== (this.user.email || '');
+          
+          if (emailChanged) {
+            // Both are changing, store email change and wait for email validator
+            this.pendingChanges.email = emailValue;
+            // Don't trigger verification yet, let email validator handle it
+            return false;
+          } else {
+            // Only phone changed
+            await this.handlePhoneVerification(value);
+            return false;
+          }
+        } else {
+          // Phone not changed, clear pending change
+          this.pendingChanges.phone = null;
+        }
+        return true;
+      },
+      email: async (value, allValues) => {
+        if (value && value !== (this.user.email || '')) {
+          // Email changed, check if user exists
+          const userExists = await this.checkUserExists(null, value);
+          if (userExists) {
+            this.openErrorDialog(t('user.edit.emailExists'));
+            return false;
+          }
+          this.pendingChanges.email = value;
+          
+          // Check if phone is also being changed (either pending or in current values)
+          const phoneValue = allValues?.phone;
+          const phoneChanged = (phoneValue && phoneValue !== (this.user.phone || '')) || this.pendingChanges.phone !== null;
+          
+          if (phoneChanged) {
+            // Both are changing, trigger dual verification
+            const finalPhoneValue = this.pendingChanges.phone || phoneValue;
+            await this.handleDualVerification(finalPhoneValue, value);
+            return false;
+          } else {
+            // Only email changed
+            await this.handleEmailVerification(value);
+            return false;
+          }
+        } else {
+          // Email not changed, clear pending change
+          this.pendingChanges.email = null;
+        }
+        return true;
+      }
+    }
   }
 
   get isTrialUsed() {
@@ -135,7 +216,7 @@ class UserStore {
     }
     const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
     try {
-      const queryParams = { clientId: cid };
+      const queryParams = { clientId: cid, withOrders: true };
       if (phone) queryParams.phone = phone;
       if (email) queryParams.email = email;
       
@@ -187,10 +268,17 @@ class UserStore {
       if (!user) {
         const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
         // User doesn't exist, create a new one
-        // Generate a unique ID based on email hash and client ID
+        // Generate a unique numeric ID based on email hash and client ID
         const emailHash = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+        let hash = 0;
+        for (let i = 0; i < emailHash.length; i++) {
+          const char = emailHash.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+        const positiveHash = Math.abs(hash);
         const newUser = {
-          id: `email_${emailHash}_${cid}_${Date.now()}`,
+          id: positiveHash * 10000 + cid,
           email: email,
           client_id: cid,
           name: t('menu.account_page.guest'),
@@ -330,6 +418,254 @@ class UserStore {
 
   getUsage = function(type) {
     return this.user.usage[type] || {}
+  }
+
+  // Phone/Email verification methods for editing user profile
+  checkUserExists = async function(phone, email) {
+    const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
+    try {
+      const queryParams = { clientId: cid };
+      if (phone) queryParams.phone = phone;
+      if (email) queryParams.email = email;
+      
+      const user = await get('check_user', queryParams);
+      return user && user.id !== this.user.id; // Return true if user exists and is not current user
+    } catch {
+      return false;
+    }
+  }
+
+  sendPhoneVerification = async function(phone) {
+    try {
+      const response = await post('send_sms', {}, {
+        host: window.location.hostname,
+        phone: phone,
+        countryCode: '+86'
+      });
+      return response;
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+      throw error;
+    }
+  }
+
+  sendEmailVerification = async function(email) {
+    try {
+      const response = await post('send_email', {}, {
+        host: window.location.hostname,
+        email: email
+      });
+      return response;
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  }
+
+  verifyPhoneCode = async function(phone, code) {
+    try {
+      const response = await post('verify_sms', {}, {
+        host: window.location.hostname,
+        phone: phone,
+        code: code,
+        countryCode: '+86'
+      });
+      return response;
+    } catch (error) {
+      console.error('Error verifying SMS:', error);
+      throw error;
+    }
+  }
+
+  verifyEmailCode = async function(email, code) {
+    try {
+      const response = await post('verify_email', {}, {
+        host: window.location.hostname,
+        email: email,
+        code: code
+      });
+      return response;
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      throw error;
+    }
+  }
+
+  // Verification handlers for validator pattern
+  handlePhoneVerification = async function(phone) {
+    try {
+      const response = await this.sendPhoneVerification(phone);
+      if (response.success) {
+        this.showVerificationDialog('phone', phone);
+      } else {
+        this.openErrorDialog(response.error || '发送验证码失败');
+      }
+    } catch (error) {
+      this.openErrorDialog('发送验证码失败');
+    }
+  }
+
+  handleEmailVerification = async function(email) {
+    try {
+      const response = await this.sendEmailVerification(email);
+      if (response.success) {
+        this.showVerificationDialog('email', email);
+      } else {
+        this.openErrorDialog(response.error || '发送验证码失败');
+      }
+    } catch (error) {
+      this.openErrorDialog('发送验证码失败');
+    }
+  }
+
+  showVerificationDialog = function(type, contact, phone = '', email = '') {
+    this.verificationDialog = {
+      isOpen: true,
+      type,
+      contact,
+      phone,
+      email,
+      error: '',
+      isLoading: false
+    };
+  }
+
+  // Handle dual verification (both phone and email changed)
+  handleDualVerification = async function(phone, email) {
+    try {
+      // Send verification codes for both
+      const phoneResponse = await this.sendPhoneVerification(phone);
+      const emailResponse = await this.sendEmailVerification(email);
+
+      if (phoneResponse.success && emailResponse.success) {
+        this.showVerificationDialog('dual', '', phone, email);
+      } else {
+        const errors = [];
+        if (!phoneResponse.success) errors.push(`手机: ${phoneResponse.error || '发送验证码失败'}`);
+        if (!emailResponse.success) errors.push(`邮箱: ${emailResponse.error || '发送验证码失败'}`);
+        this.openErrorDialog(errors.join(', '));
+      }
+    } catch (error) {
+      this.openErrorDialog('发送验证码失败');
+    }
+  }
+
+  handleVerifyCode = async function(phoneCode, emailCode) {
+    this.verificationDialog.isLoading = true;
+    this.verificationDialog.error = '';
+
+    try {
+      if (this.verificationDialog.type === 'dual') {
+        // Handle dual verification
+        const phoneResponse = await this.verifyPhoneCode(this.verificationDialog.phone, phoneCode);
+        const emailResponse = await this.verifyEmailCode(this.verificationDialog.email, emailCode);
+
+        if (phoneResponse.success && emailResponse.success) {
+          // Both verifications successful, save user data
+          const updatedUser = {
+            ...this.user,
+            phone: this.verificationDialog.phone,
+            email: this.verificationDialog.email
+          };
+          
+          await this.save(updatedUser);
+          this.resetPendingChanges();
+          this.verificationDialog.isOpen = false;
+          this.closeEditDialog();
+        } else {
+          const errors = [];
+          if (!phoneResponse.success) errors.push(`手机: ${phoneResponse.error || '验证失败'}`);
+          if (!emailResponse.success) errors.push(`邮箱: ${emailResponse.error || '验证失败'}`);
+          this.verificationDialog.error = errors.join(', ');
+          this.verificationDialog.isLoading = false;
+        }
+      } else {
+        // Handle single verification (backward compatibility)
+        const code = phoneCode || emailCode;
+        let response;
+        if (this.verificationDialog.type === 'phone') {
+          response = await this.verifyPhoneCode(this.verificationDialog.contact, code);
+        } else {
+          response = await this.verifyEmailCode(this.verificationDialog.contact, code);
+        }
+
+        if (response.success) {
+          // Verification successful, save user data
+          const updatedUser = {
+            ...this.user,
+            [this.verificationDialog.type]: this.verificationDialog.contact
+          };
+          
+          await this.save(updatedUser);
+          this.resetPendingChanges();
+          this.verificationDialog.isOpen = false;
+          this.closeEditDialog();
+        } else {
+          this.verificationDialog.error = response.error || t('user.edit.verificationFailed');
+          this.verificationDialog.isLoading = false;
+        }
+      }
+    } catch (error) {
+      this.verificationDialog.error = t('user.edit.verificationFailed');
+      this.verificationDialog.isLoading = false;
+    }
+  }
+
+  resetPendingChanges = function() {
+    this.pendingChanges = {
+      phone: null,
+      email: null
+    };
+  }
+
+  handleResendCode = async function(resendType) {
+    try {
+      if (this.verificationDialog.type === 'dual') {
+        if (resendType === 'phone') {
+          // Resend only phone code
+          const phoneResponse = await this.sendPhoneVerification(this.verificationDialog.phone);
+          if (!phoneResponse.success) {
+            this.verificationDialog.error = `手机: ${phoneResponse.error || '发送验证码失败'}`;
+          }
+        } else if (resendType === 'email') {
+          // Resend only email code
+          const emailResponse = await this.sendEmailVerification(this.verificationDialog.email);
+          if (!emailResponse.success) {
+            this.verificationDialog.error = `邮箱: ${emailResponse.error || '发送验证码失败'}`;
+          }
+        } else {
+          // Resend both codes (fallback for backward compatibility)
+          const phoneResponse = await this.sendPhoneVerification(this.verificationDialog.phone);
+          const emailResponse = await this.sendEmailVerification(this.verificationDialog.email);
+
+          if (!phoneResponse.success || !emailResponse.success) {
+            const errors = [];
+            if (!phoneResponse.success) errors.push(`手机: ${phoneResponse.error || '发送验证码失败'}`);
+            if (!emailResponse.success) errors.push(`邮箱: ${emailResponse.error || '发送验证码失败'}`);
+            this.verificationDialog.error = errors.join(', ');
+          }
+        }
+      } else {
+        // Single verification resend
+        let response;
+        if (this.verificationDialog.type === 'phone') {
+          response = await this.sendPhoneVerification(this.verificationDialog.contact);
+        } else {
+          response = await this.sendEmailVerification(this.verificationDialog.contact);
+        }
+
+        if (!response.success) {
+          this.verificationDialog.error = response.error || '发送验证码失败';
+        }
+      }
+    } catch (error) {
+      this.verificationDialog.error = '发送验证码失败';
+    }
+  }
+
+  closeVerificationDialog = function() {
+    this.verificationDialog.isOpen = false;
+    this.resetPendingChanges();
   }
 }
 
