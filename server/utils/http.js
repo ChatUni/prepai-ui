@@ -47,6 +47,20 @@ const makeApi =
         initAI && (await initAI());
         if (q.params) q.params = JSON.parse(q.params);
         if (isForm) body = await parseForm(event);
+        
+        // Replace clientId with host-based lookup if clientId is present
+        if (q.clientId || body?.clientId) {
+          const { getClientByHost } = await import('./rep.js');
+          const host = event.headers?.host || event.headers?.Host;
+          if (host) {
+            const client = await getClientByHost(host);
+            if (client) {
+              if (q.clientId) q.clientId = client.id;
+              if (body?.clientId) body.clientId = client.id;
+            }
+          }
+        }
+        
         // const r = await t(q, body, event, Response)
         const r = await t(q, body, event);
         return res(r || 'done', 200, nocache, q.returnType);

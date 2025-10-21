@@ -135,7 +135,7 @@ const upgradeAll = async ({ userIds, membershipId, phones, clientId }) => {
     let user = users.find(u => u.phone === phone)
     if (!user) {
       user = {
-        id: +phone * 10000 + clientId,
+        id: +phone * 10000 + +clientId,
         phone: phone,
         client_id: clientId,
         name: '游客',

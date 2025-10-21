@@ -64,12 +64,14 @@ const AdminPage = observer(() => {
         icon={FiSettings}
         iconColor="text-blue-500"
       />
-      <MenuListItem
-        label={t('menu.admin_page.sub_admin_settings')}
-        onClick={() => navigate(routeMap['sub-admin-settings'])}
-        icon={FiUsers}
-        iconColor="text-purple-500"
-      />
+      {userStore.isClientAdmin &&
+        <MenuListItem
+          label={t('menu.admin_page.sub_admin_settings')}
+          onClick={() => navigate(routeMap['sub-admin-settings'])}
+          icon={FiUsers}
+          iconColor="text-purple-500"
+        />
+      }
       <MenuListItem
         label={t('menu.admin_page.course_settings')}
         onClick={() => navigate(routeMap['course-settings'])}
