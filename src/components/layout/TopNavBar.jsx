@@ -53,9 +53,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   };
 
   return (
-    <>
-      {/* Top row with logo and hamburger menu */}
-      <div className="flex items-center justify-between w-full border-b border-gray-200 p-4">
+    <div className="flex items-center justify-between w-full border-b border-gray-200 p-4">
         {/* Left section with back button and logo */}
         <div className="flex items-center">
           {showBackButton && (
@@ -140,43 +138,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
         </div> */}
         
         {/* No duplicate desktop navigation needed */}
-      </div>
-      
-      {/* Mobile navigation items - fixed at the bottom of the screen */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 h-12 z-50 shadow-lg">
-        <div className="flex justify-around items-center h-full">
-          {!isLoggedIn ? (
-            // Show login button when not logged in
-            <div
-              className="text-sm font-medium cursor-pointer flex flex-col items-center text-blue-600"
-              onClick={handleLoginClick}
-            >
-              <div>{t('auth.login')}</div>
-            </div>
-          ) : (
-            // Show navigation items when logged in
-            navItems.filter(x => !x.hide).map(item => {
-              const isActive = uiStore.activeNavItem === item.label;
-              
-              return (
-                <div
-                  key={item.id}
-                  className={`text-sm font-medium cursor-pointer flex flex-col items-center ${
-                    isActive ? 'text-teal-500' : 'text-gray-600'
-                  }`}
-                  onClick={() => handleNavClick(item)}
-                >
-                  {/* You could add icons here for each nav item */}
-                  <div className={`${isActive ? 'border-b-2 border-teal-500' : ''}`}>
-                    {item.label}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-    </>
+    </div>
   );
 });
 

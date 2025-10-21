@@ -7,6 +7,7 @@ import languageStore from './stores/languageStore';
 
 // Import components
 import TopNavBar from './components/layout/TopNavBar';
+import BottomNavBar from './components/layout/BottomNavBar';
 import LeftMenu from './components/layout/LeftMenu';
 import MainContent from './components/layout/MainContent';
 import InstructorChatPage from './components/pages/instructor/InstructorChatPage';
@@ -85,17 +86,20 @@ const MainLayout = observer(() => {
   };
   
   const SpecialLayout = ({ children }) => (
-    <div className="flex flex-grow w-full justify-center items-center overflow-y-auto bg-gray-100">
+    <div className="flex flex-grow w-full justify-center pt-10 overflow-y-auto bg-gray-100">
       { children }
     </div>
   )
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      <TopNavBar onMenuToggle={toggleMobileMenu} />
+      {/* Top navigation bar */}
+      <div className="flex-shrink-0">
+        <TopNavBar onMenuToggle={toggleMobileMenu} />
+      </div>
       
-      {/* Main content layout */}
-      <div className="flex flex-1 overflow-y-auto">
+      {/* Main content layout - grows to fill remaining space */}
+      <div className="flex flex-1 overflow-hidden">
         {/* For account and admin pages, we use a different layout without the left menu */}
         {isSpecialLayoutPage ? (
           <SpecialLayout>
@@ -134,8 +138,8 @@ const MainLayout = observer(() => {
               <LeftMenu onItemClick={() => setMobileMenuOpen(false)} />
             </div>
             
-            {/* Main content area - takes full width on mobile */}
-            <div className="flex flex-col flex-grow w-full mb-12 overflow-y-auto">
+            {/* Main content area - takes full width and grows to fill space */}
+            <div className="flex flex-col flex-grow w-full overflow-y-auto">
               <Routes>
                 {/* Public route */}
                 <Route path="/login" element={<LoginPage />} />
@@ -282,7 +286,10 @@ const MainLayout = observer(() => {
         )}
       </div>
       
-      {/* API Tools removed */}
+      {/* Bottom navigation bar (mobile only) */}
+      <div className="flex-shrink-0">
+        <BottomNavBar />
+      </div>
     </div>
   );
 });
