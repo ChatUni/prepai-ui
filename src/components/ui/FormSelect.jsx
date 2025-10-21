@@ -296,6 +296,19 @@ const FormSelect = observer(({
     }
   }, [displayMode, isOpen, opts.length]);
 
+  // Cleanup audio when component unmounts
+  useEffect(() => {
+    return () => {
+      // Stop any currently playing audio when component unmounts
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.src = '';
+        currentAudioRef.current = null;
+      }
+      currentAudioUrlRef.current = null;
+    };
+  }, []);
+
   // Render row mode
   if (displayMode === 'row') {
     return (

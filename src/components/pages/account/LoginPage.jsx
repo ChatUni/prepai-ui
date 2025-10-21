@@ -54,6 +54,15 @@ const LoginPage = observer(() => {
     setError('');
   };
 
+  const isTestAccount = (phone) => {
+    // Check if URL contains a port or "localhost"
+    const url = window.location.href;
+    const hasPort = url.includes(':') && !url.match(/^https?:\/\/[^:\/]+$/);
+    const hasLocalhost = url.includes('localhost');
+    
+    return (hasPort || hasLocalhost) && phone < 10;
+  }
+
   const sendVerificationCode = async () => {
     if (loginMethod === 'phone') {
       if (!phoneNumber) {
@@ -61,7 +70,7 @@ const LoginPage = observer(() => {
         return;
       }
 
-      if (import.meta.env.VITE_NO_SMS == 1) {
+      if (isTestAccount(phoneNumber)) {
         await userStore.loginWithPhone(phoneNumber);
         navigate(from, { replace: true });
         return;
@@ -100,11 +109,11 @@ const LoginPage = observer(() => {
         return;
       }
 
-      if (import.meta.env.VITE_NO_SMS == 1) {
-        await userStore.loginWithEmail(email);
-        navigate(from, { replace: true });
-        return;
-      }
+      // if (import.meta.env.VITE_NO_SMS == 1) {
+      //   await userStore.loginWithEmail(email);
+      //   navigate(from, { replace: true });
+      //   return;
+      // }
 
       setIsLoading(true);
       setError('');

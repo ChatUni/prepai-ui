@@ -333,6 +333,39 @@ const AssistantChatPage = observer(() => {
     }
   }, [assistantId, assistantStore.assistants, navigate]);
   
+  // Cleanup audio when component unmounts
+  useEffect(() => {
+    return () => {
+      // Stop all audio elements when leaving the page
+      const audioElements = document.querySelectorAll('audio');
+      audioElements.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      
+      // Stop any audio managed by FormSelect components
+      // Find all Audio objects created by FormSelect components and stop them
+      const allAudioObjects = [];
+      
+      // Look for any Audio objects in the global scope that might be playing
+      // Since FormSelect creates Audio objects dynamically, we need to stop them
+      // by clearing their src and pausing them if they exist
+      try {
+        // This will catch any Audio objects that are still playing
+        const mediaElements = document.querySelectorAll('audio, video');
+        mediaElements.forEach(element => {
+          if (element.src && !element.paused) {
+            element.pause();
+            element.src = '';
+            element.load(); // Reset the element
+          }
+        });
+      } catch (error) {
+        console.warn('Error stopping media elements:', error);
+      }
+    };
+  }, []);
+  
   // Handle message sending
   const handleSendMessage = (text) => {
     assistantChatStore.sendMessage(text);
