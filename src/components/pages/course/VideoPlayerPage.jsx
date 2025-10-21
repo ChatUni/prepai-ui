@@ -15,6 +15,11 @@ const VideoPlayerPage = observer(() => {
   const { t } = languageStore;
   const { seriesId, courseId } = useParams();
   const navigate = useNavigate();
+  
+  // Custom back handler to navigate to series detail with courses tab
+  const handleBackClick = () => {
+    navigate(`/series/${seriesId}?tab=courses`);
+  };
   const videoRef = useRef(null);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -387,7 +392,7 @@ const VideoPlayerPage = observer(() => {
 
   const errorContent = error && (
     <>
-      <BackButton label={t('menu.categories.back')} className="mb-4" />
+      <BackButton label={t('menu.categories.back')} className="mb-4" onClick={handleBackClick} />
     </>
   );
 
@@ -411,7 +416,7 @@ const VideoPlayerPage = observer(() => {
 
   return (
     <div className="flex flex-col flex-grow py-4 md:py-6 pb-16 md:pb-6 px-4 md:px-6 h-full">
-      <BackButton className="mb-4 hidden md:flex" />
+      <BackButton className="mb-4 hidden md:flex" onClick={handleBackClick} />
       
       {/* Main content area with video and tab panels - mobile optimized */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-6 md:justify-between flex-grow">

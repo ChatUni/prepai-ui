@@ -17,6 +17,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const isLoggedIn = userStore.isLoggedIn;
   const { t } = languageStore;
   const isAdminPage = location.pathname === '/admin';
+  const isVideoPlayerPage = location.pathname.includes('/video/');
 
   const navItems = [
     { id: 'private', label: t('menu.private'), hide: userStore.isSuperAdmin || clientStore.client.hideSeries },
@@ -64,13 +65,30 @@ const TopNavBar = observer(({ onMenuToggle }) => {
     }
   };
 
+  const handleVideoPlayerBackClick = () => {
+    // Extract seriesId from the current path: /video/seriesId/courseId
+    const pathParts = location.pathname.split('/');
+    const videoIndex = pathParts.indexOf('video');
+    if (videoIndex >= 0 && pathParts[videoIndex + 1]) {
+      const seriesId = pathParts[videoIndex + 1];
+      navigate(`/series/${seriesId}?tab=courses`);
+    } else {
+      // Fallback to default back navigation
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between w-full border-b border-gray-200 p-4">
         {/* Left section with back button and logo */}
         <div className="flex items-center">
           {showBackButton && (
             <div className="mr-4">
-              <BackButton onClick={isAdminPage ? handleAdminBackClick : undefined} />
+              <BackButton onClick={
+                isAdminPage ? handleAdminBackClick :
+                isVideoPlayerPage ? handleVideoPlayerBackClick :
+                undefined
+              } />
             </div>
           )}
 

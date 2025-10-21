@@ -5,16 +5,21 @@ import seriesStore from '../../../stores/seriesStore';
 import { t } from '../../../stores/languageStore';
 import TabPanel from '../../ui/TabPanel';
 import PaymentManager from '../../ui/PaymentManager';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { StickyButton } from '../../ui/Button';
 import paymentManagerStore from '../../../stores/paymentManagerStore';
 
 const SeriesDetailPage = observer(() => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const selectedSeries = seriesStore.items.find(x => x.id == id);
   if (!selectedSeries) return null;
   const instructors = seriesStore.getSeriesInstructors(selectedSeries);
   const isPaid = seriesStore.isPaid(selectedSeries.id);
+  
+  // Get initial tab from URL parameter, default to 0 (About This Series)
+  const tabParam = searchParams.get('tab');
+  const initialTab = tabParam === 'courses' ? 2 : 0; // 2 is the index for Course List tab
 
   return (
     <div className="flex-1 p-3 pb-20 sm:p-4 md:p-6 md:pb-6 overflow-y-auto">
@@ -44,7 +49,7 @@ const SeriesDetailPage = observer(() => {
       </div>
 
       {/* Tab Panel */}
-      <TabPanel className="mb-6 border border-gray-200">
+      <TabPanel className="mb-6 border border-gray-200" initialActiveTab={initialTab}>
         <TabPanel.Tab label={t('series.aboutThisSeries')}>
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             {selectedSeries.category && (

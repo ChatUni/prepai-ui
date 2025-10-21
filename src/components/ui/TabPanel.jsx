@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-const TabPanel = ({ children, className = '' }) => {
-  const [activeTab, setActiveTab] = useState(0);
+const TabPanel = ({ children, className = '', initialActiveTab = 0 }) => {
+  const [activeTab, setActiveTab] = useState(initialActiveTab);
   
   // Filter out only valid tab children
   const tabs = children.filter(child => child.type === TabPanel.Tab);
