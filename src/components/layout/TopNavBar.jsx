@@ -8,6 +8,7 @@ import LanguageSelector from '../ui/LanguageSelector';
 import BackButton from '../ui/BackButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import clientStore from '../../stores/clientStore';
+import adminStore from '../../stores/adminStore';
 
 const TopNavBar = observer(({ onMenuToggle }) => {
   const location = useLocation();
@@ -15,6 +16,7 @@ const TopNavBar = observer(({ onMenuToggle }) => {
   const showBackButton = !routeStore.isTopLevelPage;
   const isLoggedIn = userStore.isLoggedIn;
   const { t } = languageStore;
+  const isAdminPage = location.pathname === '/admin';
 
   const navItems = [
     { id: 'private', label: t('menu.private'), hide: userStore.isSuperAdmin || clientStore.client.hideSeries },
@@ -52,13 +54,23 @@ const TopNavBar = observer(({ onMenuToggle }) => {
     navigate('/login');
   };
 
+  const handleAdminBackClick = () => {
+    if (adminStore.currentMenu === 'system-settings') {
+      // If on 2nd level, go back to 1st level
+      adminStore.setCurrentMenu('main');
+    } else if (adminStore.currentMenu === 'main') {
+      // If on 1st level, go back to account page
+      navigate('/account');
+    }
+  };
+
   return (
     <div className="flex items-center justify-between w-full border-b border-gray-200 p-4">
         {/* Left section with back button and logo */}
         <div className="flex items-center">
           {showBackButton && (
             <div className="mr-4">
-              <BackButton />
+              <BackButton onClick={isAdminPage ? handleAdminBackClick : undefined} />
             </div>
           )}
 

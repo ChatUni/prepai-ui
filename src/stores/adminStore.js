@@ -1,9 +1,29 @@
 import { makeAutoObservable } from 'mobx';
 
 class AdminStore {
+  currentMenu = 'main';
+
   constructor() {
     makeAutoObservable(this);
   }
+
+  setCurrentMenu = (menu) => {
+    this.currentMenu = menu;
+  };
+
+  handleSystemSettingsClick = () => {
+    this.setCurrentMenu('system-settings');
+  };
+
+  handleBackClick = (navigate) => {
+    if (this.currentMenu === 'system-settings') {
+      // If on 2nd level, go back to 1st level
+      this.setCurrentMenu('main');
+    } else if (this.currentMenu === 'main') {
+      // If on 1st level, go back to account page
+      navigate('/account');
+    }
+  };
 
   // Add new instructor
   addInstructor = async (instructorData) => {

@@ -16,8 +16,11 @@ const ConfirmButtons = observer(({
   const handleClick = (handler) => async () => {
     uiStore.setConfirmButtonsLoading(true);
     try {
-      handler && await handler();
-      !isDialog && navigate(-1);
+      if (handler) {
+        await handler();
+      } else if (!isDialog) {
+        navigate(-1);
+      }
     } finally {
       uiStore.setConfirmButtonsLoading(false);
     }

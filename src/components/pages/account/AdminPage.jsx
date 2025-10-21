@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -19,6 +19,7 @@ import {
 import { t } from '../../../stores/languageStore';
 import MenuListItem from '../../ui/MenuListItem';
 import userStore from '../../../stores/userStore';
+import adminStore from '../../../stores/adminStore';
 
 const routeMap = {
   'new-instructor': '/instructors/new',
@@ -44,23 +45,14 @@ const routeMap = {
 
 const AdminPage = observer(() => {
   const navigate = useNavigate();
-  const [currentMenu, setCurrentMenu] = useState('main');
 
   if (!userStore.isAdmin) return null;
-
-  const handleSystemSettingsClick = () => {
-    setCurrentMenu('system-settings');
-  };
-
-  const handleBackClick = () => {
-    setCurrentMenu('main');
-  };
 
   const renderMainMenu = () => (
     <>
       <MenuListItem
         label={t('menu.admin_page.system_settings')}
-        onClick={handleSystemSettingsClick}
+        onClick={adminStore.handleSystemSettingsClick}
         icon={FiSettings}
         iconColor="text-blue-500"
       />
@@ -116,6 +108,12 @@ const AdminPage = observer(() => {
           iconColor="text-orange-500"
         />
       }
+      <MenuListItem
+        label={t('menu.admin_page.back')}
+        onClick={() => adminStore.handleBackClick(navigate)}
+        icon={FiArrowLeft}
+        iconColor="text-gray-500"
+      />
     </>
   );
 
@@ -141,7 +139,7 @@ const AdminPage = observer(() => {
       />
       <MenuListItem
         label={t('menu.admin_page.back')}
-        onClick={handleBackClick}
+        onClick={() => adminStore.handleBackClick(navigate)}
         icon={FiArrowLeft}
         iconColor="text-gray-500"
       />
@@ -149,7 +147,7 @@ const AdminPage = observer(() => {
   );
 
   const getHeaderTitle = () => {
-    if (currentMenu === 'system-settings') {
+    if (adminStore.currentMenu === 'system-settings') {
       return t('menu.admin_page.system_settings');
     }
     return t('menu.admin_page.title');
@@ -164,7 +162,7 @@ const AdminPage = observer(() => {
 
       {/* Menu Items */}
       <div className="space-y-2">
-        {currentMenu === 'main' ? renderMainMenu() : renderSystemSettingsMenu()}
+        {adminStore.currentMenu === 'main' ? renderMainMenu() : renderSystemSettingsMenu()}
       </div>
     </div>
   );

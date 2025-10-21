@@ -5,7 +5,7 @@ import PageTitle from './PageTitle';
 import { ConfirmDialog, ErrorDialog, InfoDialog, ToggleConfirmDialog } from './Dialogs';
 //import routeStore from '../../stores/routeStore';
 
-const Page = observer(({ store, editItem, title, showDialogsOnly, children }) => {
+const Page = observer(({ store, editItem, title, showDialogsOnly, onClose, onConfirm, children }) => {
   useEffect(() => {
     store.initPageEditing && editItem && store.initPageEditing(editItem);
     
@@ -30,7 +30,8 @@ const Page = observer(({ store, editItem, title, showDialogsOnly, children }) =>
       {editItem && (
         <ConfirmButtons
           isConfirm={true}
-          onConfirm={() => store.confirmEdit()}
+          onConfirm={onConfirm || (() => store.confirmEdit())}
+          onClose={onClose}
         />
       )}
 

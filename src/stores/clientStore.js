@@ -8,6 +8,7 @@ import { omit } from '../utils/utils';
 import { combineStores } from '../utils/storeUtils';
 import PageStore from './pageStore';
 import EditingStore from './editingStore';
+import adminStore from './adminStore';
 
 class ClientStore {
   client = {};
@@ -158,6 +159,11 @@ class ClientStore {
       });
     }
   }
+
+  navigateBackToAdmin = (navigate) => {
+    // Simply navigate back - the admin store should already be in system-settings state
+    navigate('/admin');
+  };
 
   save = async function(item = this.client) {
     const r = await save('clients', omit(item, ['memberships', 'latestOrder', 'latestWithdraw']));
