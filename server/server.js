@@ -2,17 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
-import https from 'https';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// SSL imports (commented out for HTTP mode)
+// import https from 'https';
+// import fs from 'fs';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
 import apiHandlers from './utils/apiHandlers.js';
 import { connect } from './utils/db.js';
 import { parseForm } from './utils/http.js';
 
-// Get __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Get __dirname equivalent for ES modules (for SSL)
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
 dotenv.config();
@@ -101,13 +102,18 @@ app.post('/api', handleEndpoint);
 //   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 // });
 
-// SSL certificate options
-const sslOptions = {
-  cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
-  key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
-};
+// SSL certificate options (commented out for HTTP mode)
+// const sslOptions = {
+//   cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
+//   key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
+// };
 
-// Start the HTTPS server
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running on https://localhost:${PORT}`);
+// Start the HTTPS server (commented out for HTTP mode)
+// https.createServer(sslOptions, app).listen(PORT, () => {
+//   console.log(`HTTPS Server running on https://localhost:${PORT}`);
+// });
+
+// Start the HTTP server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
