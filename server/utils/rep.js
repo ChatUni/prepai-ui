@@ -264,7 +264,7 @@ const getUser = async (phone, clientId, email, withOrders) => {
 }
 
 const checkUser = async (phone, clientId, email) => {
-  const query = { client_id: clientId };
+  const query = {};
   if (phone) {
     query.phone = phone;
   } else if (email) {
@@ -273,8 +273,14 @@ const checkUser = async (phone, clientId, email) => {
     throw new Error('Phone or email is required');
   }
 
-  const users = await get('users', query);
+  let users = await get('users', query);
+
+  const sup = users.find(u => u.role === 'super' && !u.client_id);
+  if (sup) return users;
+
+  users = users.filter(u => u.client_id === +clientId);
   if (users.length === 0) throw new Error('User not found');
+  
   return users
 }
 
