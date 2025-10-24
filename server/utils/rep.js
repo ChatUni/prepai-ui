@@ -33,7 +33,8 @@ const getCurrentBalance = async clientId => {
 }
 
 const getClientByHost = async (host) => {
-  const client = await flatOne('clients', `m_host=regex$${host}`)
+  const client = await flatOne('clients', `m_host=regex$${`${host};`}`)
+  if (!client) throw new Error('client not found')
   return client
 }
 
@@ -277,11 +278,44 @@ const checkUser = async (phone, clientId, email) => {
   return users
 }
 
+const newUser = async (user) => {
+  const clientId = user.client_id;
+  
+  // Generate ID based on phone or email
+  let id;
+  if (user.phone) {
+    id = +user.phone * 10000 + clientId;
+  } else if (user.email) {
+    // Generate a unique numeric ID based on email hash and client ID
+    const emailHash = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+    let hash = 0;
+    for (let i = 0; i < emailHash.length; i++) {
+      const char = emailHash.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    const positiveHash = Math.abs(hash);
+    id = positiveHash * 10000 + clientId;
+  } else {
+    throw new Error('Phone or email is required');
+  }
+  
+  const newUserData = {
+    ...user,
+    id,
+    date_created: new Date().toISOString(),
+  };
+  
+  await save('users', newUserData);
+  return newUserData;
+}
+
 export {
   getClient,
   getClientByHost,
   getUser,
   checkUser,
+  newUser,
   getDocById,
   getLatestOrder,
   upgradeAll,

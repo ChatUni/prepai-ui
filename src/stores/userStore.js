@@ -235,19 +235,16 @@ class UserStore {
 
       if (!user) {
         const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
-        // User doesn't exist, create a new one
-        const newUser = {
-          id: +phone * 10000 + cid,
+        // User doesn't exist, create a new one using server-side logic
+        const newUserData = {
           phone: phone,
           client_id: cid,
           name: t('menu.account_page.guest'),
           role: 'user',
-          date_created: new Date().toISOString(),
         };
 
-        // Save the new user to database
-        await save('users', newUser);
-        this.user = newUser;
+        // Save the new user to database (server will generate ID)
+        this.user = await post('new_user', {}, newUserData);
       }
       
       this.user.isLoggedIn = true;
@@ -267,28 +264,16 @@ class UserStore {
 
       if (!user) {
         const cid = clientStore.client.id || +import.meta.env.VITE_CLIENT_ID;
-        // User doesn't exist, create a new one
-        // Generate a unique numeric ID based on email hash and client ID
-        const emailHash = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-        let hash = 0;
-        for (let i = 0; i < emailHash.length; i++) {
-          const char = emailHash.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash; // Convert to 32-bit integer
-        }
-        const positiveHash = Math.abs(hash);
-        const newUser = {
-          id: positiveHash * 10000 + cid,
+        // User doesn't exist, create a new one using server-side logic
+        const newUserData = {
           email: email,
           client_id: cid,
           name: t('menu.account_page.guest'),
           role: 'user',
-          date_created: new Date().toISOString(),
         };
 
-        // Save the new user to database
-        await save('users', newUser);
-        this.user = newUser;
+        // Save the new user to database (server will generate ID)
+        this.user = await post('new_user', {}, newUserData);
       }
       
       this.user.isLoggedIn = true;

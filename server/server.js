@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 // import { fileURLToPath } from 'url';
 import apiHandlers from './utils/apiHandlers.js';
 import { connect } from './utils/db.js';
-import { parseForm } from './utils/http.js';
+import { parseForm, replaceClientId } from './utils/http.js';
 
 // Get __dirname equivalent for ES modules (for SSL)
 // const __filename = fileURLToPath(import.meta.url);
@@ -86,6 +86,9 @@ const handleEndpoint = async (req, res) => {
 
     // Use parsed body for multipart data, otherwise use regular body
     const requestData = req.parsedBody || req.body;
+
+    // Replace clientId with host-based lookup if clientId is present
+    await replaceClientId(q, requestData, req.headers);
 
     const response = await t(q, requestData, req);
     res.status(200).send(response);

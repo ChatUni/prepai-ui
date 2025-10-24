@@ -252,7 +252,7 @@ class ClientStore {
     this.error = null;
 
     try {
-      const client = await get('client', { id: import.meta.env.VITE_CLIENT_ID });
+      const client = await get('client', { clientId: import.meta.env.VITE_CLIENT_ID });
       
       runInAction(() => {
         if (client) {

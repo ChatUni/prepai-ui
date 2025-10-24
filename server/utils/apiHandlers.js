@@ -3,12 +3,12 @@ import { handleUrlSigning, handleFileUpload, handleFileDelete, getAllFilesInFold
 import { wechat_pay, wechat_query, wechat_refund } from './wechat.js';
 import { send_sms, verify_sms, send_email, verify_email } from './sms.js';
 import { chat, draw, video, tts } from '../openai.js';
-import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund, checkUser } from './rep.js';
+import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund, checkUser, newUser } from './rep.js';
 
 export default {
   db_handlers: {
     get: {
-      client: q => getClient(q.id),
+      client: q => getClient(q.clientId),
       courses: q => flat('courses', `${q.seriesId ? `m_series_id=${q.seriesId}&` : ''}f_series|series&f_instructors`),
       instructors: q => flat('instructors', `m_client_id=${q.clientId}`),
       assistants: q => flat('assistants', `m_type=platform|client_id=${q.clientId}|user_id=${q.userId}`),
@@ -16,8 +16,8 @@ export default {
       exams: q => flat('exams', `m_client_id=${q.clientId}`),
       models: q => flat('models', `m_enabled=true&p_id,name,pricing`),
       series: q => flat('series', `m_client_id=${q.clientId}&f_+courses|course|series`),
-      user: q => getUser(q.phone, q.clientId, q.email, q.withOrders),
-      check_user: q => checkUser(q.phone, q.clientId, q.email),
+      user: q => getUser(q.phone, +q.clientId, q.email, q.withOrders),
+      check_user: q => checkUser(q.phone, +q.clientId, q.email),
       users: q => flat('users', `m_client_id=${q.clientId}`),
       orders: q => flat('orders', `m_client_id=${q.clientId}&f_users`),
       questions: q => flat('questions', `m_course_id=${q.courseId}&r_size=10`),
@@ -26,6 +26,7 @@ export default {
     post: {
       save: (q, b) => save(q.doc, b),
       remove: (q, b) => remove(q.doc, b.id),
+      new_user: (q, b) => newUser(b),
       send_sms,
       verify_sms,
       send_email,

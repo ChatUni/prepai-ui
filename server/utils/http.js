@@ -47,19 +47,9 @@ const makeApi =
         initAI && (await initAI());
         if (q.params) q.params = JSON.parse(q.params);
         if (isForm) body = await parseForm(event);
-        
+
         // Replace clientId with host-based lookup if clientId is present
-        if (q.clientId || body?.clientId) {
-          const { getClientByHost } = await import('./rep.js');
-          const host = event.headers?.host || event.headers?.Host;
-          if (host) {
-            const client = await getClientByHost(host);
-            if (client) {
-              if (q.clientId) q.clientId = client.id;
-              if (body?.clientId) body.clientId = client.id;
-            }
-          }
-        }
+        await replaceClientId(q, body, event.headers);
         
         // const r = await t(q, body, event, Response)
         const r = await t(q, body, event);
@@ -98,11 +88,30 @@ const tryc = (func, err) => {
   }
 };
 
+const replaceClientId = async (q, body, headers) => {
+  // Replace clientId with host-based lookup if clientId is present
+  if (q.clientId || body?.clientId || q.client_id || body?.client_id) {
+    const { getClientByHost } = await import('./rep.js');
+    const host = headers?.host || headers?.Host;
+
+    if (host) {
+      const client = await getClientByHost(host);
+      if (client) {
+        if (q.clientId) q.clientId = client.id;
+        if (q.client_id) q.client_id = client.id;
+        if (body?.clientId) body.clientId = client.id;
+        if (body?.client_id) body.client_id = client.id;
+      }
+    }
+  }
+};
+
 export {
   getOrigin,
   headers,
   res,
   makeApi,
   parseForm,
-  tryc
+  tryc,
+  replaceClientId
 };

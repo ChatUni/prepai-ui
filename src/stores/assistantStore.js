@@ -41,7 +41,9 @@ class AssistantStore {
 
   get filteringFields() {
     return [
-      item => this.isUserRoute ? this.isUserAssistant(item) : !this.isUserAssistant(item)
+      item => this.isUserRoute
+        ? (this.isUserAssistant(item) && item.user_id === userStore.user.id)
+        : !this.isUserAssistant(item)
     ];
   }
 
@@ -121,13 +123,13 @@ class AssistantStore {
         const result = this.getResult(a);
         const memberType = membershipStore.getMemberType(result);
         return this.isPlatformAssistant(a)
-          ? { ...a, memberType, usageType: result, ...this.getOverrideItem(a) }
+          ? { ...a, memberType, usageType: result, ...(this.getOverrideItem(a) || {}) }
           : { ...a, memberType, usageType: result, shelf: !this.isUserAssistant(a) }
       })
   };
   
   getOverrideItem = function(item) {
-    return clientStore.client.settings.assistants.find(x => x.id === item.id)
+    return clientStore.client.settings.assistants?.find(x => x.id === item.id)
   }
 
   parseParams = function(item) {
@@ -184,8 +186,8 @@ class AssistantStore {
       return item
     } else {
       item.client_id = clientStore.client.id;
-      if (item.shelf) delete item.user_id;
-      else item.user_id = userStore.user.id;
+      // if (item.shelf) delete item.user_id;
+      // else item.user_id = userStore.user.id;
       item.type = item.shelf ? 'client' : 'user';
       return await save('assistants', item);
     }

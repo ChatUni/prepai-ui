@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import store from '../../../stores/assistantStore';
 import CardEditActions from '../../ui/CardEditActions';
 import DndOrderContainer from '../../ui/DndOrderContainer';
+import userStore from '../../../stores/userStore';
 
 const AssistantCard = observer(({
   assistant,
@@ -64,7 +65,7 @@ const AssistantCard = observer(({
           item={assistant}
           store={store}
           hideDelete={item => store.isPlatformAssistant(item)}
-          hideShelf={item => store.isPlatformAssistant(item)}
+          hideShelf={item => store.isPlatformAssistant(item) || (item.shelf && item.user_id !== userStore.user.id)}
           hideVisibility={item => store.isUserAssistantRoute}
         />
       )}
