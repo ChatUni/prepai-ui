@@ -34,7 +34,7 @@ const getCurrentBalance = async clientId => {
 
 const getClientByHost = async (host) => {
   const client = await flatOne('clients', `m_host=regex$${`${host};`}`)
-  if (!client) throw new Error('client not found')
+  if (!client) throw new Error(`client not found for host ${host}`)
   return client
 }
 
