@@ -103,6 +103,9 @@ const replaceClientId = async (q, body, headers) => {
         if (body?.client_id) body.client_id = client.id;
       }
     }
+  } else if (body?.client) { // if don't want to be replaced, send client instead of clientId
+    body.client_id = body.client;
+    delete body.client;
   }
 };
 

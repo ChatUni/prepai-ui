@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { uploadImage } from '../utils/uploadHelper';
 import { deleteImage, extractKeyFromUrl } from '../utils/tosHelper';
 import { uploadToTOS } from '../utils/tosHelper';
-import lang from './languageStore';
+import { t } from './languageStore';
 import { get, save } from '../utils/db';
 import { omit } from '../utils/utils';
 import { combineStores } from '../utils/storeUtils';
@@ -16,6 +16,14 @@ class ClientStore {
   originalBanners = [];
   // Track changes as {type: 'add'|'edit'|'delete', data: File|string, index?: number, oldUrl?: string}
   changes = [];
+  
+  // Dialog state for creating new clients
+  showCreateClientDialog = false;
+  newClientData = {
+    name: '',
+    host: '',
+    phone: ''
+  };
 
   get name() {
     return 'client';
@@ -29,6 +37,14 @@ class ClientStore {
       phone: '',
       email: '',
       qrcode: '',
+    };
+  }
+
+  get newClientItem() {
+    return {
+      name: '',
+      host: '',
+      phone: '', // This will be the admin phone
     };
   }
 
@@ -290,18 +306,100 @@ class ClientStore {
     console.log(this.error);
     
     // Handle specific error cases
-    if (this.error === lang.t('series.banners.emptyBannersError')) {
-      return lang.t('series.banners.emptyBannersError');
+    if (this.error === t('series.banners.emptyBannersError')) {
+      return t('series.banners.emptyBannersError');
     }
     if (this.error.includes('Failed to save changes')) {
-      return lang.t('series.banners.saveError');
+      return t('series.banners.saveError');
     }
     if (this.error.includes('Failed to load client')) {
-      return lang.t('series.banners.loadError');
+      return t('series.banners.loadError');
     }
 
     // Default error message
-    return lang.t('common.unexpectedError');
+    return t('common.unexpectedError');
+  }
+
+  // Dialog methods for creating new clients
+  openCreateClientDialog = function() {
+    this.showCreateClientDialog = true;
+    this.newClientData = {
+      name: '',
+      host: '',
+      phone: ''
+    };
+  }
+
+  closeCreateClientDialog = function() {
+    this.showCreateClientDialog = false;
+    this.newClientData = {
+      name: '',
+      host: '',
+      phone: ''
+    };
+  }
+
+  setNewClientField = function(field, value) {
+    this.newClientData[field] = value;
+  }
+
+  // Method to create a new client with simplified fields
+  createNewClient = async function() {    
+    try {
+      // Validate required fields
+      if (!this.newClientData.name || !this.newClientData.host || !this.newClientData.phone) {
+        this.openErrorDialog(t('client.create.allFieldsRequired'));
+        return;
+      }
+
+      // Create the client with basic structure
+      const newClient = {
+        name: this.newClientData.name,
+        host: this.newClientData.host,
+        phone: '',
+        desc: '',
+        logo: '',
+        email: '',
+        qrcode: '',
+        allowFree1Day: false,
+        hideSeries: false,
+        hideExam: false,
+        settings: {
+          banners: [],
+          assistantGroups: [
+            "AI对话",
+            "AI绘图",
+            "AI视频",
+            "AI配音",
+            "短视频创作",
+            "工作小助手"
+          ],
+          examGroups: [
+            "推荐考试",
+            "模拟考试"
+          ],
+          seriesGroups: [
+            "精选课程",
+            "热门课程"
+          ],
+        }
+      };
+      
+      const result = await save('clients', newClient);
+      await save('users', {
+        id: this.newClientData.phone * 10000 + result[0].id,
+        role: 'admin',
+        name: '管理员',
+        phone: this.newClientData.phone,
+        client: result[0].id
+      });
+      this.closeCreateClientDialog();
+      this.openInfoDialog(t('client.create.createSuccess'));
+      return result;
+    } catch (error) {
+      this.openErrorDialog(t('client.create.createFailed') + ': ' + error.message);
+      throw error;
+    }
   }
 }
 

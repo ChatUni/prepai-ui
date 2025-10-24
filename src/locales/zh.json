@@ -98,13 +98,19 @@
   },
   "client": {
     "allowFree1Day": "新用户1天免费试用",
+    "create": {
+      "allFieldsRequired": "请填写所有必填字段",
+      "createFailed": "创建B端用户失败",
+      "createSuccess": "B端用户创建成功！"
+    },
     "desc": "描述",
     "email": "邮箱",
     "hideExam": "隐藏考测模块",
     "hideSeries": "隐藏好课模块",
+    "host": "域名",
     "logo": "标志",
     "name": "客户名称",
-    "phone": "电话",
+    "phone": "管理员电话",
     "qrcode": "二维码"
   },
   "common": {
@@ -473,7 +479,8 @@
       "system_settings": "系统设置",
       "title": "管理后台",
       "upload_questions": "上传试题",
-      "upgrade": "指定升级"
+      "upgrade": "指定升级",
+      "create_client": "创建B端用户"
     },
     "ai": "AI助理",
     "assistants": "助手",

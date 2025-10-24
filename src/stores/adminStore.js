@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import clientStore from './clientStore';
 
 class AdminStore {
   currentMenu = 'main';
@@ -100,6 +101,10 @@ class AdminStore {
       console.error('Error editing assistant:', error);
       throw error;
     }
+  };
+
+  handleCreateClientClick = () => {
+    clientStore.openCreateClientDialog();
   };
 }
 
