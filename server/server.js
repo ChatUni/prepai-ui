@@ -3,23 +3,23 @@ import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
 // SSL imports (commented out for HTTP mode)
-// import https from 'https';
-// import fs from 'fs';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import apiHandlers from './utils/apiHandlers.js';
 import { connect } from './utils/db.js';
 import { parseForm, replaceClientId } from './utils/http.js';
 
 // Get __dirname equivalent for ES modules (for SSL)
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 443;
 
 // Enable compression for all responses
 app.use(compression());
@@ -71,8 +71,8 @@ app.use((req, res, next) => {
   }
 });
 
-// Serve static files from dist folder
-app.use(express.static('dist'));
+// Serve static files from dist folder (one level up from server)
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 const handleEndpoint = async (req, res) => {
   const q = req.query;
@@ -101,22 +101,28 @@ const handleEndpoint = async (req, res) => {
 app.get('/api', handleEndpoint);
 app.post('/api', handleEndpoint);
 
-// app.get('/(.*)/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
+// Catch-all handler for client-side routing
+app.use((req, res, next) => {
+  // If it's not an API request and the file doesn't exist, serve index.html
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  } else {
+    next();
+  }
+});
 
 // SSL certificate options (commented out for HTTP mode)
-// const sslOptions = {
-//   cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
-//   key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
-// };
+const sslOptions = {
+  cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
+  key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
+};
 
 // Start the HTTPS server (commented out for HTTP mode)
-// https.createServer(sslOptions, app).listen(PORT, () => {
-//   console.log(`HTTPS Server running on https://localhost:${PORT}`);
-// });
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`HTTPS Server running on https://localhost:${PORT}`);
+});
 
 // Start the HTTP server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
