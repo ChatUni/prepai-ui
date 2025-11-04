@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --config vite.config.dev.js",
     "server": "node server/server.js",
-    "dev:server": "concurrently \"npm run server\" \"npm run dev\"",
+    "server:http": "node server/server.js --http",
+    "dev:server": "concurrently \"npm run server:http\" \"npm run dev\"",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\" \"netlify dev\"",
     "build": "vite build --config vite.config.prod.js",
     "lint": "eslint .",

@@ -78,9 +78,9 @@ class AssistantStore {
     return {
       name: 1,
       greeting: 1,
-      prompt: () => !this.isPlatformAssistant(),
+      prompt: x => this.isPlatformAssistant() || (x || '').length > 0,
       image: 1,
-      model: () => !this.isPlatformAssistant(),
+      model: x => this.isPlatformAssistant() || (x || '').length > 0,
       group: 1,
     }
   }

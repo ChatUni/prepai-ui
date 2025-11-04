@@ -110,18 +110,23 @@ class EditingStore {
     this.editingItem = {};
   };
 
-  validate = async function() { // return a list of error msgs, each validator should return its own error msg
+  validate = async function() { // return a list of error msgs, each validator returns: 1. true/null/undefined - no err, 2. string - custom err msg, 3. false - missing err msg
     if (this.validator) {
       const err = await Promise.all(Object.entries(this.validator).map(([k, v]) => {
         const iv = (this.isCRUD ? this.editingItem : this)[k];
         const f = t(`${this.name}.${k}`);
         if (v === 1) {
           if (iv === null || iv === undefined || iv === '') return t('common.required', { name: f });
+          return null;
         } else if (typeof v === 'function') {
-          return v(iv);
+          const r = v(iv);
+          if (r === true) return null;
+          if (r === false) return t('common.required', { name: f });
+          if (typeof(r) === 'string') return r;
+          return null;
         }
-      })).then(r => r.filter(x => (typeof(x) === 'string' && x !== '') || x === false)); // keep the ones with error msg or === false
-      return err;
+      }))
+      return err.filter(x => (typeof(x) === 'string' && x !== '') || x === false); // keep the ones with error msg or === false
     }
     return [];
   }

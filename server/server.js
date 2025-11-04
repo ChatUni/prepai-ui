@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
-// SSL imports (commented out for HTTP mode)
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
@@ -11,15 +10,19 @@ import apiHandlers from './utils/apiHandlers.js';
 import { connect } from './utils/db.js';
 import { parseForm, replaceClientId } from './utils/http.js';
 
-// Get __dirname equivalent for ES modules (for SSL)
+// Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
 dotenv.config();
 
+// Check command line arguments for HTTP mode
+const useHTTP = process.argv.includes('--http');
+const defaultPort = useHTTP ? 80 : 443;
+
 const app = express();
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || defaultPort;
 
 // Enable compression for all responses
 app.use(compression());
@@ -111,18 +114,20 @@ app.use((req, res, next) => {
   }
 });
 
-// SSL certificate options (commented out for HTTP mode)
-const sslOptions = {
-  cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
-  key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
-};
+if (useHTTP) {
+  // Start the HTTP server
+  app.listen(PORT, () => {
+    console.log(`HTTP Server running on http://localhost:${PORT}`);
+  });
+} else {
+  // SSL certificate options for HTTPS
+  const sslOptions = {
+    cert: fs.readFileSync(path.join(__dirname, 'certs', 'full.pem')),
+    key: fs.readFileSync(path.join(__dirname, 'certs', '20251014_43334.private.key'))
+  };
 
-// Start the HTTPS server (commented out for HTTP mode)
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running on https://localhost:${PORT}`);
-});
-
-// Start the HTTP server
-// app.listen(PORT, () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-// });
+  // Start the HTTPS server
+  https.createServer(sslOptions, app).listen(PORT, () => {
+    console.log(`HTTPS Server running on https://localhost:${PORT}`);
+  });
+}

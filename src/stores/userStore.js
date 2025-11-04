@@ -89,6 +89,10 @@ class UserStore {
     return this.isClientAdmin || this.isSubAdmin || this.isSuperAdmin;
   }
 
+  get hasFreeAccess() {
+    return this.isClientAdmin || this.isSuperAdmin;
+  }
+
   get validator() {
     return {
       name: 1,
@@ -386,7 +390,9 @@ class UserStore {
     return combinedExpireDate;
   }
 
-  isPaid = function(type, id) {    
+  isPaid = function(type, id) {
+    if (this.hasFreeAccess) return true;
+
     const expireDate = this.getExpireDate(type, id);
     if (!expireDate) return false;
     

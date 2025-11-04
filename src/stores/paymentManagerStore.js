@@ -47,9 +47,9 @@ class PaymentManagerStore {
   get validator() {
     return {
       rechargeAmount: 1,
-      userName: () => this.isWithdraw && this.userName.trim() === '' && t('withdraw.user_name_required'),
-      bankName: () => this.isWithdraw && this.bankName.trim() === '' && t('withdraw.bank_name_required'),
-      bankAccount: () => this.isWithdraw && this.bankAccount.trim() === '' && t('withdraw.bank_account_required'),
+      userName: () => this.isWithdrawMode && this.userName.trim() === '' ? t('withdraw.user_name_required') : null,
+      bankName: () => this.isWithdrawMode && this.bankName.trim() === '' ? t('withdraw.bank_name_required') : null,
+      bankAccount: () => this.isWithdrawMode && this.bankAccount.trim() === '' ? t('withdraw.bank_account_required') : null,
     };
   }
 
@@ -108,8 +108,8 @@ class PaymentManagerStore {
     this.startTransaction('withdraw');
   };
 
-  confirmTransaction = function() {
-    const err = this.validate();
+  confirmTransaction = async function() {
+    const err = await this.validate();
     if (err.length > 0) {
       userStore.openErrorDialog(err);
       return;
