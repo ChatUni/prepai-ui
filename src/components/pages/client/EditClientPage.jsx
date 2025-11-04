@@ -61,10 +61,12 @@ const EditClientPage = observer(({ mode }) => {
     }
   };
 
+  const editItem = mode === 'create' ? store.editingItem : store.client;
+
   return (
     <Page
       store={store}
-      editItem={store.editingItem || store.client}
+      editItem={editItem}
       onClose={handleNavigateBack}
       onConfirm={handleConfirm}
     >
