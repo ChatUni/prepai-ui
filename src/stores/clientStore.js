@@ -3,7 +3,7 @@ import { uploadImage } from '../utils/uploadHelper';
 import { deleteImage, extractKeyFromUrl } from '../utils/tosHelper';
 import { uploadToTOS } from '../utils/tosHelper';
 import { t } from './languageStore';
-import { get, save } from '../utils/db';
+import { get, post, save } from '../utils/db';
 import { omit } from '../utils/utils';
 import { combineStores } from '../utils/storeUtils';
 import PageStore from './pageStore';
@@ -344,7 +344,7 @@ class ClientStore {
   }
 
   // Method to create a new client with simplified fields
-  createNewClient = async function() {    
+  createNewClient = async function() {
     try {
       // Validate required fields
       if (!this.newClientData.name || !this.newClientData.host || !this.newClientData.phone) {
@@ -352,53 +352,11 @@ class ClientStore {
         return;
       }
 
-      // Create the client with basic structure
-      const newClient = {
-        name: this.newClientData.name,
-        host: this.newClientData.host,
-        phone: '',
-        desc: '',
-        logo: '',
-        email: '',
-        qrcode: '',
-        allowFree1Day: false,
-        hideSeries: false,
-        hideExam: false,
-        settings: {
-          banners: [],
-          assistantGroups: [
-            "AI对话",
-            "AI绘图",
-            "AI视频",
-            "AI配音",
-            "短视频创作",
-            "工作小助手"
-          ],
-          examGroups: [
-            "推荐考试",
-            "模拟考试"
-          ],
-          seriesGroups: [
-            "精选课程",
-            "热门课程"
-          ],
-        }
-      };
-      
-      const result = await save('clients', newClient);
-      await save('users', {
-        id: this.newClientData.phone * 10000 + result[0].id,
-        role: 'admin',
-        name: '管理员',
-        phone: this.newClientData.phone,
-        client: result[0].id
-      });
+      await post('create_client', {}, this.newClientData);
       this.closeCreateClientDialog();
       this.openInfoDialog(t('client.create.createSuccess'));
-      return result;
     } catch (error) {
       this.openErrorDialog(t('client.create.createFailed') + ': ' + error.message);
-      throw error;
     }
   }
 }

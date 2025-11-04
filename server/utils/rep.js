@@ -316,12 +316,85 @@ const newUser = async (user) => {
   return newUserData;
 }
 
+const createClient = async (clientData) => {
+  // Validate required fields
+  if (!clientData.name || !clientData.host || !clientData.phone) {
+    throw new Error('All fields (name, host, phone) are required');
+  }
+
+  // Check if host already exists (host is semicolon-separated string)
+  const hostList = clientData.host.split(';').map(h => h.trim()).filter(h => h);
+  
+  // Get all existing clients to check for host conflicts
+  const existingClients = await get('clients');
+  
+  for (const existingClient of existingClients) {
+    if (existingClient.host) {
+      const existingHosts = existingClient.host.split(';').map(h => h.trim()).filter(h => h);
+      
+      // Check if any of the new hosts already exist
+      for (const newHost of hostList) {
+        if (existingHosts.includes(newHost)) {
+          throw new Error(`域名 '${newHost}' 已存在`);
+        }
+      }
+    }
+  }
+
+  // Create the client with basic structure
+  const newClient = {
+    name: clientData.name,
+    host: clientData.host,
+    phone: '',
+    desc: '',
+    logo: '',
+    email: '',
+    qrcode: '',
+    allowFree1Day: false,
+    hideSeries: false,
+    hideExam: false,
+    settings: {
+      banners: [],
+      assistantGroups: [
+        "AI对话",
+        "AI绘图",
+        "AI视频",
+        "AI配音",
+        "短视频创作",
+        "工作小助手"
+      ],
+      examGroups: [
+        "推荐考试",
+        "模拟考试"
+      ],
+      seriesGroups: [
+        "精选课程",
+        "热门课程"
+      ],
+    }
+  };
+  
+  const result = await save('clients', newClient);
+  
+  // Create admin user for the client
+  await save('users', {
+    id: clientData.phone * 10000 + result[0].id,
+    role: 'admin',
+    name: '管理员',
+    phone: clientData.phone,
+    client: result[0].id
+  });
+  
+  return result;
+};
+
 export {
   getClient,
   getClientByHost,
   getUser,
   checkUser,
   newUser,
+  createClient,
   getDocById,
   getLatestOrder,
   upgradeAll,

@@ -24,6 +24,7 @@ import adminStore from '../../../stores/adminStore';
 import clientStore from '../../../stores/clientStore';
 import Dialog from '../../ui/Dialog';
 import FormInput from '../../ui/FormInput';
+import { ErrorDialog, InfoDialog } from '../../ui/Dialogs';
 
 const routeMap = {
   'new-instructor': '/instructors/new',
@@ -224,6 +225,10 @@ const AdminPage = observer(() => {
           </div>
         </div>
       </Dialog>
+
+      {/* Error and Info Dialogs */}
+      <ErrorDialog store={clientStore} />
+      <InfoDialog store={clientStore} />
     </div>
   );
 });
