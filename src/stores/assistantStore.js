@@ -188,7 +188,7 @@ class AssistantStore {
       item.client_id = clientStore.client.id;
       // if (item.shelf) delete item.user_id;
       // else item.user_id = userStore.user.id;
-      item.type = item.shelf ? 'client' : 'user';
+      // item.type = item.shelf ? 'client' : 'user';
       return await save('assistants', item);
     }
   }
