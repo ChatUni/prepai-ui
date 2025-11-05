@@ -164,16 +164,15 @@ class AssistantChatStore {
       return;
     }
     
-    // Collect any image data from workflow parameters
-    let imageData = null;
+    // Collect all image data from workflow parameters
+    const imageDataList = [];
     if (this.selectedAssistant.function === 'workflow') {
       for (const [paramName, paramConfig] of Object.entries(this.wf_params)) {
         if (paramConfig && paramConfig.type === 'image' && paramConfig.value) {
-          imageData = {
+          imageDataList.push({
             file: paramConfig.value,
             paramName: paramName
-          };
-          break; // Take the first image found
+          });
         }
       }
     }
@@ -184,15 +183,17 @@ class AssistantChatStore {
       text
     });
     
-    // If there's an image, add it to the message
-    if (imageData && imageData.file instanceof File) {
-      this.addMessage({
-        sender: 'user',
-        type: 'image',
-        url: URL.createObjectURL(imageData.file),
-        file: imageData.file,
-      });
-    }
+    // Add all images to the message list
+    imageDataList.forEach(imageData => {
+      if (imageData.file instanceof File) {
+        this.addMessage({
+          sender: 'user',
+          type: 'image',
+          url: URL.createObjectURL(imageData.file),
+          file: imageData.file,
+        });
+      }
+    });
     
     this.setLoading(true);
     
