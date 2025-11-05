@@ -8,7 +8,7 @@ class ListStore {
   items = [];
 
   get filteredItems() {
-    let filtered = this.items;
+    let filtered = this.items || [];
 
     if (!this.isSettingRoute) {
       filtered = filtered.filter(item => !item.hidden && !item.deleted);
