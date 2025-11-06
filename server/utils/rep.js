@@ -382,7 +382,7 @@ const createClient = async (clientData) => {
     role: 'admin',
     name: '管理员',
     phone: clientData.phone,
-    client: result[0].id
+    client_id: result[0].id
   });
   
   return result;
