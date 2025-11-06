@@ -64,8 +64,8 @@ const AssistantCard = observer(({
         <CardEditActions
           item={assistant}
           store={store}
-          hideDelete={item => store.isPlatformAssistant(item)}
-          hideShelf={item => store.isPlatformAssistant(item) || (item.shelf && item.user_id !== userStore.user.id)}
+          hideDelete={item => store.hideDelete(item)}
+          hideShelf={item => store.hideDelete(item)}
           hideVisibility={item => store.isUserAssistantRoute}
         />
       )}

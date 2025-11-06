@@ -42,8 +42,8 @@ class AssistantStore {
   get filteringFields() {
     return [
       item => this.isUserRoute
-        ? (this.isUserAssistant(item) && item.user_id === userStore.user.id)
-        : !this.isUserAssistant(item)
+        ? (this.isUserAssistant(item) && !item.shelf && item.user_id === userStore.user.id)
+        : !this.isUserAssistant(item) || item.shelf
     ];
   }
 
@@ -124,7 +124,7 @@ class AssistantStore {
         const memberType = membershipStore.getMemberType(result);
         return this.isPlatformAssistant(a)
           ? { ...a, memberType, usageType: result, ...(this.getOverrideItem(a) || {}) }
-          : { ...a, memberType, usageType: result, shelf: !this.isUserAssistant(a) }
+          : { ...a, memberType, usageType: result }
       })
   };
   
@@ -237,6 +237,10 @@ class AssistantStore {
 
   isVideo = function(item = this.editingItem) {
     return this.getResult(item) === 'video';
+  }
+
+  hideDelete = function(item = this.editingItem) {
+    return this.isPlatformAssistant(item) || (item.shelf && item.user_id !== userStore.user.id)
   }
 }
 
