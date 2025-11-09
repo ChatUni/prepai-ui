@@ -3,6 +3,7 @@ import { post, get } from '../utils/db.js';
 import assistantStore from './assistantStore.js';
 import userStore from './userStore.js';
 import { t } from './languageStore';
+import { isImageUrl, getProxiedImageUrl } from '../utils/utils.js';
 
 class AssistantChatStore {
   selectedAssistant = null;
@@ -282,14 +283,25 @@ class AssistantChatStore {
             }
           }
           
-          // Add assistant response to messages
-          this.addMessage({
-            sender: 'assistant',
-            isHtml,
-            url: !isHtml ? messageText : undefined,
-            text: messageText,
-            type: isHtml ? 'html' : result
-          });
+          // Check if messageText is an image URL and handle accordingly
+          if (!isHtml && isImageUrl(messageText)) {
+            // This is an image URL, create an image message
+            this.addMessage({
+              sender: 'assistant',
+              type: 'image',
+              url: getProxiedImageUrl(messageText),
+              text: messageText // Keep original URL as text for fallback
+            });
+          } else {
+            // Regular text or HTML message
+            this.addMessage({
+              sender: 'assistant',
+              isHtml,
+              url: !isHtml ? messageText : undefined,
+              text: messageText,
+              type: isHtml ? 'html' : result
+            });
+          }
         } catch (error) {
           console.error('Error running workflow:', error);
           this.addMessage({

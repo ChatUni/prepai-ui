@@ -4,6 +4,7 @@ import { wechat_pay, wechat_query, wechat_refund } from './wechat.js';
 import { send_sms, verify_sms, send_email, verify_email } from './sms.js';
 import { chat, draw, video, tts } from '../openai.js';
 import { getClient, getUser, upgradeAll, withdraw, completeWithdraw, requestRefund, upgradeRefund, checkUser, newUser, createClient } from './rep.js';
+import { proxyImage } from './http.js';
 
 export default {
   db_handlers: {
@@ -39,6 +40,7 @@ export default {
       tos_file: (q) => handleUrlSigning(q.key),
       tos_folder: (q) => getAllFilesInFolder(q.folder),
       voice_options: () => getVoiceOptions(),
+      proxy_image: proxyImage,
     },
     post: {
       chat: (q, b) => chat(q.api, b, false),
@@ -91,6 +93,7 @@ export const { db_handlers, handlers, nocache } = {
       tos_file: (q) => handleUrlSigning(q.key),
       tos_folder: (q) => getAllFilesInFolder(q.folder),
       voice_options: () => getVoiceOptions(),
+      proxy_image: proxyImage,
     },
     post: {
       chat: (q, b) => chat(q.api, b, false),

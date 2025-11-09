@@ -1,5 +1,7 @@
 import busboy from 'busboy';
 import { connect } from './db.js';
+import https from 'https';
+import http from 'http';
 
 const FUNC = '/.netlify/functions/'
 const CONTENT_TYPES = { json: 'application/json', html: 'text/html', ast: 'application/json' }
@@ -109,6 +111,56 @@ const replaceClientId = async (q, body, headers) => {
   }
 };
 
+// Proxy image handler to avoid CORS issues
+const proxyImage = async (q, b, req) => {
+  const imageUrl = decodeURIComponent(q.url);
+  
+  if (!imageUrl || (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://'))) {
+    throw new Error('Invalid image URL');
+  }
+  
+  return new Promise((resolve, reject) => {
+    const protocol = imageUrl.startsWith('https://') ? https : http;
+    
+    const request = protocol.get(imageUrl, (response) => {
+      // Check if the response is an image
+      const contentType = response.headers['content-type'];
+      if (!contentType || !contentType.startsWith('image/')) {
+        reject(new Error('URL does not point to an image'));
+        return;
+      }
+      
+      // Set appropriate headers for the proxied image
+      req.res.set({
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        'Access-Control-Allow-Origin': '*'
+      });
+      
+      // Pipe the image data directly to the response
+      response.pipe(req.res);
+      
+      response.on('end', () => {
+        resolve(); // Don't return data, as we're streaming directly
+      });
+      
+      response.on('error', (error) => {
+        reject(error);
+      });
+    });
+    
+    request.on('error', (error) => {
+      reject(error);
+    });
+    
+    // Set timeout for the request
+    request.setTimeout(10000, () => {
+      request.destroy();
+      reject(new Error('Request timeout'));
+    });
+  });
+};
+
 export {
   getOrigin,
   headers,
@@ -116,5 +168,6 @@ export {
   makeApi,
   parseForm,
   tryc,
-  replaceClientId
+  replaceClientId,
+  proxyImage
 };

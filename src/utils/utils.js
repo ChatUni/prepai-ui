@@ -44,3 +44,18 @@ const buildUrl = (url) => {
   if (url.startsWith('http')) return url
   return `${window.location.origin}/${url}`
 }
+
+// Helper function to detect if a string is an image URL
+export const isImageUrl = (url) => {
+  if (typeof url !== 'string') return false;
+  const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp|svg)(\?.*)?$/i;
+  const isHttpUrl = url.startsWith('http://') || url.startsWith('https://');
+  return isHttpUrl && imageExtensions.test(url);
+};
+
+// Helper function to proxy image URLs through backend to avoid CORS issues
+export const getProxiedImageUrl = (originalUrl) => {
+  // Encode the original URL to pass it as a parameter
+  const encodedUrl = encodeURIComponent(originalUrl);
+  return `/api?type=proxy_image&url=${encodedUrl}`;
+};

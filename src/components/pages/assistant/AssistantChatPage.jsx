@@ -30,21 +30,69 @@ const TypingIndicator = () => {
 };
 
 // Image message component
-const ImageMessage = ({ message }) => (
-  <div className={`max-w-[75%] ${message.sender === 'user' ? 'ml-auto' : 'mr-auto'}`}>
-    <div className="inline-block">
-      <img
-        src={message.url}
-        alt="Generated image"
-        className="max-w-full h-auto rounded-lg"
-        style={{ maxWidth: '300px', maxHeight: '300px' }}
-      />
-      <div className="text-xs mt-1 text-gray-500">
-        {new Date(message.timestamp).toLocaleTimeString()}
+const ImageMessage = ({ message }) => {
+  const [imageError, setImageError] = React.useState(false);
+  const [fallbackUrl, setFallbackUrl] = React.useState(null);
+
+  const handleImageError = (e) => {
+    console.warn('Image failed to load, likely due to CORS:', e);
+    setImageError(true);
+    
+    // If the original URL failed and we haven't tried the proxy yet, try the proxy
+    if (!message.url.includes('proxy_image') && message.text) {
+      const encodedUrl = encodeURIComponent(message.text);
+      const proxyUrl = `/api?type=proxy_image&url=${encodedUrl}`;
+      setFallbackUrl(proxyUrl);
+    }
+  };
+
+  const handleFallbackError = () => {
+    console.warn('Proxy image also failed to load');
+    setFallbackUrl(null);
+  };
+
+  return (
+    <div className={`max-w-[75%] ${message.sender === 'user' ? 'ml-auto' : 'mr-auto'}`}>
+      <div className="inline-block">
+        {!imageError ? (
+          <img
+            src={message.url}
+            alt="Generated image"
+            className="max-w-full h-auto rounded-lg"
+            style={{ maxWidth: '300px', maxHeight: '300px' }}
+            onError={handleImageError}
+          />
+        ) : fallbackUrl ? (
+          <img
+            src={fallbackUrl}
+            alt="Generated image"
+            className="max-w-full h-auto rounded-lg"
+            style={{ maxWidth: '300px', maxHeight: '300px' }}
+            onError={handleFallbackError}
+          />
+        ) : (
+          <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-gray-500 mb-2">Image could not be loaded</div>
+              <a
+                href={message.text || message.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+              >
+                <FaDownload className="w-3 h-3 mr-1" />
+                Open in new tab
+              </a>
+            </div>
+          </div>
+        )}
+        <div className="text-xs mt-1 text-gray-500">
+          {new Date(message.timestamp).toLocaleTimeString()}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Video message component
 const VideoMessage = ({ message }) => (
