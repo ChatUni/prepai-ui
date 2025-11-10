@@ -13,6 +13,7 @@ import FormSelect from '../../ui/FormSelect';
 import FormInput from '../../ui/FormInput';
 import FormRadio from '../../ui/FormRadio';
 import ImageUpload from '../../ui/ImageUpload';
+import { BASE_URL } from '../../../config';
 
 // Loading indicator with animated dots
 const TypingIndicator = () => {
@@ -36,12 +37,13 @@ const ImageMessage = ({ message }) => {
 
   const handleImageError = (e) => {
     console.warn('Image failed to load, likely due to CORS:', e);
+    console.log(message);
     setImageError(true);
     
     // If the original URL failed and we haven't tried the proxy yet, try the proxy
     if (!message.url.includes('proxy_image') && message.text) {
       const encodedUrl = encodeURIComponent(message.text);
-      const proxyUrl = `/api?type=proxy_image&url=${encodedUrl}`;
+      const proxyUrl = `${BASE_URL}/api?type=proxy_image&url=${encodedUrl}`;
       setFallbackUrl(proxyUrl);
     }
   };

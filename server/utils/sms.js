@@ -191,6 +191,7 @@ function createEmailTransporter() {
             pass: process.env.EMAIL_PASSWORD
         }
     });
+    console.log(emailTransporter)
 }
 
 async function sendEmail(email, code) {
