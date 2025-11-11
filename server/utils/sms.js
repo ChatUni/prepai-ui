@@ -8,6 +8,7 @@ import tencentcloud from "tencentcloud-sdk-nodejs";
 const smsClient = tencentcloud.sms.v20210111.Client;
 import { flatOne, getByStrId, save } from './db.js';
 import nodemailer from 'nodemailer';
+import { TransactionalEmailsApi, Configuration } from '@getbrevo/brevo';
 
 /* 实例化要请求产品(以sms为例)的client对象 */
 let client = null
@@ -180,43 +181,134 @@ const verify_sms = async (q, b) => {
   }
 };
 
-// Email transporter setup
+/**
+ * Email setup with Brevo API as default provider
+ *
+ * Environment variables required for Brevo (recommended):
+ * - BREVO_API_KEY: Your Brevo API key
+ * - BREVO_SENDER_EMAIL: Verified sender email address in Brevo
+ * - BREVO_SENDER_NAME: Display name for the sender (optional, defaults to 'PrepAI')
+ *
+ * Fallback environment variables for Gmail SMTP:
+ * - EMAIL_USER: Gmail username
+ * - EMAIL_PASSWORD: Gmail app password
+ */
 let emailTransporter = null;
+let brevoApiInstance = null;
+
+function initializeBrevoApi() {
+    try {
+        const config = new Configuration({
+            apiKey: process.env.BREVO_API_KEY,
+            basePath: 'https://api.brevo.com/v3'
+        });
+        brevoApiInstance = new TransactionalEmailsApi(config);
+        console.log('Brevo API client initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Brevo API:', error);
+        // If Brevo initialization fails, we'll fall back to Gmail
+        brevoApiInstance = null;
+    }
+}
 
 function createEmailTransporter() {
-    emailTransporter = nodemailer.createTransport({
-        service: 'gmail', // or your preferred email service
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
-    console.log(emailTransporter)
+    // Use Brevo API by default, fallback to Gmail SMTP if Brevo API key not available
+    if (process.env.BREVO_API_KEY) {
+        initializeBrevoApi();
+        console.log('Email service initialized with Brevo API');
+    } else {
+        emailTransporter = nodemailer.createTransport({
+            service: 'gmail', // fallback to gmail
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
+        console.log('Email transporter initialized with Gmail SMTP (fallback)');
+    }
 }
 
 async function sendEmail(email, code) {
-    if (!emailTransporter) {
+    // Initialize email service if not already done
+    if (!brevoApiInstance && !emailTransporter) {
         createEmailTransporter();
     }
     
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: '验证码 - Verification Code',
-        html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>验证码 / Verification Code</h2>
-                <p>您的验证码是 / Your verification code is:</p>
-                <div style="background-color: #f0f0f0; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0;">
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_USER;
+    const senderName = process.env.BREVO_SENDER_NAME || 'PrepAI';
+    
+    const htmlContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #333; margin-bottom: 10px;">验证码 / Verification Code</h1>
+            </div>
+            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 30px; text-align: center;">
+                <p style="font-size: 16px; color: #666; margin-bottom: 20px;">您的验证码是 / Your verification code is:</p>
+                <div style="background-color: #007bff; color: white; padding: 15px 30px; border-radius: 6px; font-size: 32px; font-weight: bold; letter-spacing: 3px; margin: 20px 0; display: inline-block;">
                     ${code}
                 </div>
-                <p>验证码有效期为5分钟 / This code will expire in 5 minutes.</p>
-                <p>如果您没有请求此验证码，请忽略此邮件 / If you didn't request this code, please ignore this email.</p>
+                <p style="font-size: 14px; color: #666; margin-top: 20px;">验证码有效期为5分钟 / This code will expire in 5 minutes.</p>
             </div>
-        `
-    };
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+                <p style="font-size: 12px; color: #999;">如果您没有请求此验证码，请忽略此邮件 / If you didn't request this code, please ignore this email.</p>
+            </div>
+        </div>
+    `;
     
-    await emailTransporter.sendMail(mailOptions);
+    // Use Brevo API if available, otherwise fallback to nodemailer
+    if (brevoApiInstance) {
+        const sendSmtpEmail = {
+            sender: { email: senderEmail, name: senderName },
+            to: [{ email: email }],
+            subject: '验证码 - Verification Code',
+            htmlContent: htmlContent
+        };
+        
+        try {
+            console.log('Sending email via Brevo API with data:', JSON.stringify(sendSmtpEmail, null, 2));
+            const data = await brevoApiInstance.sendTransacEmail(sendSmtpEmail);
+            console.log('✅ Email sent successfully via Brevo API:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error sending email via Brevo API:');
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            console.error('Full error:', error);
+            
+            // Fall back to Gmail if Brevo fails
+            console.log('Falling back to Gmail SMTP...');
+            if (!emailTransporter) {
+                emailTransporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASSWORD
+                    }
+                });
+            }
+            
+            const mailOptions = {
+                from: `${senderName} <${senderEmail}>`,
+                to: email,
+                subject: '验证码 - Verification Code',
+                html: htmlContent
+            };
+            
+            await emailTransporter.sendMail(mailOptions);
+            console.log('✅ Email sent successfully via Gmail SMTP (fallback)');
+        }
+    } else {
+        // Fallback to nodemailer (Gmail)
+        const mailOptions = {
+            from: `${senderName} <${senderEmail}>`,
+            to: email,
+            subject: '验证码 - Verification Code',
+            html: htmlContent
+        };
+        
+        await emailTransporter.sendMail(mailOptions);
+        console.log('✅ Email sent successfully via Gmail SMTP');
+    }
 }
 
 // Email handlers
