@@ -125,12 +125,10 @@ const proxyImage = async (q, b, req) => {
     const request = protocol.get(imageUrl, (response) => {
       // Check if the response is an image
       const contentType = response.headers['content-type'];
-      console.log(imageUrl);
-      console.log(contentType);
-      if (!contentType || !contentType.startsWith('image/')) {
-        reject(new Error('URL does not point to an image'));
-        return;
-      }
+      // if (!contentType || !contentType.startsWith('image/')) {
+      //   reject(new Error('URL does not point to an image'));
+      //   return;
+      // }
       
       // Set appropriate headers for the proxied image
       req.res.set({

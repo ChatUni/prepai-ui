@@ -41,6 +41,10 @@ class MembershipStore {
     return this.isSettingRoute ? t('membership.priceSettings.title') : t('membership.title');
   }
 
+  get isNonGroupedList() {
+    return true;
+  }
+
   get searchableFields() {
     return ['name', 'desc'];
   }

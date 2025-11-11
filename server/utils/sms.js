@@ -8,7 +8,7 @@ import tencentcloud from "tencentcloud-sdk-nodejs";
 const smsClient = tencentcloud.sms.v20210111.Client;
 import { flatOne, getByStrId, save } from './db.js';
 import nodemailer from 'nodemailer';
-import { TransactionalEmailsApi, Configuration } from '@getbrevo/brevo';
+import { TransactionalEmailsApi } from '@getbrevo/brevo';
 
 /* 实例化要请求产品(以sms为例)的client对象 */
 let client = null
@@ -198,11 +198,8 @@ let brevoApiInstance = null;
 
 function initializeBrevoApi() {
     try {
-        const config = new Configuration({
-            apiKey: process.env.BREVO_API_KEY,
-            basePath: 'https://api.brevo.com/v3'
-        });
-        brevoApiInstance = new TransactionalEmailsApi(config);
+        brevoApiInstance = new TransactionalEmailsApi();
+        brevoApiInstance.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
         console.log('Brevo API client initialized successfully');
     } catch (error) {
         console.error('Error initializing Brevo API:', error);
@@ -265,9 +262,9 @@ async function sendEmail(email, code) {
         };
         
         try {
-            console.log('Sending email via Brevo API with data:', JSON.stringify(sendSmtpEmail, null, 2));
+            //console.log('Sending email via Brevo API with data:', JSON.stringify(sendSmtpEmail, null, 2));
             const data = await brevoApiInstance.sendTransacEmail(sendSmtpEmail);
-            console.log('✅ Email sent successfully via Brevo API:', data);
+            //console.log('✅ Email sent successfully via Brevo API:', data);
             return data;
         } catch (error) {
             console.error('❌ Error sending email via Brevo API:');
